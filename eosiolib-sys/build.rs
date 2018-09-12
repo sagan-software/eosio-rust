@@ -1,7 +1,6 @@
 extern crate bindgen;
 
 use std::env;
-use std::path::PathBuf;
 
 fn include_library(path: &str) -> String {
     let libraries_dir = env::current_dir()
@@ -25,7 +24,11 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let out_path = env::current_dir()
+        .unwrap()
+        .join("src")
+        .canonicalize()
+        .unwrap();
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
