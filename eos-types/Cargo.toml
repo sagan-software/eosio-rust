@@ -1,0 +1,8 @@
+[package]
+name = "eos_types"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[lib]
+test = false
+doctest = false

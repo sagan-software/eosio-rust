@@ -1,0 +1,9 @@
+[profile.release]
+lto = true
+opt-level = "z"
+debug = false
+
+[workspace]
+members = [
+    "eosiolib-sys"
+]

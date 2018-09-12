@@ -1,0 +1,11 @@
+[package]
+name = "eosiolib"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[lib]
+test = false
+doctest = false
+
+[dependencies]
+eosiolib_sys = { path = "../eosiolib-sys", version = "0.1" }

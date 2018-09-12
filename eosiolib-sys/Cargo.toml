@@ -1,0 +1,12 @@
+[package]
+name = "eosiolib_sys"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+build = "build.rs"
+
+[lib]
+test = false
+doctest = false
+
+[build-dependencies]
+bindgen = "0.40.0"
