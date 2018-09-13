@@ -1,10 +1,19 @@
+#![no_std]
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![feature(alloc)]
 
-// include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+#[cfg(test)]
+#[macro_use]
+extern crate std;
+
+extern crate alloc;
+extern crate memchr;
 
 mod bindings;
+pub mod cstr;
+pub mod ctypes;
 
 pub mod action {
     pub use super::bindings::{
@@ -83,8 +92,8 @@ pub mod transaction {
 pub mod types {
     pub use super::bindings::{
         account_name, account_permission, action_name, block_id_type, checksum160, checksum256,
-        checksum512, int128_t, permission_name, public_key, scope_name, signature, table_name,
-        time, transaction_id_type, uint128_t, weight_type,
+        checksum512, permission_name, public_key, scope_name, signature, table_name, time,
+        transaction_id_type, weight_type,
     };
 }
 
@@ -92,6 +101,8 @@ pub mod prelude {
     pub use super::action::*;
     pub use super::chain::*;
     pub use super::crypto::*;
+    pub use super::cstr::*;
+    pub use super::ctypes::*;
     pub use super::db::*;
     pub use super::permission::*;
     pub use super::print::*;

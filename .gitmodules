@@ -1,3 +1,9 @@
 [submodule "external/eosio.cdt"]
 	path = external/eosio.cdt
 	url = git@github.com:EOSIO/eosio.cdt.git
+[submodule "external/eos"]
+	path = external/eos
+	url = git@github.com:EOSIO/eos.git
+[submodule "external/eosio.contracts"]
+	path = external/eosio.contracts
+	url = git@github.com:EOSIO/eosio.contracts.git

@@ -65,20 +65,20 @@ pub type uint_fast8_t = u8;
 pub type uint_fast16_t = u16;
 pub type uint_fast32_t = u32;
 pub type uint_fast64_t = u64;
-pub type intmax_t = ::std::os::raw::c_long;
-pub type uintmax_t = ::std::os::raw::c_ulong;
+pub type intmax_t = ::ctypes::c_long;
+pub type uintmax_t = ::ctypes::c_ulong;
 pub type wint_t = u32;
 pub type va_list = __builtin_va_list;
 pub type __isoc_va_list = __builtin_va_list;
-pub type wctype_t = ::std::os::raw::c_ulong;
+pub type wctype_t = ::ctypes::c_ulong;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __mbstate_t {
-    pub __opaque1: ::std::os::raw::c_uint,
-    pub __opaque2: ::std::os::raw::c_uint,
+    pub __opaque1: ::ctypes::c_uint,
+    pub __opaque2: ::ctypes::c_uint,
 }
 pub type mbstate_t = __mbstate_t;
-pub type regoff_t = ::std::os::raw::c_int;
+pub type regoff_t = ::ctypes::c_int;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __locale_struct {
@@ -92,8 +92,8 @@ pub struct _IO_FILE {
 }
 pub type FILE = _IO_FILE;
 pub type off_t = i64;
-pub type time_t = ::std::os::raw::c_long;
-pub type suseconds_t = ::std::os::raw::c_long;
+pub type time_t = ::ctypes::c_long;
+pub type suseconds_t = ::ctypes::c_long;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct timeval {
@@ -104,7 +104,7 @@ pub struct timeval {
 #[derive(Debug, Copy, Clone)]
 pub struct timespec {
     pub tv_sec: time_t,
-    pub tv_nsec: ::std::os::raw::c_long,
+    pub tv_nsec: ::ctypes::c_long,
 }
 pub type float_t = f32;
 pub type double_t = f64;
@@ -121,13 +121,13 @@ extern "C" {
     pub fn wcsncat(arg1: *mut u32, arg2: *const u32, arg3: usize) -> *mut u32;
 }
 extern "C" {
-    pub fn wcscmp(arg1: *const u32, arg2: *const u32) -> ::std::os::raw::c_int;
+    pub fn wcscmp(arg1: *const u32, arg2: *const u32) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn wcsncmp(arg1: *const u32, arg2: *const u32, arg3: usize) -> ::std::os::raw::c_int;
+    pub fn wcsncmp(arg1: *const u32, arg2: *const u32, arg3: usize) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn wcscoll(arg1: *const u32, arg2: *const u32) -> ::std::os::raw::c_int;
+    pub fn wcscoll(arg1: *const u32, arg2: *const u32) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn wcsxfrm(arg1: *mut u32, arg2: *const u32, arg3: usize) -> usize;
@@ -163,7 +163,7 @@ extern "C" {
     pub fn wmemchr(arg1: *const u32, arg2: u32, arg3: usize) -> *mut u32;
 }
 extern "C" {
-    pub fn wmemcmp(arg1: *const u32, arg2: *const u32, arg3: usize) -> ::std::os::raw::c_int;
+    pub fn wmemcmp(arg1: *const u32, arg2: *const u32, arg3: usize) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn wmemcpy(arg1: *mut u32, arg2: *const u32, arg3: usize) -> *mut u32;
@@ -175,39 +175,39 @@ extern "C" {
     pub fn wmemset(arg1: *mut u32, arg2: u32, arg3: usize) -> *mut u32;
 }
 extern "C" {
-    pub fn btowc(arg1: ::std::os::raw::c_int) -> wint_t;
+    pub fn btowc(arg1: ::ctypes::c_int) -> wint_t;
 }
 extern "C" {
-    pub fn wctob(arg1: wint_t) -> ::std::os::raw::c_int;
+    pub fn wctob(arg1: wint_t) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn mbsinit(arg1: *const mbstate_t) -> ::std::os::raw::c_int;
+    pub fn mbsinit(arg1: *const mbstate_t) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn mbrtowc(
         arg1: *mut u32,
-        arg2: *const ::std::os::raw::c_char,
+        arg2: *const ::ctypes::c_char,
         arg3: usize,
         arg4: *mut mbstate_t,
     ) -> usize;
 }
 extern "C" {
-    pub fn wcrtomb(arg1: *mut ::std::os::raw::c_char, arg2: u32, arg3: *mut mbstate_t) -> usize;
+    pub fn wcrtomb(arg1: *mut ::ctypes::c_char, arg2: u32, arg3: *mut mbstate_t) -> usize;
 }
 extern "C" {
-    pub fn mbrlen(arg1: *const ::std::os::raw::c_char, arg2: usize, arg3: *mut mbstate_t) -> usize;
+    pub fn mbrlen(arg1: *const ::ctypes::c_char, arg2: usize, arg3: *mut mbstate_t) -> usize;
 }
 extern "C" {
     pub fn mbsrtowcs(
         arg1: *mut u32,
-        arg2: *mut *const ::std::os::raw::c_char,
+        arg2: *mut *const ::ctypes::c_char,
         arg3: usize,
         arg4: *mut mbstate_t,
     ) -> usize;
 }
 extern "C" {
     pub fn wcsrtombs(
-        arg1: *mut ::std::os::raw::c_char,
+        arg1: *mut ::ctypes::c_char,
         arg2: *mut *const u32,
         arg3: usize,
         arg4: *mut mbstate_t,
@@ -223,54 +223,51 @@ extern "C" {
     pub fn wcstold(arg1: *const u32, arg2: *mut *mut u32) -> f64;
 }
 extern "C" {
-    pub fn wcstol(
-        arg1: *const u32,
-        arg2: *mut *mut u32,
-        arg3: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_long;
+    pub fn wcstol(arg1: *const u32, arg2: *mut *mut u32, arg3: ::ctypes::c_int)
+        -> ::ctypes::c_long;
 }
 extern "C" {
     pub fn wcstoul(
         arg1: *const u32,
         arg2: *mut *mut u32,
-        arg3: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_ulong;
+        arg3: ::ctypes::c_int,
+    ) -> ::ctypes::c_ulong;
 }
 extern "C" {
     pub fn wcstoll(
         arg1: *const u32,
         arg2: *mut *mut u32,
-        arg3: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_longlong;
+        arg3: ::ctypes::c_int,
+    ) -> ::ctypes::c_longlong;
 }
 extern "C" {
     pub fn wcstoull(
         arg1: *const u32,
         arg2: *mut *mut u32,
-        arg3: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_ulonglong;
+        arg3: ::ctypes::c_int,
+    ) -> ::ctypes::c_ulonglong;
 }
 extern "C" {
-    pub fn fwide(arg1: *mut FILE, arg2: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
+    pub fn fwide(arg1: *mut FILE, arg2: ::ctypes::c_int) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn wprintf(arg1: *const u32, ...) -> ::std::os::raw::c_int;
+    pub fn wprintf(arg1: *const u32, ...) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn fwprintf(arg1: *mut FILE, arg2: *const u32, ...) -> ::std::os::raw::c_int;
+    pub fn fwprintf(arg1: *mut FILE, arg2: *const u32, ...) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn swprintf(arg1: *mut u32, arg2: usize, arg3: *const u32, ...) -> ::std::os::raw::c_int;
+    pub fn swprintf(arg1: *mut u32, arg2: usize, arg3: *const u32, ...) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn vwprintf(arg1: *const u32, arg2: *mut __va_list_tag) -> ::std::os::raw::c_int;
+    pub fn vwprintf(arg1: *const u32, arg2: *mut __va_list_tag) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn vfwprintf(
         arg1: *mut FILE,
         arg2: *const u32,
         arg3: *mut __va_list_tag,
-    ) -> ::std::os::raw::c_int;
+    ) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn vswprintf(
@@ -278,33 +275,30 @@ extern "C" {
         arg2: usize,
         arg3: *const u32,
         arg4: *mut __va_list_tag,
-    ) -> ::std::os::raw::c_int;
+    ) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn wscanf(arg1: *const u32, ...) -> ::std::os::raw::c_int;
+    pub fn wscanf(arg1: *const u32, ...) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn fwscanf(arg1: *mut FILE, arg2: *const u32, ...) -> ::std::os::raw::c_int;
+    pub fn fwscanf(arg1: *mut FILE, arg2: *const u32, ...) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn swscanf(arg1: *const u32, arg2: *const u32, ...) -> ::std::os::raw::c_int;
+    pub fn swscanf(arg1: *const u32, arg2: *const u32, ...) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn vwscanf(arg1: *const u32, arg2: *mut __va_list_tag) -> ::std::os::raw::c_int;
+    pub fn vwscanf(arg1: *const u32, arg2: *mut __va_list_tag) -> ::ctypes::c_int;
 }
 extern "C" {
-    pub fn vfwscanf(
-        arg1: *mut FILE,
-        arg2: *const u32,
-        arg3: *mut __va_list_tag,
-    ) -> ::std::os::raw::c_int;
+    pub fn vfwscanf(arg1: *mut FILE, arg2: *const u32, arg3: *mut __va_list_tag)
+        -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn vswscanf(
         arg1: *const u32,
         arg2: *const u32,
         arg3: *mut __va_list_tag,
-    ) -> ::std::os::raw::c_int;
+    ) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn fgetwc(arg1: *mut FILE) -> wint_t;
@@ -325,10 +319,10 @@ extern "C" {
     pub fn putwchar(arg1: u32) -> wint_t;
 }
 extern "C" {
-    pub fn fgetws(arg1: *mut u32, arg2: ::std::os::raw::c_int, arg3: *mut FILE) -> *mut u32;
+    pub fn fgetws(arg1: *mut u32, arg2: ::ctypes::c_int, arg3: *mut FILE) -> *mut u32;
 }
 extern "C" {
-    pub fn fputws(arg1: *const u32, arg2: *mut FILE) -> ::std::os::raw::c_int;
+    pub fn fputws(arg1: *const u32, arg2: *mut FILE) -> ::ctypes::c_int;
 }
 extern "C" {
     pub fn ungetwc(arg1: wint_t, arg2: *mut FILE) -> wint_t;
@@ -367,7 +361,7 @@ pub type weight_type = u16;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct public_key {
-    pub data: [::std::os::raw::c_char; 34usize],
+    pub data: [::ctypes::c_char; 34usize],
 }
 /// @brief EOSIO Signature
 /// @details EOSIO Signature. It is 66 bytes.
@@ -421,7 +415,7 @@ extern "C" {
     /// @endcode
     ///
     /// @param msg - a null terminated string explaining the reason for failure
-    pub fn eosio_assert(test: u32, msg: *const ::std::os::raw::c_char);
+    pub fn eosio_assert(test: u32, msg: *const ::ctypes::c_char);
 }
 extern "C" {
     /// Aborts processing of this action and unwinds all pending changes if the test condition is true
@@ -429,7 +423,7 @@ extern "C" {
     /// @param test - 0 to abort, 1 to ignore
     /// @param msg - a pointer to the start of string explaining the reason for failure
     /// @param msg_len - length of the string
-    pub fn eosio_assert_message(test: u32, msg: *const ::std::os::raw::c_char, msg_len: u32);
+    pub fn eosio_assert_message(test: u32, msg: *const ::ctypes::c_char, msg_len: u32);
 }
 extern "C" {
     /// Aborts processing of this action and unwinds all pending changes if the test condition is true
@@ -467,7 +461,7 @@ extern "C" {
     /// @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
     /// @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
     /// @post `msg` is filled with packed action data
-    pub fn read_action_data(msg: *mut ::std::os::raw::c_void, len: u32) -> u32;
+    pub fn read_action_data(msg: *mut ::ctypes::c_void, len: u32) -> u32;
 }
 extern "C" {
     /// Get the length of the current action's data field. This method is useful for dynamically sized actions
@@ -514,7 +508,7 @@ extern "C" {
     /// @param serialized_action - serialized action
     /// @param size - size of serialized action in bytes
     /// @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
-    pub fn send_inline(serialized_action: *mut ::std::os::raw::c_char, size: usize);
+    pub fn send_inline(serialized_action: *mut ::ctypes::c_char, size: usize);
 }
 extern "C" {
     /// Send an inline context free action in the context of this action's parent transaction
@@ -522,7 +516,7 @@ extern "C" {
     /// @param serialized_action - serialized action
     /// @param size - size of serialized action in bytes
     /// @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
-    pub fn send_context_free_inline(serialized_action: *mut ::std::os::raw::c_char, size: usize);
+    pub fn send_context_free_inline(serialized_action: *mut ::ctypes::c_char, size: usize);
 }
 extern "C" {
     /// Verifies that @ref name exists in the set of write locks held on a action. Throws if not found
@@ -568,389 +562,6 @@ extern "C" {
     pub fn get_active_producers(producers: *mut account_name, datalen: u32) -> u32;
 }
 extern "C" {
-    /// Multiply two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Multiply two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers.
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `res` is replaced with the result of multiplication
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = 100;
-    /// __int128 b = 100;
-    /// __multi3(res, a, (a >> 64), b, (b >> 64));
-    /// printi128(&res); // Output: 10000
-    /// @endcode
-    pub fn __multi3(res: *mut [u64; 2], la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Divide two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Divide two 128 bit integers (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `res` is replaced with the result of division
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = 100;
-    /// __int128 b = 100;
-    /// __divti3(res, a, (a >> 64), b, (b >> 64));
-    /// printi128(&res); // Output: 1
-    /// @endcode
-    pub fn __divti3(res: *mut [u64; 2], la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Divide two 128 bit unsigned integers split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Divide two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// Example:
-    /// @code
-    /// unsigned __int128 res = 0;
-    /// unsigned __int128 a = 100;
-    /// unsigned __int128 b = 100;
-    /// __udivti3(res, a, (a >> 64), b, (b >> 64));
-    /// printi128(&res); // Output: 1
-    /// @endcode
-    pub fn __udivti3(res: *mut [u64; 2], la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Perform modular arithmetic on two 128 bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Perform modular arithmetic on two 128 bit integers (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `res` is replaced with the result of modulus
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = 100;
-    /// __int128 b = 3;
-    /// __modti3(res, a, (a >> 64), b, (b >> 64));
-    /// printi128(&res); // Output: 1
-    /// @endcode
-    pub fn __modti3(res: *mut [u64; 2], la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Perform modular arithmetic on two 128 unsigned bit integers split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Perform modular arithmetic on two 128 unsigned bit integers (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `res` is replaced with the result of modulus
-    /// Example:
-    /// @code
-    /// unsigned __int128 res = 0;
-    /// unsigned __int128 a = 100;
-    /// unsigned __int128 b = 3;
-    /// __umodti3(res, a, (a >> 64), b, (b >> 64));
-    /// printi128(&res); // Output: 1
-    /// @endcode
-    pub fn __umodti3(res: *mut [u64; 2], la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Perform logical shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Perform logical shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers)
-    /// @param res    It will be replaced with the result product.
-    /// @param lo     Low 64 bits of the 128 bit factor.
-    /// @param hi     High 64 bits of the 128 bit factor.
-    /// @param shift  Number of bits to shift.
-    /// @post `res` is replaced with the result of the operation
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = 8;
-    /// __lshlti3(res, a, (a >> 64), 1);
-    /// printi128(&res); // Output: 16
-    /// @endcode
-    pub fn __lshlti3(res: *mut [u64; 2], lo: u64, hi: u64, shift: u32);
-}
-extern "C" {
-    /// Perform logical shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Perform logical shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers)
-    /// @param res    It will be replaced with the result product.
-    /// @param lo     Low 64 bits of the 128 bit factor.
-    /// @param hi     High 64 bits of the 128 bit factor.
-    /// @param shift  Number of bits to shift.
-    /// @post `res` is replaced with the result of the operation
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = 8;
-    /// __lshrti3(res, a, (a >> 64), 1);
-    /// printi128(&res); // Output: 4
-    /// @endcode
-    pub fn __lshrti3(res: *mut [u64; 2], lo: u64, hi: u64, shift: u32);
-}
-extern "C" {
-    /// Perform arithmetic shift left on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Perform arithmetic shift left on a 128 bit integer (which is represented as two 64 bit unsigned integers)
-    /// @param res    It will be replaced with the result product.
-    /// @param lo     Low 64 bits of the 128 bit factor.
-    /// @param hi     High 64 bits of the 128 bit factor.
-    /// @param shift  Number of bits to shift.
-    /// @post `res` is replaced with the result of the operation
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = 8;
-    /// __ashlti3(res, a, (a >> 64), 1);
-    /// printi128(&res); // Output: 16
-    /// @endcode
-    pub fn __ashlti3(res: *mut [u64; 2], lo: u64, hi: u64, shift: u32);
-}
-extern "C" {
-    /// Perform arithmetic shift right on a 128 bit integer split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Perform arithmetic shift right on a 128 bit integer (which is represented as two 64 bit unsigned integers)
-    /// @param res    It will be replaced with the result product.
-    /// @param lo     Low 64 bits of the 128 bit factor.
-    /// @param hi     High 64 bits of the 128 bit factor.
-    /// @param shift  Number of bits to shift.
-    /// @post `res` is replaced with the result of the operation
-    /// Example:
-    /// @code
-    /// __int128 res = 0;
-    /// __int128 a = -8;
-    /// __ashrti3(res, a, (a >> 64), 1);
-    /// printi128(&res); // Output: -4
-    /// @endcode
-    pub fn __ashrti3(res: *mut [u64; 2], lo: u64, hi: u64, shift: u32);
-}
-extern "C" {
-    /// Add two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Add two long doubles (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `ret` is replaced with the result of the operation
-    pub fn __addtf3(ret: *mut f64, la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Subtract two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Subtract two long doubles (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `ret` is replaced with the result of the operation
-    pub fn __subtf3(ret: *mut f64, la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Multiply two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Multiply two long doubles (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `ret` is replaced with the result of the operation
-    pub fn __multf3(ret: *mut f64, la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Divide two long doubles split as two 64 bit unsigned integers and assign the value to the first parameter.
-    /// @brief Divide two long doubles (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @post `ret` is replaced with the result of the operation
-    pub fn __divtf3(ret: *mut f64, la: u64, ha: u64, lb: u64, hb: u64);
-}
-extern "C" {
-    /// Check equality between two doubles split as two 64 bit unsigned integers
-    /// @brief Check equality between two doubles (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return 1 if either a or b is NaN
-    pub fn __eqtf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Check inequality between two doubles split as two 64 bit unsigned integers
-    /// @brief Check inequality between two doubles (which are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return1 if either a or b is NaN
-    pub fn __netf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Check if the first double is greater or equal to the second double, the doubles are split as two 64 bit unsigned integers
-    /// @brief Check if the first double is greater or equal to the second double, (the doubles are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return -1 if either a or b is NaN
-    pub fn __getf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Check if the first double is greater than the second double, the doubles are split as two 64 bit unsigned integers
-    /// @brief Check if the first double is greater than the second double, (the doubles are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return 0 if either a or b is NaN
-    pub fn __gttf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Check if the first double is less or equal to the second double, the doubles are split as two 64 bit unsigned integers
-    /// @brief Check if the first double is less or equal to the second double, (the doubles are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return 1 if either a or b is NaN
-    pub fn __letf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Check if the first double is less than the second double, the doubles are split as two 64 bit unsigned integers
-    /// @brief Check if the first double is less than the second double, (the doubles are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return 0 if either a or b is NaN
-    pub fn __lttf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Compare two doubles which are split as two 64 bit unsigned integers
-    /// @brief Compare two doubles (the doubles are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if a greater than b
-    /// @return 0 if a equal to b
-    /// @return -1 if a less than b
-    /// @return 1 if either a or b is NaN
-    pub fn __cmptf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Check if either of the doubles is NaN, the doubles are split as two 64 bit unsigned integers
-    /// @brief Check if either of the doubles is NaN, (the doubles are represented as two 64 bit unsigned integers)
-    /// @param res  It will be replaced with the result product.
-    /// @param la   Low 64 bits of the first 128 bit factor.
-    /// @param ha   High 64 bits of the first 128 bit factor.
-    /// @param lb   Low 64 bits of the second 128 bit factor.
-    /// @param hb   High 64 bits of the second 128 bit factor.
-    /// @return 1 if either a or b is NaN
-    /// @return 0 if either a or b is not NaN
-    pub fn __unordtf2(la: u64, ha: u64, lb: u64, hb: u64) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    /// Extend float to long double
-    /// @brief Extend float to long double
-    /// @param ret  It will be replaced with the result product.
-    /// @param f    Input float to be extended
-    /// @post `ret` is replaced with the extended float
-    pub fn __extendsftf2(ret: *mut f64, f: f32);
-}
-extern "C" {
-    /// Extend double to long double
-    /// @brief Extend float to long double
-    /// @param ret  It will be replaced with the result product.
-    /// @param f    Input float to be extended
-    /// @post `ret` is replaced with the extended float
-    pub fn __extenddftf2(ret: *mut f64, f: f64);
-}
-extern "C" {
-    /// Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer
-    /// @brief Convert long double (which are split as two 64 bit unsigned integers) into 64 bit integer
-    /// @param l   Low 64 bits of the first 128 bit factor.
-    /// @param h   High 64 bits of the first 128 bit factor.
-    /// @return the converted 64 bit integer.
-    pub fn __fixtfdi(l: u64, h: u64) -> i64;
-}
-extern "C" {
-    /// Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer
-    /// @brief Convert long double (which are split as two 64 bit unsigned integers) into 32 bit integer
-    /// @param l   Low 64 bits of the first 128 bit factor.
-    /// @param h   High 64 bits of the first 128 bit factor.
-    /// @return the converted 32 bit integer.
-    pub fn __fixtfsi(l: u64, h: u64) -> i32;
-}
-extern "C" {
-    /// Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer
-    /// @brief Convert long double (which are split as two 64 bit unsigned integers) into 64 bit unsigned integer
-    /// @param l   Low 64 bits of the first 128 bit factor.
-    /// @param h   High 64 bits of the first 128 bit factor.
-    /// @return the converted 64 bit unsigned integer.
-    pub fn __fixunstfdi(l: u64, h: u64) -> u64;
-}
-extern "C" {
-    /// Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer
-    /// @brief Convert long double (which are split as two 64 bit unsigned integers) into 32 bit unsigned integer
-    /// @param l   Low 64 bits of the first 128 bit factor.
-    /// @param h   High 64 bits of the first 128 bit factor.
-    /// @return the converted 32 bit unsigned integer.
-    pub fn __fixunstfsi(l: u64, h: u64) -> u32;
-}
-extern "C" {
-    /// Truncate long double (which are split as two 64 bit unsigned integers) into double
-    /// @brief Convert long double (which are split as two 64 bit unsigned integers) into double
-    /// @param l   Low 64 bits of the first 128 bit factor.
-    /// @param h   High 64 bits of the first 128 bit factor.
-    /// @return the converted double
-    pub fn __trunctfdf2(l: u64, h: u64) -> f64;
-}
-extern "C" {
-    /// Truncate long double (which are split as two 64 bit unsigned integers) into float
-    /// @brief Convert long double (which are split as two 64 bit unsigned integers) into float
-    /// @param l   Low 64 bits of the first 128 bit factor.
-    /// @param h   High 64 bits of the first 128 bit factor.
-    /// @return the converted float
-    pub fn __trunctfsf2(l: u64, h: u64) -> f32;
-}
-extern "C" {
-    pub fn __break_point();
-}
-extern "C" {
     /// Tests if the sha256 hash generated from data matches the provided checksum.
     /// This method is optimized to a NO-OP when in fast evaluation mode.
     /// @brief Tests if the sha256 hash generated from data matches the provided checksum.
@@ -972,11 +583,7 @@ extern "C" {
     /// //If the sha256 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha256 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha256(
-        data: *const ::std::os::raw::c_char,
-        length: u32,
-        hash: *const checksum256,
-    );
+    pub fn assert_sha256(data: *const ::ctypes::c_char, length: u32, hash: *const checksum256);
 }
 extern "C" {
     /// Tests if the sha1 hash generated from data matches the provided checksum.
@@ -1000,7 +607,7 @@ extern "C" {
     /// //If the sha1 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha1 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha1(data: *const ::std::os::raw::c_char, length: u32, hash: *const checksum160);
+    pub fn assert_sha1(data: *const ::ctypes::c_char, length: u32, hash: *const checksum160);
 }
 extern "C" {
     /// Tests if the sha512 hash generated from data matches the provided checksum.
@@ -1024,11 +631,7 @@ extern "C" {
     /// //If the sha512 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha512 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha512(
-        data: *const ::std::os::raw::c_char,
-        length: u32,
-        hash: *const checksum512,
-    );
+    pub fn assert_sha512(data: *const ::ctypes::c_char, length: u32, hash: *const checksum512);
 }
 extern "C" {
     /// Tests if the ripemod160 hash generated from data matches the provided checksum.
@@ -1051,11 +654,7 @@ extern "C" {
     /// //If the ripemod160 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("ripemod160 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_ripemd160(
-        data: *const ::std::os::raw::c_char,
-        length: u32,
-        hash: *const checksum160,
-    );
+    pub fn assert_ripemd160(data: *const ::ctypes::c_char, length: u32, hash: *const checksum160);
 }
 extern "C" {
     /// Hashes `data` using `sha256` and stores result in memory pointed to by hash.
@@ -1072,7 +671,7 @@ extern "C" {
     /// sha256( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha256(data: *const ::std::os::raw::c_char, length: u32, hash: *mut checksum256);
+    pub fn sha256(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum256);
 }
 extern "C" {
     /// Hashes `data` using `sha1` and stores result in memory pointed to by hash.
@@ -1089,7 +688,7 @@ extern "C" {
     /// sha1( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha1(data: *const ::std::os::raw::c_char, length: u32, hash: *mut checksum160);
+    pub fn sha1(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum160);
 }
 extern "C" {
     /// Hashes `data` using `sha512` and stores result in memory pointed to by hash.
@@ -1106,7 +705,7 @@ extern "C" {
     /// sha512( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha512(data: *const ::std::os::raw::c_char, length: u32, hash: *mut checksum512);
+    pub fn sha512(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum512);
 }
 extern "C" {
     /// Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
@@ -1123,7 +722,7 @@ extern "C" {
     /// ripemod160( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn ripemd160(data: *const ::std::os::raw::c_char, length: u32, hash: *mut checksum160);
+    pub fn ripemd160(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum160);
 }
 extern "C" {
     /// Calculates the public key used for a given signature and hash used to create a message.
@@ -1141,11 +740,11 @@ extern "C" {
     /// @endcode
     pub fn recover_key(
         digest: *const checksum256,
-        sig: *const ::std::os::raw::c_char,
+        sig: *const ::ctypes::c_char,
         siglen: usize,
-        pub_: *mut ::std::os::raw::c_char,
+        pub_: *mut ::ctypes::c_char,
         publen: usize,
-    ) -> ::std::os::raw::c_int;
+    ) -> ::ctypes::c_int;
 }
 extern "C" {
     /// Tests a given public key with the generated key from digest and the signature.
@@ -1174,9 +773,9 @@ extern "C" {
     /// @endcode
     pub fn assert_recover_key(
         digest: *const checksum256,
-        sig: *const ::std::os::raw::c_char,
+        sig: *const ::ctypes::c_char,
         siglen: usize,
-        pub_: *const ::std::os::raw::c_char,
+        pub_: *const ::ctypes::c_char,
         publen: usize,
     );
 }
@@ -1199,7 +798,7 @@ extern "C" {
         table: table_name,
         payer: account_name,
         id: u64,
-        data: *const ::std::os::raw::c_void,
+        data: *const ::ctypes::c_void,
         len: u32,
     ) -> i32;
 }
@@ -1218,7 +817,7 @@ extern "C" {
     pub fn db_update_i64(
         iterator: i32,
         payer: account_name,
-        data: *const ::std::os::raw::c_void,
+        data: *const ::ctypes::c_void,
         len: u32,
     );
 }
@@ -1259,7 +858,7 @@ extern "C" {
     /// eosio_assert(len <= 50, "buffer to small to store retrieved record");
     /// db_get_i64(itr, value, len);
     /// @endcode
-    pub fn db_get_i64(iterator: i32, data: *const ::std::os::raw::c_void, len: u32) -> i32;
+    pub fn db_get_i64(iterator: i32, data: *const ::ctypes::c_void, len: u32) -> i32;
 }
 extern "C" {
     /// Find the table row following the referenced table row in a primary 64-bit integer index table
@@ -2148,11 +1747,11 @@ extern "C" {
     ///
     /// @return 1 if the transaction is authorized, 0 otherwise
     pub fn check_transaction_authorization(
-        trx_data: *const ::std::os::raw::c_char,
+        trx_data: *const ::ctypes::c_char,
         trx_size: u32,
-        pubkeys_data: *const ::std::os::raw::c_char,
+        pubkeys_data: *const ::ctypes::c_char,
         pubkeys_size: u32,
-        perms_data: *const ::std::os::raw::c_char,
+        perms_data: *const ::ctypes::c_char,
         perms_size: u32,
     ) -> i32;
 }
@@ -2171,9 +1770,9 @@ extern "C" {
     pub fn check_permission_authorization(
         account: account_name,
         permission: permission_name,
-        pubkeys_data: *const ::std::os::raw::c_char,
+        pubkeys_data: *const ::ctypes::c_char,
         pubkeys_size: u32,
-        perms_data: *const ::std::os::raw::c_char,
+        perms_data: *const ::ctypes::c_char,
         perms_size: u32,
         delay_us: u64,
     ) -> i32;
@@ -2205,7 +1804,7 @@ extern "C" {
     /// @code
     /// prints("Hello World!"); // Output: Hello World!
     /// @endcode
-    pub fn prints(cstr: *const ::std::os::raw::c_char);
+    pub fn prints(cstr: *const ::ctypes::c_char);
 }
 extern "C" {
     /// Prints string up to given length
@@ -2218,7 +1817,7 @@ extern "C" {
     /// @code
     /// prints_l("Hello World!", 5); // Output: Hello
     /// @endcode
-    pub fn prints_l(cstr: *const ::std::os::raw::c_char, len: u32);
+    pub fn prints_l(cstr: *const ::ctypes::c_char, len: u32);
 }
 extern "C" {
     /// Prints value as a 64 bit signed integer
@@ -2322,7 +1921,7 @@ extern "C" {
 }
 extern "C" {
 
-    pub fn printhex(data: *const ::std::os::raw::c_void, datalen: u32);
+    pub fn printhex(data: *const ::ctypes::c_void, datalen: u32);
 }
 extern "C" {
     /// @brief Get the resource limits of an account
@@ -2359,7 +1958,7 @@ extern "C" {
     ///
     /// @return -1 if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
     pub fn set_proposed_producers(
-        producer_data: *mut ::std::os::raw::c_char,
+        producer_data: *mut ::ctypes::c_char,
         producer_data_size: u32,
     ) -> i64;
 }
@@ -2369,10 +1968,7 @@ extern "C" {
     /// @param producer_data - pointer to producer schedule packed as bytes
     /// @param producer_data_size - size of the packed producer schedule
     /// @pre `producer_data` is a valid pointer to a range of memory at least `producer_data_size` bytes long that contains serialized produced schedule data
-    pub fn set_active_producers(
-        producer_data: *mut ::std::os::raw::c_char,
-        producer_data_size: u32,
-    );
+    pub fn set_active_producers(producer_data: *mut ::ctypes::c_char, producer_data_size: u32);
 }
 extern "C" {
     /// @brief Check if an account is privileged
@@ -2395,7 +1991,7 @@ extern "C" {
     /// @param data - pointer to blockchain parameters packed as bytes
     /// @param datalen - size of the packed blockchain parameters
     /// @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long that contains packed blockchain params data
-    pub fn set_blockchain_parameters_packed(data: *mut ::std::os::raw::c_char, datalen: u32);
+    pub fn set_blockchain_parameters_packed(data: *mut ::ctypes::c_char, datalen: u32);
 }
 extern "C" {
     /// @brief Retrieve the blolckchain parameters
@@ -2405,8 +2001,7 @@ extern "C" {
     /// @return size of the blockchain parameters
     /// @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long
     /// @post `data` is filled with packed blockchain parameters
-    pub fn get_blockchain_parameters_packed(data: *mut ::std::os::raw::c_char, datalen: u32)
-        -> u32;
+    pub fn get_blockchain_parameters_packed(data: *mut ::ctypes::c_char, datalen: u32) -> u32;
 }
 extern "C" {
     /// @brief Activate new feature
@@ -2426,7 +2021,7 @@ extern "C" {
     pub fn send_deferred(
         sender_id: *const uint128_t,
         payer: account_name,
-        serialized_transaction: *const ::std::os::raw::c_char,
+        serialized_transaction: *const ::ctypes::c_char,
         size: usize,
         replace_existing: u32,
     );
@@ -2449,7 +2044,7 @@ extern "C" {
     /// id = 0xffffffffffffffff
     /// cancel_deferred( id );
     /// @endcode
-    pub fn cancel_deferred(sender_id: *const uint128_t) -> ::std::os::raw::c_int;
+    pub fn cancel_deferred(sender_id: *const uint128_t) -> ::ctypes::c_int;
 }
 extern "C" {
     /// Access a copy of the currently executing transaction.
@@ -2458,7 +2053,7 @@ extern "C" {
     /// @param buffer - a buffer to write the current transaction to
     /// @param size - the size of the buffer, 0 to return required size
     /// @return the size of the transaction written to the buffer, or number of bytes that can be copied if size==0 passed
-    pub fn read_transaction(buffer: *mut ::std::os::raw::c_char, size: usize) -> usize;
+    pub fn read_transaction(buffer: *mut ::ctypes::c_char, size: usize) -> usize;
 }
 extern "C" {
     /// Gets the size of the currently executing transaction.
@@ -2476,7 +2071,7 @@ extern "C" {
     /// @code
     /// int tbn = tapos_block_num();
     /// @endcode
-    pub fn tapos_block_num() -> ::std::os::raw::c_int;
+    pub fn tapos_block_num() -> ::ctypes::c_int;
 }
 extern "C" {
     /// Gets the block prefix used for TAPOS on the currently executing transaction.
@@ -2487,7 +2082,7 @@ extern "C" {
     /// @code
     /// int tbp = tapos_block_prefix();
     /// @endcode
-    pub fn tapos_block_prefix() -> ::std::os::raw::c_int;
+    pub fn tapos_block_prefix() -> ::ctypes::c_int;
 }
 extern "C" {
     /// Gets the expiration of the currently executing transaction.
@@ -2513,9 +2108,9 @@ extern "C" {
     pub fn get_action(
         type_: u32,
         index: u32,
-        buff: *mut ::std::os::raw::c_char,
+        buff: *mut ::ctypes::c_char,
         size: usize,
-    ) -> ::std::os::raw::c_int;
+    ) -> ::ctypes::c_int;
 }
 extern "C" {
     /// Retrieve the signed_transaction.context_free_data[index].
@@ -2527,16 +2122,16 @@ extern "C" {
     /// @return size copied, or context_free_data[index].size() if 0 passed for size, or -1 if index not valid
     pub fn get_context_free_data(
         index: u32,
-        buff: *mut ::std::os::raw::c_char,
+        buff: *mut ::ctypes::c_char,
         size: usize,
-    ) -> ::std::os::raw::c_int;
+    ) -> ::ctypes::c_int;
 }
 pub type __builtin_va_list = [__va_list_tag; 1usize];
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __va_list_tag {
-    pub gp_offset: ::std::os::raw::c_uint,
-    pub fp_offset: ::std::os::raw::c_uint,
-    pub overflow_arg_area: *mut ::std::os::raw::c_void,
-    pub reg_save_area: *mut ::std::os::raw::c_void,
+    pub gp_offset: ::ctypes::c_uint,
+    pub fp_offset: ::ctypes::c_uint,
+    pub overflow_arg_area: *mut ::ctypes::c_void,
+    pub reg_save_area: *mut ::ctypes::c_void,
 }

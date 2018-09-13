@@ -1,7 +1,6 @@
 #include <eosiolib/types.h>
 #include <eosiolib/action.h>
 #include <eosiolib/chain.h>
-#include <eosiolib/compiler_builtins.h>
 #include <eosiolib/crypto.h>
 #include <eosiolib/db.h>
 #include <eosiolib/permission.h>
