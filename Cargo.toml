@@ -6,8 +6,12 @@ debug = false
 [workspace]
 members = [
     "eosio",
+    "eosio_abi",
     "eosio_api",
+    "eosio_cli",
     "eosio_macros",
     "eosio_sys",
-    "eosio_types"
+    "eosio_types",
+    "examples/hello",
+    "examples/tic_tac_toe"
 ]

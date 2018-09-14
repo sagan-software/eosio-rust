@@ -1,12 +1,21 @@
+extern crate eosio_macros;
 extern crate eosio_sys;
+extern crate eosio_types;
 
-pub use eosio_sys::action;
-pub use eosio_sys::chain;
-pub use eosio_sys::crypto;
-pub use eosio_sys::db;
-pub use eosio_sys::permission;
-pub use eosio_sys::prelude;
-pub use eosio_sys::print;
-pub use eosio_sys::privileged;
-pub use eosio_sys::system;
-pub use eosio_sys::transaction;
+pub mod types {
+    pub use eosio_types::*;
+}
+
+pub mod sys {
+    pub use eosio_sys::*;
+}
+
+pub mod macros {
+    pub use eosio_macros::*;
+}
+
+pub mod prelude {
+    pub use super::macros::*;
+    pub use super::sys::prelude::*;
+    pub use super::types::*;
+}

@@ -8,11 +8,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "eosio_abi"
+version = "0.1.0"
+
+[[package]]
 name = "eosio_api"
 version = "0.1.0"
 dependencies = [
  "eosio_types 0.1.0",
 ]
+
+[[package]]
+name = "eosio_cli"
+version = "0.1.0"
 
 [[package]]
 name = "eosio_macros"
@@ -34,6 +42,13 @@ dependencies = [
 [[package]]
 name = "eosio_types"
 version = "0.1.0"
+
+[[package]]
+name = "hello"
+version = "0.1.0"
+dependencies = [
+ "eosio 0.1.0",
+]
 
 [[package]]
 name = "memchr"
@@ -64,6 +79,13 @@ dependencies = [
  "proc-macro2 0.4.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "tic_tac_toe"
+version = "0.1.0"
+dependencies = [
+ "eosio 0.1.0",
 ]
 
 [[package]]
