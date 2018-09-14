@@ -8,10 +8,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "eosio_abi"
-version = "0.1.0"
-
-[[package]]
 name = "eosio_api"
 version = "0.1.0"
 dependencies = [
