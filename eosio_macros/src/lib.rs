@@ -6,7 +6,7 @@ extern crate proc_macro;
 extern crate proc_macro2;
 extern crate syn;
 
-use eosio_sys::cstr::CString;
+use eosio_sys::ctypes::CString;
 use eosio_types::{string_to_name, ToNameError};
 use proc_macro::{Span, TokenStream};
 use std::str::FromStr;

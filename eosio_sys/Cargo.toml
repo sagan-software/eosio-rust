@@ -6,7 +6,3 @@ authors = ["Liam Curry <liam@sagan.software>"]
 [lib]
 test = false
 doctest = false
-
-[dependencies]
-# cstr_core = { version = "0.1.2", features = ["alloc"] }
-memchr = { version = "2.0", default-features = false }

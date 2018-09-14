@@ -1,19 +1,8 @@
-#![no_std]
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
-#![feature(alloc)]
-
-#[cfg(test)]
-#[macro_use]
-extern crate std;
-
-extern crate alloc;
-extern crate memchr;
 
 mod bindings;
-pub mod cstr;
-pub mod ctypes;
 
 pub mod action {
     pub use super::bindings::{
@@ -101,7 +90,6 @@ pub mod prelude {
     pub use super::action::*;
     pub use super::chain::*;
     pub use super::crypto::*;
-    pub use super::cstr::*;
     pub use super::ctypes::*;
     pub use super::db::*;
     pub use super::permission::*;
@@ -110,4 +98,50 @@ pub mod prelude {
     pub use super::system::*;
     pub use super::transaction::*;
     pub use super::types::*;
+}
+
+pub mod ctypes {
+    pub use bindings::{int128_t, uint128_t};
+    pub use std::ffi::*;
+    pub type c_char = c_uchar;
+    pub type c_int = i32;
+    pub type c_uint = u32;
+    pub type c_long = i32;
+    pub type c_ulong = u32;
+    pub type int8_t = i8;
+    pub type int16_t = i16;
+    pub type int32_t = i32;
+    pub type int64_t = i64;
+    pub type uint8_t = u8;
+    pub type uint16_t = u16;
+    pub type uint32_t = u32;
+    pub type uint64_t = u64;
+    pub type c_schar = i8;
+    pub type c_short = i16;
+    pub type c_longlong = i64;
+    pub type c_uchar = u8;
+    pub type c_ushort = u16;
+    pub type c_ulonglong = u64;
+    pub type c_float = f32;
+    pub type c_double = f64;
+    pub type intmax_t = i64;
+    pub type uintmax_t = u64;
+    pub type size_t = usize;
+    pub type ptrdiff_t = isize;
+    pub type intptr_t = isize;
+    pub type uintptr_t = usize;
+    pub type ssize_t = isize;
+
+    // NOTE from libc v0.2.23
+    // Use repr(u8) as LLVM expects `void*` to be the same as `i8*` to help enable
+    // more optimization opportunities around it recognizing things like
+    // malloc/free.
+    #[repr(u8)]
+    pub enum c_void {
+        // Two dummy variants so the #[repr] attribute can be used.
+        #[doc(hidden)]
+        __variant1,
+        #[doc(hidden)]
+        __variant2,
+    }
 }
