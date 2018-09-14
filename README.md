@@ -1,13 +1,11 @@
 # rust-eos
 
-## Libraries for building EOS smart contracts in Rust
+> ***Libraries for building EOS smart contracts in Rust***
 
 
-> 🚧 _**UNDER CONSTRUCTION**_ 🚧
+🚧 _**UNDER CONSTRUCTION**_ 🚧
 
 Please excuse the mess, this project is under active development. Documentation, goals, and roadmap coming soon.
-
----
 
 ## Contributor Quickstart
 
