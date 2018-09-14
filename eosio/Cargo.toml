@@ -1,0 +1,9 @@
+[package]
+name = "eosio"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[dependencies]
+eosio_macros = { path = "../eosio_macros", version = "0.1" }
+eosio_sys = { path = "../eosio_sys", version = "0.1" }
+eosio_types = { path = "../eosio_types", version = "0.1" }

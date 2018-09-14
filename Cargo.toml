@@ -5,8 +5,9 @@ debug = false
 
 [workspace]
 members = [
-    "eos-api",
-    "eos-types",
-    "eosiolib",
-    "eosiolib-sys"
+    "eosio",
+    "eosio_api",
+    "eosio_macros",
+    "eosio_sys",
+    "eosio_types"
 ]

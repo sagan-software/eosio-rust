@@ -1,0 +1,16 @@
+[package]
+name = "eosio_macros"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "0.15"
+proc-macro2 = "0.4"
+eosio_sys = { path = "../eosio_sys", version = "0.1" }
+eosio_types = { path = "../eosio_types", version = "0.1" }
+
+[[tests]]
+name = "tests"
