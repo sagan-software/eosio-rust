@@ -43,7 +43,7 @@ accounts: hello_account
 	wasm-gc $*.wasm $*_gc.wasm
 
 %_gc_opt.wasm: %_gc.wasm
-	wasm-opt --output $*_gc_opt.wasm -Oz $*_gc.wasm
+	wasm-opt --fuzz-exec --output $*_gc_opt.wasm -Oz $*_gc.wasm
 
 %_gc_opt.wat: %_gc_opt.wasm
 	wasm2wat $*_gc_opt.wasm -o $*_gc_opt.wat --generate-names
@@ -56,7 +56,7 @@ accounts: hello_account
 	$(CLEOS) set code $* /mnt/dev/release/$*_gc_opt_wat.wasm
 
 say_hi:
-	$(CLEOS) push action hello hi '["sagan"]' -p 'hello@active'
+	$(CLEOS) push action hello hi '["contributor"]' -p 'hello@active'
 
 .PHONY: install build test clean docker wallet accounts hello
 .SECONDARY:

@@ -1,15 +1,19 @@
-#![feature(proc_macro_non_items, proc_macro_diagnostic)]
+#![no_std]
+#![feature(proc_macro_non_items, proc_macro_diagnostic, alloc)]
 
+#[macro_use]
+extern crate alloc;
 extern crate eosio_sys;
 extern crate eosio_types;
 extern crate proc_macro;
 extern crate proc_macro2;
 extern crate syn;
 
+use alloc::prelude::*;
+use core::str::{self, FromStr};
 use eosio_sys::ctypes::CString;
 use eosio_types::{string_to_name, ToNameError};
 use proc_macro::{Span, TokenStream};
-use std::str::FromStr;
 
 #[proc_macro]
 pub fn n(input: TokenStream) -> TokenStream {
@@ -56,6 +60,7 @@ pub fn cstr(input: TokenStream) -> TokenStream {
     let input_string = input.to_string();
     let input_str = input_string.as_str().trim_matches('"');
     let cstring = CString::new(input_str).unwrap();
-    let cstring_str = cstring.to_str().unwrap();
-    format!("\"{}\".as_ptr()", cstring_str).parse().unwrap()
+    let bytes = cstring.to_bytes_with_nul();
+    let c_str = str::from_utf8(bytes).unwrap();
+    format!("\"{}\".as_ptr()", c_str).parse().unwrap()
 }

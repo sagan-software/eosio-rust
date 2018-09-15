@@ -45,4 +45,4 @@ make hello_example
 make say_hi
 ```
 
-If all goes well you should see "Hello World" in the console.
+If all goes well you should see "Hello, contributor" in the console.

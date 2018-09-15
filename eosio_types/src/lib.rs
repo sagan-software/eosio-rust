@@ -1,5 +1,11 @@
-use std::char;
-use std::str;
+#![no_std]
+#![feature(alloc)]
+
+extern crate alloc;
+
+use alloc::prelude::*;
+use core::char;
+use core::str;
 
 pub struct Name(u64);
 

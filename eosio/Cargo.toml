@@ -7,3 +7,4 @@ authors = ["Liam Curry <liam@sagan.software>"]
 eosio_macros = { path = "../eosio_macros", version = "0.1" }
 eosio_sys = { path = "../eosio_sys", version = "0.1" }
 eosio_types = { path = "../eosio_types", version = "0.1" }
+wee_alloc = "0.4.2"

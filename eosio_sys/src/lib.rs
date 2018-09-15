@@ -1,8 +1,14 @@
+#![no_std]
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![feature(alloc)]
+
+extern crate alloc;
+extern crate memchr;
 
 mod bindings;
+mod cstr;
 
 pub mod action {
     pub use super::bindings::{
@@ -102,7 +108,7 @@ pub mod prelude {
 
 pub mod ctypes {
     pub use bindings::{int128_t, uint128_t};
-    pub use std::ffi::*;
+    pub use cstr::*;
     pub type c_char = c_uchar;
     pub type c_int = i32;
     pub type c_uint = u32;
