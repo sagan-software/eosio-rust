@@ -23,10 +23,10 @@ use core::str::{self, FromStr};
 use eosio_sys::ctypes::CString;
 use eosio_types::{string_to_name, ToNameError, NAME_CHARS};
 use proc_macro::{Span, TokenStream};
-use syn::parse::Parser;
+use proc_macro2::TokenTree;
+use syn::parse::{Parse, ParseStream, Parser, Result};
 use syn::punctuated::Punctuated;
-use syn::spanned::Spanned;
-use syn::{Attribute, Expr, FnArg, ItemFn, Pat, PathSegment, Type};
+use syn::{Expr, ExprLit, FnArg, ItemFn, Lit, LitStr, Type};
 
 #[proc_macro]
 pub fn n(input: TokenStream) -> TokenStream {
@@ -77,34 +77,63 @@ pub fn cstr(input: TokenStream) -> TokenStream {
     let cstring = CString::new(input_str).unwrap();
     let bytes = cstring.to_bytes_with_nul();
     let c_str = str::from_utf8(bytes).unwrap();
-    format!("\"{}\".as_ptr()", c_str).parse().unwrap()
+    format!("\"{}\"", c_str).parse().unwrap()
 }
 
 #[proc_macro]
-pub fn print(tokens: TokenStream) -> TokenStream {
-    // let parser = Punctuated::<PathSegment, Token![,]>::parse_separated_nonempty;
-    // let input = parser.parse(tokens).unwrap();
-    tokens
+pub fn print(input: TokenStream) -> TokenStream {
+    let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;
+    let args = parser.parse(input).unwrap();
+    let mut prints = quote!();
+    for i in args.iter() {
+        let mut printable = quote!(#i);
+        if let Expr::Lit(ref lit) = *i {
+            if let Lit::Str(ref strlit) = lit.lit {
+                printable = quote!(cstr!(#strlit));
+            }
+        }
+        prints = quote! {
+            #prints
+            #printable.print();
+        };
+    }
+    TokenStream::from(quote!(#prints))
+}
+
+struct Assert {
+    test: Expr,
+    message: LitStr,
+}
+
+impl Parse for Assert {
+    fn parse(input: ParseStream) -> Result<Self> {
+        let test: Expr = input.parse()?;
+        input.parse::<Token![,]>()?;
+        let message: LitStr = input.parse()?;
+        Ok(Assert { test, message })
+    }
 }
 
 #[proc_macro]
-pub fn assert(input: TokenStream) -> TokenStream {
-    input
+pub fn eosio_assert(input: TokenStream) -> TokenStream {
+    let Assert { test, message } = parse_macro_input!(input as Assert);
+    let expanded = quote! {
+        unsafe {
+            eosio_assert(
+                if #test { 1 } else { 0 },
+                cstr!(#message).as_ptr()
+            )
+        }
+    };
+    TokenStream::from(quote!(#expanded))
 }
 
 #[proc_macro_attribute]
 pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
-    // let attrs = input.attrs;
-    // let vis = input.vis;
-    // let constness = input.constness;
-    // let unsafety = input.unsafety;
-    // let asyncness = input.asyncness;
-    // let abi = input.abi;
     let ident = input.ident;
     let decl = input.decl;
     let inputs = decl.inputs;
-    let mut bytes_len: usize = 0;
     let mut reads = quote!();
     for input in inputs.iter() {
         match input {
@@ -115,15 +144,11 @@ pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
                     Type::Path(ty) => {
                         let segment = ty.path.segments.iter().next().unwrap();
                         let ty_ident = &segment.ident;
-                        if ty_ident == "Name" {
-                            let bytes_ends = bytes_len + 8;
-                            reads = quote! {
-                                #reads
-                                let #pat = ::eosio::datastream::read_name(&bytes[#bytes_len..#bytes_ends]).unwrap();
-                            };
-                            bytes_len += 8;
-                        }
-                        println!("!!!, {}", bytes_len);
+                        reads = quote! {
+                            #reads
+                            let (#pat, count) = #ty_ident::read(&bytes[pos..]).unwrap();
+                            pos += count;
+                        };
                     }
                     _ => println!("7"),
                 }
@@ -134,7 +159,8 @@ pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
     let block = input.block;
     let expanded = quote! {
         fn #ident() {
-            let mut bytes = [0u8; #bytes_len];
+            // TODO: set the length of this to a fixed size based on the action inputs
+            let mut bytes = [0u8; 10000];
             let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
             unsafe {
                 ::eosio::sys::action::read_action_data(
@@ -142,6 +168,8 @@ pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
                     ::eosio::sys::action::action_data_size()
                 );
             }
+
+            let mut pos = 0;
             #reads
             #block
         }

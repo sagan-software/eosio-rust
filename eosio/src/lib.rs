@@ -14,7 +14,8 @@ extern crate eosio_sys;
 extern crate eosio_types;
 extern crate wee_alloc;
 
-pub mod datastream;
+pub mod bytes;
+pub mod print;
 
 pub mod types {
     pub use eosio_types::*;
@@ -29,7 +30,9 @@ pub mod macros {
 }
 
 pub mod prelude {
+    pub use super::bytes::*;
     pub use super::macros::*;
+    pub use super::print::*;
     pub use super::sys::prelude::*;
     pub use super::types::*;
 }
