@@ -115,7 +115,7 @@ pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
                     Type::Path(ty) => {
                         let segment = ty.path.segments.iter().next().unwrap();
                         let ty_ident = &segment.ident;
-                        if ty_ident == "u64" {
+                        if ty_ident == "Name" {
                             let bytes_ends = bytes_len + 8;
                             reads = quote! {
                                 #reads

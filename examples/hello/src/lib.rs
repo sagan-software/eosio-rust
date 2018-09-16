@@ -17,7 +17,7 @@ pub extern "C" fn apply(_receiver: u64, _code: u64, action: u64) {
 }
 
 #[action]
-fn hi(name1: u64, name2: u64) {
+fn hi(name1: Name, name2: Name) {
     unsafe {
         // print!("Hello, ", name1, "! ", "Hello, ", name2, "! ");
         prints(cstr!("Hello, "));
