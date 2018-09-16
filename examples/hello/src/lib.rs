@@ -7,7 +7,7 @@ use eosio::prelude::*;
 
 #[eosio_action]
 fn hi(name: Name) {
-    eosio_print!("Hello, ", name);
+    print!("Hello, ", name);
 }
 
 eosio_abi!(hi);

@@ -81,7 +81,7 @@ pub fn cstr(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn eosio_print(input: TokenStream) -> TokenStream {
+pub fn print(input: TokenStream) -> TokenStream {
     let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;
     let args = parser.parse(input).unwrap();
     let mut prints = quote!();
