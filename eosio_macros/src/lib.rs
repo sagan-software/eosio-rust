@@ -26,7 +26,7 @@ use proc_macro::{Span, TokenStream};
 use proc_macro2::TokenTree;
 use syn::parse::{Parse, ParseStream, Parser, Result};
 use syn::punctuated::Punctuated;
-use syn::{Expr, ExprLit, FnArg, ItemFn, Lit, LitStr, Type};
+use syn::{Expr, ExprLit, FnArg, Ident, ItemFn, Lit, LitStr, Type};
 
 #[proc_macro]
 pub fn n(input: TokenStream) -> TokenStream {
@@ -81,7 +81,7 @@ pub fn cstr(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn print(input: TokenStream) -> TokenStream {
+pub fn eosio_print(input: TokenStream) -> TokenStream {
     let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;
     let args = parser.parse(input).unwrap();
     let mut prints = quote!();
@@ -129,7 +129,7 @@ pub fn eosio_assert(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
     let ident = input.ident;
     let decl = input.decl;
@@ -176,4 +176,37 @@ pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
     };
     TokenStream::from(quote!(#expanded))
     // input
+}
+
+#[proc_macro]
+pub fn eosio_abi(input: TokenStream) -> TokenStream {
+    let parser = Punctuated::<Ident, Token![,]>::parse_separated_nonempty;
+    let args = parser.parse(input).unwrap();
+    let mut actions = quote!();
+    for i in args.iter() {
+        actions = quote! {
+            #actions
+            n!(#i) => #i(),
+        };
+    }
+    let expanded = quote! {
+        #[no_mangle]
+        pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
+            if action == n!(onerror) {
+                eosio_assert!(
+                    code == n!(eosio),
+                    "onerror action's are only valid from the \"eosio\" system account"
+                );
+            }
+            if code == receiver || action == n!(onerror) {
+                match action {
+                    #actions
+                    _ => {
+                        eosio_assert!(false, "bad action");
+                    }
+                }
+            }
+        }
+    };
+    TokenStream::from(quote!(#expanded))
 }
