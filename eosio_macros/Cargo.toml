@@ -7,8 +7,9 @@ authors = ["Liam Curry <liam@sagan.software>"]
 proc-macro = true
 
 [dependencies]
-syn = "0.15"
+syn = { version = "0.15.4", features = ["full", "fold"] }
 proc-macro2 = "0.4"
+quote = "0.6"
 eosio_sys = { path = "../eosio_sys", version = "0.1" }
 eosio_types = { path = "../eosio_types", version = "0.1" }
 

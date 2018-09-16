@@ -27,6 +27,7 @@ dependencies = [
  "eosio_sys 0.1.0",
  "eosio_types 0.1.0",
  "proc-macro2 0.4.19 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "syn 0.15.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

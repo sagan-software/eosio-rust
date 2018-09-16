@@ -14,6 +14,8 @@ extern crate eosio_sys;
 extern crate eosio_types;
 extern crate wee_alloc;
 
+pub mod datastream;
+
 pub mod types {
     pub use eosio_types::*;
 }

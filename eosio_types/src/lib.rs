@@ -10,6 +10,9 @@ use core::str;
 pub struct Name(u64);
 
 impl Name {
+    pub fn new(n: u64) -> Name {
+        Name(n)
+    }
     pub fn as_u64(&self) -> u64 {
         self.0
     }
@@ -64,13 +67,14 @@ pub fn string_to_name(s: &str) -> Result<u64, ToNameError> {
     Ok(value)
 }
 
+pub const NAME_CHARS: [u8; 32] = *b".12345abcdefghijklmnopqrstuvwxyz";
+
 pub fn name_to_string(name: u64) -> String {
-    let charmap = b".12345abcdefghijklmnopqrstuvwxyz";
     let mut chars = [b'.'; 13];
     let mut t = name;
     for i in 0..13 {
         let charmap_index = t & if i == 0 { 15 } else { 31 };
-        let mut c = charmap[charmap_index as usize];
+        let mut c = NAME_CHARS[charmap_index as usize];
         chars[12 - i] = c;
         t >>= if i == 0 { 4 } else { 5 };
     }

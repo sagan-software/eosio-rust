@@ -56,7 +56,7 @@ accounts: hello_account
 	$(CLEOS) set code $* /mnt/dev/release/$*_gc_opt_wat.wasm
 
 say_hi:
-	$(CLEOS) push action hello hi '["contributor"]' -p 'hello@active'
+	$(CLEOS) push action hello hi '["contributor","tester"]' -p 'hello@active'
 
 .PHONY: install build test clean docker wallet accounts hello
 .SECONDARY:

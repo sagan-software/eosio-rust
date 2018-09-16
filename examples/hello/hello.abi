@@ -10,6 +10,10 @@
         {
           "name": "user",
           "type": "name"
+        },
+        {
+          "name": "user",
+          "type": "name"
         }
       ]
     }
