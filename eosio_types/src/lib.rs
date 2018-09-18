@@ -7,6 +7,7 @@ use alloc::prelude::*;
 use core::char;
 use core::str;
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct Name(u64);
 
 impl Name {
@@ -84,12 +85,12 @@ pub fn name_to_string(name: u64) -> String {
         .to_string()
 }
 
-pub type AccountName = u64;
-pub type PermissionName = u64;
-pub type TableName = u64;
+pub type AccountName = Name;
+pub type PermissionName = Name;
+pub type TableName = Name;
 pub type Time = u32;
-pub type ScopeName = u64;
-pub type ActionName = u64;
+pub type ScopeName = Name;
+pub type ActionName = Name;
 pub type WeightType = u16;
 
 #[cfg(test)]

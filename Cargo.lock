@@ -91,7 +91,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tic_tac_toe"
+name = "tictactoe"
 version = "0.1.0"
 dependencies = [
  "eosio 0.1.0",

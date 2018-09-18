@@ -72,6 +72,12 @@ impl Printable for bool {
     }
 }
 
+impl Printable for usize {
+    fn print(&self) {
+        (*self as u32).print()
+    }
+}
+
 impl Printable for f32 {
     fn print(&self) {
         unsafe { printsf(*self) }

@@ -11,5 +11,5 @@ members = [
     "eosio_sys",
     "eosio_types",
     "examples/hello",
-    "examples/tic_tac_toe"
+    "examples/tictactoe"
 ]

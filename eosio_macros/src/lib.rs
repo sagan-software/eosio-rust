@@ -35,7 +35,7 @@ pub fn n(input: TokenStream) -> TokenStream {
     let name_result = string_to_name(input_str);
 
     match name_result {
-        Ok(name) => TokenStream::from_str(&name.to_string()).unwrap(),
+        Ok(name) => TokenStream::from(quote!(#name)),
         Err(error) => {
             let span = Span::call_site();
             let err = match error {
@@ -119,7 +119,7 @@ pub fn eosio_assert(input: TokenStream) -> TokenStream {
     let Assert { test, message } = parse_macro_input!(input as Assert);
     let expanded = quote! {
         unsafe {
-            eosio_assert(
+            ::eosio::sys::system::eosio_assert(
                 if #test { 1 } else { 0 },
                 cstr!(#message).as_ptr()
             )

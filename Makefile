@@ -37,7 +37,7 @@ wallet:
 %_account:
 	$(CLEOS) create account eosio $* $(PUBKEY) $(PUBKEY)
 
-accounts: hello_account
+accounts: hello_account tictactoe_account alice_account bob_account
 
 %_gc.wasm: %.wasm
 	wasm-gc $*.wasm $*_gc.wasm
@@ -57,6 +57,29 @@ accounts: hello_account
 
 say_hi:
 	$(CLEOS) push action hello hi '["contributor","tester"]' -p 'hello@active'
+
+create_game:
+	$(CLEOS) push action tictactoe create '["bob","alice"]' -p 'alice@active'
+
+restart_game:
+	$(CLEOS) push action tictactoe restart '["bob","alice","alice"]' -p 'alice@active'
+
+close_game:
+	$(CLEOS) push action tictactoe close '["bob","alice"]' -p 'alice@active'
+
+make_moves: make_moves_alice make_moves_bob
+	$(CLEOS) push action tictactoe makemove '["bob","alice","alice",0,1]' -p 'alice@active'
+	$(CLEOS) push action tictactoe makemove '["bob","alice","bob",1,1]' -p 'bob@active'
+	$(CLEOS) push action tictactoe makemove '["bob","alice","alice",0,2]' -p 'alice@active'
+
+make_moves_alice:
+	$(CLEOS) push action tictactoe makemove '["bob","alice","alice",0,0]' -p 'alice@active'
+
+make_moves_bob:
+	$(CLEOS) push action tictactoe makemove '["bob","alice","bob",1,0]' -p 'bob@active'
+
+get_games_%:
+	$(CLEOS) get table tictactoe $* games
 
 .PHONY: install build test clean docker wallet accounts hello
 .SECONDARY:

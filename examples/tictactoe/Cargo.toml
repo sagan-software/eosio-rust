@@ -1,5 +1,5 @@
 [package]
-name = "tic_tac_toe"
+name = "tictactoe"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 

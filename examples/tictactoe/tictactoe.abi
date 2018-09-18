@@ -76,7 +76,7 @@
             ]
         },
         {
-            "name": "move",
+            "name": "makemove",
             "base": "",
             "fields": [
                 {
@@ -119,8 +119,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "move",
-            "type": "move",
+            "name": "makemove",
+            "type": "makemove",
             "ricardian_contract": ""
         }
     ],

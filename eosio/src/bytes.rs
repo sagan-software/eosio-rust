@@ -1,5 +1,6 @@
 // https://github.com/EOSIO/eos/blob/master/libraries/chain/abi_serializer.cpp#L65-L103
 
+use alloc::prelude::Vec;
 use eosio_types::Name;
 
 #[derive(Debug)]
@@ -171,6 +172,33 @@ impl Readable for bool {
     }
 }
 
+impl Readable for usize {
+    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
+        // TODO: fix this. usize isn't always u8
+        u8::read(bytes).map(|(v, c)| (v as usize, c))
+    }
+}
+
+impl<T> Readable for Vec<T>
+where
+    T: Readable,
+{
+    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
+        let mut pos = 0;
+        let (capacity, p) = usize::read(bytes)?;
+        pos += p;
+
+        let mut results = Vec::new();
+        for i in 0..capacity {
+            let (r, p) = T::read(&bytes[pos..])?;
+            results.push(r);
+            pos += p;
+        }
+
+        Ok((results, pos))
+    }
+}
+
 // string
 // vector
 // f32
@@ -188,3 +216,88 @@ impl Readable for bool {
 // symbol_code
 // asset
 // extended_asset
+
+#[derive(Debug)]
+pub enum WriteError {
+    NotEnoughSpace,
+}
+
+pub trait Writeable: Sized {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError>;
+}
+
+impl Writeable for u8 {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        let ff = 0xff as u8;
+        bytes[0] = (self & ff) as u8;
+        Ok(1)
+    }
+}
+
+impl Writeable for u16 {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        let ff = 0xff as u16;
+        bytes[0] = (self & ff) as u8;
+        bytes[1] = ((self >> 8) & ff) as u8;
+        Ok(2)
+    }
+}
+
+impl Writeable for u32 {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        let ff = 0xff as u32;
+        bytes[0] = (self & ff) as u8;
+        bytes[1] = ((self >> 8) & ff) as u8;
+        bytes[2] = ((self >> 16) & ff) as u8;
+        bytes[3] = ((self >> 24) & ff) as u8;
+        Ok(4)
+    }
+}
+
+impl Writeable for u64 {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        let ff = 0xff as u64;
+        bytes[0] = (self & ff) as u8;
+        bytes[1] = ((self >> 8) & ff) as u8;
+        bytes[2] = ((self >> 16) & ff) as u8;
+        bytes[3] = ((self >> 24) & ff) as u8;
+        bytes[4] = ((self >> 32) & ff) as u8;
+        bytes[5] = ((self >> 40) & ff) as u8;
+        bytes[6] = ((self >> 48) & ff) as u8;
+        bytes[7] = ((self >> 56) & ff) as u8;
+        Ok(8)
+    }
+}
+
+impl Writeable for usize {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        // TODO: fix this when usize is larger than 2 bytes
+        (*self as u8).write(bytes)
+    }
+}
+
+impl Writeable for ::types::Name {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        self.as_u64().write(bytes)
+    }
+}
+
+impl Writeable for bool {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        let value: u8 = if *self { 1 } else { 0 };
+        value.write(bytes)
+    }
+}
+
+impl<T> Writeable for Vec<T>
+where
+    T: Writeable,
+{
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        let mut pos = self.len().write(bytes)?;
+        for item in self.iter() {
+            pos += item.write(&mut bytes[pos..])?;
+        }
+        Ok(pos)
+    }
+}
