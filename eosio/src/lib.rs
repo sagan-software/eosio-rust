@@ -16,6 +16,7 @@ extern crate wee_alloc;
 
 pub mod action;
 pub mod bytes;
+pub mod db;
 pub mod print;
 
 pub mod types {
@@ -34,6 +35,7 @@ pub mod macros {
 pub mod prelude {
     pub use super::action::*;
     pub use super::bytes::*;
+    pub use super::db::*;
     pub use super::macros::*;
     pub use super::print::*;
     pub use super::types::*;

@@ -189,7 +189,7 @@ where
         pos += p;
 
         let mut results = Vec::new();
-        for i in 0..capacity {
+        for _i in 0..capacity {
             let (r, p) = T::read(&bytes[pos..])?;
             results.push(r);
             pos += p;

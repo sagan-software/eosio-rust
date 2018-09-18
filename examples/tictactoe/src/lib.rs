@@ -16,41 +16,29 @@ fn create(challenger: AccountName, host: AccountName) {
         "challenger shouldn't be the same as host"
     );
 
-    // Check if game already exists
-    let end = unsafe { ::eosio::sys::db::db_end_i64(n!(tictactoe), host.as_u64(), n!(games)) };
-    let itr = unsafe {
-        ::eosio::sys::db::db_find_i64(n!(tictactoe), host.as_u64(), n!(games), challenger.as_u64())
-    };
-    eosio_assert!(itr == end, "game already existss");
+    let table = Game::table(host.clone());
+
+    eosio_assert!(!table.exists(challenger.as_u64()), "game already exists");
 
     let game = Game {
         challenger,
         host: host.clone(),
-        turn: host,
-        winner: AccountName::new(n!(none)),
+        turn: host.clone(),
+        winner: n!(none).into(),
         board: Vec::new(),
     };
-    game.save();
+    table.emplace(host, game);
 }
 
 #[eosio_action]
 fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     require_auth(&by);
 
-    // Check if game exists
-    let end = unsafe { ::eosio::sys::db::db_end_i64(n!(tictactoe), host.as_u64(), n!(games)) };
-    let itr = unsafe {
-        ::eosio::sys::db::db_find_i64(n!(tictactoe), host.as_u64(), n!(games), challenger.as_u64())
-    };
-    eosio_assert!(itr != end, "game doesn't exists");
+    let table = Game::table(host.clone());
+    let itr = table.find(challenger.as_u64());
+    eosio_assert!(!table.is_end(itr), "game doesn't exists");
 
-    let mut bytes = [0u8; 1000];
-    let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
-    unsafe {
-        ::eosio::sys::db::db_get_i64(itr, ptr, 1000);
-    }
-
-    let (mut game, _) = Game::read(&bytes).unwrap();
+    let mut game = table.get(itr).unwrap();
 
     eosio_assert!(
         by == game.host || by == game.challenger,
@@ -58,45 +46,32 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     );
 
     game.board = vec![0; BOARD_AREA as usize];
-    game.turn = host;
-    game.winner = AccountName::new(n!(none));
-    game.save();
+    game.turn = host.clone();
+    game.winner = n!(none).into();
+
+    table.modify(itr, host, game);
 }
 
 #[eosio_action]
 fn close(challenger: AccountName, host: AccountName) {
     require_auth(&host);
 
-    // Check if game exists
-    let end = unsafe { ::eosio::sys::db::db_end_i64(n!(tictactoe), host.as_u64(), n!(games)) };
-    let itr = unsafe {
-        ::eosio::sys::db::db_find_i64(n!(tictactoe), host.as_u64(), n!(games), challenger.as_u64())
-    };
-    eosio_assert!(itr != end, "game doesn't exists");
+    let table = Game::table(host.clone());
+    let itr = table.find(challenger.as_u64());
+    eosio_assert!(!table.is_end(itr), "game doesn't exists");
 
-    unsafe {
-        ::eosio::sys::db::db_remove_i64(itr);
-    }
+    table.erase(itr);
 }
 
 #[eosio_action]
 fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u16, col: u16) {
     require_auth(&by);
 
-    // Check if game exists
-    let end = unsafe { ::eosio::sys::db::db_end_i64(n!(tictactoe), host.as_u64(), n!(games)) };
-    let itr = unsafe {
-        ::eosio::sys::db::db_find_i64(n!(tictactoe), host.as_u64(), n!(games), challenger.as_u64())
-    };
-    eosio_assert!(itr != end, "game doesn't exists");
+    let table = Game::table(host.clone());
+    let itr = table.find(challenger.as_u64());
+    eosio_assert!(!table.is_end(itr), "game doesn't exists");
 
-    let mut bytes = vec![0u8; 1000];
-    let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
-    unsafe {
-        ::eosio::sys::db::db_get_i64(itr, ptr, 1000);
-    }
-
-    let (mut game, _) = Game::read(&bytes).unwrap();
+    let mut game = table.get(itr).unwrap();
     game.board.resize(BOARD_AREA as usize, 0);
 
     // Check if this game hasn't ended yet
@@ -128,7 +103,8 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
     game.board[loc] = cell_value;
     game.turn = turn;
     game.update_winner();
-    game.save();
+
+    table.modify(itr, host, game);
 }
 
 eosio_abi!(create, restart, close, makemove);
@@ -138,6 +114,7 @@ const BOARD_HEIGHT: u16 = 3;
 const BOARD_AREA: u16 = BOARD_WIDTH * BOARD_HEIGHT;
 
 // #[eosio_table]
+#[derive(Readable, Writeable)]
 struct Game {
     challenger: AccountName,
     host: AccountName,
@@ -146,39 +123,16 @@ struct Game {
     board: Vec<u8>,
 }
 
+impl TableRow for Game {
+    fn primary_key(&self) -> u64 {
+        self.challenger.as_u64()
+    }
+}
+
 impl Game {
-    fn save(&self) {
-        let mut bytes = [0u8; 1000];
-        let pos = self.write(&mut bytes).unwrap();
-        let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-
-        let end =
-            unsafe { ::eosio::sys::db::db_end_i64(n!(tictactoe), self.host.as_u64(), n!(games)) };
-        let itr = unsafe {
-            ::eosio::sys::db::db_find_i64(
-                n!(tictactoe),
-                self.host.as_u64(),
-                n!(games),
-                self.challenger.as_u64(),
-            )
-        };
-
-        if itr != end {
-            unsafe {
-                ::eosio::sys::db::db_update_i64(itr, self.host.as_u64(), ptr, pos as u32);
-            }
-        } else {
-            unsafe {
-                ::eosio::sys::db::db_store_i64(
-                    self.host.as_u64(),
-                    n!(games),
-                    self.host.as_u64(),
-                    self.challenger.as_u64(),
-                    ptr,
-                    pos as u32,
-                );
-            }
-        }
+    fn table(host: AccountName) -> Table<Game> {
+        let code = current_receiver();
+        Table::new(code, host, n!(games).into())
     }
 
     fn update_winner(&mut self) {
@@ -215,45 +169,10 @@ impl Game {
             }
         }
         if taken_tiles == 9 {
-            self.winner = AccountName::new(n!(draw));
+            self.winner = n!(draw).into();
             return;
         }
-        self.winner = AccountName::new(n!(none));
-    }
-}
-
-impl Readable for Game {
-    fn read(bytes: &[u8]) -> Result<(Game, usize), ReadError> {
-        let mut pos = 0;
-        let (challenger, p) = AccountName::read(&bytes[pos..])?;
-        pos += p;
-        let (host, p) = AccountName::read(&bytes[pos..])?;
-        pos += p;
-        let (turn, p) = AccountName::read(&bytes[pos..])?;
-        pos += p;
-        let (winner, p) = AccountName::read(&bytes[pos..])?;
-        pos += p;
-        let (board, p) = Vec::<u8>::read(&bytes[pos..])?;
-        let game = Game {
-            challenger,
-            host,
-            turn,
-            winner,
-            board,
-        };
-        Ok((game, pos))
-    }
-}
-
-impl Writeable for Game {
-    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
-        let mut pos = 0;
-        pos += self.challenger.write(&mut bytes[pos..])?;
-        pos += self.host.write(&mut bytes[pos..])?;
-        pos += self.turn.write(&mut bytes[pos..])?;
-        pos += self.winner.write(&mut bytes[pos..])?;
-        pos += self.board.write(&mut bytes[pos..])?;
-        Ok(pos)
+        self.winner = n!(none).into();
     }
 }
 

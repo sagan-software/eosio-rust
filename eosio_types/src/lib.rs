@@ -19,6 +19,12 @@ impl Name {
     }
 }
 
+impl From<u64> for Name {
+    fn from(n: u64) -> Self {
+        Name::new(n)
+    }
+}
+
 fn char_to_symbol(c: char) -> Option<char> {
     if c >= 'a' && c <= 'z' {
         char::from_u32((c as u32 - 'a' as u32) + 6)

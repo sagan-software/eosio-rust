@@ -14,13 +14,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "eosio_api"
-version = "0.1.0"
-dependencies = [
- "eosio_types 0.1.0",
-]
-
-[[package]]
 name = "eosio_macros"
 version = "0.1.0"
 dependencies = [
