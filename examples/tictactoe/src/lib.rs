@@ -113,20 +113,14 @@ const BOARD_WIDTH: u16 = 3;
 const BOARD_HEIGHT: u16 = 3;
 const BOARD_AREA: u16 = BOARD_WIDTH * BOARD_HEIGHT;
 
-// #[eosio_table]
-#[derive(Readable, Writeable)]
+#[derive(TableRow, Readable, Writeable)]
 struct Game {
+    #[primary_key]
     challenger: AccountName,
     host: AccountName,
     turn: AccountName,
     winner: AccountName,
     board: Vec<u8>,
-}
-
-impl TableRow for Game {
-    fn primary_key(&self) -> u64 {
-        self.challenger.as_u64()
-    }
 }
 
 impl Game {
