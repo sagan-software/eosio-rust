@@ -13,7 +13,7 @@ build:
 	cargo build --release --target=wasm32-unknown-unknown
 
 test:
-	cargo test
+	cargo test --features test
 
 clean:
 	rm -Rf target

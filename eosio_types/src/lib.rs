@@ -7,14 +7,14 @@ use alloc::prelude::*;
 use core::char;
 use core::str;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Name(u64);
 
 impl Name {
     pub fn new(n: u64) -> Name {
         Name(n)
     }
-    pub fn as_u64(&self) -> u64 {
+    pub fn as_u64(self) -> u64 {
         self.0
     }
 }
@@ -22,6 +22,12 @@ impl Name {
 impl From<u64> for Name {
     fn from(n: u64) -> Self {
         Name::new(n)
+    }
+}
+
+impl Into<u64> for Name {
+    fn into(self) -> u64 {
+        self.0
     }
 }
 
@@ -136,5 +142,6 @@ mod tests {
         name_to_string_single_char, 3_458_764_513_820_540_928, "a"
         name_to_string_only_numbers, 614_251_535_012_020_768, "123451234512"
         name_to_string_only_letters, 14_605_613_396_213_628_928, "test"
+        name_to_string_zero, 0, ""
     );
 }

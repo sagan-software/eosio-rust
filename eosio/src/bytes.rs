@@ -160,9 +160,18 @@ impl Readable for i128 {
     }
 }
 
-impl Readable for ::types::Name {
+impl Readable for Name {
     fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
         u64::read(bytes).map(|(v, c)| (Name::new(v), c))
+    }
+}
+
+impl Readable for Option<Name> {
+    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
+        u64::read(bytes).map(|(v, c)| {
+            let value = if v == 0 { None } else { Some(Name::new(v)) };
+            (value, c)
+        })
     }
 }
 
@@ -271,14 +280,23 @@ impl Writeable for u64 {
 
 impl Writeable for usize {
     fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
-        // TODO: fix this when usize is larger than 2 bytes
+        // TODO: fix this when usize is larger than 1 byte
         (*self as u8).write(bytes)
     }
 }
 
-impl Writeable for ::types::Name {
+impl Writeable for Name {
     fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
         self.as_u64().write(bytes)
+    }
+}
+
+impl Writeable for Option<Name> {
+    fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+        match self {
+            Some(name) => name.as_u64().write(bytes),
+            None => (0 as u64).write(bytes),
+        }
     }
 }
 

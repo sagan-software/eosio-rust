@@ -1,3 +1,4 @@
+#![no_std]
 #![recursion_limit = "128"]
 #![feature(
     proc_macro_non_items,
@@ -8,7 +9,6 @@
 
 #[macro_use]
 extern crate alloc;
-extern crate core;
 extern crate eosio_sys;
 extern crate eosio_types;
 extern crate proc_macro;
@@ -154,10 +154,10 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
                             pos += count;
                         };
                     }
-                    _ => println!("7"),
+                    _ => unimplemented!(),
                 }
             }
-            _ => println!("NOT CAPTURED"),
+            _ => unimplemented!(),
         }
     }
     let block = input.block;
@@ -353,7 +353,7 @@ pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStrea
     proc_macro::TokenStream::from(expanded)
 }
 
-#[proc_macro_derive(TableRow, attributes(primary_key))]
+#[proc_macro_derive(TableRow, attributes(primary))]
 pub fn derive_table_row(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -375,7 +375,7 @@ pub fn derive_table_row(input: proc_macro::TokenStream) -> proc_macro::TokenStre
                 let mut primary_key = None;
                 for field in fields.named.iter() {
                     for attr in field.attrs.iter() {
-                        let meta = attr.interpret_meta().map(|m| m.name() == "primary_key");
+                        let meta = attr.interpret_meta().map(|m| m.name() == "primary");
                         match (primary_key.is_none(), meta) {
                             (true, Some(true)) => primary_key = field.ident.clone(),
                             (false, Some(true)) => panic!("only 1 primary key allowed"),
@@ -399,5 +399,33 @@ pub fn derive_table_row(input: proc_macro::TokenStream) -> proc_macro::TokenStre
         _ => unimplemented!(),
     };
 
+    proc_macro::TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn wee_alloc(input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+        #[cfg(not(test))]
+        #[global_allocator]
+        static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+        #[cfg(not(test))]
+        #[panic_handler]
+        #[no_mangle]
+        pub fn panic(_info: &::core::panic::PanicInfo) -> ! {
+            unsafe {
+                ::core::intrinsics::abort();
+            }
+        }
+
+        #[cfg(not(test))]
+        #[alloc_error_handler]
+        #[no_mangle]
+        pub extern "C" fn oom(_: ::core::alloc::Layout) -> ! {
+            unsafe {
+                ::core::intrinsics::abort();
+            }
+        }
+    };
     proc_macro::TokenStream::from(expanded)
 }

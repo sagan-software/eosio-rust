@@ -2,7 +2,6 @@
 #![feature(
     alloc,
     core_intrinsics,
-    panic_handler,
     lang_items,
     alloc_error_handler,
     proc_macro_non_items
@@ -41,21 +40,4 @@ pub mod prelude {
     pub use super::types::*;
 }
 
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[panic_handler]
-#[no_mangle]
-pub fn panic(_info: &::core::panic::PanicInfo) -> ! {
-    unsafe {
-        ::core::intrinsics::abort();
-    }
-}
-
-#[alloc_error_handler]
-#[no_mangle]
-pub extern "C" fn oom(_: ::core::alloc::Layout) -> ! {
-    unsafe {
-        ::core::intrinsics::abort();
-    }
-}
+::eosio_macros::wee_alloc!();
