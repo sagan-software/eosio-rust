@@ -1,3 +1,5 @@
+use eosio_bytes::{Readable, Writeable};
+use eosio_sys::ctypes::c_void;
 use eosio_types::*;
 
 pub fn current_receiver() -> AccountName {
@@ -31,4 +33,14 @@ pub fn require_recipient(name: AccountName) {
 
 pub fn require_write_lock(name: AccountName) {
     unsafe { ::eosio_sys::action::require_write_lock(name.as_u64()) }
+}
+
+pub fn send_inline<T>(action: Action<T>)
+where
+    T: Readable + Writeable,
+{
+    let mut bytes = [0u8; 10000];
+    let pos = action.write(&mut bytes).unwrap();
+    let ptr = bytes[..].as_mut_ptr();
+    unsafe { ::eosio_sys::action::send_inline(ptr, pos) }
 }

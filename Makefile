@@ -52,8 +52,8 @@ accounts: hello_account tictactoe_account alice_account bob_account
 	wat2wasm $*_gc_opt.wat -o $*_gc_opt_wat.wasm
 
 %_example: target/wasm32-unknown-unknown/release/%_gc_opt_wat.wasm
-	$(CLEOS) set abi $* /mnt/dev/examples/$*/$*.abi
-	$(CLEOS) set code $* /mnt/dev/release/$*_gc_opt_wat.wasm
+	$(CLEOS) set abi $(subst _,.,$*) /mnt/dev/examples/$*/$*.abi
+	$(CLEOS) set code $(subst _,.,$*) /mnt/dev/release/$*_gc_opt_wat.wasm
 
 say_hi:
 	$(CLEOS) push action hello hi '["contributor","tester"]' -p 'hello@active'
@@ -80,6 +80,16 @@ make_moves_bob:
 
 get_games_%:
 	$(CLEOS) get table tictactoe $* games
+
+create_token:
+	$(CLEOS) push action eosio.token create '["alice","1000.00 TGFT"]' -p 'eosio.token@active'
+
+issue_tokens:
+	$(CLEOS) push action eosio.token issue '["alice","1.00 TGFT","here you go"]' -p 'alice@active'
+
+get_currency_stats:
+	$(CLEOS) get table eosio.token TGFT stat
+
 
 .PHONY: install build test clean docker wallet accounts hello
 .SECONDARY:

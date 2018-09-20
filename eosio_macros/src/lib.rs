@@ -1,14 +1,10 @@
-#![no_std]
 #![recursion_limit = "128"]
 #![feature(
     proc_macro_non_items,
     proc_macro_diagnostic,
     proc_macro_quote,
-    alloc
 )]
 
-#[macro_use]
-extern crate alloc;
 extern crate eosio_sys;
 extern crate eosio_types;
 extern crate proc_macro;
@@ -18,18 +14,17 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
-use alloc::prelude::*;
-use core::str::{self, FromStr};
 use eosio_sys::ctypes::CString;
-use eosio_types::{string_to_name, ToNameError, NAME_CHARS};
+use eosio_types::*;
 use proc_macro::{Span, TokenStream};
 use proc_macro2::TokenTree;
+use std::str;
 use syn::parse::{Parse, ParseStream, Parser, Result};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{
     Data, DeriveInput, Expr, ExprLit, Fields, FnArg, GenericParam, Generics, Ident, Index, ItemFn,
-    Lit, LitStr, Type,
+    Lit, LitInt, LitStr, Type,
 };
 
 #[proc_macro]
@@ -69,9 +64,48 @@ pub fn a(input: TokenStream) -> TokenStream {
     input
 }
 
+struct SymbolInput {
+    precision: LitInt,
+    name: Ident,
+}
+
+impl Parse for SymbolInput {
+    fn parse(input: ParseStream) -> Result<Self> {
+        let precision: LitInt = input.parse()?;
+        input.parse::<Token![,]>()?;
+        let name: Ident = input.parse()?;
+        Ok(SymbolInput { precision, name })
+    }
+}
+
 #[proc_macro]
 pub fn s(input: TokenStream) -> TokenStream {
-    input
+    let SymbolInput { precision, name } = parse_macro_input!(input as SymbolInput);
+    let symbol_result = string_to_symbol(precision.value() as u8, &name.to_string());
+
+    let expanded = match symbol_result {
+        Ok(symbol) => quote!(#symbol),
+        Err(error) => {
+            let span = Span::call_site();
+            let err = match error {
+                ToSymbolError::IsEmpty => span
+                    .error("symbol is empty")
+                    .help("EOSIO symbols must be 1-12 characters long"),
+                ToSymbolError::TooLong => span
+                    .error("name is too long")
+                    .help("EOSIO symbols must be 1-12 characters long"),
+                ToSymbolError::BadChar(c) => {
+                    let error_message = format!("name has bad character '{}'", c);
+                    let help_message = "EOSIO symbols can only contain uppercase letters A-Z";
+                    span.error(error_message).help(help_message)
+                }
+            };
+            err.emit();
+            quote!(0)
+        }
+    };
+
+    TokenStream::from(quote!(#expanded))
 }
 
 #[proc_macro]
@@ -144,20 +178,19 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
             FnArg::Captured(input) => {
                 let pat = &input.pat;
                 let ty = &input.ty;
-                match ty {
-                    Type::Path(ty) => {
-                        let segment = ty.path.segments.iter().next().unwrap();
-                        let ty_ident = &segment.ident;
-                        reads = quote! {
-                            #reads
-                            let (#pat, count) = #ty_ident::read(&bytes[pos..]).unwrap();
-                            pos += count;
-                        };
-                    }
-                    _ => unimplemented!(),
-                }
+                let read = quote_spanned! { ty.span() =>
+                    <#ty as ::eosio::bytes::Readable>::read(&bytes[pos..]).unwrap()
+                };
+                reads = quote! {
+                    #reads
+                    let (#pat, count) = #read;
+                    pos += count;
+                };
             }
-            _ => unimplemented!(),
+            _ => {
+                println!("222222");
+                unimplemented!()
+            }
         }
     }
     let block = input.block;
@@ -213,193 +246,6 @@ pub fn eosio_abi(input: TokenStream) -> TokenStream {
         }
     };
     TokenStream::from(quote!(#expanded))
-}
-
-#[proc_macro_derive(Writeable)]
-pub fn derive_writeable(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-
-    let name = input.ident;
-
-    let mut generics = input.generics;
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param
-                .bounds
-                .push(parse_quote!(::eosio::bytes::Writeable));
-        }
-    }
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-
-    let call_site = ::proc_macro2::Span::call_site();
-    let mut writes = quote!();
-    let var = quote!(self);
-    match input.data {
-        Data::Struct(ref data) => match data.fields {
-            Fields::Named(ref fields) => {
-                let recurse = fields.named.iter().map(|f| {
-                    let name = &f.ident;
-                    let access = quote_spanned!(call_site => #var.#name);
-                    quote_spanned! {f.span() =>
-                        pos += ::eosio::bytes::Writeable::write(&#access, &mut bytes[pos..])?;
-                    }
-                });
-                writes = quote! {
-                    let mut pos = 0;
-                    #(#recurse)*
-                    Ok(pos)
-                }
-            }
-            Fields::Unnamed(ref fields) => {
-                let recurse = fields.unnamed.iter().enumerate().map(|(i, f)| {
-                    let index = Index {
-                        index: i as u32,
-                        span: call_site,
-                    };
-                    let access = quote_spanned!(call_site => #var.#index);
-                    quote_spanned! {f.span() =>
-                        pos += ::eosio::bytes::Writeable::write(&#access, &mut bytes[pos..])?;
-                    }
-                });
-                writes = quote! {
-                    let mut pos = 0;
-                    #(#recurse)*
-                    Ok(pos)
-                }
-            }
-            Fields::Unit => {
-                writes = quote! {
-                    Ok(0)
-                };
-            }
-        },
-        Data::Enum(_) | Data::Union(_) => unimplemented!(),
-    };
-
-    let expanded = quote! {
-        impl #impl_generics ::eosio::bytes::Writeable for #name #ty_generics #where_clause {
-            fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
-                #writes
-            }
-        }
-    };
-
-    proc_macro::TokenStream::from(expanded)
-}
-
-#[proc_macro_derive(Readable)]
-pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-
-    let name = input.ident;
-
-    let mut generics = input.generics;
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param
-                .bounds
-                .push(parse_quote!(::eosio::bytes::Readable));
-        }
-    }
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-
-    let call_site = ::proc_macro2::Span::call_site();
-    let mut reads = quote!();
-
-    match input.data {
-        Data::Struct(ref data) => match data.fields {
-            Fields::Named(ref fields) => {
-                let field_reads = fields.named.iter().map(|f| {
-                    let ident = &f.ident;
-                    let ty = &f.ty;
-                    quote_spanned! {f.span() =>
-                        let (#ident, p) = <#ty as ::eosio::bytes::Readable>::read(&bytes[pos..])?;
-                        pos += p;
-                    }
-                });
-                let field_names = fields.named.iter().map(|f| {
-                    let ident = &f.ident;
-                    quote! {
-                        #ident,
-                    }
-                });
-                reads = quote! {
-                    let mut pos = 0;
-                    #(#field_reads)*
-                    let item = #name {
-                        #(#field_names)*
-                    };
-                    Ok((item, pos))
-                };
-            }
-            Fields::Unnamed(ref fields) => {
-                unimplemented!();
-            }
-            Fields::Unit => {
-                unimplemented!();
-            }
-        },
-        Data::Enum(_) | Data::Union(_) => unimplemented!(),
-    };
-
-    let expanded = quote! {
-        impl #impl_generics ::eosio::bytes::Readable for #name #ty_generics #where_clause {
-            fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-                #reads
-            }
-        }
-    };
-
-    proc_macro::TokenStream::from(expanded)
-}
-
-#[proc_macro_derive(TableRow, attributes(primary))]
-pub fn derive_table_row(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-
-    let name = input.ident.clone();
-
-    let mut generics = input.generics.clone();
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param
-                .bounds
-                .push(parse_quote!(::eosio::bytes::Readable));
-        }
-    }
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-
-    let expanded = match input.data {
-        Data::Struct(ref data) => match data.fields {
-            Fields::Named(ref fields) => {
-                let mut primary_key = None;
-                for field in fields.named.iter() {
-                    for attr in field.attrs.iter() {
-                        let meta = attr.interpret_meta().map(|m| m.name() == "primary");
-                        match (primary_key.is_none(), meta) {
-                            (true, Some(true)) => primary_key = field.ident.clone(),
-                            (false, Some(true)) => panic!("only 1 primary key allowed"),
-                            _ => continue,
-                        }
-                    }
-                }
-                if primary_key.is_none() {
-                    panic!("no primary key found");
-                }
-                quote! {
-                    impl #impl_generics ::eosio::db::TableRow for #name #ty_generics #where_clause {
-                        fn primary_key(&self) -> u64 {
-                            self.#primary_key.as_u64()
-                        }
-                    }
-                }
-            }
-            _ => unimplemented!(),
-        },
-        _ => unimplemented!(),
-    };
-
-    proc_macro::TokenStream::from(expanded)
 }
 
 #[proc_macro]

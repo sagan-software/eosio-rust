@@ -6,9 +6,12 @@ debug = false
 [workspace]
 members = [
     "eosio",
+    "eosio_bytes",
+    "eosio_derives",
     "eosio_macros",
     "eosio_sys",
     "eosio_types",
+    "examples/eosio_token",
     "examples/hello",
     "examples/tictactoe"
 ]

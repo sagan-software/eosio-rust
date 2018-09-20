@@ -21,7 +21,7 @@
                 },
                 {
                     "name": "winner",
-                    "type": "name"
+                    "type": "acctoption"
                 },
                 {
                     "name": "board",
@@ -98,6 +98,20 @@
                 {
                     "name": "column",
                     "type": "uint16"
+                }
+            ]
+        },
+        {
+            "name": "acctoption",
+            "base": "",
+            "fields": [
+                {
+                    "name": "is_some",
+                    "type": "bool"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
                 }
             ]
         }

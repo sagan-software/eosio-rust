@@ -3,14 +3,6 @@
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
-extern crate eosio_bytes;
-extern crate eosio_derives;
-
-mod action;
-mod asset;
-mod names;
-mod symbol;
-mod time;
 
 mod lib {
     mod core {
@@ -19,8 +11,6 @@ mod lib {
         #[cfg(feature = "std")]
         pub use std::*;
     }
-
-    pub use self::core::{char, str};
 
     #[cfg(all(feature = "alloc", not(feature = "std")))]
     pub use alloc::string::{String, ToString};
@@ -33,9 +23,8 @@ mod lib {
     pub use std::vec::Vec;
 }
 
-pub type WeightType = u16;
-pub use self::action::*;
-pub use self::asset::*;
-pub use self::names::*;
-pub use self::symbol::*;
-pub use self::time::*;
+mod readable;
+mod writeable;
+
+pub use self::readable::*;
+pub use self::writeable::*;

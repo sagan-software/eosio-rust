@@ -1,11 +1,20 @@
 use eosio_types::*;
 
-use bytes::{ReadError, Readable, Writeable};
 use core::marker::PhantomData;
+use eosio_bytes::{ReadError, Readable, Writeable};
 use eosio_sys::ctypes::*;
 
 pub trait TableRow: Readable + Writeable {
     fn primary_key(&self) -> u64;
+
+    fn table<C, S, N>(code: C, scope: S, name: N) -> Table<Self>
+    where
+        C: Into<AccountName>,
+        S: Into<AccountName>,
+        N: Into<TableName>,
+    {
+        Table::new(code, scope, name)
+    }
 }
 
 #[derive(PartialEq, Copy, Clone)]
@@ -31,11 +40,16 @@ impl<T> Table<T>
 where
     T: TableRow,
 {
-    pub fn new(code: AccountName, scope: AccountName, name: TableName) -> Table<T> {
+    pub fn new<C, S, N>(code: C, scope: S, name: N) -> Table<T>
+    where
+        C: Into<AccountName>,
+        S: Into<AccountName>,
+        N: Into<TableName>,
+    {
         Table {
-            code,
-            scope,
-            name,
+            code: code.into(),
+            scope: scope.into(),
+            name: name.into(),
             _row_type: PhantomData,
         }
     }
@@ -83,7 +97,10 @@ where
         T::read(&bytes).map(|(t, _)| t)
     }
 
-    pub fn emplace(&self, payer: AccountName, item: T) -> TableIter {
+    pub fn emplace<P>(&self, payer: P, item: T) -> TableIter
+    where
+        P: Into<AccountName>,
+    {
         let mut bytes = [0u8; 1000];
         let pos = item.write(&mut bytes).unwrap();
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
@@ -91,7 +108,7 @@ where
             ::eosio_sys::db::db_store_i64(
                 self.scope.as_u64(),
                 self.name.as_u64(),
-                payer.as_u64(),
+                payer.into().as_u64(),
                 item.primary_key(),
                 ptr,
                 pos as u32,
@@ -100,12 +117,15 @@ where
         itr.into()
     }
 
-    pub fn modify(&self, itr: TableIter, payer: AccountName, item: T) {
+    pub fn modify<P>(&self, itr: TableIter, payer: P, item: T)
+    where
+        P: Into<AccountName>,
+    {
         let mut bytes = [0u8; 1000];
         let pos = item.write(&mut bytes).unwrap();
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
 
-        unsafe { ::eosio_sys::db::db_update_i64(itr.0, payer.as_u64(), ptr, pos as u32) }
+        unsafe { ::eosio_sys::db::db_update_i64(itr.0, payer.into().as_u64(), ptr, pos as u32) }
     }
 
     pub fn erase(&self, itr: TableIter) {

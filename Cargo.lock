@@ -7,10 +7,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "eosio"
 version = "0.1.0"
 dependencies = [
+ "eosio_bytes 0.1.0",
+ "eosio_derives 0.1.0",
  "eosio_macros 0.1.0",
  "eosio_sys 0.1.0",
  "eosio_types 0.1.0",
  "wee_alloc 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "eosio_bytes"
+version = "0.1.0"
+
+[[package]]
+name = "eosio_derives"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2 0.4.19 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 0.15.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -32,8 +47,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "eosio_token"
+version = "0.1.0"
+dependencies = [
+ "eosio 0.1.0",
+ "eosio_bytes 0.1.0",
+]
+
+[[package]]
 name = "eosio_types"
 version = "0.1.0"
+dependencies = [
+ "eosio_bytes 0.1.0",
+ "eosio_derives 0.1.0",
+]
 
 [[package]]
 name = "hello"
@@ -88,6 +115,7 @@ name = "tictactoe"
 version = "0.1.0"
 dependencies = [
  "eosio 0.1.0",
+ "eosio_bytes 0.1.0",
 ]
 
 [[package]]

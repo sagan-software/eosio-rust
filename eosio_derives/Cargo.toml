@@ -1,0 +1,15 @@
+[package]
+name = "eosio_derives"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "0.15.4", features = ["full", "fold"] }
+proc-macro2 = "0.4"
+quote = "0.6"
+
+[[tests]]
+name = "tests"

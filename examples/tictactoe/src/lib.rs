@@ -4,6 +4,7 @@
 #[macro_use]
 extern crate alloc;
 extern crate eosio;
+extern crate eosio_bytes;
 
 use alloc::vec::Vec;
 use eosio::prelude::*;
@@ -114,7 +115,7 @@ struct Game {
 impl Game {
     fn table(host: AccountName) -> Table<Game> {
         let code = current_receiver();
-        Table::new(code, host, n!(games).into())
+        Table::new(code, host, n!(games))
     }
 
     fn update_winner(&mut self) {

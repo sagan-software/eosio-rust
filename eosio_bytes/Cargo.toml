@@ -1,0 +1,9 @@
+[package]
+name = "eosio_bytes"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[features]
+default = ["alloc"]
+std = []
+alloc = []
