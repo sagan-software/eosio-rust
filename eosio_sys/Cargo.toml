@@ -9,3 +9,8 @@ doctest = false
 
 [dependencies]
 memchr = { version = "2.0", default-features = false }
+
+[features]
+default = ["alloc"]
+std = []
+alloc = []

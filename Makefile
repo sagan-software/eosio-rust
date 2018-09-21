@@ -37,7 +37,12 @@ wallet:
 %_account:
 	$(CLEOS) create account eosio $* $(PUBKEY) $(PUBKEY)
 
-accounts: hello_account tictactoe_account alice_account bob_account
+accounts: hello_account tictactoe_account alice_account bob_account carol_account eosio.token_account
+
+%_permissions:
+	$(CLEOS) set account permission $* active \
+		'{"threshold": 1,"keys": [{"key": "'$(PUBKEY)'","weight": 1}],"accounts": [{"permission":{"actor":"$*","permission":"eosio.code"},"weight":1}]}' owner
+
 
 %_gc.wasm: %.wasm
 	wasm-gc $*.wasm $*_gc.wasm
@@ -86,10 +91,19 @@ create_token:
 
 issue_tokens:
 	$(CLEOS) push action eosio.token issue '["alice","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosio.token issue '["bob","1.00 TGFT","here you go"]' -p 'alice@active'
+	#$(CLEOS) push action eosio.token issue '["carol","1.00 TGFT","here you go"]' -p 'alice@active'
+
+transfer_tokens:
+	$(CLEOS) push action eosio.token transfer '["alice","bob","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosio.token transfer '["bob","alice","0.05 TGFT","here you go"]' -p 'bob@active'
 
 get_currency_stats:
 	$(CLEOS) get table eosio.token TGFT stat
 
+get_token_accounts:
+	$(CLEOS) get table eosio.token alice accounts
+	$(CLEOS) get table eosio.token bob accounts
 
 .PHONY: install build test clean docker wallet accounts hello
 .SECONDARY:

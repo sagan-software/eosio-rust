@@ -157,7 +157,7 @@ pub fn eosio_assert(input: TokenStream) -> TokenStream {
     let Assert { test, message } = parse_macro_input!(input as Assert);
     let expanded = quote! {
         unsafe {
-            ::eosio::sys::system::eosio_assert(
+            ::eosio_sys::eosio_assert(
                 if #test { 1 } else { 0 },
                 cstr!(#message).as_ptr()
             )
@@ -179,18 +179,16 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
                 let pat = &input.pat;
                 let ty = &input.ty;
                 let read = quote_spanned! { ty.span() =>
-                    <#ty as ::eosio::bytes::Readable>::read(&bytes[pos..]).unwrap()
+                    <#ty as ::eosio_bytes::Readable>::read(&bytes[pos..]).unwrap()
                 };
+                let tmp = quote!(#input).to_string();
                 reads = quote! {
                     #reads
                     let (#pat, count) = #read;
                     pos += count;
                 };
             }
-            _ => {
-                println!("222222");
-                unimplemented!()
-            }
+            _ => unimplemented!(),
         }
     }
     let block = input.block;
@@ -198,11 +196,11 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
         fn #ident() {
             // TODO: set the length of this to a fixed size based on the action inputs
             let mut bytes = [0u8; 10000];
-            let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
+            let ptr: *mut ::eosio_sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio_sys::c_void;
             unsafe {
-                ::eosio::sys::action::read_action_data(
+                ::eosio_sys::read_action_data(
                     ptr,
-                    ::eosio::sys::action::action_data_size()
+                    ::eosio_sys::action_data_size()
                 );
             }
 

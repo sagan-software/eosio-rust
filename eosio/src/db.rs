@@ -1,8 +1,7 @@
-use eosio_types::*;
-
 use core::marker::PhantomData;
-use eosio_bytes::{ReadError, Readable, Writeable};
+use eosio_bytes::*;
 use eosio_sys::ctypes::*;
+use eosio_types::*;
 
 pub trait TableRow: Readable + Writeable {
     fn primary_key(&self) -> u64;
@@ -56,7 +55,7 @@ where
 
     pub fn end(&self) -> TableIter {
         let itr = unsafe {
-            ::eosio_sys::db::db_end_i64(self.code.as_u64(), self.scope.as_u64(), self.name.as_u64())
+            ::eosio_sys::db_end_i64(self.code.as_u64(), self.scope.as_u64(), self.name.as_u64())
         };
         itr.into()
     }
@@ -78,7 +77,7 @@ where
         Id: Into<u64>,
     {
         let itr = unsafe {
-            ::eosio_sys::db::db_find_i64(
+            ::eosio_sys::db_find_i64(
                 self.code.as_u64(),
                 self.scope.as_u64(),
                 self.name.as_u64(),
@@ -92,7 +91,7 @@ where
         let mut bytes = [0u8; 1000];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db::db_get_i64(itr.0, ptr, 1000);
+            ::eosio_sys::db_get_i64(itr.0, ptr, 1000);
         }
         T::read(&bytes).map(|(t, _)| t)
     }
@@ -105,7 +104,7 @@ where
         let pos = item.write(&mut bytes).unwrap();
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let itr = unsafe {
-            ::eosio_sys::db::db_store_i64(
+            ::eosio_sys::db_store_i64(
                 self.scope.as_u64(),
                 self.name.as_u64(),
                 payer.into().as_u64(),
@@ -125,12 +124,12 @@ where
         let pos = item.write(&mut bytes).unwrap();
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
 
-        unsafe { ::eosio_sys::db::db_update_i64(itr.0, payer.into().as_u64(), ptr, pos as u32) }
+        unsafe { ::eosio_sys::db_update_i64(itr.0, payer.into().as_u64(), ptr, pos as u32) }
     }
 
     pub fn erase(&self, itr: TableIter) {
         unsafe {
-            ::eosio_sys::db::db_remove_i64(itr.0);
+            ::eosio_sys::db_remove_i64(itr.0);
         }
     }
 }

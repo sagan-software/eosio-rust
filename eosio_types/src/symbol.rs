@@ -20,6 +20,12 @@ impl Symbol {
     }
 }
 
+impl From<u64> for Symbol {
+    fn from(n: u64) -> Self {
+        Symbol(n)
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum ToSymbolError {
     IsEmpty,

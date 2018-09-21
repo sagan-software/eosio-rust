@@ -5,6 +5,8 @@
 extern crate alloc;
 extern crate eosio;
 extern crate eosio_bytes;
+extern crate eosio_sys;
+extern crate eosio_types;
 
 use alloc::vec::Vec;
 use eosio::prelude::*;

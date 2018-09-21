@@ -5,8 +5,10 @@
 extern crate alloc;
 extern crate eosio;
 extern crate eosio_bytes;
+extern crate eosio_sys;
+extern crate eosio_types;
 
-use alloc::prelude::{String, Vec};
+use alloc::prelude::{String, ToString, Vec};
 use eosio::prelude::*;
 
 #[eosio_action]
@@ -59,6 +61,25 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
 
     st.supply.amount += quantity.amount;
     stats_table.modify(itr, 0, st);
+
+    add_balance(st.issuer, quantity, st.issuer);
+
+    if to != st.issuer {
+        send_inline(Action {
+            account: receiver,
+            name: n!(transfer).into(),
+            authorization: vec![PermissionLevel {
+                actor: st.issuer,
+                permission: n!(active).into(),
+            }],
+            data: TransferArgs {
+                from: receiver,
+                to,
+                quantity: quantity,
+                memo,
+            },
+        });
+    }
 }
 
 #[eosio_action]
@@ -116,7 +137,12 @@ fn retire(quantity: Asset, memo: String) {
 }
 
 #[eosio_action]
-fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
+fn transfer(from: AccountName, to: AccountName) {
+    let quantity = Asset {
+        amount: 1,
+        symbol: s!(2, TGFT).into(),
+    };
+    let memo = "".to_string();
     eosio_assert!(from != to, "cannot transfer to self");
     require_auth(from);
     eosio_assert!(is_account(to), "to account does not exist");
@@ -138,15 +164,39 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     eosio_assert!(memo.len() <= 256, "memo has more than 256 bytes");
 
     let payer = if has_auth(to) { to } else { from };
+
+    sub_balance(from, quantity);
+    add_balance(to, quantity, payer);
 }
 
 eosio_abi!(create, issue, transfer, open, close, retire);
 
-fn sub_balance(owner: AccountName, value: Asset) {}
+fn sub_balance(owner: AccountName, value: Asset) {
+    let receiver = current_receiver();
+    let accounts_table = Account::table(receiver, owner, n!(accounts));
+    let itr = accounts_table.find(value.symbol.name());
+    eosio_assert!(!accounts_table.is_end(itr), "no balance object found");
 
-fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {}
+    let mut account = accounts_table.get(itr).unwrap();
+    account.balance.amount -= value.amount;
+    accounts_table.modify(itr, owner, account);
+}
 
-#[derive(Readable, Writeable)]
+fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
+    let receiver = current_receiver();
+    let accounts_table = Account::table(receiver, owner, n!(accounts));
+    let itr = accounts_table.find(value.symbol.name());
+    if accounts_table.is_end(itr) {
+        let account = Account { balance: value };
+        accounts_table.emplace(ram_payer, account);
+    } else {
+        let mut account = accounts_table.get(itr).unwrap();
+        account.balance.amount += value.amount;
+        accounts_table.modify(itr, 0, account);
+    }
+}
+
+#[derive(Readable, Writeable, Copy, Clone)]
 struct Account {
     balance: Asset,
 }
@@ -157,7 +207,7 @@ impl TableRow for Account {
     }
 }
 
-#[derive(Readable, Writeable)]
+#[derive(Readable, Writeable, Copy, Clone)]
 struct CurrencyStats {
     supply: Asset,
     max_supply: Asset,
@@ -168,4 +218,12 @@ impl TableRow for CurrencyStats {
     fn primary_key(&self) -> u64 {
         self.supply.symbol.name()
     }
+}
+
+#[derive(Readable, Writeable, Clone)]
+struct TransferArgs {
+    from: AccountName,
+    to: AccountName,
+    quantity: Asset,
+    memo: String,
 }

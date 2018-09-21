@@ -1,6 +1,6 @@
-extern crate eosio_types;
+extern crate ;
 
-use eosio_types::*;
+use ::*;
 
 macro_rules! test_string_to_name {
     ($($n:ident, $i:expr, $o:expr)*) => ($(

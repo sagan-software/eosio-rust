@@ -12,6 +12,12 @@ mod names;
 mod symbol;
 mod time;
 
+pub use self::action::*;
+pub use self::asset::*;
+pub use self::names::*;
+pub use self::symbol::*;
+pub use self::time::*;
+
 mod lib {
     mod core {
         #[cfg(not(feature = "std"))]
@@ -32,10 +38,3 @@ mod lib {
     #[cfg(feature = "std")]
     pub use std::vec::Vec;
 }
-
-pub type WeightType = u16;
-pub use self::action::*;
-pub use self::asset::*;
-pub use self::names::*;
-pub use self::symbol::*;
-pub use self::time::*;
