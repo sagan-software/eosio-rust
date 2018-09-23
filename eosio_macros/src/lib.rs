@@ -109,7 +109,7 @@ pub fn s(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn cstr(input: TokenStream) -> TokenStream {
+pub fn c(input: TokenStream) -> TokenStream {
     let input_string = input.to_string();
     let input_str = input_string.as_str().trim_matches('"');
     let cstring = CString::new(input_str).unwrap();
@@ -119,7 +119,7 @@ pub fn cstr(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn print(input: TokenStream) -> TokenStream {
+pub fn eosio_print(input: TokenStream) -> TokenStream {
     let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;
     let args = parser.parse(input).unwrap();
     let mut prints = quote!();
@@ -127,7 +127,7 @@ pub fn print(input: TokenStream) -> TokenStream {
         let mut printable = quote!(#i);
         if let Expr::Lit(ref lit) = *i {
             if let Lit::Str(ref strlit) = lit.lit {
-                printable = quote!(cstr!(#strlit));
+                printable = quote!(c!(#strlit));
             }
         }
         prints = quote! {
@@ -159,7 +159,7 @@ pub fn eosio_assert(input: TokenStream) -> TokenStream {
         unsafe {
             ::eosio_sys::eosio_assert(
                 if #test { 1 } else { 0 },
-                cstr!(#message).as_ptr()
+                c!(#message).as_ptr()
             )
         }
     };
@@ -172,25 +172,25 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
     let ident = input.ident;
     let decl = input.decl;
     let inputs = decl.inputs;
-    let mut reads = quote!();
-    for input in inputs.iter() {
-        match input {
-            FnArg::Captured(input) => {
-                let pat = &input.pat;
-                let ty = &input.ty;
-                let read = quote_spanned! { ty.span() =>
-                    <#ty as ::eosio_bytes::Readable>::read(&bytes[pos..]).unwrap()
-                };
-                let tmp = quote!(#input).to_string();
-                reads = quote! {
-                    #reads
-                    let (#pat, count) = #read;
-                    pos += count;
+    let reads = inputs.iter().enumerate().map(|(i, f)| match f {
+        FnArg::Captured(input) => {
+            let pat = &input.pat;
+            let ty = &input.ty;
+            let read = quote_spanned! { ty.span() =>
+                <#ty as ::eosio_bytes::Readable>::read(&bytes, pos)
+            };
+            quote! {
+                let (#pat, pos) = match #read {
+                    Ok(v) => v,
+                    Err(_) => {
+                        eosio_assert(false, c!("read"));
+                        return
+                    }
                 };
             }
-            _ => unimplemented!(),
         }
-    }
+        _ => unimplemented!(),
+    });
     let block = input.block;
     let expanded = quote! {
         fn #ident() {
@@ -204,8 +204,8 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
                 );
             }
 
-            let mut pos = 0;
-            #reads
+            let pos = 0;
+            #(#reads)*
             #block
         }
     };
@@ -228,16 +228,16 @@ pub fn eosio_abi(input: TokenStream) -> TokenStream {
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
             if action == n!(onerror) {
-                eosio_assert!(
+                eosio_assert(
                     code == n!(eosio),
-                    "onerror action's are only valid from the \"eosio\" system account"
+                    c!("onerror action's are only valid from the \"eosio\" system account")
                 );
             }
             if code == receiver || action == n!(onerror) {
                 match action {
                     #actions
                     _ => {
-                        eosio_assert!(false, "bad action");
+                        eosio_assert(false, c!("bad action"));
                     }
                 }
             }

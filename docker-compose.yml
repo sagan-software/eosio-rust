@@ -4,15 +4,22 @@ services:
 
   nodeosd:
     hostname: nodeosd
-    image: eosio/eos:v1.2.5
-    entrypoint: /opt/eosio/bin/nodeosd.sh
+    image: eosio/eos:v1.3.0
+    entrypoint: nodeos
     command: >
       --data-dir /opt/eosio/bin/data-dir
       --enable-stale-production
+      --http-server-address=0.0.0.0:8888
       --http-alias=nodeosd:8888
       --http-alias=127.0.0.1:8888
       --http-alias=localhost:8888
       --contracts-console
+      --plugin eosio::chain_api_plugin
+      --plugin eosio::history_api_plugin
+      --chain-state-db-size-mb=8192
+      --reversible-blocks-db-size-mb=340
+
+      --producer-name=eosio
     volumes:
       - nodeos-data-volume:/opt/eosio/bin/data-dir
     ports:
@@ -26,7 +33,7 @@ services:
 
   keosd:
     hostname: keosd
-    image: eosio/eos:v1.2.5
+    image: eosio/eos:v1.3.0
     entrypoint: keosd
     command: >
       --wallet-dir /opt/eosio/bin/data-dir

@@ -65,20 +65,20 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     add_balance(st.issuer, quantity, st.issuer);
 
     if to != st.issuer {
-        send_inline(Action {
-            account: receiver,
-            name: n!(transfer).into(),
-            authorization: vec![PermissionLevel {
-                actor: st.issuer,
-                permission: n!(active).into(),
-            }],
-            data: TransferArgs {
-                from: receiver,
-                to,
-                quantity: quantity,
-                memo,
-            },
-        });
+        // send_inline(Action {
+        //     account: receiver,
+        //     name: n!(transfer).into(),
+        //     authorization: vec![PermissionLevel {
+        //         actor: st.issuer,
+        //         permission: n!(active).into(),
+        //     }],
+        //     data: TransferArgs {
+        //         from: receiver,
+        //         to,
+        //         quantity: quantity,
+        //         memo,
+        //     },
+        // });
     }
 }
 
@@ -137,15 +137,12 @@ fn retire(quantity: Asset, memo: String) {
 }
 
 #[eosio_action]
-fn transfer(from: AccountName, to: AccountName) {
-    let quantity = Asset {
-        amount: 1,
-        symbol: s!(2, TGFT).into(),
-    };
-    let memo = "".to_string();
+fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     eosio_assert!(from != to, "cannot transfer to self");
     require_auth(from);
     eosio_assert!(is_account(to), "to account does not exist");
+
+    let memo = "a".to_string();
     let receiver = current_receiver();
     let symbol_name = quantity.symbol.name();
     let stats_table = CurrencyStats::table(receiver, symbol_name, n!(stat));

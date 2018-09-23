@@ -1,4 +1,4 @@
-use eosio_macros::cstr;
+use eosio_macros::c;
 use eosio_types::*;
 
 pub trait Printable {
@@ -67,7 +67,7 @@ impl<'a> Printable for &'a str {
 
 impl Printable for bool {
     fn print(&self) {
-        let out = if *self { cstr!("true") } else { cstr!("false") };
+        let out = if *self { c!("true") } else { c!("false") };
         unsafe { ::eosio_sys::prints(out.as_ptr()) }
     }
 }

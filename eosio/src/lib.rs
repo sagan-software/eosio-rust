@@ -1,13 +1,14 @@
-#![no_std]
+// #![no_std]
 #![feature(
     alloc,
-    core_intrinsics,
-    lang_items,
-    alloc_error_handler,
+    // core_intrinsics,
+    // lang_items,
+    // alloc_error_handler,
     proc_macro_non_items
 )]
 
 extern crate alloc;
+extern crate core;
 extern crate eosio_bytes;
 extern crate eosio_derives;
 extern crate eosio_macros;
@@ -29,4 +30,4 @@ pub mod prelude {
     pub use eosio_types::*;
 }
 
-::eosio_macros::wee_alloc!();
+// ::eosio_macros::wee_alloc!();

@@ -6,14 +6,14 @@ use names::*;
 use lib::Vec;
 
 #[cfg(any(feature = "std", feature = "alloc"))]
-#[derive(Readable, Writeable, Clone, Debug)]
-pub struct Action<Data>
+#[derive(Writeable, Clone, Debug)]
+pub struct Action<'a, Data>
 where
-    Data: Readable + Writeable,
+    Data: Writeable,
 {
     pub account: AccountName,
     pub name: ActionName,
-    pub authorization: Vec<PermissionLevel>,
+    pub authorization: &'a [PermissionLevel],
     pub data: Data,
 }
 

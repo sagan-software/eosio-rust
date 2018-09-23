@@ -1,3 +1,6 @@
+use fixed_size::FixedSize;
+use lib::{BitOr, Mul, Shl};
+
 #[cfg(all(feature = "alloc", not(feature = "std")))]
 use lib::{String, Vec};
 
@@ -7,167 +10,44 @@ pub enum ReadError {
 }
 
 pub trait Readable: Sized {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError>;
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError>;
 }
 
-impl Readable for u8 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.is_empty() {
+impl<T> Readable for T
+where
+    T: FixedSize + From<u8> + BitOr<Output = T> + Shl<Output = T> + Mul<Output = T>,
+{
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+        let width = T::size();
+        let end_pos = pos + width;
+        if bytes.len() < end_pos {
             return Err(ReadError::NotEnoughBytes);
         }
-        Ok((bytes[0], 1))
-    }
-}
 
-impl Readable for u16 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 2 {
-            return Err(ReadError::NotEnoughBytes);
+        let mut num = T::from(0 as u8);
+        for i in 0..width {
+            match bytes.get(pos + i) {
+                Some(b) => {
+                    let shift = T::from(i as u8) * T::from(8 as u8);
+                    num = num | (T::from(*b) << shift);
+                }
+                None => return Err(ReadError::NotEnoughBytes),
+            }
         }
-        let num = (u16::from(bytes[0])) | (u16::from(bytes[1]) << 8);
-        Ok((num, 2))
-    }
-}
-
-impl Readable for u32 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 4 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (u32::from(bytes[0]))
-            | (u32::from(bytes[1]) << 8)
-            | (u32::from(bytes[2]) << 16)
-            | (u32::from(bytes[3]) << 24);
-        Ok((num, 4))
-    }
-}
-
-impl Readable for u64 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 8 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (u64::from(bytes[0]))
-            | (u64::from(bytes[1]) << 8)
-            | (u64::from(bytes[2]) << 16)
-            | (u64::from(bytes[3]) << 24)
-            | (u64::from(bytes[4]) << 32)
-            | (u64::from(bytes[5]) << 40)
-            | (u64::from(bytes[6]) << 48)
-            | (u64::from(bytes[7]) << 56);
-        Ok((num, 8))
-    }
-}
-
-impl Readable for u128 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 16 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (u128::from(bytes[0]))
-            | (u128::from(bytes[1]) << 8)
-            | (u128::from(bytes[2]) << 16)
-            | (u128::from(bytes[3]) << 24)
-            | (u128::from(bytes[4]) << 32)
-            | (u128::from(bytes[5]) << 40)
-            | (u128::from(bytes[6]) << 48)
-            | (u128::from(bytes[7]) << 56)
-            | (u128::from(bytes[8]) << 64)
-            | (u128::from(bytes[9]) << 72)
-            | (u128::from(bytes[10]) << 80)
-            | (u128::from(bytes[11]) << 88)
-            | (u128::from(bytes[12]) << 96)
-            | (u128::from(bytes[13]) << 104)
-            | (u128::from(bytes[14]) << 112)
-            | (u128::from(bytes[15]) << 120);
-        Ok((num, 16))
-    }
-}
-
-impl Readable for i8 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.is_empty() {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        Ok((bytes[0] as i8, 1))
-    }
-}
-
-impl Readable for i16 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 2 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (i16::from(bytes[0])) | (i16::from(bytes[1]) << 8);
-        Ok((num, 2))
-    }
-}
-
-impl Readable for i32 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 4 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (i32::from(bytes[0]))
-            | (i32::from(bytes[1]) << 8)
-            | (i32::from(bytes[2]) << 16)
-            | (i32::from(bytes[3]) << 24);
-        Ok((num, 4))
-    }
-}
-
-impl Readable for i64 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 8 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (i64::from(bytes[0]))
-            | (i64::from(bytes[1]) << 8)
-            | (i64::from(bytes[2]) << 16)
-            | (i64::from(bytes[3]) << 24)
-            | (i64::from(bytes[4]) << 32)
-            | (i64::from(bytes[5]) << 40)
-            | (i64::from(bytes[6]) << 48)
-            | (i64::from(bytes[7]) << 56);
-        Ok((num, 8))
-    }
-}
-
-impl Readable for i128 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        if bytes.len() < 16 {
-            return Err(ReadError::NotEnoughBytes);
-        }
-        let num = (i128::from(bytes[0]))
-            | (i128::from(bytes[1]) << 8)
-            | (i128::from(bytes[2]) << 16)
-            | (i128::from(bytes[3]) << 24)
-            | (i128::from(bytes[4]) << 32)
-            | (i128::from(bytes[5]) << 40)
-            | (i128::from(bytes[6]) << 48)
-            | (i128::from(bytes[7]) << 56)
-            | (i128::from(bytes[8]) << 64)
-            | (i128::from(bytes[9]) << 72)
-            | (i128::from(bytes[10]) << 80)
-            | (i128::from(bytes[11]) << 88)
-            | (i128::from(bytes[12]) << 96)
-            | (i128::from(bytes[13]) << 104)
-            | (i128::from(bytes[14]) << 112)
-            | (i128::from(bytes[15]) << 120);
-        Ok((num, 16))
+        Ok((num, end_pos))
     }
 }
 
 impl Readable for bool {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        u8::read(bytes).map(|(v, c)| (v == 1, c))
+    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
+        u8::read(bytes, offset).map(|(v, c)| (v == 1, c))
     }
 }
 
 impl Readable for usize {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        // TODO: fix this. usize isn't always u8
-        u8::read(bytes).map(|(v, c)| (v as usize, c))
+    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
+        // TODO: fix this. usize isn't always u8?
+        u8::read(bytes, offset).map(|(v, c)| (v as usize, c))
     }
 }
 
@@ -175,16 +55,11 @@ impl<T> Readable for Option<T>
 where
     T: Readable,
 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        let mut pos = 0;
-        let (is_some, p) = bool::read(bytes)?;
-        pos += p;
-
-        let (item, p) = T::read(bytes)?;
-        pos += p;
-
+    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
+        let (is_some, offset) = bool::read(bytes, offset)?;
+        let (item, offset) = T::read(bytes, offset)?;
         let opt = if is_some { Some(item) } else { None };
-        Ok((opt, pos))
+        Ok((opt, offset))
     }
 }
 
@@ -193,14 +68,14 @@ impl<T> Readable for Vec<T>
 where
     T: Readable,
 {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
+    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
         let mut pos = 0;
-        let (capacity, p) = usize::read(bytes)?;
+        let (capacity, p) = usize::read(bytes, offset)?;
         pos += p;
 
         let mut results = Vec::new();
         for _i in 0..capacity {
-            let (r, p) = T::read(&bytes[pos..])?;
+            let (r, p) = T::read(bytes, pos)?;
             results.push(r);
             pos += p;
         }
@@ -209,11 +84,72 @@ where
     }
 }
 
+impl<T> Readable for [T; 9]
+where
+    T: Readable + Default + Copy,
+{
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+        let (capacity, pos) = usize::read(bytes, pos)?;
+
+        let mut items = [T::default(); 9];
+        let mut pos = pos;
+        for item in items.iter_mut() {
+            let (v, p) = T::read(bytes, pos)?;
+            *item = v;
+            pos = p;
+        }
+
+        Ok((items, pos))
+    }
+}
+
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Readable for String {
-    fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
-        let (bytes_vec, pos) = Vec::<u8>::read(bytes)?;
-        let s = String::from_utf8_lossy(&bytes_vec);
+    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
+        // TODO: may need to read this as a cstr
+        let (bytes_vec, pos) = Vec::<u8>::read(bytes, offset)?;
+        let s = ::eosio_sys::CStr::from_bytes_with_nul(&bytes_vec);
+        let s = match s {
+            Ok(s) => s.to_string_lossy(),
+            Err(_) => String::from_utf8_lossy(&bytes_vec),
+        };
         Ok((s.into_owned(), pos))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sequence_pos() {
+        let bytes = &[
+            10, 9, 0, 1, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 20, 4, 3, 2, 1, 1, 1, 1, 1,
+        ];
+        let pos = 0;
+
+        let (_, pos) = u8::read(bytes, pos).unwrap();
+        assert_eq!(pos, 1);
+
+        let (_, pos) = u8::read(bytes, pos).unwrap();
+        assert_eq!(pos, 2);
+
+        let (_, pos) = u16::read(bytes, pos).unwrap();
+        assert_eq!(pos, 4);
+
+        let (_, pos) = u32::read(bytes, pos).unwrap();
+        assert_eq!(pos, 8);
+
+        let (_, pos) = u64::read(bytes, pos).unwrap();
+        assert_eq!(pos, 16);
+
+        let (_, pos) = u64::read(bytes, pos).unwrap();
+        assert_eq!(pos, 24);
+
+        let (_, pos) = u64::read(bytes, 2).unwrap();
+        assert_eq!(pos, 10);
+
+        let (_, pos) = u64::read(bytes, 10).unwrap();
+        assert_eq!(pos, 18);
     }
 }

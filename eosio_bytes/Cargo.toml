@@ -7,3 +7,6 @@ authors = ["Liam Curry <liam@sagan.software>"]
 default = ["alloc"]
 std = []
 alloc = []
+
+[dependencies]
+eosio_sys = { path = "../eosio_sys", version = "0.1" }

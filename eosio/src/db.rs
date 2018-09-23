@@ -1,5 +1,6 @@
 use core::marker::PhantomData;
 use eosio_bytes::*;
+use eosio_macros::*;
 use eosio_sys::ctypes::*;
 use eosio_types::*;
 
@@ -93,15 +94,21 @@ where
         unsafe {
             ::eosio_sys::db_get_i64(itr.0, ptr, 1000);
         }
-        T::read(&bytes).map(|(t, _)| t)
+        T::read(&bytes, 0).map(|(t, _)| t)
     }
 
     pub fn emplace<P>(&self, payer: P, item: T) -> TableIter
     where
         P: Into<AccountName>,
     {
-        let mut bytes = [0u8; 1000];
-        let pos = item.write(&mut bytes).unwrap();
+        let mut bytes = [0u8; 10000];
+        let pos = match item.write(&mut bytes, 0) {
+            Ok(pos) => pos,
+            Err(_) => {
+                eosio_assert!(false, "write");
+                0
+            }
+        };
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let itr = unsafe {
             ::eosio_sys::db_store_i64(
@@ -113,17 +120,22 @@ where
                 pos as u32,
             )
         };
-        itr.into()
+        TableIter(0)
     }
 
     pub fn modify<P>(&self, itr: TableIter, payer: P, item: T)
     where
         P: Into<AccountName>,
     {
-        let mut bytes = [0u8; 1000];
-        let pos = item.write(&mut bytes).unwrap();
+        let mut bytes = [0u8; 10000];
+        let pos = match item.write(&mut bytes, 0) {
+            Ok(pos) => pos,
+            Err(_) => {
+                eosio_assert!(false, "write");
+                0
+            }
+        };
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-
         unsafe { ::eosio_sys::db_update_i64(itr.0, payer.into().as_u64(), ptr, pos as u32) }
     }
 

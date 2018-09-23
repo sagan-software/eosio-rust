@@ -40,12 +40,11 @@ pub fn derive_writeable(input: proc_macro::TokenStream) -> proc_macro::TokenStre
                 let recurse = fields.named.iter().map(|f| {
                     let name = &f.ident;
                     let access = quote_spanned!(call_site => #var.#name);
-                    quote_spanned! {f.span() =>
-                        pos += ::eosio_bytes::Writeable::write(&#access, &mut bytes[pos..])?;
+                    quote_spanned! { f.span() =>
+                        let pos = ::eosio_bytes::Writeable::write(&#access, bytes, pos)?;
                     }
                 });
                 writes = quote! {
-                    let mut pos = 0;
                     #(#recurse)*
                     Ok(pos)
                 }
@@ -57,19 +56,18 @@ pub fn derive_writeable(input: proc_macro::TokenStream) -> proc_macro::TokenStre
                         span: call_site,
                     };
                     let access = quote_spanned!(call_site => #var.#index);
-                    quote_spanned! {f.span() =>
-                        pos += ::eosio_bytes::Writeable::write(&#access, &mut bytes[pos..])?;
+                    quote_spanned! { f.span() =>
+                        let pos = ::eosio_bytes::Writeable::write(&#access, bytes, pos)?;
                     }
                 });
                 writes = quote! {
-                    let mut pos = 0;
                     #(#recurse)*
                     Ok(pos)
                 }
             }
             Fields::Unit => {
                 writes = quote! {
-                    Ok(0)
+                    Ok(pos)
                 };
             }
         },
@@ -78,7 +76,7 @@ pub fn derive_writeable(input: proc_macro::TokenStream) -> proc_macro::TokenStre
 
     let expanded = quote! {
         impl #impl_generics ::eosio_bytes::Writeable for #name #ty_generics #where_clause {
-            fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
+            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
                 #writes
             }
         }
@@ -113,8 +111,7 @@ pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStrea
                     let ident = &f.ident;
                     let ty = &f.ty;
                     quote_spanned! {f.span() =>
-                        let (#ident, p) = <#ty as ::eosio_bytes::Readable>::read(&bytes[pos..])?;
-                        pos += p;
+                        let (#ident, pos) = <#ty as ::eosio_bytes::Readable>::read(bytes, pos)?;
                     }
                 });
                 let field_names = fields.named.iter().map(|f| {
@@ -124,7 +121,7 @@ pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStrea
                     }
                 });
                 reads = quote! {
-                    let mut pos = 0;
+                    let pos = 0;
                     #(#field_reads)*
                     let item = #name {
                         #(#field_names)*
@@ -137,8 +134,7 @@ pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStrea
                     let ty = &f.ty;
                     let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
                     quote_spanned! {f.span() =>
-                        let (#ident, p) = <#ty as ::eosio_bytes::Readable>::read(&bytes[pos..])?;
-                        pos += p;
+                        let (#ident, pos) = <#ty as ::eosio_bytes::Readable>::read(bytes, pos)?;
                     }
                 });
                 let fields_list = fields.unnamed.iter().enumerate().map(|(i, _f)| {
@@ -148,7 +144,6 @@ pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStrea
                     }
                 });
                 reads = quote! {
-                    let mut pos = 0;
                     #(#field_reads)*
                     let item = #name(
                         #(#fields_list)*
@@ -165,7 +160,7 @@ pub fn derive_readable(input: proc_macro::TokenStream) -> proc_macro::TokenStrea
 
     let expanded = quote! {
         impl #impl_generics ::eosio_bytes::Readable for #name #ty_generics #where_clause {
-            fn read(bytes: &[u8]) -> Result<(Self, usize), ReadError> {
+            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
                 #reads
             }
         }

@@ -1,4 +1,3 @@
-#![no_std]
 #![feature(proc_macro_non_items)]
 
 extern crate eosio;
@@ -9,8 +8,8 @@ extern crate eosio_types;
 use eosio::prelude::*;
 
 #[eosio_action]
-fn hi(name: Name) {
-    print!("Hello, ", name);
+fn hi(name: Name, name2: Name, name3: Name) {
+    eosio_print!("Hi, ", name);
 }
 
 eosio_abi!(hi);

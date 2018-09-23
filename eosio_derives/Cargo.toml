@@ -11,5 +11,8 @@ syn = { version = "0.15.4", features = ["full", "fold"] }
 proc-macro2 = "0.4"
 quote = "0.6"
 
+[dev-dependencies]
+eosio_bytes = { path = "../eosio_bytes", version = "0.1" }
+
 [[tests]]
 name = "tests"

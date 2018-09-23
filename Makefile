@@ -58,10 +58,12 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 
 %_example: target/wasm32-unknown-unknown/release/%_gc_opt_wat.wasm
 	$(CLEOS) set abi $(subst _,.,$*) /mnt/dev/examples/$*/$*.abi
-	$(CLEOS) set code $(subst _,.,$*) /mnt/dev/release/$*_gc_opt_wat.wasm
+	$(CLEOS) set code $(subst _,.,$*) /mnt/dev/release/$*_gc_opt.wasm
 
 say_hi:
 	$(CLEOS) push action hello hi '["contributor","tester"]' -p 'hello@active'
+
+simulate_tictactoe: create_game make_moves restart_game make_moves close_game
 
 create_game:
 	$(CLEOS) push action tictactoe create '["bob","alice"]' -p 'alice@active'
