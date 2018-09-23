@@ -183,7 +183,7 @@ pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
                 let (#pat, pos) = match #read {
                     Ok(v) => v,
                     Err(_) => {
-                        eosio_assert(false, c!("read"));
+                        eosio_assert_code(false, n!(read));
                         return
                     }
                 };
@@ -228,16 +228,16 @@ pub fn eosio_abi(input: TokenStream) -> TokenStream {
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
             if action == n!(onerror) {
-                eosio_assert(
+                eosio_assert_code(
                     code == n!(eosio),
-                    c!("onerror action's are only valid from the \"eosio\" system account")
+                    n!(badonerror)
                 );
             }
             if code == receiver || action == n!(onerror) {
                 match action {
                     #actions
                     _ => {
-                        eosio_assert(false, c!("bad action"));
+                        eosio_assert_code(false, n!(badaction));
                     }
                 }
             }

@@ -9,6 +9,23 @@ pub fn eosio_assert(test: bool, msg: &str) {
     unsafe { ::eosio_sys::eosio_assert(test, msg_ptr) }
 }
 
+pub fn eosio_assert_code<C>(test: bool, code: C)
+where
+    C: Into<u64>,
+{
+    let test = if test { 1 } else { 0 };
+    let code: u64 = code.into();
+    unsafe { ::eosio_sys::eosio_assert_code(test, code) }
+}
+
+pub fn eosio_exit<C>(code: C)
+where
+    C: Into<i32>,
+{
+    let code: i32 = code.into();
+    unsafe { ::eosio_sys::eosio_exit(code) }
+}
+
 pub fn current_receiver() -> AccountName {
     let name = unsafe { ::eosio_sys::current_receiver() };
     Name::new(name)

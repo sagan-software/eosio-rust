@@ -52,7 +52,7 @@ where
 
 impl Writeable for usize {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        // TODO: fix this when usize is larger than 1 byte
+        // TODO: fix this when usize is larger than 1 byte?
         (*self as u8).write(bytes, pos)
     }
 }
@@ -98,7 +98,7 @@ macro_rules! impl_fixed_array {
             T: Writeable,
         {
             fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-                (&self).write(bytes, pos)
+                (&self[..]).write(bytes, pos)
             }
         }
     };
@@ -137,25 +137,55 @@ impl Writeable for String {
     }
 }
 
-// impl<'a> Writeable for &'a str {
-//     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-//         let pos = self.len().write(bytes)?;
-//         let pos = pos + self.as_bytes().write(&mut bytes[pos..])?;
-//         Ok(pos)
-//     }
-// }
+impl<'a> Writeable for &'a str {
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let pos = self.len().write(bytes, pos)?;
+        let pos = self.as_bytes().write(bytes, pos)?;
+        Ok(pos)
+    }
+}
 
-// impl<A, B> Writeable for (A, B)
-// where
-//     A: Writeable,
-//     B: Writeable,
-// {
-//     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-//         let pos = self.0.write(bytes)?;
-//         let pos = pos + self.1.write(&mut bytes[pos..])?;
-//         Ok(pos)
-//     }
-// }
+impl<A, B> Writeable for (A, B)
+where
+    A: Writeable,
+    B: Writeable,
+{
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let pos = self.0.write(bytes, pos)?;
+        let pos = self.1.write(bytes, pos)?;
+        Ok(pos)
+    }
+}
+
+impl<A, B, C> Writeable for (A, B, C)
+where
+    A: Writeable,
+    B: Writeable,
+    C: Writeable,
+{
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let pos = self.0.write(bytes, pos)?;
+        let pos = self.1.write(bytes, pos)?;
+        let pos = self.2.write(bytes, pos)?;
+        Ok(pos)
+    }
+}
+
+impl<A, B, C, D> Writeable for (A, B, C, D)
+where
+    A: Writeable,
+    B: Writeable,
+    C: Writeable,
+    D: Writeable,
+{
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let pos = self.0.write(bytes, pos)?;
+        let pos = self.1.write(bytes, pos)?;
+        let pos = self.2.write(bytes, pos)?;
+        let pos = self.3.write(bytes, pos)?;
+        Ok(pos)
+    }
+}
 
 #[cfg(test)]
 mod tests {

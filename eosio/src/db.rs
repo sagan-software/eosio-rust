@@ -89,26 +89,20 @@ where
     }
 
     pub fn get(&self, itr: TableIter) -> Result<T, ReadError> {
-        let mut bytes = [0u8; 1000];
+        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db_get_i64(itr.0, ptr, 1000);
+            ::eosio_sys::db_get_i64(itr.0, ptr, 10000);
         }
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    pub fn emplace<P>(&self, payer: P, item: T) -> TableIter
+    pub fn emplace<P>(&self, payer: P, item: T) -> Result<TableIter, WriteError>
     where
         P: Into<AccountName>,
     {
-        let mut bytes = [0u8; 10000];
-        let pos = match item.write(&mut bytes, 0) {
-            Ok(pos) => pos,
-            Err(_) => {
-                eosio_assert!(false, "write");
-                0
-            }
-        };
+        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let itr = unsafe {
             ::eosio_sys::db_store_i64(
@@ -120,23 +114,18 @@ where
                 pos as u32,
             )
         };
-        TableIter(0)
+        Ok(TableIter(itr))
     }
 
-    pub fn modify<P>(&self, itr: TableIter, payer: P, item: T)
+    pub fn modify<P>(&self, itr: TableIter, payer: P, item: T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
-        let mut bytes = [0u8; 10000];
-        let pos = match item.write(&mut bytes, 0) {
-            Ok(pos) => pos,
-            Err(_) => {
-                eosio_assert!(false, "write");
-                0
-            }
-        };
+        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         unsafe { ::eosio_sys::db_update_i64(itr.0, payer.into().as_u64(), ptr, pos as u32) }
+        Ok(pos)
     }
 
     pub fn erase(&self, itr: TableIter) {

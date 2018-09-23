@@ -12,19 +12,26 @@ const BOARD_WIDTH: u16 = 3;
 const BOARD_HEIGHT: u16 = 3;
 const BOARD_AREA: usize = (BOARD_WIDTH * BOARD_HEIGHT) as usize;
 
+enum CreateError {
+    EqualChallengerAndHost = 10,
+    GameAlreadyExists,
+    GameWriteError,
+}
+
 #[eosio_action]
 fn create(challenger: AccountName, host: AccountName) {
-    eosio_print!(challenger, host);
     require_auth(host);
-    eosio_assert(
+    eosio_assert_code(
         challenger != host,
-        c!("challenger shouldn't be the same as host"),
+        CreateError::EqualChallengerAndHost as u64,
     );
 
     let table = Game::table(host);
 
-    // eosio_print!("TMP: ", challenger, ", ", host);
-    eosio_assert(!table.exists(challenger), c!("game already existss"));
+    eosio_assert_code(
+        !table.exists(challenger),
+        CreateError::GameAlreadyExists as u64,
+    );
 
     let game = Game {
         challenger,
@@ -34,7 +41,15 @@ fn create(challenger: AccountName, host: AccountName) {
         board: [0; BOARD_AREA],
     };
 
-    table.emplace(host, game);
+    let write_result = table.emplace(host, game);
+    eosio_assert_code(write_result.is_ok(), CreateError::GameWriteError as u64);
+}
+
+enum RestartError {
+    GameNotFound = 20,
+    GameReadError,
+    NotYourGame,
+    GameWriteError,
 }
 
 #[eosio_action]
@@ -43,26 +58,31 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
 
     let table = Game::table(host);
     let itr = table.find(challenger);
-    eosio_assert(!table.is_end(itr), c!("game doesn't existss"));
+    eosio_assert_code(!table.is_end(itr), RestartError::GameNotFound as u64);
 
     let mut game = match table.get(itr) {
         Ok(game) => game,
         Err(_) => {
-            eosio_assert(false, c!("couldn't get game from table"));
+            eosio_assert_code(false, RestartError::GameReadError as u64);
             return;
         }
     };
 
-    eosio_assert(
+    eosio_assert_code(
         by == game.host || by == game.challenger,
-        c!("this is not your game!"),
+        RestartError::NotYourGame as u64,
     );
 
     game.board = [0; BOARD_AREA];
     game.turn = host;
     game.winner = n!(none).into();
 
-    table.modify(itr, host, game);
+    let write_result = table.modify(itr, host, game);
+    eosio_assert_code(write_result.is_ok(), RestartError::GameWriteError as u64);
+}
+
+enum CloseError {
+    GameNotFound = 30,
 }
 
 #[eosio_action]
@@ -71,9 +91,19 @@ fn close(challenger: AccountName, host: AccountName) {
 
     let table = Game::table(host);
     let itr = table.find(challenger);
-    eosio_assert(!table.is_end(itr), c!("game doesn't exists"));
+    eosio_assert_code(!table.is_end(itr), CloseError::GameNotFound as u64);
 
     table.erase(itr);
+}
+
+enum MoveError {
+    GameNotFound = 40,
+    GameReadError,
+    NotYourGame,
+    GameEnded,
+    NotYourTurn,
+    InvalidMove,
+    GameWriteError,
 }
 
 #[eosio_action]
@@ -82,25 +112,25 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
     let table = Game::table(host);
     let itr = table.find(challenger);
-    eosio_assert(!table.is_end(itr), c!("game doesn't exists"));
+    eosio_assert_code(!table.is_end(itr), MoveError::GameNotFound as u64);
 
     let mut game = match table.get(itr) {
         Ok(game) => game,
         Err(_) => {
-            eosio_assert(false, c!("couldn't get game from table"));
+            eosio_assert_code(false, MoveError::GameReadError as u64);
             return;
         }
     };
 
-    eosio_assert(
+    eosio_assert_code(
         by == game.host || by == game.challenger,
-        c!("this is not your game!"),
+        MoveError::NotYourGame as u64,
     );
-    eosio_assert(game.winner == n!(none).into(), c!("the game has ended!"));
-    eosio_assert(by == game.turn, c!("it's not your turn yet!"));
-    eosio_assert(
+    eosio_assert_code(game.winner == n!(none).into(), MoveError::GameEnded as u64);
+    eosio_assert_code(by == game.turn, MoveError::NotYourTurn as u64);
+    eosio_assert_code(
         is_valid_move(row, col, &game.board),
-        c!("not a valid movement!"),
+        MoveError::InvalidMove as u64,
     );
 
     let loc = movement_location(row, col);
@@ -120,7 +150,8 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
     game.winner = game.get_winner();
 
-    table.modify(itr, host, game);
+    let write_result = table.modify(itr, host, game);
+    eosio_assert_code(write_result.is_ok(), MoveError::GameWriteError as u64);
 }
 
 eosio_abi!(create, restart, close, makemove);

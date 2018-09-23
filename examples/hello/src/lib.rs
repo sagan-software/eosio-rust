@@ -8,7 +8,7 @@ extern crate eosio_types;
 use eosio::prelude::*;
 
 #[eosio_action]
-fn hi(name: Name, name2: Name, name3: Name) {
+fn hi(name: Name) {
     eosio_print!("Hi, ", name);
 }
 
