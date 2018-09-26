@@ -1,7 +1,6 @@
 use eosio_bytes::*;
-use eosio_macros::*;
-use eosio_sys::ctypes::c_void;
 use eosio_types::*;
+use print::Printable;
 
 pub fn eosio_assert(test: bool, msg: &str) {
     let test = if test { 1 } else { 0 };
@@ -59,26 +58,40 @@ pub fn require_write_lock(name: AccountName) {
     unsafe { ::eosio_sys::require_write_lock(name.as_u64()) }
 }
 
-pub fn send_inline<T>(action: Action<T>)
-where
-    T: Writeable,
-{
-    let mut bytes = [0u8; 10000];
-    let pos = action.write(&mut bytes, 0).unwrap();
-    let ptr = bytes[..pos].as_mut_ptr();
-    unsafe { ::eosio_sys::send_inline(ptr, pos) }
+pub enum InlineError {
+    WriteError,
 }
 
-pub fn send_context_free_inline<T>(action: Action<T>)
+pub fn send_inline<T>(action: &Action<T>) -> Result<(), InlineError>
 where
     T: Writeable,
 {
-    eosio_assert!(
-        action.authorization.len() == 0,
-        "context free actions cannot have authorizations"
-    );
-    let mut bytes = [0u8; 10000];
-    let pos = action.write(&mut bytes, 0).unwrap();
+    let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+    let pos = action
+        .write(&mut bytes, 0)
+        .map_err(|_| InlineError::WriteError)?;
+    let ptr = bytes[..].as_mut_ptr();
+    unsafe { ::eosio_sys::send_inline(ptr, pos) }
+    Ok(())
+}
+
+pub enum ContextFreeInlineError {
+    NoAuthorizationsAllowed,
+    WriteError,
+}
+
+pub fn send_context_free_inline<T>(action: &Action<T>) -> Result<(), ContextFreeInlineError>
+where
+    T: Writeable,
+{
+    if action.authorization.is_empty() {
+        return Err(ContextFreeInlineError::NoAuthorizationsAllowed);
+    }
+    let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+    let pos = action
+        .write(&mut bytes, 0)
+        .map_err(|_| ContextFreeInlineError::WriteError)?;
     let ptr = bytes[..pos].as_mut_ptr();
     unsafe { ::eosio_sys::send_context_free_inline(ptr, pos) }
+    Ok(())
 }

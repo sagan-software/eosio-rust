@@ -1,21 +1,23 @@
-#![no_std]
+#![cfg_attr(feature = "alloc", feature(alloc))]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
-#![feature(alloc)]
 
-extern crate alloc;
 extern crate memchr;
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+extern crate std;
 
 mod bindings;
-mod cstr;
+// mod cstr;
 
 pub use self::bindings::*;
 pub use self::ctypes::*;
 
 pub mod ctypes {
     pub use bindings::{int128_t, uint128_t};
-    pub use cstr::*;
+    // pub use cstr::*;
+    pub use std::ffi::*;
     pub type c_char = c_uchar;
     pub type c_int = i32;
     pub type c_uint = u32;

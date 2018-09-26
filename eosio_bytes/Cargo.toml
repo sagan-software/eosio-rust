@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 
 [features]
-default = ["alloc"]
+default = ["std"]
 std = []
 alloc = []
 

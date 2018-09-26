@@ -3,6 +3,11 @@ name = "eosio"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 
+[features]
+default = ["std"]
+std = []
+alloc = []
+
 [dependencies]
 eosio_bytes = { path = "../eosio_bytes", version = "0.1" }
 eosio_types = { path = "../eosio_types", version = "0.1" }

@@ -8,7 +8,3 @@ crate-type = ["cdylib"]
 
 [dependencies]
 eosio = { path = "../../eosio", version = "0.1" }
-eosio_bytes = { path = "../../eosio_bytes", version = "0.1" }
-eosio_types = { path = "../../eosio_types", version = "0.1" }
-eosio_sys = { path = "../../eosio_sys", version = "0.1" }
-eosio_derives = { path = "../../eosio_derives", version = "0.1" }

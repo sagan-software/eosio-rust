@@ -1,4 +1,4 @@
-# eosio-rs
+# eosiolib.rs
 
 > ***Libraries for building EOS smart contracts in Rust***
 

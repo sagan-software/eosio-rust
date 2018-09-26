@@ -68,16 +68,15 @@ impl<T> Readable for Vec<T>
 where
     T: Readable,
 {
-    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
-        let mut pos = 0;
-        let (capacity, p) = usize::read(bytes, offset)?;
-        pos += p;
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+        let (capacity, pos) = usize::read(bytes, pos)?;
 
-        let mut results = Vec::new();
+        let mut results = Vec::with_capacity(capacity);
+        let mut pos = pos;
         for _i in 0..capacity {
             let (r, p) = T::read(bytes, pos)?;
             results.push(r);
-            pos += p;
+            pos = p;
         }
 
         Ok((results, pos))

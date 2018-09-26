@@ -131,17 +131,18 @@ impl_fixed_array!(9);
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Writeable for String {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        // let s = ::eosio_sys::CString::new(self.clone()).unwrap();
-        // s.into_bytes_with_nul().write(bytes)
-        self.as_bytes().write(bytes, pos)
+        let s = ::eosio_sys::CString::new(self.clone()).unwrap();
+        s.as_bytes_with_nul().write(bytes, pos)
+        // self.as_bytes().write(bytes, pos)
     }
 }
 
 impl<'a> Writeable for &'a str {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let pos = self.len().write(bytes, pos)?;
-        let pos = self.as_bytes().write(bytes, pos)?;
-        Ok(pos)
+        // let pos = self.len().write(bytes, pos)?;
+        // let pos = self.as_bytes().write(bytes, pos)?;
+        // Ok(pos)
+        self.as_bytes().write(bytes, pos)
     }
 }
 

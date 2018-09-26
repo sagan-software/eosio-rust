@@ -1,5 +1,6 @@
 use eosio_macros::c;
 use eosio_types::*;
+use lib::String;
 
 pub trait Printable {
     fn print(&self);
@@ -61,7 +62,16 @@ impl Printable for i64 {
 
 impl<'a> Printable for &'a str {
     fn print(&self) {
+        // TODO: Convert to CStr first?
         unsafe { ::eosio_sys::prints(self.as_ptr()) }
+    }
+}
+
+#[cfg(any(feature = "std", feature = "alloc"))]
+impl<'a> Printable for String {
+    fn print(&self) {
+        // TODO: Convert to CString first?
+        self.as_str().print()
     }
 }
 
@@ -87,5 +97,32 @@ impl Printable for f32 {
 impl Printable for f64 {
     fn print(&self) {
         unsafe { ::eosio_sys::printdf(*self) }
+    }
+}
+
+impl Printable for char {
+    fn print(&self) {
+        let num = *self as u8;
+        let ptr = &num as *const ::eosio_sys::c_char;
+        unsafe { ::eosio_sys::prints_l(ptr, 1) }
+    }
+}
+
+impl Printable for Symbol {
+    fn print(&self) {
+        self.precision().print();
+        ','.print();
+
+        // not working
+        let mut sym = self.name();
+        let ff: u64 = 0xff;
+        for _i in 0..7 {
+            let c = sym & ff;
+            if c == 0 {
+                return;
+            }
+            (c as u8 as char).print();
+            sym >>= 8;
+        }
     }
 }

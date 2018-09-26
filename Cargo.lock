@@ -55,9 +55,6 @@ name = "eosio_token"
 version = "0.1.0"
 dependencies = [
  "eosio 0.1.0",
- "eosio_bytes 0.1.0",
- "eosio_sys 0.1.0",
- "eosio_types 0.1.0",
 ]
 
 [[package]]
@@ -73,10 +70,6 @@ name = "hello"
 version = "0.1.0"
 dependencies = [
  "eosio 0.1.0",
- "eosio_bytes 0.1.0",
- "eosio_derives 0.1.0",
- "eosio_sys 0.1.0",
- "eosio_types 0.1.0",
 ]
 
 [[package]]
@@ -129,9 +122,6 @@ name = "tictactoe"
 version = "0.1.0"
 dependencies = [
  "eosio 0.1.0",
- "eosio_bytes 0.1.0",
- "eosio_sys 0.1.0",
- "eosio_types 0.1.0",
 ]
 
 [[package]]

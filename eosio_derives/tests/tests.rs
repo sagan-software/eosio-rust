@@ -9,6 +9,8 @@ use eosio_derives::*;
 #[test]
 fn test_write_read_struct_named_fields() {
     #[derive(Readable, Writeable, PartialEq, Debug)]
+    #[readable_path = "::eosio_bytes::Readable"]
+    #[writeable_path = "::eosio_bytes::Writeable"]
     struct Thing {
         a: u64,
         b: u64,
@@ -33,6 +35,8 @@ fn test_write_read_struct_named_fields() {
 #[test]
 fn test_write_read_struct_unnamed_fields() {
     #[derive(Readable, Writeable, PartialEq, Debug)]
+    #[readable_path = "::eosio_bytes::Readable"]
+    #[writeable_path = "::eosio_bytes::Writeable"]
     struct Thing(u64, u64, u32);
 
     let thing1 = Thing(1, 2, 3);

@@ -3,6 +3,8 @@ use eosio_derives::*;
 use lib::*;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
+#[readable_path = "::eosio_bytes::Readable"]
+#[writeable_path = "::eosio_bytes::Writeable"]
 pub struct Name(u64);
 
 impl Name {

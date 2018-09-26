@@ -1,15 +1,9 @@
-#![no_std]
-#![feature(alloc, proc_macro_non_items)]
+#![feature(proc_macro_non_items)]
 
-#[macro_use]
-extern crate alloc;
 extern crate eosio;
-extern crate eosio_bytes;
-extern crate eosio_sys;
-extern crate eosio_types;
 
-use alloc::prelude::{String, ToString, Vec};
 use eosio::prelude::*;
+use std::string::ToString;
 
 #[eosio_action]
 fn create(issuer: AccountName, max_supply: Asset) {
@@ -19,12 +13,13 @@ fn create(issuer: AccountName, max_supply: Asset) {
     let symbol = max_supply.symbol;
     eosio_assert(max_supply.amount > 0, c!("max-supply must be positive"));
 
-    let stats_table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
-    eosio_print!(receiver, ", ", symbol.name());
-    eosio_assert_code(
-        !stats_table.exists(symbol.name()),
-        20u64
-        // c!("token with symbol already exists"),
+    let symbol_name = symbol.name();
+    let table = CurrencyStats::table(receiver, symbol_name, n!(stat));
+
+    let itr = table.find(symbol_name);
+    eosio_assert(
+        !table.exists(symbol_name),
+        c!("token with symbol already exists"),
     );
 
     let stats = CurrencyStats {
@@ -33,7 +28,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
         issuer,
     };
 
-    stats_table.emplace(receiver, stats);
+    table.emplace(receiver, stats);
 }
 
 #[eosio_action]
@@ -42,13 +37,14 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     let symbol = quantity.symbol;
 
     eosio_assert(memo.len() <= 256, c!("memo has more than 256 bytes"));
-    let stats_table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
-    let itr = stats_table.find(symbol.name());
+    let table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
+    let itr = table.find(symbol.name());
     eosio_assert(
-        !stats_table.is_end(itr),
+        !table.is_end(itr),
         c!("token with symbol does not exist, create token before issue"),
     );
-    let mut st = stats_table.get(itr).unwrap();
+    let mut st = table.get(itr).unwrap();
+    eosio_print!("test: ", memo.as_str());
 
     require_auth(st.issuer);
     eosio_assert(quantity.amount > 0, c!("must issue positive quantity"));
@@ -62,25 +58,35 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     );
 
     st.supply.amount += quantity.amount;
-    stats_table.modify(itr, 0, st);
+    if table.modify(itr, 0, st).is_err() {
+        eosio_assert(false, c!("failed to modify stats"));
+        return;
+    }
 
     add_balance(st.issuer, quantity, st.issuer);
 
     if to != st.issuer {
-        // send_inline(Action {
-        //     account: receiver,
-        //     name: n!(transfer).into(),
-        //     authorization: vec![PermissionLevel {
-        //         actor: st.issuer,
-        //         permission: n!(active).into(),
-        //     }],
-        //     data: TransferArgs {
-        //         from: receiver,
-        //         to,
-        //         quantity: quantity,
-        //         memo,
-        //     },
-        // });
+        let result = send_inline(&Action {
+            account: receiver,
+            name: n!(transfer).into(),
+            authorization: &[PermissionLevel {
+                actor: st.issuer,
+                permission: n!(active).into(),
+            }],
+            data: TransferArgs {
+                from: st.issuer,
+                to: to,
+                quantity,
+            },
+        });
+        match result {
+            Ok(_) => {
+                eosio_print!("success");
+            }
+            Err(_) => {
+                eosio_assert(false, c!("failed to send inline action"));
+            }
+        }
     }
 }
 
@@ -142,7 +148,8 @@ fn retire(quantity: Asset, memo: String) {
 }
 
 #[eosio_action]
-fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
+fn transfer(from: AccountName, to: AccountName, quantity: Asset) {
+    eosio_print!("!!! FROM: ", from, " !!! TO: ", to);
     eosio_assert(from != to, c!("cannot transfer to self"));
     require_auth(from);
     eosio_assert(is_account(to), c!("to account does not exist"));
@@ -155,22 +162,22 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
         !stats_table.is_end(itr),
         c!("token with symbol does not exist"),
     );
-    let st = stats_table.get(itr).unwrap();
+    // let st = stats_table.get(itr).unwrap();
 
-    require_recipient(from);
-    require_recipient(to);
+    // require_recipient(from);
+    // require_recipient(to);
 
-    eosio_assert(quantity.amount > 0, c!("must transfer positive quantity"));
-    eosio_assert(
-        quantity.symbol == st.supply.symbol,
-        c!("symbol precision mismatch"),
-    );
-    eosio_assert(memo.len() <= 256, c!("memo has more than 256 bytes"));
+    // eosio_assert(quantity.amount > 0, c!("must transfer positive quantity"));
+    // eosio_assert(
+    //     quantity.symbol == st.supply.symbol,
+    //     c!("symbol precision mismatch"),
+    // );
+    // // eosio_assert(memo.len() <= 256, c!("memo has more than 256 bytes"));
 
-    let payer = if has_auth(to) { to } else { from };
+    // let payer = if has_auth(to) { to } else { from };
 
-    sub_balance(from, quantity);
-    add_balance(to, quantity, payer);
+    // sub_balance(from, quantity);
+    // add_balance(to, quantity, payer);
 }
 
 eosio_abi!(create, issue, transfer, open, close, retire);
@@ -229,5 +236,5 @@ struct TransferArgs {
     from: AccountName,
     to: AccountName,
     quantity: Asset,
-    memo: String,
+    // memo: String,
 }

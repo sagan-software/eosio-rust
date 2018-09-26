@@ -11,6 +11,6 @@ doctest = false
 memchr = { version = "2.0", default-features = false }
 
 [features]
-default = ["alloc"]
+default = ["std"]
 std = []
 alloc = []

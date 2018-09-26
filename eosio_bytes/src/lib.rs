@@ -2,7 +2,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(try_from)]
 
-#[cfg(feature = "alloc")]
+#[cfg(all(feature = "alloc", not(feature = "std")))]
 extern crate alloc;
 extern crate eosio_sys;
 
@@ -14,9 +14,9 @@ mod lib {
         pub use std::*;
     }
 
-    pub use core::ops::{BitAnd, BitOr, Mul, Shl, Shr};
+    pub use self::core::ops::{BitAnd, BitOr, Mul, Shl, Shr};
 
-    pub use core::convert::TryInto;
+    pub use self::core::convert::TryInto;
 
     #[cfg(all(feature = "alloc", not(feature = "std")))]
     pub use alloc::string::{String, ToString};

@@ -1,8 +1,9 @@
 use core::marker::PhantomData;
 use eosio_bytes::*;
-use eosio_macros::*;
+use eosio_macros::c;
 use eosio_sys::ctypes::*;
 use eosio_types::*;
+use print::Printable;
 
 pub trait TableRow: Readable + Writeable {
     fn primary_key(&self) -> u64;
@@ -23,6 +24,20 @@ pub struct TableIter(i32);
 impl From<i32> for TableIter {
     fn from(itr: i32) -> Self {
         TableIter(itr)
+    }
+}
+
+impl Printable for TableIter {
+    fn print(&self) {
+        c!("TableIter(").print();
+        self.as_i32().print();
+        c!(")").print();
+    }
+}
+
+impl TableIter {
+    pub fn as_i32(&self) -> i32 {
+        self.0
     }
 }
 

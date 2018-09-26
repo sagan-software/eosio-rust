@@ -1,7 +1,7 @@
 #![cfg_attr(feature = "alloc", feature(alloc))]
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(feature = "alloc")]
+#[cfg(all(feature = "alloc", not(feature = "std")))]
 extern crate alloc;
 extern crate eosio_bytes;
 extern crate eosio_derives;

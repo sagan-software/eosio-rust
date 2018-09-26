@@ -3,19 +3,21 @@ use eosio_derives::*;
 use names::AccountName;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
+#[readable_path = "::eosio_bytes::Readable"]
+#[writeable_path = "::eosio_bytes::Writeable"]
 pub struct Symbol(u64);
 
 impl Symbol {
-    pub fn precision(&self) -> u64 {
-        self.0 & 0xff
+    pub fn precision(self) -> u64 {
+        self.0 & 255
     }
-    pub fn name(&self) -> u64 {
+    pub fn name(self) -> u64 {
         self.0 >> 8
     }
-    pub fn name_length(&self) -> usize {
+    pub fn name_length(self) -> usize {
         symbol_name_length(self.0)
     }
-    pub fn value(&self) -> u64 {
+    pub fn value(self) -> u64 {
         self.0
     }
 }
@@ -51,7 +53,7 @@ pub fn symbol_name_length(symbol: u64) -> usize {
     let mut sym = symbol;
     sym >>= 8; // skip precision
     let mut len = 0;
-    while sym & 0xff > 0 && len <= 7 {
+    while sym & 255 > 0 && len <= 7 {
         len += 1;
         sym >>= 8;
     }
@@ -59,6 +61,8 @@ pub fn symbol_name_length(symbol: u64) -> usize {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
+#[readable_path = "::eosio_bytes::Readable"]
+#[writeable_path = "::eosio_bytes::Writeable"]
 pub struct ExtendedSymbol {
     pub symbol: Symbol,
     pub contract: AccountName,
