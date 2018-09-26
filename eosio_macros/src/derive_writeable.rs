@@ -1,18 +1,15 @@
 use proc_macro::TokenStream;
 use syn::spanned::Spanned;
-use syn::{Attribute, Data, DeriveInput, Fields, GenericParam, Index, Lit, Meta, Path};
+use syn::{Attribute, Data, DeriveInput, Fields, GenericParam, Index, Meta, Path};
 
 fn get_writeable_path(attrs: &[Attribute]) -> Path {
-    let mut path: Path = parse_quote!(::eosio::bytes::Writeable);
+    let mut path: Path = parse_quote!(::eosio::writeable);
     for attr in attrs {
         if let Some(meta) = attr.interpret_meta() {
             match meta {
-                Meta::NameValue(nv) => {
-                    if nv.ident != "writeable_path" {
-                        continue;
-                    }
-                    if let Lit::Str(lit) = nv.lit {
-                        path = lit.parse().unwrap();
+                Meta::Word(word) => {
+                    if word == "eosio_internal" {
+                        path = parse_quote!(::writeable);
                     }
                 }
                 _ => continue,
@@ -32,7 +29,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let mut generics = input.generics;
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#writeable_path));
+            type_param
+                .bounds
+                .push(parse_quote!(#writeable_path::Writeable));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -47,7 +46,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let name = &f.ident;
                     let access = quote_spanned!(call_site => #var.#name);
                     quote_spanned! { f.span() =>
-                        let pos = #writeable_path::write(&#access, bytes, pos)?;
+                        let pos = #writeable_path::Writeable::write(&#access, bytes, pos)?;
                     }
                 });
                 writes = quote! {
@@ -63,7 +62,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     };
                     let access = quote_spanned!(call_site => #var.#index);
                     quote_spanned! { f.span() =>
-                        let pos = #writeable_path::write(&#access, bytes, pos)?;
+                        let pos = #writeable_path::Writeable::write(&#access, bytes, pos)?;
                     }
                 });
                 writes = quote! {
@@ -81,8 +80,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        impl #impl_generics #writeable_path for #name #ty_generics #where_clause {
-            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        impl #impl_generics #writeable_path::Writeable for #name #ty_generics #where_clause {
+            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, #writeable_path::WriteError> {
                 #writes
             }
         }

@@ -1,4 +1,4 @@
-use eosio_types::*;
+use eosio_sys::{string_to_symbol, ToSymbolError};
 use proc_macro::{Span, TokenStream};
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{Ident, LitInt};

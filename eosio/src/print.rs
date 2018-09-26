@@ -1,15 +1,9 @@
 use eosio_macros::c;
-use eosio_types::*;
 use lib::String;
+use names::*;
 
 pub trait Printable {
     fn print(&self);
-}
-
-impl Printable for Name {
-    fn print(&self) {
-        unsafe { ::eosio_sys::printn(self.as_u64()) }
-    }
 }
 
 impl Printable for u8 {
@@ -105,24 +99,5 @@ impl Printable for char {
         let num = *self as u8;
         let ptr = &num as *const ::eosio_sys::c_char;
         unsafe { ::eosio_sys::prints_l(ptr, 1) }
-    }
-}
-
-impl Printable for Symbol {
-    fn print(&self) {
-        self.precision().print();
-        ','.print();
-
-        // not working
-        let mut sym = self.name();
-        let ff: u64 = 0xff;
-        for _i in 0..7 {
-            let c = sym & ff;
-            if c == 0 {
-                return;
-            }
-            (c as u8 as char).print();
-            sym >>= 8;
-        }
     }
 }

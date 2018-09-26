@@ -1,18 +1,16 @@
 use proc_macro::TokenStream;
 use syn::spanned::Spanned;
-use syn::{Attribute, Data, DeriveInput, Fields, GenericParam, Ident, Lit, Meta, Path};
+use syn::{Attribute, Data, DeriveInput, Fields, GenericParam, Ident, Meta, Path};
 
 fn get_readable_path(attrs: &[Attribute]) -> Path {
-    let mut path: Path = parse_quote!(::eosio::bytes::Readable);
+    let mut path: Path = parse_quote!(::eosio::readable);
     for attr in attrs {
         if let Some(meta) = attr.interpret_meta() {
             match meta {
-                Meta::NameValue(nv) => {
-                    if nv.ident != "readable_path" {
-                        continue;
-                    }
-                    if let Lit::Str(lit) = nv.lit {
-                        path = lit.parse().unwrap();
+                Meta::Word(word) => {
+                    if word == "eosio_internal" {
+                        path = parse_quote!(::readable);
+                        break;
                     }
                 }
                 _ => continue,
@@ -47,7 +45,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ident = &f.ident;
                     let ty = &f.ty;
                     quote_spanned! {f.span() =>
-                        let (#ident, pos) = <#ty as #readable_path>::read(bytes, pos)?;
+                        let (#ident, pos) = <#ty as #readable_path::Readable>::read(bytes, pos)?;
                     }
                 });
                 let field_names = fields.named.iter().map(|f| {
@@ -69,7 +67,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ty = &f.ty;
                     let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
                     quote_spanned! {f.span() =>
-                        let (#ident, pos) = <#ty as #readable_path>::read(bytes, pos)?;
+                        let (#ident, pos) = <#ty as #readable_path::Readable>::read(bytes, pos)?;
                     }
                 });
                 let fields_list = fields.unnamed.iter().enumerate().map(|(i, _f)| {
@@ -94,8 +92,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        impl #impl_generics #readable_path for #name #ty_generics #where_clause {
-            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+        impl #impl_generics #readable_path::Readable for #name #ty_generics #where_clause {
+            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), #readable_path::ReadError> {
                 #reads
             }
         }

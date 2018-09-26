@@ -1,9 +1,10 @@
-use core::marker::PhantomData;
-use eosio_bytes::*;
 use eosio_macros::c;
 use eosio_sys::ctypes::*;
-use eosio_types::*;
+use lib::PhantomData;
+use names::*;
 use print::Printable;
+use readable::{ReadError, Readable};
+use writeable::{WriteError, Writeable};
 
 pub trait TableRow: Readable + Writeable {
     fn primary_key(&self) -> u64;

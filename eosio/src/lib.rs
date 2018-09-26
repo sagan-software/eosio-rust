@@ -1,65 +1,64 @@
-// #![no_std]
-#![feature(
-    alloc,
-    // core_intrinsics,
-    // lang_items,
-    // alloc_error_handler,
-    proc_macro_non_items
-)]
+#![cfg_attr(feature = "alloc", feature(alloc))]
+#![cfg_attr(not(feature = "std"), no_std)]
+#![feature(proc_macro_non_items, try_from, custom_attribute)]
 
+#[cfg(all(feature = "alloc", not(feature = "std")))]
 extern crate alloc;
-extern crate core;
-extern crate eosio_bytes;
-extern crate eosio_derives;
 extern crate eosio_macros;
 extern crate eosio_sys;
-extern crate eosio_types;
-extern crate wee_alloc;
 
 mod lib {
-    #[cfg(not(feature = "std"))]
-    pub use core::*;
-    #[cfg(feature = "std")]
-    pub use std::*;
+    mod core {
+        #[cfg(not(feature = "std"))]
+        pub use core::*;
+        #[cfg(feature = "std")]
+        pub use std::*;
+    }
+
+    pub use self::core::convert::TryInto;
+    pub use self::core::marker::PhantomData;
+    pub use self::core::ops::{BitAnd, BitOr, Mul, Shl, Shr};
 
     #[cfg(all(feature = "alloc", not(feature = "std")))]
     pub use alloc::string::{String, ToString};
     #[cfg(feature = "std")]
     pub use std::string::String;
+
+    #[cfg(all(feature = "alloc", not(feature = "std")))]
+    pub use alloc::vec::Vec;
+    #[cfg(feature = "std")]
+    pub use std::vec::Vec;
 }
 
 pub mod action;
+pub mod asset;
 pub mod db;
+pub mod fixed_size;
+pub mod names;
 pub mod print;
+pub mod readable;
+pub mod symbol;
+pub mod time;
+pub mod writeable;
 
 pub mod sys {
     pub use eosio_sys::*;
-}
-
-pub mod bytes {
-    pub use eosio_bytes::*;
-}
-
-pub mod derives {
-    pub use eosio_derives::*;
 }
 
 pub mod macros {
     pub use eosio_macros::*;
 }
 
-pub mod types {
-    pub use eosio_types::*;
-}
-
 pub mod prelude {
     pub use super::action::*;
-    pub use super::bytes::*;
+    pub use super::asset::*;
     pub use super::db::*;
-    pub use super::derives::*;
+    pub use super::fixed_size::*;
     pub use super::macros::*;
+    pub use super::names::*;
     pub use super::print::*;
-    pub use super::types::*;
+    pub use super::readable::*;
+    pub use super::symbol::*;
+    pub use super::time::*;
+    pub use super::writeable::*;
 }
-
-// ::eosio_macros::wee_alloc!();

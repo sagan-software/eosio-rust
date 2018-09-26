@@ -1,4 +1,4 @@
-use eosio_types::*;
+use eosio_sys::{string_to_name, ToNameError, NAME_CHARS};
 use proc_macro::{Span, TokenStream};
 use std::str;
 
