@@ -21,6 +21,7 @@ mod derive_writeable;
 mod eosio_abi;
 mod eosio_action;
 mod eosio_assert;
+mod eosio_name;
 mod eosio_print;
 mod n;
 mod s;
@@ -48,6 +49,11 @@ pub fn eosio_assert(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+pub fn eosio_name(input: TokenStream) -> TokenStream {
+    ::eosio_name::expand(input)
+}
+
+#[proc_macro]
 pub fn eosio_print(input: TokenStream) -> TokenStream {
     ::eosio_print::expand(input)
 }
@@ -68,7 +74,7 @@ pub fn derive_writeable(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_derive(Readable, attributes(eosio_internal))]
-pub fn derive_readable(input: TokenStream) -> TokenStream {
+pub fn derive_read(input: TokenStream) -> TokenStream {
     ::derive_readable::expand(input)
 }
 

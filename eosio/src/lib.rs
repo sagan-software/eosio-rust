@@ -30,16 +30,17 @@ mod lib {
     pub use std::vec::Vec;
 }
 
+pub mod account;
 pub mod action;
 pub mod asset;
 pub mod db;
 pub mod fixed_size;
-pub mod names;
+pub mod permission;
 pub mod print;
-pub mod readable;
+pub mod read;
 pub mod symbol;
 pub mod time;
-pub mod writeable;
+pub mod write;
 
 pub mod sys {
     pub use eosio_sys::*;
@@ -50,15 +51,16 @@ pub mod macros {
 }
 
 pub mod prelude {
+    pub use super::account::*;
     pub use super::action::*;
     pub use super::asset::*;
     pub use super::db::*;
     pub use super::fixed_size::*;
     pub use super::macros::*;
-    pub use super::names::*;
+    pub use super::permission::*;
     pub use super::print::*;
-    pub use super::readable::*;
+    pub use super::read::*;
     pub use super::symbol::*;
     pub use super::time::*;
-    pub use super::writeable::*;
+    pub use super::write::*;
 }

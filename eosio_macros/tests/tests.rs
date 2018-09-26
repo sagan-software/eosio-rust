@@ -2,7 +2,7 @@
 
 extern crate eosio_macros;
 
-use eosio_macros::{n, s};
+use eosio_macros::*;
 
 #[test]
 fn test_n() {
@@ -13,10 +13,10 @@ fn test_n() {
 
 #[test]
 fn test_s() {
-    assert_eq!(s!(0, TGFT), 361956332544);
-    assert_eq!(s!(4, EOS), 1397703940);
-    assert_eq!(s!(0, EOS), 1397703936);
-    assert_eq!(s!(1, EDNA), 280485971201);
+    assert_eq!(s!(0, TGFT), 361_956_332_544);
+    assert_eq!(s!(4, EOS), 1_397_703_940);
+    assert_eq!(s!(0, EOS), 1_397_703_936);
+    assert_eq!(s!(1, EDNA), 280_485_971_201);
 }
 
 #[test]

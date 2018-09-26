@@ -52,10 +52,3 @@ test_symbol_name_length!(
     symbol_name_length_three, 1_397_703_940, 3
     symbol_name_length_four, 361_956_332_544, 4
 );
-
-#[test]
-fn basic_symbol_tests() {
-    let symbol = Symbol::from(361_956_332_546);
-    assert_eq!(symbol.name(), 1_413_891_924);
-    assert_eq!(symbol.precision(), 2);
-}

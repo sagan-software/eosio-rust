@@ -5,7 +5,7 @@ extern crate eosio;
 use eosio::prelude::*;
 
 #[eosio_action]
-fn hi(name: Name) {
+fn hi(name: AccountName) {
     eosio_print!("Hi, ", name);
 }
 

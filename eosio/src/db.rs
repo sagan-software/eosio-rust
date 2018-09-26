@@ -1,10 +1,12 @@
-use eosio_macros::c;
+use account::AccountName;
+use eosio_macros::*;
 use eosio_sys::ctypes::*;
 use lib::PhantomData;
-use names::*;
 use print::Printable;
-use readable::{ReadError, Readable};
-use writeable::{WriteError, Writeable};
+use read::{ReadError, Readable};
+use write::{WriteError, Writeable};
+
+eosio_name!(TableName);
 
 pub trait TableRow: Readable + Writeable {
     fn primary_key(&self) -> u64;
@@ -72,7 +74,7 @@ where
 
     pub fn end(&self) -> TableIter {
         let itr = unsafe {
-            ::eosio_sys::db_end_i64(self.code.as_u64(), self.scope.as_u64(), self.name.as_u64())
+            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
         };
         itr.into()
     }
@@ -95,9 +97,9 @@ where
     {
         let itr = unsafe {
             ::eosio_sys::db_find_i64(
-                self.code.as_u64(),
-                self.scope.as_u64(),
-                self.name.as_u64(),
+                self.code.into(),
+                self.scope.into(),
+                self.name.into(),
                 id.into(),
             )
         };
@@ -122,9 +124,9 @@ where
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let itr = unsafe {
             ::eosio_sys::db_store_i64(
-                self.scope.as_u64(),
-                self.name.as_u64(),
-                payer.into().as_u64(),
+                self.scope.into(),
+                self.name.into(),
+                payer.into().into(),
                 item.primary_key(),
                 ptr,
                 pos as u32,
@@ -140,7 +142,8 @@ where
         let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-        unsafe { ::eosio_sys::db_update_i64(itr.0, payer.into().as_u64(), ptr, pos as u32) }
+        let payer: AccountName = payer.into();
+        unsafe { ::eosio_sys::db_update_i64(itr.0, payer.into(), ptr, pos as u32) }
         Ok(pos)
     }
 

@@ -1,6 +1,5 @@
 use eosio_macros::c;
 use lib::String;
-use names::*;
 
 pub trait Printable {
     fn print(&self);
@@ -8,19 +7,19 @@ pub trait Printable {
 
 impl Printable for u8 {
     fn print(&self) {
-        unsafe { ::eosio_sys::printui(*self as u64) }
+        unsafe { ::eosio_sys::printui(u64::from(*self)) }
     }
 }
 
 impl Printable for u16 {
     fn print(&self) {
-        unsafe { ::eosio_sys::printui(*self as u64) }
+        unsafe { ::eosio_sys::printui(u64::from(*self)) }
     }
 }
 
 impl Printable for u32 {
     fn print(&self) {
-        unsafe { ::eosio_sys::printui(*self as u64) }
+        unsafe { ::eosio_sys::printui(u64::from(*self)) }
     }
 }
 
@@ -32,19 +31,19 @@ impl Printable for u64 {
 
 impl Printable for i8 {
     fn print(&self) {
-        unsafe { ::eosio_sys::printi(*self as i64) }
+        unsafe { ::eosio_sys::printi(i64::from(*self)) }
     }
 }
 
 impl Printable for i16 {
     fn print(&self) {
-        unsafe { ::eosio_sys::printi(*self as i64) }
+        unsafe { ::eosio_sys::printi(i64::from(*self)) }
     }
 }
 
 impl Printable for i32 {
     fn print(&self) {
-        unsafe { ::eosio_sys::printi(*self as i64) }
+        unsafe { ::eosio_sys::printi(i64::from(*self)) }
     }
 }
 

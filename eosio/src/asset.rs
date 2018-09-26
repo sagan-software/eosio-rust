@@ -1,8 +1,6 @@
-use macros::*;
-use names::AccountName;
-use readable::*;
+use account::AccountName;
+use eosio_macros::*;
 use symbol::Symbol;
-use writeable::*;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
 #[eosio_internal]

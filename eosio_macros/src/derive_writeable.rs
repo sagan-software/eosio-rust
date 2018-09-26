@@ -3,13 +3,13 @@ use syn::spanned::Spanned;
 use syn::{Attribute, Data, DeriveInput, Fields, GenericParam, Index, Meta, Path};
 
 fn get_writeable_path(attrs: &[Attribute]) -> Path {
-    let mut path: Path = parse_quote!(::eosio::writeable);
+    let mut path: Path = parse_quote!(::eosio::write);
     for attr in attrs {
         if let Some(meta) = attr.interpret_meta() {
             match meta {
                 Meta::Word(word) => {
                     if word == "eosio_internal" {
-                        path = parse_quote!(::writeable);
+                        path = parse_quote!(::write);
                     }
                 }
                 _ => continue,

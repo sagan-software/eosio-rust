@@ -1,7 +1,9 @@
-use macros::*;
-use names::*;
-use print::Printable;
-use writeable::{WriteError, Writeable};
+use account::AccountName;
+use eosio_macros::*;
+use permission::{PermissionLevel, PermissionName};
+use write::{WriteError, Writeable};
+
+eosio_name!(ActionName);
 
 #[derive(Clone, Debug)]
 pub struct Action<'a, Data>
@@ -31,13 +33,6 @@ where
     }
 }
 
-#[derive(Readable, Writeable, Clone, Debug)]
-#[eosio_internal]
-pub struct PermissionLevel {
-    pub actor: AccountName,
-    pub permission: PermissionName,
-}
-
 pub fn eosio_assert(test: bool, msg: &str) {
     let test = if test { 1 } else { 0 };
     let msg_ptr = msg.as_ptr();
@@ -63,35 +58,35 @@ where
 
 pub fn current_receiver() -> AccountName {
     let name = unsafe { ::eosio_sys::current_receiver() };
-    Name::new(name)
+    name.into()
 }
 
 pub fn has_auth(name: AccountName) -> bool {
-    unsafe { ::eosio_sys::has_auth(name.as_u64()) }
+    unsafe { ::eosio_sys::has_auth(name.into()) }
 }
 
 pub fn is_account(name: AccountName) -> bool {
-    unsafe { ::eosio_sys::is_account(name.as_u64()) }
+    unsafe { ::eosio_sys::is_account(name.into()) }
 }
 
 pub fn require_auth(name: AccountName) {
-    unsafe { ::eosio_sys::require_auth(name.as_u64()) }
+    unsafe { ::eosio_sys::require_auth(name.into()) }
 }
 
 pub fn require_auth2(name: AccountName, permission: PermissionName) {
-    unsafe { ::eosio_sys::require_auth2(name.as_u64(), permission.as_u64()) }
+    unsafe { ::eosio_sys::require_auth2(name.into(), permission.into()) }
 }
 
 pub fn require_read_lock(name: AccountName) {
-    unsafe { ::eosio_sys::require_read_lock(name.as_u64()) }
+    unsafe { ::eosio_sys::require_read_lock(name.into()) }
 }
 
 pub fn require_recipient(name: AccountName) {
-    unsafe { ::eosio_sys::require_recipient(name.as_u64()) }
+    unsafe { ::eosio_sys::require_recipient(name.into()) }
 }
 
 pub fn require_write_lock(name: AccountName) {
-    unsafe { ::eosio_sys::require_write_lock(name.as_u64()) }
+    unsafe { ::eosio_sys::require_write_lock(name.into()) }
 }
 
 pub enum InlineError {

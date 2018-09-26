@@ -1,8 +1,6 @@
+use account::AccountName;
 use eosio_macros::*;
-use names::AccountName;
 use print::Printable;
-use readable::Readable;
-use writeable::Writeable;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
 #[eosio_internal]
@@ -34,7 +32,6 @@ impl Printable for Symbol {
         self.precision().print();
         ','.print();
 
-        // not working
         let mut sym = self.name();
         let ff: u64 = 0xff;
         for _i in 0..7 {
