@@ -152,7 +152,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
 eosio_abi!(create, restart, close, makemove);
 
-#[derive(TableRow, Readable, Writeable)]
+#[derive(TableRow, Read, Write)]
 struct Game {
     #[primary]
     challenger: AccountName,

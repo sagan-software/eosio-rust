@@ -2,7 +2,7 @@
 #![feature(
     proc_macro_non_items,
     proc_macro_diagnostic,
-    proc_macro_quote,
+    proc_macro_quote
 )]
 
 extern crate eosio_sys;
@@ -14,10 +14,10 @@ extern crate syn;
 extern crate quote;
 
 mod c;
-mod derive_printable;
-mod derive_readable;
+mod derive_print;
+mod derive_read;
 mod derive_table_row;
-mod derive_writeable;
+mod derive_write;
 mod eosio_abi;
 mod eosio_action;
 mod eosio_assert;
@@ -68,14 +68,14 @@ pub fn s(input: TokenStream) -> TokenStream {
     ::s::expand(input)
 }
 
-#[proc_macro_derive(Writeable, attributes(eosio_internal))]
-pub fn derive_writeable(input: TokenStream) -> TokenStream {
-    ::derive_writeable::expand(input)
+#[proc_macro_derive(Write)]
+pub fn derive_write(input: TokenStream) -> TokenStream {
+    ::derive_write::expand(input)
 }
 
-#[proc_macro_derive(Readable, attributes(eosio_internal))]
+#[proc_macro_derive(Read)]
 pub fn derive_read(input: TokenStream) -> TokenStream {
-    ::derive_readable::expand(input)
+    ::derive_read::expand(input)
 }
 
 #[proc_macro_derive(TableRow, attributes(primary))]

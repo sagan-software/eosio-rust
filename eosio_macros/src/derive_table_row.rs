@@ -9,9 +9,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let mut generics = input.generics.clone();
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param
-                .bounds
-                .push(parse_quote!(::eosio_bytes::Readable));
+            type_param.bounds.push(parse_quote!(::eosio::bytes::Read));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();

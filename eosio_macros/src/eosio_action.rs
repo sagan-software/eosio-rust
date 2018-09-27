@@ -12,7 +12,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
             let pat = &input.pat;
             let ty = &input.ty;
             let read = quote_spanned! { ty.span() =>
-                <#ty as ::eosio::read::Readable>::read(&bytes, pos)
+                <#ty as ::eosio::bytes::Read>::read(&bytes, pos)
             };
             quote! {
                 let (#pat, pos) = match #read {

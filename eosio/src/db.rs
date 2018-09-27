@@ -1,15 +1,15 @@
 use account::AccountName;
+use bytes::{Read, ReadError};
+use bytes::{Write, WriteError};
 use eosio_macros::*;
 use eosio_sys::ctypes::*;
 use lib::PhantomData;
 use print::Printable;
-use read::{ReadError, Readable};
 use scope::ScopeName;
-use write::{WriteError, Writeable};
 
 eosio_name!(TableName);
 
-pub trait TableRow: Readable + Writeable {
+pub trait TableRow: Read + Write {
     fn primary_key(&self) -> u64;
 
     fn table<C, S, N>(code: C, scope: S, name: N) -> Table<Self>

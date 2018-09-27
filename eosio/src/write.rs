@@ -114,19 +114,19 @@ impl_fixed_array!(7);
 impl_fixed_array!(8);
 impl_fixed_array!(9);
 
-// #[cfg(any(feature = "std", feature = "alloc"))]
-// impl<T> Writeable for Vec<T>
-// where
-//     T: Writeable,
-// {
-//     fn write(&self, bytes: &mut [u8]) -> Result<usize, WriteError> {
-//         let pos = self.len().write(bytes)?;
-//         for item in self.iter() {
-//             let pos = item.write(&mut bytes[pos..])?;
-//         }
-//         Ok(pos)
-//     }
-// }
+#[cfg(any(feature = "std", feature = "alloc"))]
+impl<T> Writeable for Vec<T>
+where
+    T: Writeable,
+{
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let mut pos = self.len().write(bytes, pos)?;
+        for item in self.iter() {
+            pos = item.write(bytes, pos)?;
+        }
+        Ok(pos)
+    }
+}
 
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Writeable for String {
@@ -185,28 +185,5 @@ where
         let pos = self.2.write(bytes, pos)?;
         let pos = self.3.write(bytes, pos)?;
         Ok(pos)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_sequence_pos() {
-        let mut bytes = &mut [0u8; 1000];
-        let pos = 0;
-
-        let pos = 1u8.write(bytes, pos).unwrap();
-        assert_eq!(pos, 1);
-
-        let pos = 1u16.write(bytes, pos).unwrap();
-        assert_eq!(pos, 3);
-
-        let pos = 1u32.write(bytes, pos).unwrap();
-        assert_eq!(pos, 7);
-
-        let pos = 1u64.write(bytes, pos).unwrap();
-        assert_eq!(pos, 15);
     }
 }

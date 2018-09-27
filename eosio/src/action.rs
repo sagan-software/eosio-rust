@@ -1,14 +1,14 @@
 use account::AccountName;
+use bytes::{Write, WriteError};
 use eosio_macros::*;
 use permission::{PermissionLevel, PermissionName};
-use write::{WriteError, Writeable};
 
 eosio_name!(ActionName);
 
 #[derive(Clone, Debug)]
 pub struct Action<'a, Data>
 where
-    Data: Writeable,
+    Data: Write,
 {
     pub account: AccountName,
     pub name: ActionName,
@@ -16,9 +16,9 @@ where
     pub data: Data,
 }
 
-impl<'a, Data> Writeable for Action<'a, Data>
+impl<'a, Data> Write for Action<'a, Data>
 where
-    Data: Writeable,
+    Data: Write,
 {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
         let pos = self.account.write(bytes, pos)?;
@@ -95,7 +95,7 @@ pub enum InlineError {
 
 pub fn send_inline<T>(action: &Action<T>) -> Result<(), InlineError>
 where
-    T: Writeable,
+    T: Write,
 {
     let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
     let pos = action
@@ -113,7 +113,7 @@ pub enum ContextFreeInlineError {
 
 pub fn send_context_free_inline<T>(action: &Action<T>) -> Result<(), ContextFreeInlineError>
 where
-    T: Writeable,
+    T: Write,
 {
     if action.authorization.is_empty() {
         return Err(ContextFreeInlineError::NoAuthorizationsAllowed);

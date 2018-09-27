@@ -33,15 +33,13 @@ mod lib {
 pub mod account;
 pub mod action;
 pub mod asset;
+pub mod bytes;
 pub mod db;
-pub mod fixed_size;
 pub mod permission;
 pub mod print;
-pub mod read;
 pub mod scope;
 pub mod symbol;
 pub mod time;
-pub mod write;
 
 pub mod sys {
     pub use eosio_sys::*;
@@ -55,14 +53,17 @@ pub mod prelude {
     pub use super::account::*;
     pub use super::action::*;
     pub use super::asset::*;
+    pub use super::bytes::*;
     pub use super::db::*;
-    pub use super::fixed_size::*;
     pub use super::macros::*;
     pub use super::permission::*;
     pub use super::print::*;
-    pub use super::read::*;
     pub use super::scope::*;
     pub use super::symbol::*;
     pub use super::time::*;
-    pub use super::write::*;
+}
+
+mod eosio {
+    pub use super::bytes;
+    pub use super::sys;
 }

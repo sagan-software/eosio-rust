@@ -2,8 +2,7 @@ use account::AccountName;
 use eosio_macros::*;
 use print::Printable;
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
-#[eosio_internal]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
 pub struct SymbolName(u64);
 
 impl From<u64> for SymbolName {
@@ -33,8 +32,7 @@ impl Printable for SymbolName {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
-#[eosio_internal]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
 pub struct Symbol(u64);
 
 impl Symbol {
@@ -66,8 +64,7 @@ impl Printable for Symbol {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
-#[eosio_internal]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
 pub struct ExtendedSymbol {
     pub symbol: Symbol,
     pub contract: AccountName,

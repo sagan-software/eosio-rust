@@ -253,7 +253,7 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
     }
 }
 
-#[derive(Readable, Writeable, Copy, Clone)]
+#[derive(Read, Write, Copy, Clone)]
 struct Account {
     balance: Asset,
 }
@@ -264,7 +264,7 @@ impl TableRow for Account {
     }
 }
 
-#[derive(Readable, Writeable, Copy, Clone)]
+#[derive(Read, Write, Copy, Clone)]
 struct CurrencyStats {
     supply: Asset,
     max_supply: Asset,
@@ -277,7 +277,7 @@ impl TableRow for CurrencyStats {
     }
 }
 
-#[derive(Readable, Writeable, Clone)]
+#[derive(Read, Write, Clone)]
 struct TransferArgs {
     from: AccountName,
     to: AccountName,

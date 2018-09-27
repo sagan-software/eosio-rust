@@ -1,11 +1,10 @@
 use proc_macro::TokenStream;
-use syn::spanned::Spanned;
 use syn::Ident;
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let ident = parse_macro_input!(input as Ident);
     let expanded = quote! {
-        #[derive(Debug, PartialEq, Clone, Copy, Default, Readable, Writeable)]
+        #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
         #[eosio_internal]
         pub struct #ident(u64);
 
@@ -23,7 +22,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
         impl ::print::Printable for #ident {
             fn print(&self) {
-                unsafe { ::eosio_sys::printn((*self).into()) }
+                unsafe { ::eosio::sys::printn((*self).into()) }
             }
         }
     };
