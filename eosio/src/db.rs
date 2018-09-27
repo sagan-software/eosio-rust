@@ -4,6 +4,7 @@ use eosio_sys::ctypes::*;
 use lib::PhantomData;
 use print::Printable;
 use read::{ReadError, Readable};
+use scope::ScopeName;
 use write::{WriteError, Writeable};
 
 eosio_name!(TableName);
@@ -14,7 +15,7 @@ pub trait TableRow: Readable + Writeable {
     fn table<C, S, N>(code: C, scope: S, name: N) -> Table<Self>
     where
         C: Into<AccountName>,
-        S: Into<AccountName>,
+        S: Into<ScopeName>,
         N: Into<TableName>,
     {
         Table::new(code, scope, name)
@@ -49,7 +50,7 @@ where
     T: TableRow,
 {
     code: AccountName,
-    scope: AccountName,
+    scope: ScopeName,
     name: TableName,
     _row_type: PhantomData<T>,
 }
@@ -61,7 +62,7 @@ where
     pub fn new<C, S, N>(code: C, scope: S, name: N) -> Table<T>
     where
         C: Into<AccountName>,
-        S: Into<AccountName>,
+        S: Into<ScopeName>,
         N: Into<TableName>,
     {
         Table {

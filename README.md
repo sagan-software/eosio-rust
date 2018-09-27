@@ -1,48 +1,51 @@
-# eosiolib.rs
+![eosiolib.rs](logo.png)
 
-> ***Libraries for building EOS smart contracts in Rust***
+## Libraries for building EOSIO smart contracts in Rust
 
+![Travis (.org)](https://img.shields.io/travis/rust-lang/rust.svg?style=flat-square)
+![AppVeyor tests](https://img.shields.io/appveyor/tests/NZSmartie/coap-net-iu0to.svg?style=flat-square)
+![Crates.io](https://img.shields.io/crates/v/rustc-serialize.svg?style=flat-square)
 
-🚧 _**UNDER CONSTRUCTION**_ 🚧
+- [Homepage](#)
+- [Documentation](#)
+- [Telegram](#)
 
-Please excuse the mess, this project is under active development. Documentation, goals, and roadmap coming soon.
+## Quickstart
 
-## Contributor Quickstart
+```rust
+#![feature(proc_macro_non_items)]
 
-Want to help? Great! Here's how you can get started:
+extern crate eosio;
 
-```bash
-git clone git@github.com:sagan-software/rust-eos.git
-cd rust-eos
-make
+use eosio::prelude::*;
+
+#[eosio_action]
+fn hi(name: AccountName) {
+    eosio_print!("Hi, ", name);
+}
+
+eosio_abi!(hi);
 ```
 
-That will clone the repo, install Rust, build crates, and run unit tests.
+## Getting Started
 
-### Optional Dependencies
+Guides and getting started documentation coming soon.
 
-To test out smart contracts on a local node you will need to have these dependencies installed:
+## Getting Help
 
-1. **Docker**: used to start test nodes and deploy smart contracts.
-    - [Docker Community Edition for Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
-2. **Binaryen**: used to optimize `.wasm` files and generate `.wat` files.
-    - For [Homebrew](https://brew.sh/) users: `brew install binaryen`
+If you run into problems please join our [Telegram group](https://t.me/SaganSoftware) and ask for help.
 
-### Hello World
+## License
 
-To test out the `hello` example on-chain, first startup a local node with Docker:
+Licensed under either of these:
 
-```bash
-make docker
-```
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
+   https://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or
+   https://opensource.org/licenses/MIT)
 
-Then in a new terminal window:
+### Contributing
 
-```bash
-make wallet
-make hello_account
-make hello_example
-make say_hi
-```
-
-If all goes well you should see "Hello, contributor" in the console.
+Unless you explicitly state otherwise, any contribution you intentionally submit
+for inclusion in the work, as defined in the Apache-2.0 license, shall be
+dual-licensed as above, without any additional terms or conditions.

@@ -38,6 +38,7 @@ pub mod fixed_size;
 pub mod permission;
 pub mod print;
 pub mod read;
+pub mod scope;
 pub mod symbol;
 pub mod time;
 pub mod write;
@@ -60,6 +61,7 @@ pub mod prelude {
     pub use super::permission::*;
     pub use super::print::*;
     pub use super::read::*;
+    pub use super::scope::*;
     pub use super::symbol::*;
     pub use super::time::*;
     pub use super::write::*;

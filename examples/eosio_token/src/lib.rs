@@ -260,7 +260,7 @@ struct Account {
 
 impl TableRow for Account {
     fn primary_key(&self) -> u64 {
-        self.balance.symbol.name()
+        self.balance.symbol.name().into()
     }
 }
 
@@ -273,7 +273,7 @@ struct CurrencyStats {
 
 impl TableRow for CurrencyStats {
     fn primary_key(&self) -> u64 {
-        self.supply.symbol.name()
+        self.supply.symbol.name().into()
     }
 }
 
