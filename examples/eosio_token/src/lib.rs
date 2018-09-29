@@ -3,7 +3,6 @@
 extern crate eosio;
 
 use eosio::prelude::*;
-use std::string::ToString;
 
 #[eosio_action]
 fn create(issuer: AccountName, max_supply: Asset) {
@@ -82,6 +81,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
                 from: st.issuer,
                 to: to,
                 quantity,
+                memo,
             },
         });
         match result {
@@ -102,7 +102,13 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     let accounts_table = Account::table(receiver, symbol.name(), n!(accounts));
     let itr = accounts_table.find(symbol.name());
     if (itr == accounts_table.end()) {
-        let mut account = accounts_table.get(itr).unwrap();
+        let mut account = match accounts_table.get(itr) {
+            Ok(a) => a,
+            Err(_) => {
+                eosio_assert(false, c!("error reading accounts table"));
+                return;
+            }
+        };
         account.balance = Asset { amount: 0, symbol };
         accounts_table.emplace(ram_payer, account);
     }
@@ -119,7 +125,14 @@ fn close(owner: AccountName, symbol: Symbol) {
         c!("Balance row already deleted or never existed. Action won't have any effect."),
     );
 
-    let account = accounts_table.get(itr).unwrap();
+    let account = match accounts_table.get(itr) {
+        Ok(a) => a,
+        Err(_) => {
+            eosio_assert(false, c!("error reading accounts table"));
+            return;
+        }
+    };
+
     eosio_assert(
         account.balance.amount == 0,
         c!("Cannot close because the balance is not zero."),
@@ -140,7 +153,13 @@ fn retire(quantity: Asset, memo: String) {
         c!("token with symbol does not exist"),
     );
 
-    let mut st = stats_table.get(itr).unwrap();
+    let mut st = match stats_table.get(itr) {
+        Ok(s) => s,
+        Err(_) => {
+            eosio_assert(false, c!("error reading stats table"));
+            return;
+        }
+    };
     require_auth(st.issuer);
     eosio_assert(quantity.amount > 0, c!("must retire positive quantity"));
     eosio_assert(
@@ -153,7 +172,7 @@ fn retire(quantity: Asset, memo: String) {
 }
 
 #[eosio_action]
-fn transfer(from: AccountName, to: AccountName, quantity: Asset) {
+fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     eosio_print!(
         "!!! FROM: ",
         from,
@@ -198,12 +217,12 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset) {
         quantity.symbol == st.supply.symbol,
         c!("symbol precision mismatch"),
     );
-    // eosio_assert(memo.len() <= 256, c!("memo has more than 256 bytes"));
+    eosio_assert(memo.len() <= 256, c!("memo has more than 256 bytes"));
 
     let payer = if has_auth(to) { to } else { from };
 
-    // sub_balance(from, quantity);
-    // add_balance(to, quantity, payer);
+    sub_balance(from, quantity);
+    add_balance(to, quantity, payer);
 }
 
 eosio_abi!(create, issue, transfer, open, close, retire);
@@ -247,7 +266,7 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
             }
         };
         account.balance.amount += value.amount;
-        if accounts_table.modify(itr, 0, account).is_err() {
+        if accounts_table.modify(itr, ram_payer, account).is_err() {
             eosio_assert(false, c!("error modifying account"));
         }
     }
@@ -282,5 +301,5 @@ struct TransferArgs {
     from: AccountName,
     to: AccountName,
     quantity: Asset,
-    // memo: String,
+    memo: String,
 }

@@ -193,7 +193,7 @@ macro_rules! impl_array {
             T: Read + Default + Copy,
         {
             fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-                let (capacity, pos) = usize::read(bytes, pos)?;
+                let (_, pos) = usize::read(bytes, pos)?;
 
                 let mut items = [T::default(); $x];
                 let mut pos = pos;
@@ -218,18 +218,26 @@ macro_rules! impl_array {
     )*)
 }
 
-impl_array!(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20);
+impl_array!(
+     1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+    21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40
+    41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60
+    61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80
+    81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
+);
 
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Read for String {
-    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
         // TODO: may need to read this as a cstr
-        let (bytes_vec, pos) = Vec::<u8>::read(bytes, offset)?;
-        let s = ::eosio_sys::CStr::from_bytes_with_nul(&bytes_vec);
-        let s = match s {
-            Ok(s) => s.to_string_lossy(),
-            Err(_) => String::from_utf8_lossy(&bytes_vec),
-        };
+        let (bytes, pos) = Vec::<u8>::read(bytes, pos)?;
+        // let s = ::eosio_sys::CStr::from_bytes_with_nul(&bytes_vec);
+        // let s = match s {
+        //     Ok(s) => s.to_string_lossy(),
+        //     Err(_) => String::from_utf8_lossy(&bytes_vec),
+        // };
+        // Ok((s.into_owned(), pos))
+        let s = String::from_utf8_lossy(&bytes);
         Ok((s.into_owned(), pos))
     }
 }
@@ -237,9 +245,9 @@ impl Read for String {
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Write for String {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let s = ::eosio_sys::CString::new(self.clone()).unwrap();
-        s.as_bytes_with_nul().write(bytes, pos)
-        // self.as_bytes().write(bytes, pos)
+        // let s = ::eosio_sys::CString::new(self.clone()).unwrap();
+        // s.as_bytes_with_nul().write(bytes, pos)
+        self.as_bytes().write(bytes, pos)
     }
 }
 

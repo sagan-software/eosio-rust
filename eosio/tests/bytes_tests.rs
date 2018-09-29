@@ -1,3 +1,5 @@
+#![feature(proc_macro_non_items)]
+
 extern crate eosio;
 
 use eosio::prelude::*;
@@ -55,6 +57,8 @@ test_type!(
     test_array18, [u8; 18], [1u8; 18]
     test_array19, [u8; 19], [1u8; 19]
     test_array20, [u8; 20], [1u8; 20]
+    test_account_name, AccountName, AccountName::from(n!(test))
+    test_time, Time, Time::zero()
 );
 
 #[test]

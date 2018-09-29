@@ -5,7 +5,6 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let ident = parse_macro_input!(input as Ident);
     let expanded = quote! {
         #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
-        #[eosio_internal]
         pub struct #ident(u64);
 
         impl From<u64> for #ident {
@@ -20,7 +19,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
         }
 
-        impl ::print::Printable for #ident {
+        impl ::eosio::print::Printable for #ident {
             fn print(&self) {
                 unsafe { ::eosio::sys::printn((*self).into()) }
             }

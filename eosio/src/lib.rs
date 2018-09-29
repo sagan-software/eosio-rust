@@ -65,5 +65,6 @@ pub mod prelude {
 
 mod eosio {
     pub use super::bytes;
+    pub use super::print;
     pub use super::sys;
 }

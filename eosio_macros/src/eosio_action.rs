@@ -7,6 +7,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let ident = input.ident;
     let decl = input.decl;
     let inputs = decl.inputs;
+    let vis = input.vis;
     let reads = inputs.iter().map(|f| match f {
         FnArg::Captured(input) => {
             let pat = &input.pat;
@@ -29,7 +30,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let block = input.block;
 
     let expanded = quote! {
-        fn #ident() {
+        #vis fn #ident() {
             // TODO: set the length of this to a fixed size based on the action inputs
             let mut bytes = [0u8; 10000];
             let ptr: *mut ::eosio::sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio::sys::c_void;
