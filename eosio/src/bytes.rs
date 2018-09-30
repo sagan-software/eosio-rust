@@ -86,6 +86,36 @@ impl_num!(
     i64, 8
 ); // TODO i8 u128 i128
 
+impl Read for f32 {
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+        let (bits, pos) = u32::read(bytes, pos)?;
+        let num = f32::from_bits(bits);
+        Ok((num, pos))
+    }
+}
+
+impl Write for f32 {
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let bits = f32::to_bits(*self);
+        bits.write(bytes, pos)
+    }
+}
+
+impl Read for f64 {
+    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+        let (bits, pos) = u64::read(bytes, pos)?;
+        let num = f64::from_bits(bits);
+        Ok((num, pos))
+    }
+}
+
+impl Write for f64 {
+    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+        let bits = f64::to_bits(*self);
+        bits.write(bytes, pos)
+    }
+}
+
 impl Read for bool {
     fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
         u8::read(bytes, offset).map(|(v, c)| (v == 1, c))

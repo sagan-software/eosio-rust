@@ -59,6 +59,8 @@ test_type!(
     test_array20, [u8; 20], [1u8; 20]
     test_account_name, AccountName, AccountName::from(n!(test))
     test_time, Time, Time::zero()
+    test_f32, f32, -0.12345
+    test_f64, f64, -0.12345
 );
 
 #[test]
