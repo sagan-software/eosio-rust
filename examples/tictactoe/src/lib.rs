@@ -54,9 +54,9 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
 
     let table = Game::table(host);
     let itr = table.find(challenger);
-    eosio_assert_code(!table.is_end(itr), RestartError::GameNotFound as u64);
+    eosio_assert_code(!table.is_end(&itr), RestartError::GameNotFound as u64);
 
-    let mut game = match table.get(itr) {
+    let mut game = match itr.get() {
         Ok(game) => game,
         Err(_) => {
             eosio_assert_code(false, RestartError::GameReadError as u64);
@@ -73,7 +73,7 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     game.turn = host;
     game.winner = n!(none).into();
 
-    let write_result = table.modify(itr, host, game);
+    let write_result = table.modify(&itr, host, game);
     eosio_assert_code(write_result.is_ok(), RestartError::GameWriteError as u64);
 }
 
@@ -87,9 +87,9 @@ fn close(challenger: AccountName, host: AccountName) {
 
     let table = Game::table(host);
     let itr = table.find(challenger);
-    eosio_assert_code(!table.is_end(itr), CloseError::GameNotFound as u64);
+    eosio_assert_code(!table.is_end(&itr), CloseError::GameNotFound as u64);
 
-    table.erase(itr);
+    itr.erase();
 }
 
 enum MoveError {
@@ -108,9 +108,9 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
     let table = Game::table(host);
     let itr = table.find(challenger);
-    eosio_assert_code(!table.is_end(itr), MoveError::GameNotFound as u64);
+    eosio_assert_code(!table.is_end(&itr), MoveError::GameNotFound as u64);
 
-    let mut game = match table.get(itr) {
+    let mut game = match itr.get() {
         Ok(game) => game,
         Err(_) => {
             eosio_assert_code(false, MoveError::GameReadError as u64);
@@ -146,7 +146,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
     game.winner = game.get_winner();
 
-    let write_result = table.modify(itr, host, game);
+    let write_result = table.modify(&itr, host, game);
     eosio_assert_code(write_result.is_ok(), MoveError::GameWriteError as u64);
 }
 

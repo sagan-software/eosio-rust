@@ -13,9 +13,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
         }
 
-        impl Into<u64> for #ident {
-            fn into(self) -> u64 {
-                self.0
+        impl From<#ident> for u64 {
+            fn from(i: #ident) -> Self {
+                i.0
             }
         }
 

@@ -35,9 +35,9 @@ impl From<u64> for Time {
     }
 }
 
-impl Into<u64> for Time {
-    fn into(self) -> u64 {
-        self.0
+impl From<Time> for u64 {
+    fn from(t: Time) -> Self {
+        t.0
     }
 }
 
@@ -47,8 +47,8 @@ impl From<u32> for Time {
     }
 }
 
-impl Into<u32> for Time {
-    fn into(self) -> u32 {
-        self.seconds() as u32
+impl From<Time> for u32 {
+    fn from(t: Time) -> Self {
+        t.seconds() as u32
     }
 }

@@ -16,6 +16,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
                 <#ty as ::eosio::bytes::Read>::read(&bytes, pos)
             };
             quote! {
+                // TODO: Create a struct with #[derive(Read)] ?
                 let (#pat, pos) = match #read {
                     Ok(v) => v,
                     Err(_) => {
@@ -30,6 +31,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let block = input.block;
 
     let expanded = quote! {
+        // TODO: keep original function intact so it can be called like normal
         #vis fn #ident() {
             // TODO: set the length of this to a fixed size based on the action inputs
             let mut bytes = [0u8; 10000];
@@ -44,7 +46,6 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
             let pos = 0;
             #(#reads)*
             let size = unsafe {::eosio::sys::action_data_size()};
-            eosio_print!("TEST!!! action_data_size: ", size, ", pos: ", pos);
             #block
         }
     };

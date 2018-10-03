@@ -15,9 +15,9 @@ mod lib {
         pub use std::*;
     }
 
-    pub use self::core::convert::TryInto;
+    pub use self::core::convert::{TryFrom, TryInto};
     pub use self::core::marker::PhantomData;
-    pub use self::core::ops::{BitAnd, BitOr, Mul, Shl, Shr};
+    pub use self::core::ops::*;
 
     #[cfg(all(feature = "alloc", not(feature = "std")))]
     pub use alloc::string::{String, ToString};

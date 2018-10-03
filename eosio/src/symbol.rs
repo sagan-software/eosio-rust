@@ -1,5 +1,6 @@
 use account::AccountName;
 use eosio_macros::*;
+use lib::TryFrom;
 use print::Printable;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
@@ -11,23 +12,53 @@ impl From<u64> for SymbolName {
     }
 }
 
-impl Into<u64> for SymbolName {
-    fn into(self) -> u64 {
-        self.0
+impl From<SymbolName> for u64 {
+    fn from(s: SymbolName) -> Self {
+        s.0
     }
+}
+
+impl From<SymbolName> for [char; 7] {
+    fn from(s: SymbolName) -> Self {
+        chars_from_symbol_value(s.0)
+    }
+}
+
+impl SymbolName {
+    pub fn is_valid(&self) -> bool {
+        let chars = chars_from_symbol_value(self.0);
+        for &c in chars.iter() {
+            if !('A' <= c && c <= 'Z') {
+                return false;
+            }
+        }
+        true
+    }
+}
+
+fn chars_from_symbol_value(value: u64) -> [char; 7] {
+    let mut sym = value;
+    let ff: u64 = 0xff;
+    let mut chars = [' '; 7];
+    for c in chars.iter_mut() {
+        let b = sym & ff;
+        if b == 0 {
+            break;
+        }
+        *c = b as u8 as char;
+        sym >>= 8;
+    }
+    chars
 }
 
 impl Printable for SymbolName {
     fn print(&self) {
-        let mut sym = self.0;
-        let ff: u64 = 0xff;
-        for _i in 0..7 {
-            let c = sym & ff;
-            if c == 0 {
+        let chars: [char; 7] = (*self).into();
+        for &c in chars.iter() {
+            if c == ' ' {
                 return;
             }
-            (c as u8 as char).print();
-            sym >>= 8;
+            c.print();
         }
     }
 }
@@ -47,6 +78,9 @@ impl Symbol {
     }
     pub fn value(self) -> u64 {
         self.0
+    }
+    pub fn is_valid(self) -> bool {
+        self.name().is_valid()
     }
 }
 
@@ -68,4 +102,12 @@ impl Printable for Symbol {
 pub struct ExtendedSymbol {
     pub symbol: Symbol,
     pub contract: AccountName,
+}
+
+impl Printable for ExtendedSymbol {
+    fn print(&self) {
+        self.symbol.print();
+        '@'.print();
+        self.contract.print();
+    }
 }

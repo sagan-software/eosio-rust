@@ -55,7 +55,7 @@ impl Printable for i64 {
 
 impl<'a> Printable for &'a str {
     fn print(&self) {
-        // TODO: Convert to CStr first?
+        // TODO: Make sure &self is a C string (ends with \0)
         unsafe { ::eosio_sys::prints(self.as_ptr()) }
     }
 }
@@ -63,7 +63,7 @@ impl<'a> Printable for &'a str {
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl<'a> Printable for String {
     fn print(&self) {
-        // TODO: Convert to CString first?
+        // TODO: Make sure &self is a C string (ends with \0)
         self.as_str().print()
     }
 }

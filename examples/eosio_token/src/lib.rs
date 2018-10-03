@@ -39,10 +39,10 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     let table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
     let itr = table.find(symbol.name());
     eosio_assert(
-        !table.is_end(itr),
+        !table.is_end(&itr),
         c!("token with symbol does not exist, create token before issue"),
     );
-    let mut st = match table.get(itr) {
+    let mut st = match itr.get() {
         Ok(row) => row,
         Err(_) => {
             eosio_assert(false, c!("error reading stats table"));
@@ -62,7 +62,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     );
 
     st.supply.amount += quantity.amount;
-    if table.modify(itr, 0, st).is_err() {
+    if table.modify(&itr, 0, st).is_err() {
         eosio_assert(false, c!("failed to modify stats"));
         return;
     }
@@ -70,7 +70,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     add_balance(st.issuer, quantity, st.issuer);
 
     if to != st.issuer {
-        let result = send_inline(&Action {
+        let action = Action {
             account: receiver,
             name: n!(transfer).into(),
             authorization: &[PermissionLevel {
@@ -83,8 +83,8 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
                 quantity,
                 memo,
             },
-        });
-        match result {
+        };
+        match action.send() {
             Ok(_) => {
                 eosio_print!("success");
             }
@@ -102,7 +102,7 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     let accounts_table = Account::table(receiver, symbol.name(), n!(accounts));
     let itr = accounts_table.find(symbol.name());
     if (itr == accounts_table.end()) {
-        let mut account = match accounts_table.get(itr) {
+        let mut account = match itr.get() {
             Ok(a) => a,
             Err(_) => {
                 eosio_assert(false, c!("error reading accounts table"));
@@ -121,11 +121,11 @@ fn close(owner: AccountName, symbol: Symbol) {
     let accounts_table = Account::table(receiver, symbol.name(), n!(accounts));
     let itr = accounts_table.find(symbol.name());
     eosio_assert(
-        !accounts_table.is_end(itr),
+        !accounts_table.is_end(&itr),
         c!("Balance row already deleted or never existed. Action won't have any effect."),
     );
 
-    let account = match accounts_table.get(itr) {
+    let account = match itr.get() {
         Ok(a) => a,
         Err(_) => {
             eosio_assert(false, c!("error reading accounts table"));
@@ -137,7 +137,7 @@ fn close(owner: AccountName, symbol: Symbol) {
         account.balance.amount == 0,
         c!("Cannot close because the balance is not zero."),
     );
-    accounts_table.erase(itr);
+    itr.erase();
 }
 
 #[eosio_action]
@@ -149,11 +149,11 @@ fn retire(quantity: Asset, memo: String) {
     let stats_table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
     let itr = stats_table.find(symbol.name());
     eosio_assert(
-        !stats_table.is_end(itr),
+        !stats_table.is_end(&itr),
         c!("token with symbol does not exist"),
     );
 
-    let mut st = match stats_table.get(itr) {
+    let mut st = match itr.get() {
         Ok(s) => s,
         Err(_) => {
             eosio_assert(false, c!("error reading stats table"));
@@ -168,19 +168,11 @@ fn retire(quantity: Asset, memo: String) {
     );
 
     st.supply.amount -= quantity.amount;
-    stats_table.modify(itr, 0, st);
+    stats_table.modify(&itr, 0, st);
 }
 
 #[eosio_action]
 fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
-    eosio_print!(
-        "!!! FROM: ",
-        from,
-        " !!! TO: ",
-        to,
-        " !!! SYMBOL: ",
-        quantity.symbol
-    );
     eosio_assert(from != to, c!("cannot transfer to self"));
     require_auth(from);
     eosio_assert(is_account(to), c!("to account does not exist"));
@@ -190,18 +182,10 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     let stats_table = CurrencyStats::table(receiver, symbol_name, n!(stat));
     let itr = stats_table.find(symbol_name);
     eosio_assert(
-        !stats_table.is_end(itr),
+        !stats_table.is_end(&itr),
         c!("token with symbol does not exist"),
     );
-    eosio_print!(
-        "!!! TEST !!! ",
-        quantity.symbol,
-        ", ",
-        symbol_name,
-        ", ",
-        itr
-    );
-    let st = match stats_table.get(itr) {
+    let st = match itr.get() {
         Ok(row) => row,
         Err(_) => {
             eosio_assert(false, c!("error reading stats table"));
@@ -231,9 +215,9 @@ fn sub_balance(owner: AccountName, value: Asset) {
     let receiver = current_receiver();
     let accounts_table = Account::table(receiver, owner, n!(accounts));
     let itr = accounts_table.find(value.symbol.name());
-    eosio_assert(!accounts_table.is_end(itr), c!("no balance object found"));
+    eosio_assert(!accounts_table.is_end(&itr), c!("no balance object found"));
 
-    let mut account = match accounts_table.get(itr) {
+    let mut account = match itr.get() {
         Ok(row) => row,
         Err(_) => {
             eosio_assert(false, c!("error reading accounts table"));
@@ -243,7 +227,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
 
     account.balance.amount -= value.amount;
 
-    if accounts_table.modify(itr, owner, account).is_err() {
+    if accounts_table.modify(&itr, owner, account).is_err() {
         eosio_assert(false, c!("error modifying accounts table"));
     }
 }
@@ -252,13 +236,13 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
     let receiver = current_receiver();
     let accounts_table = Account::table(receiver, owner, n!(accounts));
     let itr = accounts_table.find(value.symbol.name());
-    if accounts_table.is_end(itr) {
+    if accounts_table.is_end(&itr) {
         let account = Account { balance: value };
         if accounts_table.emplace(ram_payer, account).is_err() {
             eosio_assert(false, c!("error emplacing account"));
         }
     } else {
-        let mut account = match accounts_table.get(itr) {
+        let mut account = match itr.get() {
             Ok(row) => row,
             Err(_) => {
                 eosio_assert(false, c!("error getting accounts table"));
@@ -266,7 +250,7 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
             }
         };
         account.balance.amount += value.amount;
-        if accounts_table.modify(itr, ram_payer, account).is_err() {
+        if accounts_table.modify(&itr, ram_payer, account).is_err() {
             eosio_assert(false, c!("error modifying account"));
         }
     }
