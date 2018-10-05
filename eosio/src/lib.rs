@@ -1,6 +1,11 @@
 #![cfg_attr(feature = "alloc", feature(alloc))]
 #![cfg_attr(not(feature = "std"), no_std)]
-#![feature(proc_macro_non_items, try_from, custom_attribute)]
+#![feature(
+    proc_macro_non_items,
+    try_from,
+    custom_attribute,
+    concat_idents
+)]
 
 #[cfg(all(feature = "alloc", not(feature = "std")))]
 extern crate alloc;

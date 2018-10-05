@@ -9,19 +9,21 @@ use scope::ScopeName;
 
 eosio_name!(TableName);
 
-#[derive(Clone, Copy, Debug)]
-pub enum SecondaryKey {
-    U64(u64),
-    // TODO: U128 (idx128)
-    // TODO: U256 (idx256)
-    F64(f64),
-    // TODO: F128 (idx_long_double)
+#[derive(Clone, Copy)]
+pub struct SecondaryTableName(TableName, usize);
+
+impl From<SecondaryTableName> for u64 {
+    fn from(t: SecondaryTableName) -> u64 {
+        let index = t.1 as u64;
+        let table: u64 = t.0.into();
+        (table & 0xFFFFFFFFFFFFFFF0u64) | (index & 0x000000000000000Fu64)
+    }
 }
 
 pub trait TableRow: Read + Write {
     fn primary_key(&self) -> u64;
 
-    fn secondary_keys(&self) -> [Option<SecondaryKey>; 16] {
+    fn secondary_keys(&self) -> [Option<&SecondaryKey>; 16] {
         [None; 16]
     }
 
@@ -35,8 +37,291 @@ pub trait TableRow: Read + Write {
     }
 }
 
+pub trait SecondaryKey {
+    fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32;
+
+    fn next(&self, iterator: i32) -> (i32, u64);
+
+    fn remove(&self, iterator: i32);
+
+    fn previous(&self, iterator: i32) -> (i32, u64);
+
+    fn store(
+        &self,
+        scope: ScopeName,
+        table: SecondaryTableName,
+        payer: AccountName,
+        id: u64,
+    ) -> i32;
+
+    fn update(&self, iterator: i32, payer: AccountName);
+
+    fn lower_bound(
+        &self,
+        code: AccountName,
+        scope: ScopeName,
+        table: SecondaryTableName,
+    ) -> (i32, u64);
+
+    fn upper_bound(
+        &self,
+        code: AccountName,
+        scope: ScopeName,
+        table: SecondaryTableName,
+    ) -> (i32, u64);
+
+    fn find_primary(
+        &self,
+        code: AccountName,
+        scope: ScopeName,
+        table: SecondaryTableName,
+        primary: u64,
+    ) -> i32;
+
+    fn find_secondary(
+        &self,
+        code: AccountName,
+        scope: ScopeName,
+        table: SecondaryTableName,
+    ) -> (i32, u64);
+
+    fn upsert(
+        &self,
+        code: AccountName,
+        scope: ScopeName,
+        table: SecondaryTableName,
+        payer: AccountName,
+        id: u64,
+    ) {
+        let end = self.end(code, scope, table);
+        let itr = self.find_primary(code, scope, table, id);
+        if itr == end {
+            self.store(scope, table, payer, id);
+        } else {
+            self.update(itr, payer);
+        }
+    }
+}
+
+macro_rules! secondary_keys_converted {
+    ($($to:ty, $from:ty)*) => ($(
+        impl SecondaryKey for $from {
+            fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32 {
+                <$to as From<$from>>::from(*self).end(code, scope, table)
+            }
+            fn next(&self, iterator: i32) -> (i32, u64) {
+                <$to as From<$from>>::from(*self).next(iterator)
+            }
+            fn previous(&self, iterator: i32) -> (i32, u64) {
+                <$to as From<$from>>::from(*self).previous(iterator)
+            }
+            fn remove(&self, iterator: i32) {
+                <$to as From<$from>>::from(*self).remove(iterator)
+            }
+            fn store(
+                &self,
+                scope: ScopeName,
+                table: SecondaryTableName,
+                payer: AccountName,
+                id: u64,
+            ) -> i32 {
+                <$to as From<$from>>::from(*self).store(scope, table, payer, id)
+            }
+            fn update(&self, iterator: i32, payer: AccountName) {
+                <$to as From<$from>>::from(*self).update(iterator, payer)
+            }
+            fn lower_bound(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+            ) -> (i32, u64) {
+                <$to as From<$from>>::from(*self).lower_bound(code, scope, table)
+            }
+            fn upper_bound(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+            ) -> (i32, u64) {
+                <$to as From<$from>>::from(*self).upper_bound(code, scope, table)
+            }
+            fn find_primary(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+                primary: u64,
+            ) -> i32 {
+                 <$to as From<$from>>::from(*self).find_primary(code, scope, table, primary)
+            }
+            fn find_secondary(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+            ) -> (i32, u64) {
+                <$to as From<$from>>::from(*self).find_secondary(code, scope, table)
+            }
+        }
+    )*)
+}
+
+macro_rules! secondary_keys_impl {
+    ($($t:ty, $i:ident)*) => ($(
+        impl SecondaryKey for $t {
+            fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32 {
+                use ::eosio_sys::*;
+                unsafe { concat_idents!(db_, $i, _end)(code.into(), scope.into(), table.into()) }
+            }
+            fn next(&self, iterator: i32) -> (i32, u64) {
+                use ::eosio_sys::*;
+                let mut pk = 0u64;
+                let ptr: *mut u64 = &mut pk;
+                let itr = unsafe { concat_idents!(db_, $i, _next)(iterator, ptr) };
+                (itr, pk)
+            }
+            fn previous(&self, iterator: i32) -> (i32, u64) {
+                use ::eosio_sys::*;
+                let mut pk = 0u64;
+                let ptr: *mut u64 = &mut pk;
+                let itr = unsafe { concat_idents!(db_, $i, _previous)(iterator, ptr) };
+                (itr, pk)
+            }
+            fn remove(&self, iterator: i32) {
+                use ::eosio_sys::*;
+                unsafe { concat_idents!(db_, $i, _remove)(iterator) }
+            }
+            fn store(
+                &self,
+                scope: ScopeName,
+                table: SecondaryTableName,
+                payer: AccountName,
+                id: u64,
+            ) -> i32 {
+                use ::eosio_sys::*;
+                let secondary: *const Self = self;
+                unsafe {
+                    concat_idents!(db_, $i, _store)(scope.into(), table.into(), payer.into(), id, secondary)
+                }
+            }
+            fn update(&self, iterator: i32, payer: AccountName) {
+                use ::eosio_sys::*;
+                let secondary: *const Self = self;
+                unsafe {
+                    concat_idents!(db_, $i, _update)(iterator, payer.into(), secondary)
+                }
+            }
+            fn lower_bound(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+            ) -> (i32, u64) {
+                use ::eosio_sys::*;
+                let mut pk = 0u64;
+                let mut sk = self.clone();
+                let itr = unsafe {
+                    concat_idents!(db_, $i, _lowerbound)(
+                        code.into(),
+                        scope.into(),
+                        table.into(),
+                        &mut sk as *mut $t,
+                        &mut pk as *mut u64,
+                    )
+                };
+                (itr, pk)
+            }
+            fn upper_bound(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+            ) -> (i32, u64) {
+                use ::eosio_sys::*;
+                let mut pk = 0u64;
+                let mut sk = self.clone();
+                let itr = unsafe {
+                    concat_idents!(db_, $i, _upperbound)(
+                        code.into(),
+                        scope.into(),
+                        table.into(),
+                        &mut sk as *mut $t,
+                        &mut pk as *mut u64,
+                    )
+                };
+                (itr, pk)
+            }
+            fn find_primary(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+                primary: u64,
+            ) -> i32 {
+                use ::eosio_sys::*;
+                let mut sk = self.clone();
+                unsafe {
+                    concat_idents!(db_, $i, _find_primary)(
+                        code.into(),
+                        scope.into(),
+                        table.into(),
+                        &mut sk as *mut $t,
+                        primary,
+                    )
+                }
+            }
+            fn find_secondary(
+                &self,
+                code: AccountName,
+                scope: ScopeName,
+                table: SecondaryTableName,
+            ) -> (i32, u64) {
+                use ::eosio_sys::*;
+                let mut pk = 0u64;
+                let secondary: *const Self = self;
+                let itr = unsafe {
+                    concat_idents!(db_, $i, _find_secondary)(
+                        code.into(),
+                        scope.into(),
+                        table.into(),
+                        secondary,
+                        &mut pk as *mut u64,
+                    )
+                };
+                (itr, pk)
+            }
+        }
+    )*)
+}
+
+secondary_keys_impl!(
+    u64, idx64
+    f64, idx_double
+    // TODO: u128, idx128
+    // TODO: u256, idx256
+    // TODO: f128, idx_long_double
+);
+
+secondary_keys_converted!(
+    u64, u8
+    u64, u16
+    u64, u32
+    f64, f32
+);
+
+pub trait TableIterator<T>: Iterator
+where
+    T: TableRow,
+{
+    fn get(&self) -> Result<T, ReadError>;
+    fn erase(&self);
+    // fn modify(&self);
+    // fn previous(&self);
+}
+
 #[derive(Copy, Clone)]
-pub struct TableIter<T>
+pub struct PrimaryIterator<T>
 where
     T: TableRow,
 {
@@ -47,31 +332,44 @@ where
     _data: PhantomData<T>,
 }
 
-impl<T> PartialEq for TableIter<T>
+impl<T> PartialEq for PrimaryIterator<T>
 where
     T: TableRow,
 {
-    fn eq(&self, other: &TableIter<T>) -> bool {
+    fn eq(&self, other: &PrimaryIterator<T>) -> bool {
         self.value == other.value
+            && self.code == other.code
+            && self.scope == other.scope
+            && self.table == other.table
     }
 }
 
-impl<T> Printable for TableIter<T>
+impl<T> Printable for PrimaryIterator<T>
 where
     T: TableRow,
 {
     fn print(&self) {
-        c!("TableIter(").print();
+        c!("PrimaryIterator(").print();
         self.value.print();
         c!(")").print();
     }
 }
 
-impl<T> TableIter<T>
+impl<T> Iterator for PrimaryIterator<T>
 where
     T: TableRow,
 {
-    pub fn get(&self) -> Result<T, ReadError> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        None
+    }
+}
+
+impl<T> TableIterator<T> for PrimaryIterator<T>
+where
+    T: TableRow,
+{
+    fn get(&self) -> Result<T, ReadError> {
         let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
@@ -80,58 +378,42 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    pub fn erase(&self) {
+    fn erase(&self) {
         unsafe {
             ::eosio_sys::db_remove_i64(self.value);
         }
     }
 }
 
-pub trait TableIndex {
-    fn lowerbound(&self);
-    fn upperbound(&self);
-}
-
-pub struct SecondaryIndex<K> {
+#[derive(Copy, Clone)]
+pub struct SecondaryIterator<K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    value: i32,
     code: AccountName,
     scope: ScopeName,
     table: TableName,
     index: usize,
-    _key_type: PhantomData<K>,
+    _data: PhantomData<(K, T)>,
 }
 
-impl<K> SecondaryIndex<K> {
-    pub fn new<C, S, N>(code: C, scope: S, name: N, index: usize) -> Self
-    where
-        C: Into<AccountName>,
-        S: Into<ScopeName>,
-        N: Into<TableName>,
-    {
-        SecondaryIndex {
-            code: code.into(),
-            scope: scope.into(),
-            table: name.into(),
-            index,
-            _key_type: PhantomData,
-        }
-    }
+// impl<T> Iterator for SecondaryIterator<T>
+// where
+//     T: TableRow,
+// {
+//     type Item = T;
+//     fn next(&mut self) -> Option<Self::Item> {
+//         None
+//     }
+// }
 
-    fn table_name(&self) -> u64 {
-        let base: u64 = self.table.into();
-        let index = self.index as u64;
-        (base & 0xFFFFFFFFFFFFFFF0u64) | (index & 0x000000000000000Fu64)
-    }
-}
+// impl<T> TableIterator<T> for SecondaryIterator<u32, T> where T: TableRow {
+//     fn get(&self) -> Result<T, ReadError> {
 
-impl TableIndex for SecondaryIndex<u64> {
-    fn lowerbound(&self) {
-        "LOWERBOUND u64\0".print();
-    }
-
-    fn upperbound(&self) {
-        "UPPERBOUND u64\0".print();
-    }
-}
+//     }
+// }
 
 pub struct Table<T>
 where
@@ -161,11 +443,11 @@ where
         }
     }
 
-    pub fn end(&self) -> TableIter<T> {
+    pub fn end(&self) -> PrimaryIterator<T> {
         let itr = unsafe {
             ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
         };
-        TableIter {
+        PrimaryIterator {
             value: itr,
             code: self.code,
             scope: self.scope,
@@ -174,7 +456,7 @@ where
         }
     }
 
-    pub fn is_end(&self, itr: &TableIter<T>) -> bool {
+    pub fn is_end(&self, itr: &PrimaryIterator<T>) -> bool {
         itr.value == self.end().value
     }
 
@@ -186,7 +468,7 @@ where
         !self.is_end(&itr)
     }
 
-    pub fn find<Id>(&self, id: Id) -> TableIter<T>
+    pub fn find<Id>(&self, id: Id) -> PrimaryIterator<T>
     where
         Id: Into<u64>,
     {
@@ -198,7 +480,7 @@ where
                 id.into(),
             )
         };
-        TableIter {
+        PrimaryIterator {
             value: itr,
             code: self.code,
             scope: self.scope,
@@ -207,7 +489,7 @@ where
         }
     }
 
-    // pub fn get(&self, itr: TableIter<T>) -> Result<T, ReadError> {
+    // pub fn get(&self, itr: PrimaryIterator<T>) -> Result<T, ReadError> {
     //     let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
     //     let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
     //     unsafe {
@@ -216,10 +498,13 @@ where
     //     T::read(&bytes, 0).map(|(t, _)| t)
     // }
 
-    pub fn emplace<P>(&self, payer: P, item: T) -> Result<TableIter<T>, WriteError>
+    pub fn emplace<P>(&self, payer: P, item: T) -> Result<PrimaryIterator<T>, WriteError>
     where
         P: Into<AccountName>,
     {
+        let id = item.primary_key();
+        let payer = payer.into();
+
         let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
@@ -227,21 +512,22 @@ where
             ::eosio_sys::db_store_i64(
                 self.scope.into(),
                 self.name.into(),
-                payer.into().into(),
-                item.primary_key(),
+                payer.into(),
+                id,
                 ptr,
                 pos as u32,
             )
         };
 
         // store secondary indexes
-        // for (i, k) in item.secondary_keys().iter().enumerate() {
-        //     match k {
-        //         SecondaryKey::U64()
-        //     }
-        // }
+        for (i, k) in item.secondary_keys().iter().enumerate() {
+            if let Some(k) = k {
+                let table = SecondaryTableName(self.name, i);
+                k.store(self.scope, table, payer, id);
+            }
+        }
 
-        Ok(TableIter {
+        Ok(PrimaryIterator {
             value: itr,
             code: self.code,
             scope: self.scope,
@@ -250,7 +536,12 @@ where
         })
     }
 
-    pub fn modify<P>(&self, itr: &TableIter<T>, payer: P, item: T) -> Result<usize, WriteError>
+    pub fn modify<P>(
+        &self,
+        itr: &PrimaryIterator<T>,
+        payer: P,
+        item: T,
+    ) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
@@ -260,7 +551,14 @@ where
         let payer: AccountName = payer.into();
         unsafe { ::eosio_sys::db_update_i64(itr.value, payer.into(), ptr, pos as u32) }
 
-        // update secondary indexes
+        let pk = item.primary_key();
+
+        for (i, k) in item.secondary_keys().iter().enumerate() {
+            if let Some(k) = k {
+                let table = SecondaryTableName(self.name, i);
+                k.upsert(self.code, self.scope, table, payer, pk);
+            }
+        }
 
         Ok(pos)
     }

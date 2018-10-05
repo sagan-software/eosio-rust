@@ -9,9 +9,6 @@ description = "System bindings for EOSIO blockchains"
 test = false
 doctest = false
 
-[dependencies]
-memchr = { version = "2.0", default-features = false }
-
 [features]
 default = ["std"]
 std = []

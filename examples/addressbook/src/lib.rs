@@ -36,11 +36,11 @@ fn add(
     addresses.emplace(account, address);
 
     // let table_name = (n!(address) & 18446744073709551600) | (0 & 15);
-    let table_name = (n!(address) & 0xFFFFFFFFFFFFFFF0u64) | (0 & 0x000000000000000Fu64);
-    let zipptr: *const u64 = &(zip as u64);
-    unsafe {
-        ::eosio::sys::db_idx64_store(code.into(), table_name, code.into(), account.into(), zipptr);
-    }
+    // let table_name = (n!(address) & 0xFFFFFFFFFFFFFFF0u64) | (0 & 0x000000000000000Fu64);
+    // let zipptr: *const u64 = &(zip as u64);
+    // unsafe {
+    //     ::eosio::sys::db_idx64_store(code.into(), table_name, code.into(), account.into(), zipptr);
+    // }
 }
 
 #[eosio_action]
@@ -142,46 +142,44 @@ fn likezip(zip: u32) {
 
 eosio_abi!(add, update, remove, like, likezip);
 
-#[derive(TableRow, Read, Write)]
+#[derive(Read, Write)]
 struct Address {
-    #[primary]
     account: AccountName,
     first_name: String,
     last_name: String,
     street: String,
     city: String,
     state: String,
-    #[secondary]
     zip: u32,
     liked: u64,
 }
 
-// impl TableRow for Address {
-//     fn primary_key(&self) -> u64 {
-//         self.account.into()
-//     }
+impl TableRow for Address {
+    fn primary_key(&self) -> u64 {
+        self.account.into()
+    }
 
-//     fn secondary_keys(&self) -> [Option<SecondaryKey>; 16] {
-//         [
-//             Some(SecondaryKey::U64(u64::from(self.zip))),
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//             None,
-//         ]
-//     }
-// }
+    fn secondary_keys(&self) -> [Option<&SecondaryKey>; 16] {
+        [
+            Some(&self.zip),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ]
+    }
+}
 
 // impl Address {
 //     fn by_zip() -> SecondaryIndex<u64, Self> {
