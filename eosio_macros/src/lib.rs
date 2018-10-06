@@ -23,6 +23,7 @@ mod eosio_action;
 mod eosio_assert;
 mod eosio_name;
 mod eosio_print;
+mod eosio_table;
 mod n;
 mod s;
 
@@ -56,6 +57,11 @@ pub fn eosio_name(input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn eosio_print(input: TokenStream) -> TokenStream {
     ::eosio_print::expand(input)
+}
+
+#[proc_macro_attribute]
+pub fn eosio_table(args: TokenStream, input: TokenStream) -> TokenStream {
+    ::eosio_table::expand(args, input)
 }
 
 #[proc_macro]

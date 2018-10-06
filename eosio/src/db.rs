@@ -315,7 +315,7 @@ where
     T: TableRow,
 {
     fn get(&self) -> Result<T, ReadError>;
-    fn erase(&self);
+    fn erase(&self) -> Result<T, ReadError>;
     // fn modify(&self);
     // fn previous(&self);
 }
@@ -361,7 +361,21 @@ where
 {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
-        None
+        let end = unsafe {
+            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.into())
+        };
+        if self.value == end {
+            None
+        } else {
+            let item = self.get();
+            let mut pk = 0u64;
+            let ptr: *mut u64 = &mut pk;
+            self.value = unsafe { ::eosio_sys::db_next_i64(self.value, ptr) };
+            match item {
+                Ok(item) => Some(item),
+                Err(_) => None,
+            }
+        }
     }
 }
 
@@ -378,42 +392,190 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    fn erase(&self) {
+    fn erase(&self) -> Result<T, ReadError> {
+        let item = self.get()?;
+        let pk = item.primary_key();
         unsafe {
             ::eosio_sys::db_remove_i64(self.value);
         }
+
+        for (i, k) in item.secondary_keys().iter().enumerate() {
+            if let Some(k) = k {
+                let table = SecondaryTableName(self.table, i);
+                let end = k.end(self.code, self.scope, table);
+                let itr = k.find_primary(self.code, self.scope, table, pk);
+                if itr != end {
+                    k.remove(itr);
+                }
+            }
+        }
+        Ok(item)
     }
 }
 
 #[derive(Copy, Clone)]
-pub struct SecondaryIterator<K, T>
+pub struct SecondaryCursor<'a, K, T>
 where
     K: SecondaryKey,
     T: TableRow,
 {
     value: i32,
-    code: AccountName,
-    scope: ScopeName,
-    table: TableName,
-    index: usize,
-    _data: PhantomData<(K, T)>,
+    pk: u64,
+    index: &'a SecondaryIndex<K, T>,
 }
 
-// impl<T> Iterator for SecondaryIterator<T>
-// where
-//     T: TableRow,
-// {
-//     type Item = T;
-//     fn next(&mut self) -> Option<Self::Item> {
-//         None
-//     }
-// }
+impl<'a, K, T> SecondaryCursor<'a, K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    pub fn get(&self) -> Result<T, ReadError> {
+        let pk_itr = unsafe {
+            ::eosio_sys::db_find_i64(
+                self.index.code.into(),
+                self.index.scope.into(),
+                self.index.table.0.into(),
+                self.pk.into(),
+            )
+        };
+        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
+        unsafe {
+            ::eosio_sys::db_get_i64(pk_itr, ptr, 10000);
+        }
+        T::read(&bytes, 0).map(|(t, _)| t)
+    }
 
-// impl<T> TableIterator<T> for SecondaryIterator<u32, T> where T: TableRow {
-//     fn get(&self) -> Result<T, ReadError> {
+    pub fn modify<P>(&self, payer: P, item: T) -> Result<usize, WriteError>
+    where
+        P: Into<AccountName>,
+    {
+        let table = Table::new(self.index.code, self.index.scope, self.index.table.0);
+        let pk_itr = table.find(self.pk);
+        table.modify(&pk_itr, payer, item)
+    }
+}
 
-//     }
-// }
+pub struct SecondaryIter<'a, K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    value: i32,
+    pk: u64,
+    pk_end: i32,
+    sk_end: i32,
+    index: &'a SecondaryIndex<K, T>,
+}
+
+impl<'a, K, T> Iterator for SecondaryIter<'a, K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    type Item = SecondaryCursor<'a, K, T>;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.value == self.sk_end {
+            return None;
+        }
+
+        let pk_itr = unsafe {
+            ::eosio_sys::db_find_i64(
+                self.index.code.into(),
+                self.index.scope.into(),
+                self.index.table.0.into(),
+                self.pk.into(),
+            )
+        };
+
+        if pk_itr == self.pk_end {
+            return None;
+        }
+
+        let cursor = SecondaryCursor {
+            value: self.value,
+            pk: self.pk,
+            index: self.index,
+        };
+        let (itr, pk) = self.index.key.next(self.value);
+        self.value = itr;
+        self.pk = pk;
+
+        Some(cursor)
+    }
+}
+
+#[derive(Copy, Clone)]
+pub struct SecondaryIndex<K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    code: AccountName,
+    scope: ScopeName,
+    table: SecondaryTableName,
+    key: K,
+    _data: PhantomData<T>,
+}
+
+impl<'a, K, T> SecondaryIndex<K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    pub fn new<C, S, N>(code: C, scope: S, name: N, key: K, index: usize) -> SecondaryIndex<K, T>
+    where
+        C: Into<AccountName>,
+        S: Into<ScopeName>,
+        N: Into<TableName>,
+    {
+        SecondaryIndex {
+            code: code.into(),
+            scope: scope.into(),
+            table: SecondaryTableName(name.into(), index),
+            key,
+            _data: PhantomData,
+        }
+    }
+
+    pub fn lower_bound(&self) -> SecondaryCursor<K, T> {
+        let (itr, pk) = self.key.lower_bound(self.code, self.scope, self.table);
+        SecondaryCursor {
+            value: itr,
+            pk,
+            index: self,
+        }
+    }
+
+    pub fn modify<P>(
+        &self,
+        itr: &SecondaryCursor<K, T>,
+        payer: P,
+        item: T,
+    ) -> Result<usize, WriteError>
+    where
+        P: Into<AccountName>,
+    {
+        let table = Table::new(self.code, self.scope, self.table.0);
+        let pk_itr = table.find(itr.pk);
+        table.modify(&pk_itr, payer, item)
+    }
+
+    pub fn iter(&'a self) -> SecondaryIter<'a, K, T> {
+        let sk_end = self.key.end(self.code, self.scope, self.table);
+        let pk_end = unsafe {
+            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.0.into())
+        };
+        let lower = self.lower_bound();
+        SecondaryIter {
+            value: lower.value,
+            pk: lower.pk,
+            pk_end,
+            sk_end,
+            index: self,
+        }
+    }
+}
 
 pub struct Table<T>
 where

@@ -117,7 +117,9 @@ update_address:
 	$(CLEOS) push action addressbook update '["bob","Bob","Smith","1 EOS Way","Blacksburg","VA",24062]' -p 'bob@active'
 
 remove_address:
-	$(CLEOS) push action addressbook update '["dan"]' -p 'dan@active'
+	$(CLEOS) push action addressbook remove '["alice"]' -p 'alice@active'
+	$(CLEOS) push action addressbook remove '["bob"]' -p 'bob@active'
+	$(CLEOS) push action addressbook remove '["dan"]' -p 'dan@active'
 
 like_address:
 	$(CLEOS) push action addressbook like '["dan"]' -p 'alice@active'
