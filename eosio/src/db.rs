@@ -454,6 +454,27 @@ where
         let pk_itr = table.find(self.pk);
         table.modify(&pk_itr, payer, item)
     }
+
+    pub fn iter(&'a self) -> SecondaryIter<'a, K, T> {
+        let sk_end = self
+            .index
+            .key
+            .end(self.index.code, self.index.scope, self.index.table);
+        let pk_end = unsafe {
+            ::eosio_sys::db_end_i64(
+                self.index.code.into(),
+                self.index.scope.into(),
+                self.index.table.0.into(),
+            )
+        };
+        SecondaryIter {
+            value: self.value,
+            pk: self.pk,
+            pk_end,
+            sk_end,
+            index: self.index,
+        }
+    }
 }
 
 pub struct SecondaryIter<'a, K, T>
@@ -538,40 +559,11 @@ where
         }
     }
 
-    pub fn lower_bound(&self) -> SecondaryCursor<K, T> {
-        let (itr, pk) = self.key.lower_bound(self.code, self.scope, self.table);
+    pub fn lower_bound(&self, key: K) -> SecondaryCursor<K, T> {
+        let (itr, pk) = key.lower_bound(self.code, self.scope, self.table);
         SecondaryCursor {
             value: itr,
             pk,
-            index: self,
-        }
-    }
-
-    pub fn modify<P>(
-        &self,
-        itr: &SecondaryCursor<K, T>,
-        payer: P,
-        item: T,
-    ) -> Result<usize, WriteError>
-    where
-        P: Into<AccountName>,
-    {
-        let table = Table::new(self.code, self.scope, self.table.0);
-        let pk_itr = table.find(itr.pk);
-        table.modify(&pk_itr, payer, item)
-    }
-
-    pub fn iter(&'a self) -> SecondaryIter<'a, K, T> {
-        let sk_end = self.key.end(self.code, self.scope, self.table);
-        let pk_end = unsafe {
-            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.0.into())
-        };
-        let lower = self.lower_bound();
-        SecondaryIter {
-            value: lower.value,
-            pk: lower.pk,
-            pk_end,
-            sk_end,
             index: self,
         }
     }

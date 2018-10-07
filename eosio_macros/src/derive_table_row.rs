@@ -34,7 +34,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         }
 
                         if is_secondary {
-                            secondary_keys.push(field.ident.clone());
+                            secondary_keys.push((field.ident.clone(), field.ty.clone()));
                         }
                     }
                 }
@@ -46,18 +46,33 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 }
 
                 let mut secondary_keys_expanded = quote!();
+                let mut secondary_keys_constructors = quote!();
                 for i in 0..16 {
-                    let q = match secondary_keys.get(i) {
-                        Some(sk) => quote! {
-                            Some(&self.#sk),
-                        },
-                        None => quote! {
-                            None,
-                        },
-                    };
-                    secondary_keys_expanded = quote! {
-                        #secondary_keys_expanded
-                        #q
+                    match secondary_keys.get(i) {
+                        Some((ident, ty)) => {
+                            secondary_keys_expanded = quote! {
+                                #secondary_keys_expanded
+                                Some(&self.#ident),
+                            };
+                            secondary_keys_constructors = quote! {
+                                #secondary_keys_constructors
+
+                                pub fn #ident<C, S, N>(code: C, scope: S, table: N) -> SecondaryIndex<#ty, Self>
+                                where
+                                    C: Into<AccountName>,
+                                    S: Into<ScopeName>,
+                                    N: Into<TableName>,
+                                {
+                                    SecondaryIndex::new(code, scope, table, #ty::default(), #i)
+                                }
+                            };
+                        }
+                        None => {
+                            secondary_keys_expanded = quote! {
+                                #secondary_keys_expanded
+                                None,
+                            };
+                        }
                     };
                 }
 
@@ -71,6 +86,10 @@ pub fn expand(input: TokenStream) -> TokenStream {
                                 #secondary_keys_expanded
                             ]
                         }
+                    }
+
+                    impl #impl_generics #name #ty_generics #where_clause {
+                        #secondary_keys_constructors
                     }
                 }
             }

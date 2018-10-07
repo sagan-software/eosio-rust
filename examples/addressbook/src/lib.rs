@@ -104,16 +104,15 @@ fn like(account: AccountName) {
 fn likezip(zip: u32) {
     let code = current_receiver();
 
-    let zip_index: SecondaryIndex<u32, Address> =
-        SecondaryIndex::new(code, code, n!(address), zip, 0);
-    for cursor in zip_index.iter() {
+    let zip_index = Address::zip(code, code, n!(address));
+    for cursor in zip_index.lower_bound(zip).iter() {
         let mut addr = cursor.get().unwrap();
         if addr.zip != zip {
             break;
         }
         addr.account.print();
         addr.liked += 1;
-        zip_index.modify(&cursor, 0, addr);
+        cursor.modify(0, addr);
     }
 }
 
