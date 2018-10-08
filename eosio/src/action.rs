@@ -3,23 +3,6 @@ use bytes::{Write, WriteError};
 use eosio_macros::*;
 use permission::{PermissionLevel, PermissionName};
 
-/// Aborts processing of this action and unwinds all pending changes if the test condition is true
-pub fn eosio_assert(test: bool, msg: &str) {
-    let test = if test { 1 } else { 0 };
-    let msg_ptr = msg.as_ptr();
-    unsafe { ::eosio_sys::eosio_assert(test, msg_ptr) }
-}
-
-/// Aborts processing of this action and unwinds all pending changes if the test condition is true
-pub fn eosio_assert_code<C>(test: bool, code: C)
-where
-    C: Into<u64>,
-{
-    let test = if test { 1 } else { 0 };
-    let code: u64 = code.into();
-    unsafe { ::eosio_sys::eosio_assert_code(test, code) }
-}
-
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
 pub fn eosio_exit<C>(code: C)
 where

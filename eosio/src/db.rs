@@ -321,7 +321,7 @@ where
 }
 
 #[derive(Copy, Clone)]
-pub struct PrimaryIterator<T>
+pub struct PrimaryCursor<T>
 where
     T: TableRow,
 {
@@ -332,11 +332,11 @@ where
     _data: PhantomData<T>,
 }
 
-impl<T> PartialEq for PrimaryIterator<T>
+impl<T> PartialEq for PrimaryCursor<T>
 where
     T: TableRow,
 {
-    fn eq(&self, other: &PrimaryIterator<T>) -> bool {
+    fn eq(&self, other: &PrimaryCursor<T>) -> bool {
         self.value == other.value
             && self.code == other.code
             && self.scope == other.scope
@@ -344,18 +344,18 @@ where
     }
 }
 
-impl<T> Printable for PrimaryIterator<T>
+impl<T> Printable for PrimaryCursor<T>
 where
     T: TableRow,
 {
     fn print(&self) {
-        c!("PrimaryIterator(").print();
+        c!("PrimaryCursor(").print();
         self.value.print();
         c!(")").print();
     }
 }
 
-impl<T> Iterator for PrimaryIterator<T>
+impl<T> Iterator for PrimaryCursor<T>
 where
     T: TableRow,
 {
@@ -379,7 +379,7 @@ where
     }
 }
 
-impl<T> TableIterator<T> for PrimaryIterator<T>
+impl<T> TableIterator<T> for PrimaryCursor<T>
 where
     T: TableRow,
 {
@@ -410,6 +410,19 @@ where
             }
         }
         Ok(item)
+    }
+}
+
+impl<T> PrimaryCursor<T>
+where
+    T: TableRow,
+{
+    pub fn modify<P>(&self, payer: P, item: T) -> Result<usize, WriteError>
+    where
+        P: Into<AccountName>,
+    {
+        let table = Table::new(self.code, self.scope, self.table);
+        table.modify(&self, payer, item)
     }
 }
 
@@ -451,8 +464,10 @@ where
         P: Into<AccountName>,
     {
         let table = Table::new(self.index.code, self.index.scope, self.index.table.0);
-        let pk_itr = table.find(self.pk);
-        table.modify(&pk_itr, payer, item)
+        match table.find(self.pk) {
+            Some(pk_itr) => table.modify(&pk_itr, payer, item),
+            None => Err(WriteError::NotEnoughSpace),
+        }
     }
 
     pub fn iter(&'a self) -> SecondaryIter<'a, K, T> {
@@ -597,11 +612,11 @@ where
         }
     }
 
-    pub fn end(&self) -> PrimaryIterator<T> {
+    pub fn end(&self) -> PrimaryCursor<T> {
         let itr = unsafe {
             ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
         };
-        PrimaryIterator {
+        PrimaryCursor {
             value: itr,
             code: self.code,
             scope: self.scope,
@@ -610,7 +625,7 @@ where
         }
     }
 
-    pub fn is_end(&self, itr: &PrimaryIterator<T>) -> bool {
+    pub fn is_end(&self, itr: &PrimaryCursor<T>) -> bool {
         itr.value == self.end().value
     }
 
@@ -618,11 +633,10 @@ where
     where
         Id: Into<u64>,
     {
-        let itr = self.find(id);
-        !self.is_end(&itr)
+        self.find(id).is_some()
     }
 
-    pub fn find<Id>(&self, id: Id) -> PrimaryIterator<T>
+    pub fn find<Id>(&self, id: Id) -> Option<PrimaryCursor<T>>
     where
         Id: Into<u64>,
     {
@@ -634,16 +648,23 @@ where
                 id.into(),
             )
         };
-        PrimaryIterator {
-            value: itr,
-            code: self.code,
-            scope: self.scope,
-            table: self.name,
-            _data: self._row_type,
+        let end = unsafe {
+            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
+        };
+        if itr == end {
+            None
+        } else {
+            Some(PrimaryCursor {
+                value: itr,
+                code: self.code,
+                scope: self.scope,
+                table: self.name,
+                _data: self._row_type,
+            })
         }
     }
 
-    // pub fn get(&self, itr: PrimaryIterator<T>) -> Result<T, ReadError> {
+    // pub fn get(&self, itr: PrimaryCursor<T>) -> Result<T, ReadError> {
     //     let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
     //     let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
     //     unsafe {
@@ -652,7 +673,7 @@ where
     //     T::read(&bytes, 0).map(|(t, _)| t)
     // }
 
-    pub fn emplace<P>(&self, payer: P, item: T) -> Result<PrimaryIterator<T>, WriteError>
+    pub fn emplace<P>(&self, payer: P, item: T) -> Result<PrimaryCursor<T>, WriteError>
     where
         P: Into<AccountName>,
     {
@@ -681,7 +702,7 @@ where
             }
         }
 
-        Ok(PrimaryIterator {
+        Ok(PrimaryCursor {
             value: itr,
             code: self.code,
             scope: self.scope,
@@ -690,12 +711,7 @@ where
         })
     }
 
-    pub fn modify<P>(
-        &self,
-        itr: &PrimaryIterator<T>,
-        payer: P,
-        item: T,
-    ) -> Result<usize, WriteError>
+    pub fn modify<P>(&self, itr: &PrimaryCursor<T>, payer: P, item: T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {

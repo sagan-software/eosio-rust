@@ -37,6 +37,7 @@ mod lib {
 
 pub mod account;
 pub mod action;
+pub mod assert;
 pub mod asset;
 pub mod bytes;
 pub mod db;
@@ -57,6 +58,7 @@ pub mod macros {
 pub mod prelude {
     pub use super::account::*;
     pub use super::action::*;
+    pub use super::assert::*;
     pub use super::asset::*;
     pub use super::bytes::*;
     pub use super::db::*;

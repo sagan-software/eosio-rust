@@ -74,6 +74,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
+        #[automatically_derived]
         impl #impl_generics #read_path::Read for #name #ty_generics #where_clause {
             fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), #read_path::ReadError> {
                 #reads

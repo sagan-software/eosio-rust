@@ -59,6 +59,8 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 	$(CLEOS) set abi $(subst _,.,$*) /mnt/dev/examples/$*/$*.abi.json
 	$(CLEOS) set code $(subst _,.,$*) /mnt/dev/release/$*_gc_opt.wasm
 
+examples: addressbook_example eosio_token_example hello_example tictactoe_example
+
 say_hi:
 	$(CLEOS) push action hello hi '["contributor","tester"]' -p 'hello@active'
 

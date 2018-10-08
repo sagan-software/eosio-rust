@@ -17,7 +17,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
             if action == ::eosio::macros::n!(onerror) {
-                ::eosio::action::eosio_assert_code(
+                ::eosio::assert::eosio_assert_code(
                     code == ::eosio::macros::n!(eosio),
                     ::eosio::macros::n!(badonerror)
                 );
@@ -26,7 +26,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 match action {
                     #actions
                     _ => {
-                        ::eosio::action::eosio_assert_code(false, n!(badaction));
+                        ::eosio::assert::eosio_assert_code(false, n!(badaction));
                     }
                 }
             }

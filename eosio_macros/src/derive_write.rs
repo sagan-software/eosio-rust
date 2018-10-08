@@ -61,6 +61,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
+        #[automatically_derived]
         impl #impl_generics #write_path::Write for #name #ty_generics #where_clause {
             fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, #write_path::WriteError> {
                 #writes

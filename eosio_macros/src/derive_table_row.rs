@@ -77,6 +77,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 }
 
                 quote! {
+                    #[automatically_derived]
                     impl #impl_generics ::eosio::db::TableRow for #name #ty_generics #where_clause {
                         fn primary_key(&self) -> u64 {
                             self.#primary_key.into()
@@ -88,6 +89,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         }
                     }
 
+                    #[automatically_derived]
                     impl #impl_generics #name #ty_generics #where_clause {
                         #secondary_keys_constructors
                     }
