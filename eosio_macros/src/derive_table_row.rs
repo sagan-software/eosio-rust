@@ -27,7 +27,6 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         Meta::NameValue(meta) => {
                             let lit = meta.lit;
                             let s = Ident::new(format!("{}", quote!(#lit)).as_str().trim_matches('"'), Span::call_site());
-                            println!("!!! {}", quote!(#s));
                             Some(s)
                         }
                         _ => {

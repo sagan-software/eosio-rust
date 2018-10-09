@@ -32,7 +32,7 @@ fn add(
         zip,
         liked: 0,
     };
-    addresses.emplace(account, address).assert("write");
+    addresses.emplace(account, &address).assert("write");
 }
 
 #[eosio_action]
@@ -62,7 +62,7 @@ fn update(
     address.state = state;
     address.zip = zip;
 
-    itr.modify(account, address).assert("write");
+    itr.modify(account, &address).assert("write");
 }
 
 #[eosio_action]
@@ -90,7 +90,7 @@ fn like(account: AccountName) {
 
     let mut address = itr.get().assert("read");
     address.liked += 1;
-    itr.modify(address.account, address).assert("write");
+    itr.modify(address.account, &address).assert("write");
 }
 
 #[eosio_action]
@@ -98,13 +98,13 @@ fn likezip(zip: u32) {
     let code = current_receiver();
 
     let zip_index = Address::zip(code, code);
-    for cursor in zip_index.lower_bound(zip).iter() {
+    for cursor in zip_index.lower_bound(&zip).iter() {
         let mut addr = cursor.get().assert("read");
         if addr.zip != zip {
             break;
         }
         addr.liked += 1;
-        cursor.modify(0, addr).assert("write");
+        cursor.modify(0, &addr).assert("write");
     }
 }
 

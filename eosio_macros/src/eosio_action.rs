@@ -1,5 +1,4 @@
 use proc_macro::TokenStream;
-use syn::spanned::Spanned;
 use syn::{FnArg, Ident, ItemFn};
 
 pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {

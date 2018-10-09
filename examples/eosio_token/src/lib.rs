@@ -26,7 +26,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
         issuer,
     };
 
-    table.emplace(receiver, stats);
+    table.emplace(receiver, &stats).assert("write");
 }
 
 #[eosio_action]
@@ -54,7 +54,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     );
 
     st.supply += quantity;
-    itr.modify(0, st).assert("write");
+    itr.modify(0, &st).assert("write");
 
     add_balance(st.issuer, quantity, st.issuer);
 
@@ -80,11 +80,11 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     let receiver = current_receiver();
     let accounts_table = Account::table(receiver, symbol.name());
     let itr = accounts_table.find(symbol.name());
-    if (itr.is_none()) {
-        let mut account = Account {
+    if itr.is_none() {
+        let account = Account {
             balance: Asset { amount: 0, symbol },
         };
-        accounts_table.emplace(ram_payer, account);
+        accounts_table.emplace(ram_payer, &account).assert("write");
     }
 }
 
@@ -126,7 +126,7 @@ fn retire(quantity: Asset, memo: String) {
     );
 
     st.supply -= quantity;
-    itr.modify(0, st).assert("write");
+    itr.modify(0, &st).assert("write");
 }
 
 #[eosio_action]
@@ -172,7 +172,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
 
     account.balance -= value;
 
-    itr.modify(owner, account).assert("write");
+    itr.modify(owner, &account).assert("write");
 }
 
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
@@ -183,11 +183,11 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
         Some(itr) => {
             let mut account = itr.get().assert("read");
             account.balance += value;
-            itr.modify(ram_payer, account).assert("write");
+            itr.modify(ram_payer, &account).assert("write");
         }
         None => {
             let account = Account { balance: value };
-            accounts_table.emplace(ram_payer, account).assert("write");
+            accounts_table.emplace(ram_payer, &account).assert("write");
         }
     }
 }

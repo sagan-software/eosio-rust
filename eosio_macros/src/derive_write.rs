@@ -18,9 +18,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let call_site = ::proc_macro2::Span::call_site();
-    let mut writes = quote!();
     let var = quote!(self);
-    match input.data {
+    let writes = match input.data {
         Data::Struct(ref data) => match data.fields {
             Fields::Named(ref fields) => {
                 let recurse = fields.named.iter().map(|f| {
@@ -30,7 +29,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         let pos = #write_path::Write::write(&#access, bytes, pos)?;
                     }
                 });
-                writes = quote! {
+                quote! {
                     #(#recurse)*
                     Ok(pos)
                 }
@@ -46,15 +45,15 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         let pos = #write_path::Write::write(&#access, bytes, pos)?;
                     }
                 });
-                writes = quote! {
+                quote! {
                     #(#recurse)*
                     Ok(pos)
                 }
             }
             Fields::Unit => {
-                writes = quote! {
+                quote! {
                     Ok(pos)
-                };
+                }
             }
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),

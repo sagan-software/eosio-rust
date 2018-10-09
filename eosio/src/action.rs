@@ -115,7 +115,7 @@ pub trait Action: Read + Write + Clone {
         Self::read(&bytes, 0)
     }
 
-    fn to_inline_action<'a>(self, authorization: &'a [PermissionLevel]) -> InlineAction<'a, Self> {
+    fn to_inline_action(self, authorization: &[PermissionLevel]) -> InlineAction<Self> {
         InlineAction {
             account: current_receiver(),
             name: Self::NAME.into(),
@@ -124,7 +124,7 @@ pub trait Action: Read + Write + Clone {
         }
     }
 
-    fn send<'a>(self, authorization: &'a [PermissionLevel]) -> Result<(), WriteError> {
+    fn send(self, authorization: &[PermissionLevel]) -> Result<(), WriteError> {
         self.to_inline_action(authorization).send()
     }
 }

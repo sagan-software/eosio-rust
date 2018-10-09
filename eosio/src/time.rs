@@ -12,19 +12,19 @@ impl Time {
         Time(0)
     }
 
-    pub fn is_zero(&self) -> bool {
+    pub fn is_zero(self) -> bool {
         self.0 == 0
     }
 
-    pub fn microseconds(&self) -> u64 {
+    pub fn microseconds(self) -> u64 {
         self.0
     }
 
-    pub fn milliseconds(&self) -> u64 {
+    pub fn milliseconds(self) -> u64 {
         self.microseconds() / 1_000
     }
 
-    pub fn seconds(&self) -> u64 {
+    pub fn seconds(self) -> u64 {
         self.milliseconds() / 1_000
     }
 }

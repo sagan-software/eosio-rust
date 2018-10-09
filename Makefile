@@ -15,8 +15,24 @@ build:
 test:
 	cargo test --features test
 
+docs:
+	cargo doc \
+		--all \
+		--exclude addressbook \
+		--exclude eosio_token \
+		--exclude hello \
+		--exclude tictactoe \
+		--target wasm32-unknown-unknown --release --no-deps
+
+lint:
+	touch eosio/src/lib.rs
+	touch eosio_sys/src/lib.rs
+	touch eosio_macros/src/lib.rs
+	cargo clippy
+
 clean:
 	rm -Rf target
+
 
 docker:
 	docker-compose down
@@ -136,5 +152,5 @@ likezip_address:
 get_addresses:
 	$(CLEOS) get table addressbook addressbook address
 
-.PHONY: install build test clean docker wallet accounts hello
+.PHONY: install build test clean docker wallet accounts hello docs
 .SECONDARY:

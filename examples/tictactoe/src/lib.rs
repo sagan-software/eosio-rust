@@ -29,7 +29,7 @@ fn create(challenger: AccountName, host: AccountName) {
         board: [0; BOARD_AREA],
     };
 
-    table.emplace(host, game).assert("write");
+    table.emplace(host, &game).assert("write");
 }
 
 #[eosio_action]
@@ -50,7 +50,7 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     game.turn = host;
     game.winner = n!(none).into();
 
-    itr.modify(host, game).assert("write");
+    itr.modify(host, &game).assert("write");
 }
 
 #[eosio_action]
@@ -108,7 +108,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
         }
     }
     game.winner = game.get_winner();
-    itr.modify(host, game).assert("write");
+    itr.modify(host, &game).assert("write");
 }
 
 eosio_abi!(create, restart, close, makemove);

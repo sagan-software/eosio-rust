@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
-use syn::{Attribute, DeriveInput, LitStr};
+use syn::{DeriveInput, LitStr};
 
 pub fn expand(args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);

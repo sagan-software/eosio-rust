@@ -1,6 +1,5 @@
 use account::AccountName;
 use eosio_macros::*;
-use lib::TryFrom;
 use print::Printable;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
@@ -25,7 +24,7 @@ impl From<SymbolName> for [char; 7] {
 }
 
 impl SymbolName {
-    pub fn is_valid(&self) -> bool {
+    pub fn is_valid(self) -> bool {
         let chars = chars_from_symbol_value(self.0);
         for &c in chars.iter() {
             if !('A' <= c && c <= 'Z') {

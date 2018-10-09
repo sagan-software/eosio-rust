@@ -5,6 +5,7 @@ authors = ["Liam Curry <liam@sagan.software>"]
 
 [lib]
 crate-type = ["cdylib"]
+doc = false
 
 [dependencies]
 eosio = { path = "../../eosio", version = "0.1" }

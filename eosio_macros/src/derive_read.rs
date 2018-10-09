@@ -18,9 +18,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let call_site = ::proc_macro2::Span::call_site();
-    let mut reads = quote!();
-
-    match input.data {
+    let reads = match input.data {
         Data::Struct(ref data) => match data.fields {
             Fields::Named(ref fields) => {
                 let field_reads = fields.named.iter().map(|f| {
@@ -36,13 +34,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         #ident,
                     }
                 });
-                reads = quote! {
+                quote! {
                     #(#field_reads)*
                     let item = #name {
                         #(#field_names)*
                     };
                     Ok((item, pos))
-                };
+                }
             }
             Fields::Unnamed(ref fields) => {
                 let field_reads = fields.unnamed.iter().enumerate().map(|(i, f)| {
@@ -58,13 +56,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         #ident,
                     }
                 });
-                reads = quote! {
+                quote! {
                     #(#field_reads)*
                     let item = #name(
                         #(#fields_list)*
                     );
                     Ok((item, pos))
-                };
+                }
             }
             Fields::Unit => {
                 unimplemented!();

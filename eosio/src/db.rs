@@ -16,7 +16,7 @@ impl From<SecondaryTableName> for u64 {
     fn from(t: SecondaryTableName) -> u64 {
         let index = t.1 as u64;
         let table: u64 = t.0.into();
-        (table & 0xFFFFFFFFFFFFFFF0u64) | (index & 0x000000000000000Fu64)
+        (table & 0xFFFF_FFFF_FFFF_FFF0u64) | (index & 0x0000_0000_0000_000Fu64)
     }
 }
 
@@ -418,7 +418,7 @@ impl<T> PrimaryCursor<T>
 where
     T: TableRow,
 {
-    pub fn modify<P>(&self, payer: P, item: T) -> Result<usize, WriteError>
+    pub fn modify<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
@@ -449,7 +449,7 @@ where
                 self.index.code.into(),
                 self.index.scope.into(),
                 self.index.table.0.into(),
-                self.pk.into(),
+                self.pk,
             )
         };
         let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
@@ -460,7 +460,7 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    pub fn modify<P>(&self, payer: P, item: T) -> Result<usize, WriteError>
+    pub fn modify<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
@@ -521,7 +521,7 @@ where
                 self.index.code.into(),
                 self.index.scope.into(),
                 self.index.table.0.into(),
-                self.pk.into(),
+                self.pk,
             )
         };
 
@@ -575,7 +575,7 @@ where
         }
     }
 
-    pub fn lower_bound(&self, key: K) -> SecondaryCursor<K, T> {
+    pub fn lower_bound(&self, key: &K) -> SecondaryCursor<K, T> {
         let (itr, pk) = key.lower_bound(self.code, self.scope, self.table);
         SecondaryCursor {
             value: itr,
@@ -674,7 +674,7 @@ where
     //     T::read(&bytes, 0).map(|(t, _)| t)
     // }
 
-    pub fn emplace<P>(&self, payer: P, item: T) -> Result<PrimaryCursor<T>, WriteError>
+    pub fn emplace<P>(&self, payer: P, item: &T) -> Result<PrimaryCursor<T>, WriteError>
     where
         P: Into<AccountName>,
     {
@@ -712,7 +712,7 @@ where
         })
     }
 
-    pub fn modify<P>(&self, itr: &PrimaryCursor<T>, payer: P, item: T) -> Result<usize, WriteError>
+    fn modify<P>(&self, itr: &PrimaryCursor<T>, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {

@@ -152,13 +152,3 @@ pub fn symbol_name_length(symbol: u64) -> usize {
     }
     len
 }
-
-pub fn ensure_cstr(s: &str) -> String {
-    if s.ends_with("\0") {
-        s.to_owned()
-    } else {
-        let mut s = s.to_owned();
-        s.push_str("\0");
-        s
-    }
-}

@@ -37,7 +37,7 @@ macro_rules! impl_num {
                     match bytes.get(pos + i) {
                         Some(b) => {
                             let shift = <$t as From<u8>>::from(i as u8) * <$t as From<u8>>::from(8u8);
-                            num = num | (<$t as From<u8>>::from(*b) << shift);
+                            num |= <$t as From<u8>>::from(*b) << shift;
                         }
                         None => return Err(ReadError::NotEnoughBytes),
                     }
