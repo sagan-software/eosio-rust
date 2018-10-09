@@ -2,7 +2,7 @@
 
 extern crate eosio;
 
-use eosio::prelude::*;
+use eosio::*;
 
 #[eosio_action]
 fn add(
@@ -17,7 +17,7 @@ fn add(
     require_auth(account);
 
     let code = current_receiver();
-    let addresses = Address::table(code, code, n!(address));
+    let addresses = Address::table(code, code);
 
     let itr = addresses.find(account);
     eosio_assert!(itr.is_none(), "Address for account already exists");
@@ -48,7 +48,7 @@ fn update(
     require_auth(account);
 
     let code = current_receiver();
-    let addresses = Address::table(code, code, n!(address));
+    let addresses = Address::table(code, code);
 
     let itr = addresses
         .find(account)
@@ -70,7 +70,7 @@ fn remove(account: AccountName) {
     require_auth(account);
 
     let code = current_receiver();
-    let addresses = Address::table(code, code, n!(address));
+    let addresses = Address::table(code, code);
 
     let itr = addresses
         .find(account)
@@ -82,30 +82,27 @@ fn remove(account: AccountName) {
 #[eosio_action]
 fn like(account: AccountName) {
     let code = current_receiver();
-    let addresses = Address::table(code, code, n!(address));
+    let addresses = Address::table(code, code);
 
     let itr = addresses
         .find(account)
         .assert("Address for account not found");
-    //eosio_assert!(!itr.is_end(), "Address for account not found");
 
     let mut address = itr.get().assert("read");
     address.liked += 1;
     itr.modify(address.account, address).assert("write");
-    //itr.modify(address.account, address);
 }
 
 #[eosio_action]
 fn likezip(zip: u32) {
     let code = current_receiver();
 
-    let zip_index = Address::zip(code, code, n!(address));
+    let zip_index = Address::zip(code, code);
     for cursor in zip_index.lower_bound(zip).iter() {
         let mut addr = cursor.get().assert("read");
         if addr.zip != zip {
             break;
         }
-        addr.account.print();
         addr.liked += 1;
         cursor.modify(0, addr).assert("write");
     }
@@ -113,7 +110,7 @@ fn likezip(zip: u32) {
 
 eosio_abi!(add, update, remove, like, likezip);
 
-#[eosio_table]
+#[eosio_table(address)]
 struct Address {
     #[primary]
     account: AccountName,

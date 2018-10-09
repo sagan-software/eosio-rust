@@ -21,19 +21,20 @@ impl From<SecondaryTableName> for u64 {
 }
 
 pub trait TableRow: Read + Write {
+    const NAME: u64;
+
     fn primary_key(&self) -> u64;
 
     fn secondary_keys(&self) -> [Option<&SecondaryKey>; 16] {
         [None; 16]
     }
 
-    fn table<C, S, N>(code: C, scope: S, name: N) -> Table<Self>
+    fn table<C, S>(code: C, scope: S) -> Table<Self>
     where
         C: Into<AccountName>,
         S: Into<ScopeName>,
-        N: Into<TableName>,
     {
-        Table::new(code, scope, name)
+        Table::new(code, scope, Self::NAME)
     }
 }
 

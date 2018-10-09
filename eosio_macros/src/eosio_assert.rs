@@ -20,9 +20,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let Assert { test, message } = parse_macro_input!(input as Assert);
     let expanded = quote! {
         unsafe {
-            ::eosio::sys::eosio_assert(
-                if #test { 1 } else { 0 },
-                ::eosio::macros::c!(#message).as_ptr()
+            ::eosio::eosio_assert(
+                #test,
+                ::eosio::c!(#message)
             )
         }
     };

@@ -1,5 +1,6 @@
 use proc_macro::TokenStream;
-use syn::{Data, DeriveInput, Fields, GenericParam};
+use proc_macro2::{Ident, Span};
+use syn::{Data, DeriveInput, Fields, GenericParam, Meta};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -9,10 +10,41 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let mut generics = input.generics.clone();
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(::eosio::bytes::Read));
+            type_param.bounds.push(parse_quote!(::eosio::Read));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    let table_name = input.attrs.iter().fold(None, |acc, attr| {
+        match attr.interpret_meta() {
+            Some(meta) => {
+                let name = meta.name();
+                if name == "table_name" {
+                    if acc.is_some() {
+                        panic!("only 1 table_name attribute allowed per struct");
+                    }
+                    match meta {
+                        Meta::NameValue(meta) => {
+                            let lit = meta.lit;
+                            let s = Ident::new(format!("{}", quote!(#lit)).as_str().trim_matches('"'), Span::call_site());
+                            println!("!!! {}", quote!(#s));
+                            Some(s)
+                        }
+                        _ => {
+                            panic!("invalid table_name attribute. must be in the form #[table_name = \"test\"]");
+                        }
+                    }
+                } else {
+                    acc
+                }
+            }
+            None => acc,
+        }
+    });
+
+    if table_name.is_none() {
+        panic!("#[table_name] attribute must be used when deriving from TableRow");
+    }
 
     let expanded = match input.data {
         Data::Struct(ref data) => match data.fields {
@@ -57,13 +89,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             secondary_keys_constructors = quote! {
                                 #secondary_keys_constructors
 
-                                pub fn #ident<C, S, N>(code: C, scope: S, table: N) -> SecondaryIndex<#ty, Self>
+                                pub fn #ident<C, S>(code: C, scope: S) -> SecondaryIndex<#ty, Self>
                                 where
                                     C: Into<AccountName>,
                                     S: Into<ScopeName>,
-                                    N: Into<TableName>,
                                 {
-                                    SecondaryIndex::new(code, scope, table, #ty::default(), #i)
+                                    SecondaryIndex::new(code, scope, n!(#table_name), #ty::default(), #i)
                                 }
                             };
                         }
@@ -78,7 +109,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
                 quote! {
                     #[automatically_derived]
-                    impl #impl_generics ::eosio::db::TableRow for #name #ty_generics #where_clause {
+                    impl #impl_generics ::eosio::TableRow for #name #ty_generics #where_clause {
+                        const NAME: u64 = n!(#table_name);
+
                         fn primary_key(&self) -> u64 {
                             self.#primary_key.into()
                         }

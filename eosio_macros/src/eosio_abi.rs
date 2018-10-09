@@ -10,23 +10,23 @@ pub fn expand(input: TokenStream) -> TokenStream {
     for i in args.iter() {
         actions = quote! {
             #actions
-            ::eosio::macros::n!(#i) => #i(),
+            ::eosio::n!(#i) => #i(),
         };
     }
     let expanded = quote! {
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
-            if action == ::eosio::macros::n!(onerror) {
-                ::eosio::assert::eosio_assert_code(
-                    code == ::eosio::macros::n!(eosio),
-                    ::eosio::macros::n!(badonerror)
+            if action == ::eosio::n!(onerror) {
+                ::eosio::eosio_assert_code(
+                    code == ::eosio::n!(eosio),
+                    ::eosio::n!(badonerror)
                 );
             }
-            if code == receiver || action == ::eosio::macros::n!(onerror) {
+            if code == receiver || action == ::eosio::n!(onerror) {
                 match action {
                     #actions
                     _ => {
-                        ::eosio::assert::eosio_assert_code(false, n!(badaction));
+                        ::eosio::eosio_assert_code(false, n!(badaction));
                     }
                 }
             }

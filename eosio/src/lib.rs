@@ -35,43 +35,33 @@ mod lib {
     pub use std::vec::Vec;
 }
 
-pub mod account;
-pub mod action;
-pub mod assert;
-pub mod asset;
-pub mod bytes;
-pub mod db;
-pub mod permission;
-pub mod print;
-pub mod scope;
-pub mod symbol;
-pub mod time;
+mod account;
+mod action;
+mod assert;
+mod asset;
+mod bytes;
+mod db;
+mod permission;
+mod print;
+mod scope;
+mod symbol;
+mod time;
 
-pub mod sys {
-    pub use eosio_sys::*;
-}
-
-pub mod macros {
-    pub use eosio_macros::*;
-}
-
-pub mod prelude {
-    pub use super::account::*;
-    pub use super::action::*;
-    pub use super::assert::*;
-    pub use super::asset::*;
-    pub use super::bytes::*;
-    pub use super::db::*;
-    pub use super::macros::*;
-    pub use super::permission::*;
-    pub use super::print::*;
-    pub use super::scope::*;
-    pub use super::symbol::*;
-    pub use super::time::*;
-}
+pub use self::account::*;
+pub use self::action::*;
+pub use self::assert::*;
+pub use self::asset::*;
+pub use self::bytes::*;
+pub use self::db::*;
+pub use self::permission::*;
+pub use self::print::*;
+pub use self::scope::*;
+pub use self::symbol::*;
+pub use self::time::*;
+pub use eosio_macros::*;
 
 mod eosio {
-    pub use super::bytes;
-    pub use super::print;
-    pub use super::sys;
+    pub use super::bytes::*;
+    pub use super::print::*;
+    pub use eosio_sys::*;
 }

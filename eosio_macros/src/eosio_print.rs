@@ -11,12 +11,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
         let mut printable = quote!(#i);
         if let Expr::Lit(ref lit) = *i {
             if let Lit::Str(ref strlit) = lit.lit {
-                printable = quote!(::eosio::macros::c!(#strlit));
+                printable = quote!(::eosio::c!(#strlit));
             }
         }
         prints = quote! {
             #prints
-            ::eosio::print::Printable::print(&#printable);
+            ::eosio::Printable::print(&#printable);
         };
     }
     TokenStream::from(quote!(#prints))

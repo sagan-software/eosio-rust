@@ -2,7 +2,7 @@
 
 extern crate eosio;
 
-use eosio::prelude::*;
+use eosio::*;
 
 const BOARD_WIDTH: u16 = 3;
 const BOARD_HEIGHT: u16 = 3;
@@ -16,7 +16,8 @@ fn create(challenger: AccountName, host: AccountName) {
         "challenger shouldn't be the same as host"
     );
 
-    let table = Game::table(host);
+    let code = current_receiver();
+    let table = Game::table(code, host);
 
     eosio_assert!(!table.exists(challenger), "game already exists");
 
@@ -35,7 +36,8 @@ fn create(challenger: AccountName, host: AccountName) {
 fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     require_auth(by);
 
-    let table = Game::table(host);
+    let code = current_receiver();
+    let table = Game::table(code, host);
     let itr = table.find(challenger).assert("game doesn't exist");
     let mut game = itr.get().assert("read");
 
@@ -55,7 +57,8 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
 fn close(challenger: AccountName, host: AccountName) {
     require_auth(host);
 
-    let table = Game::table(host);
+    let code = current_receiver();
+    let table = Game::table(code, host);
     let itr = table.find(challenger).assert("game doesn't exist");
 
     itr.erase().assert("read");
@@ -66,7 +69,9 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
     require_auth(by);
 
     // Check if game exists
-    let table = Game::table(host);
+
+    let code = current_receiver();
+    let table = Game::table(code, host);
     let itr = table.find(challenger).assert("game doesn't exist");
 
     let mut game = itr.get().assert("read");
@@ -108,7 +113,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
 eosio_abi!(create, restart, close, makemove);
 
-#[eosio_table]
+#[eosio_table(games)]
 struct Game {
     #[primary]
     challenger: AccountName,
@@ -119,11 +124,6 @@ struct Game {
 }
 
 impl Game {
-    fn table(host: AccountName) -> Table<Game> {
-        let code = current_receiver();
-        Table::new(code, host, n!(games))
-    }
-
     fn get_winner(&self) -> AccountName {
         let wins = [
             // rows

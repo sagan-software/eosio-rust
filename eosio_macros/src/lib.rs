@@ -84,7 +84,7 @@ pub fn derive_read(input: TokenStream) -> TokenStream {
     ::derive_read::expand(input)
 }
 
-#[proc_macro_derive(TableRow, attributes(primary, secondary))]
+#[proc_macro_derive(TableRow, attributes(table_name, primary, secondary))]
 pub fn derive_table_row(input: TokenStream) -> TokenStream {
     ::derive_table_row::expand(input)
 }

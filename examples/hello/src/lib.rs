@@ -2,7 +2,7 @@
 
 extern crate eosio;
 
-use eosio::prelude::*;
+use eosio::*;
 
 #[eosio_action]
 fn hi(name: AccountName) {

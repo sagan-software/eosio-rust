@@ -1,4 +1,4 @@
-use macros::*;
+use eosio_macros::*;
 
 #[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy)]
 pub struct Time(u64);

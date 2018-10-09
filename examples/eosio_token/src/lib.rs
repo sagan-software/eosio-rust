@@ -2,7 +2,7 @@
 
 extern crate eosio;
 
-use eosio::prelude::*;
+use eosio::*;
 
 #[eosio_action]
 fn create(issuer: AccountName, max_supply: Asset) {
@@ -13,7 +13,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
     eosio_assert!(max_supply.amount > 0, "max-supply must be positive");
 
     let symbol_name = symbol.name();
-    let table = CurrencyStats::table(receiver, symbol_name, n!(stat));
+    let table = CurrencyStats::table(receiver, symbol_name);
 
     eosio_assert!(
         !table.exists(symbol_name),
@@ -35,7 +35,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     let symbol = quantity.symbol;
 
     eosio_assert!(memo.len() <= 256, "memo has more than 256 bytes");
-    let table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
+    let table = CurrencyStats::table(receiver, symbol.name());
     let itr = table
         .find(symbol.name())
         .assert("token with symbol does not exist, create token before issue");
@@ -53,24 +53,24 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
         "quantity exceeds available supply"
     );
 
-    st.supply.amount += quantity.amount;
+    st.supply += quantity;
     itr.modify(0, st).assert("write");
 
     add_balance(st.issuer, quantity, st.issuer);
 
     if to != st.issuer {
-        let args = TransferArgs {
+        let action = TransferAction {
             from: st.issuer,
             to,
             quantity,
             memo,
         };
-        args.action(&[PermissionLevel {
-            actor: st.issuer,
-            permission: n!(active).into(),
-        }])
-        .send()
-        .assert("failed to send inline action");
+        action
+            .send(&[PermissionLevel {
+                actor: st.issuer,
+                permission: n!(active).into(),
+            }])
+            .assert("failed to send inline action");
     }
 }
 
@@ -78,7 +78,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
 fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     require_auth(ram_payer);
     let receiver = current_receiver();
-    let accounts_table = Account::table(receiver, symbol.name(), n!(accounts));
+    let accounts_table = Account::table(receiver, symbol.name());
     let itr = accounts_table.find(symbol.name());
     if (itr.is_none()) {
         let mut account = Account {
@@ -92,7 +92,7 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
 fn close(owner: AccountName, symbol: Symbol) {
     require_auth(owner);
     let receiver = current_receiver();
-    let accounts_table = Account::table(receiver, symbol.name(), n!(accounts));
+    let accounts_table = Account::table(receiver, symbol.name());
     let itr = accounts_table
         .find(symbol.name())
         .assert("Balance row already deleted or never existed. Action won't have any effect.");
@@ -112,7 +112,7 @@ fn retire(quantity: Asset, memo: String) {
 
     let receiver = current_receiver();
     let symbol = quantity.symbol;
-    let stats_table = CurrencyStats::table(receiver, symbol.name(), n!(stat));
+    let stats_table = CurrencyStats::table(receiver, symbol.name());
     let itr = stats_table
         .find(symbol.name())
         .assert("token with symbol does not exist");
@@ -125,7 +125,7 @@ fn retire(quantity: Asset, memo: String) {
         "symbol precision mismatch"
     );
 
-    st.supply.amount -= quantity.amount;
+    st.supply -= quantity;
     itr.modify(0, st).assert("write");
 }
 
@@ -137,7 +137,7 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
 
     let receiver = current_receiver();
     let symbol_name = quantity.symbol.name();
-    let stats_table = CurrencyStats::table(receiver, symbol_name, n!(stat));
+    let stats_table = CurrencyStats::table(receiver, symbol_name);
     let itr = stats_table
         .find(symbol_name)
         .assert("token with symbol does not exist");
@@ -163,26 +163,26 @@ eosio_abi!(create, issue, transfer, open, close, retire);
 
 fn sub_balance(owner: AccountName, value: Asset) {
     let receiver = current_receiver();
-    let accounts_table = Account::table(receiver, owner, n!(accounts));
+    let accounts_table = Account::table(receiver, owner);
     let itr = accounts_table
         .find(value.symbol.name())
         .assert("no balance object found");
 
     let mut account = itr.get().assert("read");
 
-    account.balance.amount -= value.amount;
+    account.balance -= value;
 
     itr.modify(owner, account).assert("write");
 }
 
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
     let receiver = current_receiver();
-    let accounts_table = Account::table(receiver, owner, n!(accounts));
+    let accounts_table = Account::table(receiver, owner);
     let itr = accounts_table.find(value.symbol.name());
     match itr {
         Some(itr) => {
             let mut account = itr.get().assert("read");
-            account.balance.amount += value.amount;
+            account.balance += value;
             itr.modify(ram_payer, account).assert("write");
         }
         None => {
@@ -198,6 +198,8 @@ struct Account {
 }
 
 impl TableRow for Account {
+    const NAME: u64 = n!(accounts);
+
     fn primary_key(&self) -> u64 {
         self.balance.symbol.name().into()
     }
@@ -211,6 +213,8 @@ struct CurrencyStats {
 }
 
 impl TableRow for CurrencyStats {
+    const NAME: u64 = n!(stat);
+
     fn primary_key(&self) -> u64 {
         self.supply.symbol.name().into()
     }

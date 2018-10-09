@@ -1,5 +1,5 @@
 use account::AccountName;
-use bytes::{Write, WriteError};
+use bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
 use permission::{PermissionLevel, PermissionName};
 
@@ -55,7 +55,7 @@ pub fn require_write_lock(name: AccountName) {
 
 eosio_name!(ActionName);
 
-pub struct Action<'a, Data>
+pub struct InlineAction<'a, Data>
 where
     Data: Write,
 {
@@ -65,7 +65,7 @@ where
     pub data: Data,
 }
 
-impl<'a, Data> Write for Action<'a, Data>
+impl<'a, Data> Write for InlineAction<'a, Data>
 where
     Data: Write,
 {
@@ -82,7 +82,7 @@ where
     }
 }
 
-impl<'a, Data> Action<'a, Data>
+impl<'a, Data> InlineAction<'a, Data>
 where
     Data: Write,
 {
@@ -96,5 +96,35 @@ where
             unsafe { ::eosio_sys::send_inline(ptr, pos) }
         }
         Ok(())
+    }
+}
+
+pub trait Action: Read + Write + Clone {
+    const NAME: u64;
+
+    fn execute(self);
+
+    fn read_action_data() -> Result<(Self, usize), ReadError> {
+        // TODO: set the length of this to a fixed size based on the action inputs
+        let mut bytes = [0u8; 10000];
+        let ptr: *mut ::eosio_sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio_sys::c_void;
+        unsafe {
+            ::eosio_sys::read_action_data(ptr, ::eosio_sys::action_data_size());
+        }
+
+        Self::read(&bytes, 0)
+    }
+
+    fn to_inline_action<'a>(self, authorization: &'a [PermissionLevel]) -> InlineAction<'a, Self> {
+        InlineAction {
+            account: current_receiver(),
+            name: Self::NAME.into(),
+            authorization,
+            data: self,
+        }
+    }
+
+    fn send<'a>(self, authorization: &'a [PermissionLevel]) -> Result<(), WriteError> {
+        self.to_inline_action(authorization).send()
     }
 }

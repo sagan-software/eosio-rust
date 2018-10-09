@@ -19,9 +19,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
         }
 
-        impl ::eosio::print::Printable for #ident {
+        impl ::eosio::Printable for #ident {
             fn print(&self) {
-                unsafe { ::eosio::sys::printn((*self).into()) }
+                unsafe { ::eosio::printn((*self).into()) }
             }
         }
     };

@@ -7,7 +7,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let name = input.ident;
 
-    let write_path: Path = parse_quote!(::eosio::bytes);
+    let write_path: Path = parse_quote!(::eosio);
 
     let mut generics = input.generics;
     for param in &mut generics.params {
