@@ -15,17 +15,17 @@ where
 eosio_name!(ActionName);
 
 #[derive(Clone, Debug)]
-pub struct InlineAction<'a, Data>
+pub struct InlineAction<Data>
 where
     Data: Write,
 {
     pub account: AccountName,
     pub name: ActionName,
-    pub authorization: &'a [PermissionLevel],
+    pub authorization: Vec<PermissionLevel>,
     pub data: Data,
 }
 
-impl<'a, Data> Write for InlineAction<'a, Data>
+impl<Data> Write for InlineAction<Data>
 where
     Data: Write,
 {
@@ -34,7 +34,8 @@ where
         let pos = self.name.write(bytes, pos)?;
         let pos = self.authorization.write(bytes, pos)?;
 
-        let mut data_bytes = [0u8; 1000]; // TODO don't hardcode?
+        let data_size = ::lib::size_of_val(&self.data);
+        let mut data_bytes = vec![0u8; data_size];
         let data_size = self.data.write(&mut data_bytes, 0)?;
 
         let pos = (&data_bytes[..=data_size]).write(bytes, pos)?;
@@ -42,12 +43,13 @@ where
     }
 }
 
-impl<'a, Data> InlineAction<'a, Data>
+impl<Data> InlineAction<Data>
 where
     Data: Write,
 {
     pub fn send(&self) -> Result<(), WriteError> {
-        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
+        let size = ::lib::size_of_val(self);
+        let mut bytes = vec![0u8; size];
         let pos = self.write(&mut bytes, 0)?;
         let ptr = bytes[..].as_mut_ptr();
         if self.authorization.is_empty() {
@@ -77,7 +79,7 @@ pub trait Action: Read + Write + Clone {
         Self::read(&bytes, 0)
     }
 
-    fn to_inline_action(self, authorization: &[PermissionLevel]) -> InlineAction<Self> {
+    fn to_inline_action(self, authorization: Vec<PermissionLevel>) -> InlineAction<Self> {
         InlineAction {
             account: AccountName::receiver(),
             name: Self::NAME.into(),
@@ -86,7 +88,7 @@ pub trait Action: Read + Write + Clone {
         }
     }
 
-    fn send(self, authorization: &[PermissionLevel]) -> Result<(), WriteError> {
+    fn send(self, authorization: Vec<PermissionLevel>) -> Result<(), WriteError> {
         self.to_inline_action(authorization).send()
     }
 }

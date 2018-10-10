@@ -12,7 +12,7 @@ extern crate alloc;
 extern crate eosio_macros;
 extern crate eosio_sys;
 
-pub mod lib {
+mod lib {
     mod core {
         #[cfg(not(feature = "std"))]
         pub use core::*;
@@ -22,6 +22,7 @@ pub mod lib {
 
     pub use self::core::convert::{TryFrom, TryInto};
     pub use self::core::marker::PhantomData;
+    pub use self::core::mem::{size_of, size_of_val};
     pub use self::core::ops::*;
     pub use self::core::str::FromStr;
 
@@ -34,6 +35,7 @@ pub mod lib {
     pub use alloc::vec::Vec;
     #[cfg(feature = "std")]
     pub use std::vec::Vec;
+
 }
 
 mod account;
@@ -63,7 +65,6 @@ pub use eosio_macros::*;
 
 mod eosio {
     pub use super::bytes::*;
-    pub use super::lib;
     pub use super::print::*;
     pub use eosio_sys::*;
 }

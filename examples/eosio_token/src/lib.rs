@@ -1,10 +1,7 @@
-#![no_std]
-#![feature(alloc, proc_macro_non_items)]
+#![feature(proc_macro_non_items)]
 
-extern crate alloc;
 extern crate eosio;
 
-use alloc::prelude::String;
 use eosio::*;
 
 #[eosio_action]
@@ -69,7 +66,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             memo,
         };
         action
-            .send(&[PermissionLevel {
+            .send(vec![PermissionLevel {
                 actor: st.issuer,
                 permission: n!(active).into(),
             }])

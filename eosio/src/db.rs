@@ -385,7 +385,7 @@ where
     T: TableRow,
 {
     fn get(&self) -> Result<T, ReadError> {
-        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
+        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
             ::eosio_sys::db_get_i64(self.value, ptr, 1000);
@@ -452,7 +452,7 @@ where
                 self.pk,
             )
         };
-        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
+        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
             ::eosio_sys::db_get_i64(pk_itr, ptr, 1000);
@@ -665,15 +665,6 @@ where
         }
     }
 
-    // pub fn get(&self, itr: PrimaryCursor<T>) -> Result<T, ReadError> {
-    //     let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
-    //     let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
-    //     unsafe {
-    //         ::eosio_sys::db_get_i64(itr.0, ptr, 1000);
-    //     }
-    //     T::read(&bytes, 0).map(|(t, _)| t)
-    // }
-
     pub fn insert<P>(&self, payer: P, item: &T) -> Result<PrimaryCursor<T>, WriteError>
     where
         P: Into<AccountName>,
@@ -681,7 +672,8 @@ where
         let id = item.primary_key();
         let payer = payer.into();
 
-        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
+        let size = ::lib::size_of_val(item);
+        let mut bytes = vec![0u8; size];
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let itr = unsafe {
@@ -716,7 +708,8 @@ where
     where
         P: Into<AccountName>,
     {
-        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
+        let size = ::lib::size_of_val(item);
+        let mut bytes = vec![0u8; size];
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let payer: AccountName = payer.into();
