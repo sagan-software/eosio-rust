@@ -1,7 +1,8 @@
 [profile.release]
 lto = true
-opt-level = "z"
+opt-level = "s"
 debug = false
+panic = "abort"
 
 [workspace]
 members = [
@@ -11,5 +12,6 @@ members = [
     "examples/addressbook",
     "examples/eosio_token",
     "examples/hello",
+    "examples/hello_bare",
     "examples/tictactoe"
 ]

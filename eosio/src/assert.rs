@@ -2,7 +2,8 @@
 pub fn eosio_assert(test: bool, msg: &str) {
     let test = if test { 1 } else { 0 };
     let msg_ptr = msg.as_ptr();
-    unsafe { ::eosio_sys::eosio_assert(test, msg_ptr) }
+    let msg_len = msg.len() as u32;
+    unsafe { ::eosio_sys::eosio_assert_message(test, msg_ptr, msg_len) }
 }
 
 /// Aborts processing of this action and unwinds all pending changes if the test condition is true
@@ -24,10 +25,8 @@ impl<T, E> Assert<T> for Result<T, E> {
         match self {
             Ok(t) => t,
             Err(_) => {
-                let msg_ptr = msg.as_ptr();
-                let len = msg.len() as u32;
-                unsafe { ::eosio_sys::eosio_assert_message(0, msg_ptr, len) }
-                panic!("unreachable");
+                eosio_assert(false, msg);
+                unreachable!();
             }
         }
     }
@@ -38,24 +37,20 @@ impl<T> Assert<T> for Option<T> {
         match self {
             Some(t) => t,
             None => {
-                let msg_ptr = msg.as_ptr();
-                let len = msg.len() as u32;
-                unsafe { ::eosio_sys::eosio_assert_message(0, msg_ptr, len) }
-                panic!("unreachable");
+                eosio_assert(false, msg);
+                unreachable!();
             }
         }
     }
 }
 
-// impl Assert<bool> for bool {
-//     fn assert(self, msg: &str) -> bool {
-//         if self {
-//             true
-//         } else {
-//             let msg_ptr = msg.as_ptr();
-//             let len = msg.len() as u32;
-//             unsafe { ::eosio_sys::eosio_assert_message(0, msg_ptr, len) }
-//             panic!("unreachable");
-//         }
-//     }
-// }
+impl Assert<bool> for bool {
+    fn assert(self, msg: &str) -> bool {
+        if self {
+            true
+        } else {
+            eosio_assert(false, msg);
+            unreachable!();
+        }
+    }
+}

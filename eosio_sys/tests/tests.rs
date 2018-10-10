@@ -12,14 +12,14 @@ macro_rules! test_string_to_name {
 }
 
 test_string_to_name!(
-    string_to_name_empty, "", Err(ToNameError::IsEmpty)
+    string_to_name_empty, "", Err(ParseNameError::IsEmpty)
     string_to_name_single_char, "a", Ok(3_458_764_513_820_540_928)
-    string_to_name_bad_number, "123456789012", Err(ToNameError::BadChar('6'))
+    string_to_name_bad_number, "123456789012", Err(ParseNameError::BadChar('6'))
     string_to_name_only_numbers, "123451234512", Ok(614_251_535_012_020_768)
-    string_to_name_too_long, "1234512345123", Err(ToNameError::TooLong)
-    string_to_name_uppercase, "TEST", Err(ToNameError::BadChar('T'))
+    string_to_name_too_long, "1234512345123", Err(ParseNameError::TooLong)
+    string_to_name_uppercase, "TEST", Err(ParseNameError::BadChar('T'))
     string_to_name_only_letters, "test", Ok(14_605_613_396_213_628_928)
-    string_to_name_special_char, "test!", Err(ToNameError::BadChar('!'))
+    string_to_name_special_char, "test!", Err(ParseNameError::BadChar('!'))
 );
 
 macro_rules! test_name_to_string {

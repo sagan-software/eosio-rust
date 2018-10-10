@@ -14,13 +14,15 @@ fn add(
     state: String,
     zip: u32,
 ) {
-    require_auth(account);
+    account.require_auth();
 
-    let code = current_receiver();
-    let addresses = Address::table(code, code);
+    let code = AccountName::receiver();
+    let table = Address::table(code, code);
 
-    let itr = addresses.find(account);
-    eosio_assert!(itr.is_none(), "Address for account already exists");
+    table
+        .find(account)
+        .is_none()
+        .assert("Address for account already exists");
 
     let address = Address {
         account,
@@ -32,7 +34,7 @@ fn add(
         zip,
         liked: 0,
     };
-    addresses.emplace(account, &address).assert("write");
+    table.insert(account, &address).assert("write");
 }
 
 #[eosio_action]
@@ -45,16 +47,13 @@ fn update(
     state: String,
     zip: u32,
 ) {
-    require_auth(account);
+    account.require_auth();
 
-    let code = current_receiver();
-    let addresses = Address::table(code, code);
+    let code = AccountName::receiver();
+    let table = Address::table(code, code);
+    let cursor = table.find(account).assert("Address for account not found");
 
-    let itr = addresses
-        .find(account)
-        .assert("Address for account not found");
-
-    let mut address = itr.get().assert("read");
+    let mut address = cursor.get().assert("read");
     address.first_name = first_name;
     address.last_name = last_name;
     address.street = street;
@@ -62,49 +61,46 @@ fn update(
     address.state = state;
     address.zip = zip;
 
-    itr.modify(account, &address).assert("write");
+    cursor.update(account, &address).assert("write");
 }
 
 #[eosio_action]
 fn remove(account: AccountName) {
-    require_auth(account);
+    account.require_auth();
 
-    let code = current_receiver();
+    let code = AccountName::receiver();
     let addresses = Address::table(code, code);
-
-    let itr = addresses
+    let cursor = addresses
         .find(account)
         .assert("Address for account not found");
 
-    itr.erase().assert("read");
+    cursor.erase().assert("read");
 }
 
 #[eosio_action]
 fn like(account: AccountName) {
-    let code = current_receiver();
+    let code = AccountName::receiver();
     let addresses = Address::table(code, code);
-
-    let itr = addresses
+    let cursor = addresses
         .find(account)
         .assert("Address for account not found");
 
-    let mut address = itr.get().assert("read");
+    let mut address = cursor.get().assert("read");
     address.liked += 1;
-    itr.modify(address.account, &address).assert("write");
+    cursor.update(address.account, &address).assert("write");
 }
 
 #[eosio_action]
 fn likezip(zip: u32) {
-    let code = current_receiver();
-
-    let zip_index = Address::zip(code, code);
-    for cursor in zip_index.lower_bound(&zip).iter() {
+    let code = AccountName::receiver();
+    let table = Address::zip(code, code);
+    for cursor in table.lower_bound(&zip).iter() {
         let mut addr = cursor.get().assert("read");
         if addr.zip != zip {
             break;
         }
         addr.liked += 1;
-        cursor.modify(0, &addr).assert("write");
+        cursor.update(0, &addr).assert("write");
     }
 }
 

@@ -53,7 +53,7 @@ wallet:
 %_account:
 	$(CLEOS) create account eosio $* $(PUBKEY) $(PUBKEY)
 
-accounts: hello_account tictactoe_account alice_account bob_account carol_account dan_account eosio.token_account addressbook_account
+accounts: hello_account tictactoe_account alice_account bob_account carol_account dan_account eosiotoken_account addressbook_account eosiotkncpp_account hellobare_account hellocpp_account
 
 %_permissions:
 	$(CLEOS) set account permission $* active \
@@ -72,13 +72,23 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 	wat2wasm $*_gc_opt.wat -o $*_gc_opt_wat.wasm
 
 %_example: target/wasm32-unknown-unknown/release/%_gc_opt_wat.wasm
-	$(CLEOS) set abi $(subst _,.,$*) /mnt/dev/examples/$*/$*.abi.json
-	$(CLEOS) set code $(subst _,.,$*) /mnt/dev/release/$*_gc_opt.wasm
+	$(CLEOS) set abi $(subst _,,$*) /mnt/dev/examples/$*/$*.abi.json
+	$(CLEOS) set code $(subst _,,$*) /mnt/dev/release/$*_gc_opt.wasm
 
-examples: addressbook_example eosio_token_example hello_example tictactoe_example
+examples: addressbook_example eosio_token_example hello_example hello_bare_example tictactoe_example
 
 say_hi:
-	$(CLEOS) push action hello hi '["contributor","tester"]' -p 'hello@active'
+	$(CLEOS) push action hello hi '["contributor"]' -p 'hello@active'
+
+say_hi_bare:
+	$(CLEOS) push action hellobare hi '["contributor"]' -p 'hello@active'
+
+hello_cpp: examples/hello/cpp/hello_gc_opt_wat.wasm
+	$(CLEOS) set abi hellocpp /mnt/dev/examples/hello/hello.abi.json
+	$(CLEOS) set code hellocpp /mnt/dev/examples/hello/cpp/hello_gc_opt.wasm
+
+say_hi_cpp:
+	$(CLEOS) push action hellocpp hi '["contributor"]' -p 'hello@active'
 
 simulate_tictactoe: create_game make_moves restart_game make_moves close_game
 
@@ -105,24 +115,40 @@ make_moves_bob:
 get_games_%:
 	$(CLEOS) get table tictactoe $* games
 
+eosio_token_cpp: examples/eosio_token/cpp/eosio.token_gc_opt_wat.wasm
+	$(CLEOS) set abi eosiotkncpp /mnt/dev/examples/eosio_token/eosio_token.abi.json
+	$(CLEOS) set code eosiotkncpp /mnt/dev/examples/eosio_token/cpp/eosio.token_gc_opt.wasm
+
 create_token:
-	$(CLEOS) push action eosio.token create '["alice","1000.00 TGFT"]' -p 'eosio.token@active'
+	$(CLEOS) push action eosiotoken create '["alice","1000.00 TGFT"]' -p 'eosiotoken@active'
+
+create_token_cpp:
+	$(CLEOS) push action eosiotkncpp create '["alice","1000.00 TGFT"]' -p 'eosiotkncpp@active'
 
 issue_tokens:
-	$(CLEOS) push action eosio.token issue '["alice","1.00 TGFT","here you go"]' -p 'alice@active'
-	$(CLEOS) push action eosio.token issue '["bob","1.00 TGFT","here you go"]' -p 'alice@active'
-	#$(CLEOS) push action eosio.token issue '["carol","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosiotoken issue '["alice","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosiotoken issue '["bob","1.00 TGFT","here you go"]' -p 'alice@active'
+	#$(CLEOS) push action eosiotoken issue '["carol","1.00 TGFT","here you go"]' -p 'alice@active'
+
+issue_tokens_cpp:
+	$(CLEOS) push action eosiotkncpp issue '["alice","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosiotkncpp issue '["bob","1.00 TGFT","here you go"]' -p 'alice@active'
+	#$(CLEOS) push action eosiotoken issue '["carol","1.00 TGFT","here you go"]' -p 'alice@active'
 
 transfer_tokens:
-	$(CLEOS) push action eosio.token transfer '["alice","bob","1.00 TGFT","here you go"]' -p 'alice@active'
-	$(CLEOS) push action eosio.token transfer '["bob","alice","0.05 TGFT","here you go"]' -p 'bob@active'
+	$(CLEOS) push action eosiotoken transfer '["alice","bob","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosiotoken transfer '["bob","alice","0.05 TGFT","here you go"]' -p 'bob@active'
+
+transfer_tokens_cpp:
+	$(CLEOS) push action eosiotkncpp transfer '["alice","bob","1.00 TGFT","here you go"]' -p 'alice@active'
+	$(CLEOS) push action eosiotkncpp transfer '["bob","alice","0.05 TGFT","here you go"]' -p 'bob@active'
 
 get_currency_stats:
-	$(CLEOS) get table eosio.token TGFT stat
+	$(CLEOS) get table eosiotoken TGFT stat
 
 get_token_accounts:
-	$(CLEOS) get table eosio.token alice accounts
-	$(CLEOS) get table eosio.token bob accounts
+	$(CLEOS) get table eosiotoken alice accounts
+	$(CLEOS) get table eosiotoken bob accounts
 
 add_address:
 	$(CLEOS) push action addressbook add '["dan","Dan","Larimer","1 EOS Way","Blacksburg","VA",24062]' -p 'dan@active'

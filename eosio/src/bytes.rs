@@ -3,7 +3,7 @@ use lib::TryInto;
 #[cfg(all(feature = "alloc", not(feature = "std")))]
 use lib::{String, ToString, Vec};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum ReadError {
     NotEnoughBytes,
 }
@@ -12,7 +12,7 @@ pub trait Read: Sized {
     fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError>;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum WriteError {
     NotEnoughSpace,
     TryFromIntError,
@@ -185,16 +185,18 @@ where
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl<T> Read for Vec<T>
 where
-    T: Read,
+    T: Read + Default + Clone,
 {
     fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
         let (capacity, pos) = usize::read(bytes, pos)?;
 
-        let mut results = Vec::with_capacity(capacity);
+        let mut results = Vec::new();
+        results.resize(capacity, T::default());
+
         let mut pos = pos;
-        for _i in 0..capacity {
+        for item in results.iter_mut() {
             let (r, p) = T::read(bytes, pos)?;
-            results.push(r);
+            *item = r;
             pos = p;
         }
 
@@ -261,12 +263,6 @@ impl Read for String {
     fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
         // TODO: may need to read this as a cstr
         let (bytes, pos) = Vec::<u8>::read(bytes, pos)?;
-        // let s = ::eosio_sys::CStr::from_bytes_with_nul(&bytes_vec);
-        // let s = match s {
-        //     Ok(s) => s.to_string_lossy(),
-        //     Err(_) => String::from_utf8_lossy(&bytes_vec),
-        // };
-        // Ok((s.into_owned(), pos))
         let s = String::from_utf8_lossy(&bytes);
         Ok((s.into_owned(), pos))
     }
@@ -275,17 +271,12 @@ impl Read for String {
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Write for String {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        // let s = ::eosio_sys::CString::new(self.clone()).unwrap();
-        // s.as_bytes_with_nul().write(bytes, pos)
         self.as_bytes().write(bytes, pos)
     }
 }
 
 impl<'a> Write for &'a str {
     fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        // let pos = self.len().write(bytes, pos)?;
-        // let pos = self.as_bytes().write(bytes, pos)?;
-        // Ok(pos)
         self.as_bytes().write(bytes, pos)
     }
 }

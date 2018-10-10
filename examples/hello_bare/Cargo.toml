@@ -1,5 +1,5 @@
 [package]
-name = "eosio_token"
+name = "hello_bare"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 
@@ -8,4 +8,4 @@ crate-type = ["cdylib"]
 doc = false
 
 [dependencies]
-eosio = { path = "../../eosio", version = "0.1", default-features = false, features = ["alloc"] }
+eosio = { path = "../../eosio", version = "0.1" }

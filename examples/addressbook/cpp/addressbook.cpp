@@ -48,7 +48,7 @@ class addressbook : public eosio::contract
         // add to table, first argument is account to bill for storage
         // each entry will be pilled to the associated account
         // we could have instead chosen to bill _self for all the storage
-        addresses.emplace(account /*payer*/, [&](auto &address) {
+        addresses.insert(account /*payer*/, [&](auto &address) {
             address.account_name = account;
             address.first_name = first_name;
             address.last_name = last_name;
@@ -80,7 +80,7 @@ class addressbook : public eosio::contract
         auto itr = addresses.find(account);
         eosio_assert(itr != addresses.end(), "Address for account not found");
 
-        addresses.modify(itr, account /*payer*/, [&](auto &address) {
+        addresses.update(itr, account /*payer*/, [&](auto &address) {
             address.account_name = account;
             address.first_name = first_name;
             address.last_name = last_name;
@@ -116,7 +116,7 @@ class addressbook : public eosio::contract
         auto itr = addresses.find(account);
         eosio_assert(itr != addresses.end(), "Address for account not found");
 
-        addresses.modify(itr, 0 /*payer*/, [&](auto &address) {
+        addresses.update(itr, 0 /*payer*/, [&](auto &address) {
             eosio::print("Liking: ",
                          address.first_name.c_str(), " ", address.last_name.c_str(), "\n");
             address.liked++;
@@ -134,7 +134,7 @@ class addressbook : public eosio::contract
         auto itr = zip_index.lower_bound(zip);
         for (; itr != zip_index.end() && itr->zip == zip; ++itr)
         {
-            zip_index.modify(itr, 0, [&](auto &address) {
+            zip_index.update(itr, 0, [&](auto &address) {
                 eosio::print("Liking: ",
                              address.first_name.c_str(), " ", address.last_name.c_str(), " ");
                 address.liked++;

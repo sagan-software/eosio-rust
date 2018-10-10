@@ -146,6 +146,40 @@ impl DivAssign for Asset {
     }
 }
 
+impl Rem for Asset {
+    type Output = Self;
+    fn rem(self, other: Self) -> Self {
+        eosio_assert(
+            self.symbol == other.symbol,
+            c!("attempt to remainder asset with different symbol"),
+        );
+        eosio_assert(other.amount != 0, c!("remainder by zero"));
+        let amount = self
+            .amount
+            .checked_rem(other.amount)
+            .assert("remainder overflow");
+        Asset {
+            amount,
+            symbol: self.symbol,
+        }
+    }
+}
+
+impl RemAssign for Asset {
+    fn rem_assign(&mut self, other: Self) {
+        eosio_assert(
+            self.symbol == other.symbol,
+            c!("attempt to remainder asset with different symbol"),
+        );
+        eosio_assert(other.amount != 0, c!("remainder by zero"));
+        let amount = self
+            .amount
+            .checked_rem(other.amount)
+            .assert("remainder overflow");
+        self.amount = amount;
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
 pub struct ExtendedAsset {
     pub quantity: Asset,
@@ -221,5 +255,23 @@ impl DivAssign for ExtendedAsset {
     fn div_assign(&mut self, other: Self) {
         eosio_assert(self.contract == other.contract, c!("type mismatch"));
         self.quantity /= other.quantity
+    }
+}
+
+impl Rem for ExtendedAsset {
+    type Output = Self;
+    fn rem(self, other: Self) -> Self {
+        eosio_assert(self.contract == other.contract, c!("type mismatch"));
+        ExtendedAsset {
+            quantity: self.quantity % other.quantity,
+            contract: self.contract,
+        }
+    }
+}
+
+impl RemAssign for ExtendedAsset {
+    fn rem_assign(&mut self, other: Self) {
+        eosio_assert(self.contract == other.contract, c!("type mismatch"));
+        self.quantity %= other.quantity
     }
 }

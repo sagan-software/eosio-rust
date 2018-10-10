@@ -65,19 +65,19 @@ fn char_to_symbol(c: char) -> Option<char> {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum ToNameError {
+pub enum ParseNameError {
     IsEmpty,
     TooLong,
     BadChar(char),
 }
 
-pub fn string_to_name(s: &str) -> Result<u64, ToNameError> {
+pub fn string_to_name(s: &str) -> Result<u64, ParseNameError> {
     if s.is_empty() {
-        return Err(ToNameError::IsEmpty);
+        return Err(ParseNameError::IsEmpty);
     }
 
     if s.len() > 12 {
-        return Err(ToNameError::TooLong);
+        return Err(ParseNameError::TooLong);
     }
 
     let mut value = 0;
@@ -95,7 +95,7 @@ pub fn string_to_name(s: &str) -> Result<u64, ToNameError> {
                 value |= n;
             }
             None => {
-                return Err(ToNameError::BadChar(c));
+                return Err(ParseNameError::BadChar(c));
             }
         }
     }

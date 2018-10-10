@@ -8,15 +8,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let args = parser.parse(input).unwrap();
     let mut prints = quote!();
     for i in args.iter() {
-        let mut printable = quote!(#i);
-        if let Expr::Lit(ref lit) = *i {
-            if let Lit::Str(ref strlit) = lit.lit {
-                printable = quote!(::eosio::c!(#strlit));
-            }
-        }
         prints = quote! {
             #prints
-            ::eosio::Printable::print(&#printable);
+            ::eosio::Print::print(&#i);
         };
     }
     TokenStream::from(quote!(#prints))

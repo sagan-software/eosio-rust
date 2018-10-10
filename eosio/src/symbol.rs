@@ -1,8 +1,8 @@
 use account::AccountName;
 use eosio_macros::*;
-use print::Printable;
+use print::Print;
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, Hash)]
 pub struct SymbolName(u64);
 
 impl From<u64> for SymbolName {
@@ -50,7 +50,7 @@ fn chars_from_symbol_value(value: u64) -> [char; 7] {
     chars
 }
 
-impl Printable for SymbolName {
+impl Print for SymbolName {
     fn print(&self) {
         let chars: [char; 7] = (*self).into();
         for &c in chars.iter() {
@@ -62,7 +62,7 @@ impl Printable for SymbolName {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, Hash)]
 pub struct Symbol(u64);
 
 impl Symbol {
@@ -89,7 +89,7 @@ impl From<u64> for Symbol {
     }
 }
 
-impl Printable for Symbol {
+impl Print for Symbol {
     fn print(&self) {
         self.precision().print();
         ','.print();
@@ -103,7 +103,7 @@ pub struct ExtendedSymbol {
     pub contract: AccountName,
 }
 
-impl Printable for ExtendedSymbol {
+impl Print for ExtendedSymbol {
     fn print(&self) {
         self.symbol.print();
         '@'.print();

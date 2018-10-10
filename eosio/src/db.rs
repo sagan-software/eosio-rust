@@ -4,7 +4,7 @@ use bytes::{Write, WriteError};
 use eosio_macros::*;
 use eosio_sys::ctypes::*;
 use lib::PhantomData;
-use print::Printable;
+use print::Print;
 use scope::ScopeName;
 
 eosio_name!(TableName);
@@ -317,7 +317,7 @@ where
 {
     fn get(&self) -> Result<T, ReadError>;
     fn erase(&self) -> Result<T, ReadError>;
-    // fn modify(&self);
+    // fn update(&self);
     // fn previous(&self);
 }
 
@@ -345,7 +345,7 @@ where
     }
 }
 
-impl<T> Printable for PrimaryCursor<T>
+impl<T> Print for PrimaryCursor<T>
 where
     T: TableRow,
 {
@@ -385,10 +385,10 @@ where
     T: TableRow,
 {
     fn get(&self) -> Result<T, ReadError> {
-        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db_get_i64(self.value, ptr, 10000);
+            ::eosio_sys::db_get_i64(self.value, ptr, 1000);
         }
         T::read(&bytes, 0).map(|(t, _)| t)
     }
@@ -418,12 +418,12 @@ impl<T> PrimaryCursor<T>
 where
     T: TableRow,
 {
-    pub fn modify<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
+    pub fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
         let table = Table::new(self.code, self.scope, self.table);
-        table.modify(&self, payer, item)
+        table.update(&self, payer, item)
     }
 }
 
@@ -452,21 +452,21 @@ where
                 self.pk,
             )
         };
-        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db_get_i64(pk_itr, ptr, 10000);
+            ::eosio_sys::db_get_i64(pk_itr, ptr, 1000);
         }
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    pub fn modify<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
+    pub fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
         let table = Table::new(self.index.code, self.index.scope, self.index.table.0);
         match table.find(self.pk) {
-            Some(pk_itr) => table.modify(&pk_itr, payer, item),
+            Some(pk_itr) => table.update(&pk_itr, payer, item),
             None => Err(WriteError::NotEnoughSpace),
         }
     }
@@ -666,22 +666,22 @@ where
     }
 
     // pub fn get(&self, itr: PrimaryCursor<T>) -> Result<T, ReadError> {
-    //     let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+    //     let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
     //     let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
     //     unsafe {
-    //         ::eosio_sys::db_get_i64(itr.0, ptr, 10000);
+    //         ::eosio_sys::db_get_i64(itr.0, ptr, 1000);
     //     }
     //     T::read(&bytes, 0).map(|(t, _)| t)
     // }
 
-    pub fn emplace<P>(&self, payer: P, item: &T) -> Result<PrimaryCursor<T>, WriteError>
+    pub fn insert<P>(&self, payer: P, item: &T) -> Result<PrimaryCursor<T>, WriteError>
     where
         P: Into<AccountName>,
     {
         let id = item.primary_key();
         let payer = payer.into();
 
-        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let itr = unsafe {
@@ -712,11 +712,11 @@ where
         })
     }
 
-    fn modify<P>(&self, itr: &PrimaryCursor<T>, payer: P, item: &T) -> Result<usize, WriteError>
+    fn update<P>(&self, itr: &PrimaryCursor<T>, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
-        let mut bytes = [0u8; 10000]; // TODO: don't hardcode this?
+        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this?
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let payer: AccountName = payer.into();

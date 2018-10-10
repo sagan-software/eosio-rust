@@ -1,2 +1,6 @@
 /target
 .DS_Store
+*_gc.wasm
+*_gc_opt.wasm
+*_gc_opt.wat
+*_gc_opt_wat.wasm
