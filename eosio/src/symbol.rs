@@ -2,7 +2,7 @@ use account::AccountName;
 use eosio_macros::*;
 use print::Print;
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
 pub struct SymbolName(u64);
 
 impl From<u64> for SymbolName {
@@ -62,7 +62,7 @@ impl Print for SymbolName {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
 pub struct Symbol(u64);
 
 impl Symbol {

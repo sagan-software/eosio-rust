@@ -5,7 +5,7 @@ use lib::PhantomData;
 use table::*;
 use table_primary::*;
 
-#[derive(Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
 pub struct SecondaryTableName(PrimaryTableName, usize);
 
 impl SecondaryTableName {
@@ -295,7 +295,7 @@ secondary_keys_converted!(
     f64, f32
 );
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct SecondaryTableCursor<'a, K, T>
 where
     K: SecondaryTableKey,
@@ -377,6 +377,7 @@ where
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIterator<'a, K, T>
 where
     K: SecondaryTableKey,
@@ -426,7 +427,7 @@ where
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIndex<K, T>
 where
     K: SecondaryTableKey,

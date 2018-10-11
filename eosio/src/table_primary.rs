@@ -8,7 +8,7 @@ use table::*;
 
 eosio_name!(PrimaryTableName);
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableCursor<T>
 where
     T: TableRow,
@@ -106,6 +106,7 @@ where
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableIterator<T>
 where
     T: TableRow,
@@ -144,6 +145,7 @@ where
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableIndex<T>
 where
     T: TableRow,

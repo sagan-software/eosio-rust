@@ -4,7 +4,7 @@ use time::Time;
 eosio_name!(AccountName);
 eosio_name!(PermissionName);
 
-#[derive(Read, Write, Clone, Debug)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
 pub struct PermissionLevel {
     pub actor: AccountName,
     pub permission: PermissionName,
