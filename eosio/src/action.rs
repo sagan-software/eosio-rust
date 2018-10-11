@@ -1,7 +1,6 @@
-use account::AccountName;
+use account::{AccountName, PermissionLevel};
 use bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
-use permission::PermissionLevel;
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
 pub fn eosio_exit<C>(code: C)

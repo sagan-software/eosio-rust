@@ -19,12 +19,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
         }
 
-        #[cfg(not(feature = "std"))]
-        use core::str::FromStr;
-        #[cfg(feature = "std")]
-        use std::str::FromStr;
-
-        impl FromStr for #ident {
+        // TODO: no_std
+        impl std::str::FromStr for #ident {
             type Err = ::eosio_sys::ParseNameError;
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let name = ::eosio_sys::string_to_name(s)?;

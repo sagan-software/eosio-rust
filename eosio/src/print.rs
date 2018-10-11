@@ -1,4 +1,3 @@
-use eosio_macros::c;
 use lib::String;
 
 pub trait Print {

@@ -1,8 +1,14 @@
 use eosio_macros::*;
-use permission::PermissionName;
 use time::Time;
 
 eosio_name!(AccountName);
+eosio_name!(PermissionName);
+
+#[derive(Read, Write, Clone, Debug)]
+pub struct PermissionLevel {
+    pub actor: AccountName,
+    pub permission: PermissionName,
+}
 
 impl AccountName {
     /// Get the current receiver of the action.

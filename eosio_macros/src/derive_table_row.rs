@@ -88,12 +88,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             secondary_keys_constructors = quote! {
                                 #secondary_keys_constructors
 
-                                pub fn #ident<C, S>(code: C, scope: S) -> SecondaryIndex<#ty, Self>
+                                pub fn #ident<C, S>(code: C, scope: S) -> SecondaryTableIndex<#ty, Self>
                                 where
                                     C: Into<AccountName>,
-                                    S: Into<ScopeName>,
+                                    S: Into<TableScope>,
                                 {
-                                    SecondaryIndex::new(code, scope, n!(#table_name), #ty::default(), #i)
+                                    SecondaryTableIndex::new(code, scope, n!(#table_name), #ty::default(), #i)
                                 }
                             };
                         }
@@ -114,7 +114,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         fn primary_key(&self) -> u64 {
                             self.#primary_key.into()
                         }
-                        fn secondary_keys(&self) -> [Option<&SecondaryKey>; 16] {
+                        fn secondary_keys(&self) -> [Option<&SecondaryTableKey>; 16] {
                             [
                                 #secondary_keys_expanded
                             ]
