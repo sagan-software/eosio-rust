@@ -103,7 +103,7 @@ fn close(owner: AccountName, symbol: Symbol) {
         account.balance.amount == 0,
         "Cannot close because the balance is not zero."
     );
-    cursor.erase().assert("read");
+    cursor.remove().assert("read");
 }
 
 #[eosio_action]

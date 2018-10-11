@@ -74,7 +74,7 @@ fn remove(account: AccountName) {
         .find(account)
         .assert("Address for account not found");
 
-    cursor.erase().assert("read");
+    cursor.remove().assert("read");
 }
 
 #[eosio_action]
@@ -94,7 +94,7 @@ fn like(account: AccountName) {
 fn likezip(zip: u32) {
     let code = AccountName::receiver();
     let table = Address::zip(code, code);
-    for cursor in table.lower_bound(&zip).iter() {
+    for cursor in table.lower_bound(&zip).into_iter() {
         let mut addr = cursor.get().assert("read");
         if addr.zip != zip {
             break;

@@ -311,14 +311,15 @@ secondary_keys_converted!(
     f64, f32
 );
 
-pub trait TableIterator<T>: Iterator
+pub trait TableCursor<T>
 where
     T: TableRow,
 {
     fn get(&self) -> Result<T, ReadError>;
-    fn erase(&self) -> Result<T, ReadError>;
-    // fn update(&self);
-    // fn previous(&self);
+    fn remove(&self) -> Result<T, ReadError>;
+    fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
+    where
+        P: Into<AccountName>;
 }
 
 #[derive(Copy, Clone)]
@@ -380,7 +381,7 @@ where
     }
 }
 
-impl<T> TableIterator<T> for PrimaryCursor<T>
+impl<T> TableCursor<T> for PrimaryCursor<T>
 where
     T: TableRow,
 {
@@ -393,7 +394,7 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    fn erase(&self) -> Result<T, ReadError> {
+    fn remove(&self) -> Result<T, ReadError> {
         let item = self.get()?;
         let pk = item.primary_key();
         unsafe {
@@ -412,13 +413,8 @@ where
         }
         Ok(item)
     }
-}
 
-impl<T> PrimaryCursor<T>
-where
-    T: TableRow,
-{
-    pub fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
+    fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
@@ -438,12 +434,12 @@ where
     index: &'a SecondaryIndex<K, T>,
 }
 
-impl<'a, K, T> SecondaryCursor<'a, K, T>
+impl<'a, K, T> TableCursor<T> for SecondaryCursor<'a, K, T>
 where
     K: SecondaryKey,
     T: TableRow,
 {
-    pub fn get(&self) -> Result<T, ReadError> {
+    fn get(&self) -> Result<T, ReadError> {
         let pk_itr = unsafe {
             ::eosio_sys::db_find_i64(
                 self.index.code.into(),
@@ -460,18 +456,34 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    pub fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
+    fn remove(&self) -> Result<T, ReadError> {
+        let table = Table::new(self.index.code, self.index.scope, self.index.table.0);
+        match table.find(self.pk) {
+            Some(cursor) => cursor.remove(),
+            None => Err(ReadError::NotEnoughBytes), // TODO: better error
+        }
+    }
+
+    fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
     where
         P: Into<AccountName>,
     {
         let table = Table::new(self.index.code, self.index.scope, self.index.table.0);
         match table.find(self.pk) {
             Some(pk_itr) => table.update(&pk_itr, payer, item),
-            None => Err(WriteError::NotEnoughSpace),
+            None => Err(WriteError::NotEnoughSpace), // TODO: better error
         }
     }
+}
 
-    pub fn iter(&'a self) -> SecondaryIter<'a, K, T> {
+impl<'a, K, T> IntoIterator for SecondaryCursor<'a, K, T>
+where
+    K: SecondaryKey,
+    T: TableRow,
+{
+    type Item = Self;
+    type IntoIter = SecondaryIter<'a, K, T>;
+    fn into_iter(self) -> Self::IntoIter {
         let sk_end = self
             .index
             .key
@@ -542,6 +554,15 @@ where
     }
 }
 
+pub trait TableIndex<'a, K, T>
+where
+    T: TableRow + 'a,
+{
+    type Cursor: TableCursor<T> + 'a;
+    fn lower_bound(&'a self, key: &'a K) -> Self::Cursor;
+    fn upper_bound(&'a self, key: &'a K) -> Self::Cursor;
+}
+
 #[derive(Copy, Clone)]
 pub struct SecondaryIndex<K, T>
 where
@@ -555,7 +576,7 @@ where
     _data: PhantomData<T>,
 }
 
-impl<'a, K, T> SecondaryIndex<K, T>
+impl<K, T> SecondaryIndex<K, T>
 where
     K: SecondaryKey,
     T: TableRow,
@@ -574,11 +595,28 @@ where
             _data: PhantomData,
         }
     }
+}
 
-    pub fn lower_bound(&self, key: &K) -> SecondaryCursor<K, T> {
-        let (itr, pk) = key.lower_bound(self.code, self.scope, self.table);
+impl<'a, K, T> TableIndex<'a, K, T> for SecondaryIndex<K, T>
+where
+    K: SecondaryKey + 'a,
+    T: TableRow + 'a,
+{
+    type Cursor = SecondaryCursor<'a, K, T>;
+
+    fn lower_bound(&'a self, key: &'a K) -> Self::Cursor {
+        let (value, pk) = key.lower_bound(self.code, self.scope, self.table);
         SecondaryCursor {
-            value: itr,
+            value,
+            pk,
+            index: self,
+        }
+    }
+
+    fn upper_bound(&'a self, key: &'a K) -> Self::Cursor {
+        let (value, pk) = key.upper_bound(self.code, self.scope, self.table);
+        SecondaryCursor {
+            value,
             pk,
             index: self,
         }
@@ -611,23 +649,6 @@ where
             name: name.into(),
             _row_type: PhantomData,
         }
-    }
-
-    pub fn end(&self) -> PrimaryCursor<T> {
-        let itr = unsafe {
-            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
-        };
-        PrimaryCursor {
-            value: itr,
-            code: self.code,
-            scope: self.scope,
-            table: self.name,
-            _data: self._row_type,
-        }
-    }
-
-    pub fn is_end(&self, itr: &PrimaryCursor<T>) -> bool {
-        itr.value == self.end().value
     }
 
     pub fn exists<Id>(&self, id: Id) -> bool

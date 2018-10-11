@@ -6,6 +6,10 @@ use lib::*;
 pub struct Time(u64);
 
 impl Time {
+    pub const MICROSECOND: u64 = 1;
+    pub const MILLISECOND: u64 = Self::MICROSECOND * 1_000;
+    pub const SECOND: u64 = Self::MILLISECOND * 1_000;
+
     pub fn now() -> Self {
         Time(unsafe { ::eosio_sys::current_time() })
     }
@@ -26,12 +30,24 @@ impl Time {
         self.0
     }
 
-    pub fn milliseconds(self) -> u64 {
-        self.microseconds() / 1_000
+    pub fn from_microseconds(microseconds: u64) -> Self {
+        Time(microseconds)
     }
 
-    pub fn seconds(self) -> u64 {
-        self.milliseconds() / 1_000
+    pub fn milliseconds(self) -> u64 {
+        self.0 / Self::MILLISECOND
+    }
+
+    pub fn from_milliseconds(milliseconds: u64) -> Self {
+        Time(milliseconds * Self::MILLISECOND)
+    }
+
+    pub fn seconds(self) -> u32 {
+        (self.0 / Self::SECOND) as u32
+    }
+
+    pub fn from_seconds(seconds: u32) -> Self {
+        Time(u64::from(seconds) * Self::SECOND)
     }
 }
 
@@ -59,15 +75,9 @@ impl From<Time> for i64 {
     }
 }
 
-impl From<u32> for Time {
-    fn from(i: u32) -> Self {
-        Time(u64::from(i) * 1_000_000)
-    }
-}
-
 impl From<Time> for u32 {
     fn from(t: Time) -> Self {
-        t.seconds() as u32
+        t.seconds()
     }
 }
 
