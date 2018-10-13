@@ -1,6 +1,6 @@
 #![recursion_limit = "128"]
 #![feature(
-    proc_macro_non_items,
+    proc_macro_hygiene,
     proc_macro_diagnostic,
     proc_macro_quote
 )]
