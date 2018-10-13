@@ -66,16 +66,6 @@ impl AccountName {
     pub fn require_recipient(&self) {
         unsafe { ::eosio_sys::require_recipient(self.0) }
     }
-
-    /// Verifies that `name` exists in the set of read locks held on a action. Throws if not found
-    pub fn require_read_lock(&self) {
-        unsafe { ::eosio_sys::require_read_lock(self.0) }
-    }
-
-    /// Verifies that `name` exists in the set of write locks held on a action. Throws if not found
-    pub fn require_write_lock(&self) {
-        unsafe { ::eosio_sys::require_write_lock(self.0) }
-    }
 }
 
 /// Verifies that `name` exists in the set of provided auths on a action. Throws if not found.
@@ -101,20 +91,4 @@ where
     A: Into<AccountName>,
 {
     account.into().require_recipient()
-}
-
-/// Verifies that `name` exists in the set of read locks held on a action. Throws if not found
-pub fn require_read_lock<A>(account: A)
-where
-    A: Into<AccountName>,
-{
-    account.into().require_read_lock()
-}
-
-/// Verifies that `name` exists in the set of write locks held on a action. Throws if not found
-pub fn require_write_lock<A>(account: A)
-where
-    A: Into<AccountName>,
-{
-    account.into().require_write_lock()
 }

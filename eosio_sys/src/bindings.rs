@@ -2,63 +2,19 @@
 
 pub type uint128_t = [u64; 2];
 pub type int128_t = [u64; 2];
-/// @brief Name of an account
-/// @details Name of an account
-pub type account_name = u64;
-/// @brief Name of a permission
-/// @details Name of an account
-pub type permission_name = u64;
-/// @brief Name of a table
-/// @details Name of atable
-pub type table_name = u64;
-/// @brief Time
-/// @details Time
-pub type time = u32;
-/// @brief Name of a scope
-/// @details Name of a scope
-pub type scope_name = u64;
-/// @brief Name of an action
-/// @details Name of an action
-pub type action_name = u64;
-/// @brief Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned
-/// @details Macro to align/overalign a type to ensure calls to intrinsics with pointers/references are properly aligned
-pub type weight_type = u16;
-/// @brief EOSIO Public Key
-/// @details EOSIO Public Key. It is 34 bytes.
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct public_key {
-    pub data: [::ctypes::c_char; 34usize],
-}
-impl Default for public_key {
-    fn default() -> Self {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
-/// @brief EOSIO Signature
-/// @details EOSIO Signature. It is 66 bytes.
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct signature {
-    pub data: [u8; 66usize],
-}
-impl Default for signature {
-    fn default() -> Self {
-        unsafe { ::std::mem::zeroed() }
-    }
-}
+pub type capi_name = u64;
 /// @brief 256-bit hash
 /// @details 256-bit hash
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct checksum256 {
+pub struct capi_checksum256 {
     pub hash: [u8; 32usize],
 }
 /// @brief 160-bit hash
 /// @details 160-bit hash
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct checksum160 {
+pub struct capi_checksum160 {
     pub hash: [u8; 20usize],
     pub __bindgen_padding_0: [u32; 3usize],
 }
@@ -66,23 +22,13 @@ pub struct checksum160 {
 /// @details 512-bit hash
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct checksum512 {
+pub struct capi_checksum512 {
     pub hash: [u8; 64usize],
 }
-impl Default for checksum512 {
+impl Default for capi_checksum512 {
     fn default() -> Self {
         unsafe { ::std::mem::zeroed() }
     }
-}
-/// @brief Type of EOSIO Transaction Id
-/// @details Type of EOSIO Transaction Id. It is 256-bit hash
-pub type transaction_id_type = checksum256;
-pub type block_id_type = checksum256;
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct account_permission {
-    pub account: account_name,
-    pub permission: permission_name,
 }
 extern "C" {
     /// Aborts processing of this action and unwinds all pending changes if the test condition is true
@@ -157,21 +103,21 @@ extern "C" {
     ///
     /// @brief Add the specified account to set of accounts to be notified
     /// @param name - name of the account to be verified
-    pub fn require_recipient(name: account_name);
+    pub fn require_recipient(name: capi_name);
 }
 extern "C" {
     /// Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
     ///
     /// @brief Verify specified account exists in the set of provided auths
     /// @param name - name of the account to be verified
-    pub fn require_auth(name: account_name);
+    pub fn require_auth(name: capi_name);
 }
 extern "C" {
     /// Verifies that @ref name has auth.
     ///
     /// @brief Verifies that @ref name has auth.
     /// @param name - name of the account to be verified
-    pub fn has_auth(name: account_name) -> bool;
+    pub fn has_auth(name: capi_name) -> bool;
 }
 extern "C" {
     /// Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
@@ -179,10 +125,10 @@ extern "C" {
     /// @brief Verify specified account exists in the set of provided auths
     /// @param name - name of the account to be verified
     /// @param permission - permission level to be verified
-    pub fn require_auth2(name: account_name, permission: permission_name);
+    pub fn require_auth2(name: capi_name, permission: capi_name);
 }
 extern "C" {
-    pub fn is_account(name: account_name) -> bool;
+    pub fn is_account(name: capi_name) -> bool;
 }
 extern "C" {
     /// Send an inline action in the context of this action's parent transaction
@@ -201,18 +147,6 @@ extern "C" {
     pub fn send_context_free_inline(serialized_action: *mut ::ctypes::c_char, size: usize);
 }
 extern "C" {
-    /// Verifies that @ref name exists in the set of write locks held on a action. Throws if not found
-    /// @brief Verifies that @ref name exists in the set of write locks held
-    /// @param name - name of the account to be verified
-    pub fn require_write_lock(name: account_name);
-}
-extern "C" {
-    /// Verifies that @ref name exists in the set of read locks held on a action. Throws if not found
-    /// @brief Verifies that @ref name exists in the set of read locks held
-    /// @param name - name of the account to be verified
-    pub fn require_read_lock(name: account_name);
-}
-extern "C" {
     /// Returns the time in microseconds from 1970 of the publication_time
     /// @brief Get the publication time
     /// @return the time in microseconds from 1970 of the publication_time
@@ -222,7 +156,7 @@ extern "C" {
     /// Get the current receiver of the action
     /// @brief Get the current receiver of the action
     /// @return the account which specifies the current receiver of the action
-    pub fn current_receiver() -> account_name;
+    pub fn current_receiver() -> capi_name;
 }
 extern "C" {
     /// Gets the set of active producers.
@@ -238,10 +172,10 @@ extern "C" {
     /// Example:
     ///
     /// @code
-    /// account_name producers[21];
-    /// uint32_t bytes_populated = get_active_producers(producers, sizeof(account_name)*21);
+    /// capi_name producers[21];
+    /// uint32_t bytes_populated = get_active_producers(producers, sizeof(capi_name)*21);
     /// @endcode
-    pub fn get_active_producers(producers: *mut account_name, datalen: u32) -> u32;
+    pub fn get_active_producers(producers: *mut capi_name, datalen: u32) -> u32;
 }
 extern "C" {
     /// Tests if the sha256 hash generated from data matches the provided checksum.
@@ -250,7 +184,7 @@ extern "C" {
     ///
     /// @param data - Data you want to hash
     /// @param length - Data length
-    /// @param hash - `checksum256*` hash to compare to
+    /// @param hash - `capi_checksum256*` hash to compare to
     ///
     /// @pre **assert256 hash** of `data` equals provided `hash` parameter.
     /// @post Executes next statement. If was not `true`, hard return.
@@ -265,7 +199,7 @@ extern "C" {
     /// //If the sha256 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha256 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha256(data: *const ::ctypes::c_char, length: u32, hash: *const checksum256);
+    pub fn assert_sha256(data: *const ::ctypes::c_char, length: u32, hash: *const capi_checksum256);
 }
 extern "C" {
     /// Tests if the sha1 hash generated from data matches the provided checksum.
@@ -274,7 +208,7 @@ extern "C" {
     ///
     /// @param data - Data you want to hash
     /// @param length - Data length
-    /// @param hash - `checksum160*` hash to compare to
+    /// @param hash - `capi_checksum160*` hash to compare to
     ///
     /// @pre **sha1 hash** of `data` equals provided `hash` parameter.
     /// @post Executes next statement. If was not `true`, hard return.
@@ -289,7 +223,7 @@ extern "C" {
     /// //If the sha1 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha1 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha1(data: *const ::ctypes::c_char, length: u32, hash: *const checksum160);
+    pub fn assert_sha1(data: *const ::ctypes::c_char, length: u32, hash: *const capi_checksum160);
 }
 extern "C" {
     /// Tests if the sha512 hash generated from data matches the provided checksum.
@@ -298,7 +232,7 @@ extern "C" {
     ///
     /// @param data - Data you want to hash
     /// @param length - Data length
-    /// @param hash - `checksum512*` hash to compare to
+    /// @param hash - `capi_checksum512*` hash to compare to
     ///
     /// @pre **assert512 hash** of `data` equals provided `hash` parameter.
     /// @post Executes next statement. If was not `true`, hard return.
@@ -313,7 +247,7 @@ extern "C" {
     /// //If the sha512 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha512 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha512(data: *const ::ctypes::c_char, length: u32, hash: *const checksum512);
+    pub fn assert_sha512(data: *const ::ctypes::c_char, length: u32, hash: *const capi_checksum512);
 }
 extern "C" {
     /// Tests if the ripemod160 hash generated from data matches the provided checksum.
@@ -321,7 +255,7 @@ extern "C" {
     ///
     /// @param data - Data you want to hash
     /// @param length - Data length
-    /// @param hash - `checksum160*` hash to compare to
+    /// @param hash - `capi_checksum160*` hash to compare to
     ///
     /// @pre **assert160 hash** of `data` equals provided `hash` parameter.
     /// @post Executes next statement. If was not `true`, hard return.
@@ -336,7 +270,11 @@ extern "C" {
     /// //If the ripemod160 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("ripemod160 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_ripemd160(data: *const ::ctypes::c_char, length: u32, hash: *const checksum160);
+    pub fn assert_ripemd160(
+        data: *const ::ctypes::c_char,
+        length: u32,
+        hash: *const capi_checksum160,
+    );
 }
 extern "C" {
     /// Hashes `data` using `sha256` and stores result in memory pointed to by hash.
@@ -353,7 +291,7 @@ extern "C" {
     /// sha256( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha256(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum256);
+    pub fn sha256(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum256);
 }
 extern "C" {
     /// Hashes `data` using `sha1` and stores result in memory pointed to by hash.
@@ -370,7 +308,7 @@ extern "C" {
     /// sha1( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha1(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum160);
+    pub fn sha1(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
 }
 extern "C" {
     /// Hashes `data` using `sha512` and stores result in memory pointed to by hash.
@@ -387,7 +325,7 @@ extern "C" {
     /// sha512( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha512(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum512);
+    pub fn sha512(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum512);
 }
 extern "C" {
     /// Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
@@ -404,7 +342,7 @@ extern "C" {
     /// ripemod160( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn ripemd160(data: *const ::ctypes::c_char, length: u32, hash: *mut checksum160);
+    pub fn ripemd160(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
 }
 extern "C" {
     /// Calculates the public key used for a given signature and hash used to create a message.
@@ -421,7 +359,7 @@ extern "C" {
     /// @code
     /// @endcode
     pub fn recover_key(
-        digest: *const checksum256,
+        digest: *const capi_checksum256,
         sig: *const ::ctypes::c_char,
         siglen: usize,
         pub_: *mut ::ctypes::c_char,
@@ -454,7 +392,7 @@ extern "C" {
     /// eosio::print("pub key matches the pub key generated from digest");
     /// @endcode
     pub fn assert_recover_key(
-        digest: *const checksum256,
+        digest: *const capi_checksum256,
         sig: *const ::ctypes::c_char,
         siglen: usize,
         pub_: *const ::ctypes::c_char,
@@ -476,9 +414,9 @@ extern "C" {
     /// @return iterator to the newly created table row
     /// @post a new entry is created in the table
     pub fn db_store_i64(
-        scope: account_name,
-        table: table_name,
-        payer: account_name,
+        scope: u64,
+        table: capi_name,
+        payer: capi_name,
         id: u64,
         data: *const ::ctypes::c_void,
         len: u32,
@@ -496,12 +434,7 @@ extern "C" {
     /// @pre `*((uint64_t*)data)` stores the primary key
     /// @pre `iterator` points to an existing table row in the table
     /// @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
-    pub fn db_update_i64(
-        iterator: i32,
-        payer: account_name,
-        data: *const ::ctypes::c_void,
-        len: u32,
-    );
+    pub fn db_update_i64(iterator: i32, payer: capi_name, data: *const ::ctypes::c_void, len: u32);
 }
 extern "C" {
     /// Remove a record from a primary 64-bit integer index table
@@ -596,7 +529,7 @@ extern "C" {
     /// @code
     /// int itr = db_find_i64(receiver, receiver, table1, N(charlie));
     /// @endcode
-    pub fn db_find_i64(code: account_name, scope: account_name, table: table_name, id: u64) -> i32;
+    pub fn db_find_i64(code: capi_name, scope: u64, table: capi_name, id: u64) -> i32;
 }
 extern "C" {
     /// Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key
@@ -608,12 +541,7 @@ extern "C" {
     /// @param table - The table name
     /// @param id - The primary key used to determine the lowerbound
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
-    pub fn db_lowerbound_i64(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
-        id: u64,
-    ) -> i32;
+    pub fn db_lowerbound_i64(code: capi_name, scope: u64, table: capi_name, id: u64) -> i32;
 }
 extern "C" {
     /// Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key
@@ -625,12 +553,7 @@ extern "C" {
     /// @param table - The table name
     /// @param id - The primary key used to determine the upperbound
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
-    pub fn db_upperbound_i64(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
-        id: u64,
-    ) -> i32;
+    pub fn db_upperbound_i64(code: capi_name, scope: u64, table: capi_name, id: u64) -> i32;
 }
 extern "C" {
     /// Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table
@@ -640,7 +563,7 @@ extern "C" {
     /// @param scope - The scope where the table resides
     /// @param table - The table name
     /// @return end iterator of the table
-    pub fn db_end_i64(code: account_name, scope: account_name, table: table_name) -> i32;
+    pub fn db_end_i64(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
     /// Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
@@ -654,9 +577,9 @@ extern "C" {
     /// @return iterator to the newly created table row
     /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 64-bit integer index table
     pub fn db_idx64_store(
-        scope: account_name,
-        table: table_name,
-        payer: account_name,
+        scope: u64,
+        table: capi_name,
+        payer: capi_name,
         id: u64,
         secondary: *const u64,
     ) -> i32;
@@ -670,7 +593,7 @@ extern "C" {
     /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
     /// @pre `iterator` points to an existing table row in the table
     /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
-    pub fn db_idx64_update(iterator: i32, payer: account_name, secondary: *const u64);
+    pub fn db_idx64_update(iterator: i32, payer: capi_name, secondary: *const u64);
 }
 extern "C" {
     /// Remove a table row from a secondary 64-bit integer index table
@@ -715,9 +638,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
     /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx64_find_primary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut u64,
         primary: u64,
     ) -> i32;
@@ -734,9 +657,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx64_find_secondary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *const u64,
         primary: *mut u64,
     ) -> i32;
@@ -755,9 +678,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx64_lowerbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut u64,
         primary: *mut u64,
     ) -> i32;
@@ -776,9 +699,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx64_upperbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut u64,
         primary: *mut u64,
     ) -> i32;
@@ -791,7 +714,7 @@ extern "C" {
     /// @param scope - The scope where the table resides
     /// @param table - The table name
     /// @return end iterator of the table
-    pub fn db_idx64_end(code: account_name, scope: account_name, table: table_name) -> i32;
+    pub fn db_idx64_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
     /// Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
@@ -805,9 +728,9 @@ extern "C" {
     /// @return iterator to the newly created table row
     /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 128-bit integer index table
     pub fn db_idx128_store(
-        scope: account_name,
-        table: table_name,
-        payer: account_name,
+        scope: u64,
+        table: capi_name,
+        payer: capi_name,
         id: u64,
         secondary: *const uint128_t,
     ) -> i32;
@@ -821,7 +744,7 @@ extern "C" {
     /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
     /// @pre `iterator` points to an existing table row in the table
     /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
-    pub fn db_idx128_update(iterator: i32, payer: account_name, secondary: *const uint128_t);
+    pub fn db_idx128_update(iterator: i32, payer: capi_name, secondary: *const uint128_t);
 }
 extern "C" {
     /// Remove a table row from a secondary 128-bit integer index table
@@ -866,9 +789,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
     /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx128_find_primary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut uint128_t,
         primary: u64,
     ) -> i32;
@@ -885,9 +808,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx128_find_secondary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *const uint128_t,
         primary: *mut u64,
     ) -> i32;
@@ -906,9 +829,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx128_lowerbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut uint128_t,
         primary: *mut u64,
     ) -> i32;
@@ -927,9 +850,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx128_upperbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut uint128_t,
         primary: *mut u64,
     ) -> i32;
@@ -942,7 +865,7 @@ extern "C" {
     /// @param scope - The scope where the table resides
     /// @param table - The table name
     /// @return end iterator of the table
-    pub fn db_idx128_end(code: account_name, scope: account_name, table: table_name) -> i32;
+    pub fn db_idx128_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
     /// Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table
@@ -957,9 +880,9 @@ extern "C" {
     /// @return iterator to the newly created table row
     /// @post new secondary key association between primary key `id` and the specified secondary key is created in the secondary 256-bit index table
     pub fn db_idx256_store(
-        scope: account_name,
-        table: table_name,
-        payer: account_name,
+        scope: u64,
+        table: capi_name,
+        payer: capi_name,
         id: u64,
         data: *const uint128_t,
         data_len: u32,
@@ -975,12 +898,7 @@ extern "C" {
     /// @param data_len - Must be set to 2
     /// @pre `iterator` points to an existing table row in the table
     /// @post the secondary key of the table row pointed to by `iterator` is replaced by the specified secondary key
-    pub fn db_idx256_update(
-        iterator: i32,
-        payer: account_name,
-        data: *const uint128_t,
-        data_len: u32,
-    );
+    pub fn db_idx256_update(iterator: i32, payer: capi_name, data: *const uint128_t, data_len: u32);
 }
 extern "C" {
     /// Remove a table row from a secondary 256-bit index table
@@ -1026,9 +944,9 @@ extern "C" {
     /// @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
     /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx256_find_primary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         data: *mut uint128_t,
         data_len: u32,
         primary: u64,
@@ -1047,9 +965,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the first table row with a secondary key equal to the specified secondary key or the end iterator of the table if the table row could not be found
     pub fn db_idx256_find_secondary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         data: *const uint128_t,
         data_len: u32,
         primary: *mut u64,
@@ -1070,9 +988,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx256_lowerbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         data: *mut uint128_t,
         data_len: u32,
         primary: *mut u64,
@@ -1093,9 +1011,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx256_upperbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         data: *mut uint128_t,
         data_len: u32,
         primary: *mut u64,
@@ -1109,7 +1027,7 @@ extern "C" {
     /// @param scope - The scope where the table resides
     /// @param table - The table name
     /// @return end iterator of the table
-    pub fn db_idx256_end(code: account_name, scope: account_name, table: table_name) -> i32;
+    pub fn db_idx256_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
     /// Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
@@ -1123,9 +1041,9 @@ extern "C" {
     /// @return iterator to the newly created table row
     /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary double-precision floating-point index table
     pub fn db_idx_double_store(
-        scope: account_name,
-        table: table_name,
-        payer: account_name,
+        scope: u64,
+        table: capi_name,
+        payer: capi_name,
         id: u64,
         secondary: *const f64,
     ) -> i32;
@@ -1139,7 +1057,7 @@ extern "C" {
     /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
     /// @pre `iterator` points to an existing table row in the table
     /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
-    pub fn db_idx_double_update(iterator: i32, payer: account_name, secondary: *const f64);
+    pub fn db_idx_double_update(iterator: i32, payer: capi_name, secondary: *const f64);
 }
 extern "C" {
     /// Remove a table row from a secondary double-precision floating-point index table
@@ -1184,9 +1102,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
     /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_find_primary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut f64,
         primary: u64,
     ) -> i32;
@@ -1203,9 +1121,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_find_secondary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *const f64,
         primary: *mut u64,
     ) -> i32;
@@ -1224,9 +1142,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_lowerbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut f64,
         primary: *mut u64,
     ) -> i32;
@@ -1245,9 +1163,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_upperbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut f64,
         primary: *mut u64,
     ) -> i32;
@@ -1260,7 +1178,7 @@ extern "C" {
     /// @param scope - The scope where the table resides
     /// @param table - The table name
     /// @return end iterator of the table
-    pub fn db_idx_double_end(code: account_name, scope: account_name, table: table_name) -> i32;
+    pub fn db_idx_double_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
     /// Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
@@ -1274,9 +1192,9 @@ extern "C" {
     /// @return iterator to the newly created table row
     /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary quadruple-precision floating-point index table
     pub fn db_idx_long_double_store(
-        scope: account_name,
-        table: table_name,
-        payer: account_name,
+        scope: u64,
+        table: capi_name,
+        payer: capi_name,
         id: u64,
         secondary: *const f64,
     ) -> i32;
@@ -1290,7 +1208,7 @@ extern "C" {
     /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
     /// @pre `iterator` points to an existing table row in the table
     /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
-    pub fn db_idx_long_double_update(iterator: i32, payer: account_name, secondary: *const f64);
+    pub fn db_idx_long_double_update(iterator: i32, payer: capi_name, secondary: *const f64);
 }
 extern "C" {
     /// Remove a table row from a secondary quadruple-precision floating-point index table
@@ -1335,9 +1253,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
     /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_find_primary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut f64,
         primary: u64,
     ) -> i32;
@@ -1354,9 +1272,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_find_secondary(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *const f64,
         primary: *mut u64,
     ) -> i32;
@@ -1375,9 +1293,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_lowerbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut f64,
         primary: *mut u64,
     ) -> i32;
@@ -1396,9 +1314,9 @@ extern "C" {
     /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
     /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_upperbound(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
+        code: capi_name,
+        scope: u64,
+        table: capi_name,
         secondary: *mut f64,
         primary: *mut u64,
     ) -> i32;
@@ -1411,11 +1329,7 @@ extern "C" {
     /// @param scope - The scope where the table resides
     /// @param table - The table name
     /// @return end iterator of the table
-    pub fn db_idx_long_double_end(
-        code: account_name,
-        scope: account_name,
-        table: table_name,
-    ) -> i32;
+    pub fn db_idx_long_double_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
     /// @brief Checks if a transaction is authorized by a provided set of keys and permissions
@@ -1450,8 +1364,8 @@ extern "C" {
     ///
     /// @return 1 if the permission is authorized, 0 otherwise
     pub fn check_permission_authorization(
-        account: account_name,
-        permission: permission_name,
+        account: capi_name,
+        permission: capi_name,
         pubkeys_data: *const ::ctypes::c_char,
         pubkeys_size: u32,
         perms_data: *const ::ctypes::c_char,
@@ -1466,7 +1380,7 @@ extern "C" {
     /// @param permission - the name of the permission
     ///
     /// @return the last used time (in microseconds since Unix epoch) of the permission
-    pub fn get_permission_last_used(account: account_name, permission: permission_name) -> i64;
+    pub fn get_permission_last_used(account: capi_name, permission: capi_name) -> i64;
 }
 extern "C" {
     /// @brief Returns the creation time of an account
@@ -1474,7 +1388,7 @@ extern "C" {
     /// @param account    - the account
     ///
     /// @return the creation time (in microseconds since Unix epoch) of the account
-    pub fn get_account_creation_time(account: account_name) -> i64;
+    pub fn get_account_creation_time(account: capi_name) -> i64;
 }
 extern "C" {
     /// Prints string
@@ -1613,7 +1527,7 @@ extern "C" {
     /// @param net_weight - pointer to `int64_t` to hold net limit
     /// @param cpu_weight - pointer to `int64_t` to hold cpu limit
     pub fn get_resource_limits(
-        account: account_name,
+        account: capi_name,
         ram_bytes: *mut i64,
         net_weight: *mut i64,
         cpu_weight: *mut i64,
@@ -1627,7 +1541,7 @@ extern "C" {
     /// @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)
     /// @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)
     pub fn set_resource_limits(
-        account: account_name,
+        account: capi_name,
         ram_bytes: i64,
         net_weight: i64,
         cpu_weight: i64,
@@ -1658,14 +1572,14 @@ extern "C" {
     /// @param account - name of the account to be checked
     /// @return true if the account is privileged
     /// @return false if the account is not privileged
-    pub fn is_privileged(account: account_name) -> bool;
+    pub fn is_privileged(account: capi_name) -> bool;
 }
 extern "C" {
     /// @brief Set the privileged status of an account
     /// Set the privileged status of an account
     /// @param account - name of the account whose privileged account to be set
     /// @param is_priv - privileged status
-    pub fn set_privileged(account: account_name, is_priv: bool);
+    pub fn set_privileged(account: capi_name, is_priv: bool);
 }
 extern "C" {
     /// @brief Set the blockchain parameters
@@ -1702,7 +1616,7 @@ extern "C" {
     /// @param replace_existing - f this is `0` then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction
     pub fn send_deferred(
         sender_id: *const uint128_t,
-        payer: account_name,
+        payer: capi_name,
         serialized_transaction: *const ::ctypes::c_char,
         size: usize,
         replace_existing: u32,
@@ -1770,13 +1684,13 @@ extern "C" {
     /// Gets the expiration of the currently executing transaction.
     ///
     /// @brief Gets the expiration of the currently executing transaction.
-    /// @return expiration of the currently executing transaction
+    /// @return expiration of the currently executing transaction in seconds since Unix epoch
     /// Example:
     /// @code
-    /// time tm = expiration();
+    /// uint32_t tm = expiration();
     /// eosio_print(tm);
     /// @endcode
-    pub fn expiration() -> time;
+    pub fn expiration() -> u32;
 }
 extern "C" {
     /// Retrieves the indicated action from the active transaction.
