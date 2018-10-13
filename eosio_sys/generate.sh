@@ -13,6 +13,12 @@ bindgen \
     --no-layout-tests \
     --output src/bindings.rs \
     --ctypes-prefix ::ctypes \
+    --with-derive-default \
+    --with-derive-eq \
+    --with-derive-hash \
+    --with-derive-ord \
+    --with-derive-partialeq \
+    --with-derive-partialord \
     --whitelist-function action_data_size \
     --whitelist-function current_receiver \
     --whitelist-function has_auth \

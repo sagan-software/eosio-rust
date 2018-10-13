@@ -1,0 +1,11 @@
+[package]
+name = "tests"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+
+[lib]
+crate-type = ["cdylib"]
+doc = false
+
+[dependencies]
+eosio = { path = "../../eosio", version = "0.1" }

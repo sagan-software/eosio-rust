@@ -7,7 +7,7 @@ pub fn expand(args: TokenStream, input: TokenStream) -> TokenStream {
     let name = parse_macro_input!(args as Ident);
     let name = LitStr::new(format!("{}", quote!(#name)).as_str(), Span::call_site());
     let expanded = quote! {
-        #[derive(TableRow, Read, Write)]
+        #[derive(TableRow, Read, Write, Clone, Eq, PartialEq, Ord, PartialOrd)]
         #[table_name = #name]
         #input
     };

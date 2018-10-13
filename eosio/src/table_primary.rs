@@ -156,20 +156,22 @@ where
     _data: PhantomData<T>,
 }
 
-impl<'a, K, T> TableIndex<'a, K, T> for PrimaryTableIndex<T>
+impl<'a, T> TableIndex<'a, u64, T> for PrimaryTableIndex<T>
 where
-    K: Clone + Into<u64>,
     T: TableRow + 'a,
 {
     type Cursor = PrimaryTableCursor<T>;
 
-    fn lower_bound(&'a self, key: &'a K) -> Option<Self::Cursor> {
+    fn lower_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
+    where
+        N: Into<u64>,
+    {
         let itr = unsafe {
             ::eosio_sys::db_lowerbound_i64(
                 self.code.into(),
                 self.scope.into(),
                 self.name.into(),
-                key.clone().into(),
+                key.into(),
             )
         };
         let end = unsafe {
@@ -188,13 +190,16 @@ where
         }
     }
 
-    fn upper_bound(&'a self, key: &'a K) -> Option<Self::Cursor> {
+    fn upper_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
+    where
+        N: Into<u64>,
+    {
         let itr = unsafe {
             ::eosio_sys::db_upperbound_i64(
                 self.code.into(),
                 self.scope.into(),
                 self.name.into(),
-                key.clone().into(),
+                key.into(),
             )
         };
         let end = unsafe {
@@ -211,6 +216,39 @@ where
         } else {
             None
         }
+    }
+
+    fn insert<P>(&self, payer: P, item: &T) -> Result<(), WriteError>
+    where
+        P: Into<AccountName>,
+    {
+        let id = item.primary_key();
+        let payer = payer.into();
+
+        let size = ::lib::size_of_val(item);
+        let mut bytes = vec![0u8; size];
+        let pos = item.write(&mut bytes, 0)?;
+        let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
+        let itr = unsafe {
+            ::eosio_sys::db_store_i64(
+                self.scope.into(),
+                self.name.into(),
+                payer.into(),
+                id,
+                ptr,
+                pos as u32,
+            )
+        };
+
+        // store secondary indexes
+        for (i, k) in item.secondary_keys().iter().enumerate() {
+            if let Some(k) = k {
+                let table = ::table_secondary::SecondaryTableName::new(self.name, i);
+                k.store(self.scope, table, payer, id);
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -265,45 +303,6 @@ where
                 _data: self._data,
             })
         }
-    }
-
-    pub fn insert<P>(&self, payer: P, item: &T) -> Result<PrimaryTableCursor<T>, WriteError>
-    where
-        P: Into<AccountName>,
-    {
-        let id = item.primary_key();
-        let payer = payer.into();
-
-        let size = ::lib::size_of_val(item);
-        let mut bytes = vec![0u8; size];
-        let pos = item.write(&mut bytes, 0)?;
-        let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-        let itr = unsafe {
-            ::eosio_sys::db_store_i64(
-                self.scope.into(),
-                self.name.into(),
-                payer.into(),
-                id,
-                ptr,
-                pos as u32,
-            )
-        };
-
-        // store secondary indexes
-        for (i, k) in item.secondary_keys().iter().enumerate() {
-            if let Some(k) = k {
-                let table = ::table_secondary::SecondaryTableName::new(self.name, i);
-                k.store(self.scope, table, payer, id);
-            }
-        }
-
-        Ok(PrimaryTableCursor {
-            value: itr,
-            code: self.code,
-            scope: self.scope,
-            table: self.name,
-            _data: self._data,
-        })
     }
 
     fn update<P>(

@@ -94,7 +94,7 @@ fn like(account: AccountName) {
 fn likezip(zip: u32) {
     let code = AccountName::receiver();
     let table = Address::zip(code, code);
-    for cursor in table.lower_bound(&zip).into_iter() {
+    for cursor in table.lower_bound(zip).into_iter() {
         let mut addr = cursor.get().assert("read");
         if addr.zip != zip {
             break;

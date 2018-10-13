@@ -67,11 +67,18 @@ where
     T: TableRow + 'a,
 {
     type Cursor: TableCursor<T> + 'a;
-    fn lower_bound(&'a self, key: &'a K) -> Option<Self::Cursor>;
-    fn upper_bound(&'a self, key: &'a K) -> Option<Self::Cursor>;
+    fn lower_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
+    where
+        N: Into<K>;
+    fn upper_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
+    where
+        N: Into<K>;
+    fn insert<P>(&'a self, payer: P, item: &'a T) -> Result<(), WriteError>
+    where
+        P: Into<AccountName>;
 }
 
 pub trait TableIterator: Iterator {
-    fn ascending(&self) -> Self;
-    fn descending(&self) -> Self;
+    fn asc(&self) -> Self;
+    fn desc(&self) -> Self;
 }

@@ -6,7 +6,7 @@ eosio_name!(PermissionName);
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
 pub struct PermissionLevel {
-    pub actor: AccountName,
+    pub account: AccountName,
     pub permission: PermissionName,
 }
 

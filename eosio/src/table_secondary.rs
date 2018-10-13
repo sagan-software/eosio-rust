@@ -329,7 +329,7 @@ where
     }
 
     fn remove(&self) -> Result<T, ReadError> {
-        let table = PrimaryTableIndex::new(self.index.code, self.index.scope, self.index.table.0);
+        let table = self.index.to_primary_index();
         match table.find(self.pk) {
             Some(cursor) => cursor.remove(),
             None => Err(ReadError::NotEnoughBytes), // TODO: better error
@@ -340,7 +340,7 @@ where
     where
         P: Into<AccountName>,
     {
-        let table = PrimaryTableIndex::new(self.index.code, self.index.scope, self.index.table.0);
+        let table = self.index.to_primary_index();
         match table.find(self.pk) {
             Some(cursor) => cursor.update(payer, item),
             None => Err(WriteError::NotEnoughSpace), // TODO: better error
@@ -465,16 +465,24 @@ where
             _data: PhantomData,
         }
     }
+
+    fn to_primary_index(&self) -> PrimaryTableIndex<T> {
+        PrimaryTableIndex::new(self.code, self.scope, self.table.0)
+    }
 }
 
 impl<'a, K, T> TableIndex<'a, K, T> for SecondaryTableIndex<K, T>
 where
-    K: SecondaryTableKey + 'a,
+    K: SecondaryTableKey + Clone + 'a,
     T: TableRow + 'a,
 {
     type Cursor = SecondaryTableCursor<'a, K, T>;
 
-    fn lower_bound(&'a self, key: &'a K) -> Option<Self::Cursor> {
+    fn lower_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
+    where
+        N: Into<K>,
+    {
+        let key = key.into();
         let (value, pk) = key.lower_bound(self.code, self.scope, self.table);
         let end = key.end(self.code, self.scope, self.table);
         if value != end {
@@ -488,7 +496,11 @@ where
         }
     }
 
-    fn upper_bound(&'a self, key: &'a K) -> Option<Self::Cursor> {
+    fn upper_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
+    where
+        N: Into<K>,
+    {
+        let key = key.into();
         let (value, pk) = key.upper_bound(self.code, self.scope, self.table);
         let end = key.end(self.code, self.scope, self.table);
         if value != end {
@@ -500,5 +512,13 @@ where
         } else {
             None
         }
+    }
+
+    fn insert<P>(&self, payer: P, item: &T) -> Result<(), WriteError>
+    where
+        P: Into<AccountName>,
+    {
+        let table = self.to_primary_index();
+        table.insert(payer, item)
     }
 }

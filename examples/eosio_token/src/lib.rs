@@ -31,7 +31,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
 
 #[eosio_action]
 fn issue(to: AccountName, quantity: Asset, memo: String) {
-    let receiver: AccountName = n!(eosiotoken).into();
+    let receiver = AccountName::receiver();
     let symbol = quantity.symbol;
 
     eosio_assert(memo.len() <= 256, "memo has more than 256 bytes");
@@ -67,7 +67,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
         };
         action
             .send(vec![PermissionLevel {
-                actor: st.issuer,
+                account: st.issuer,
                 permission: n!(active).into(),
             }])
             .assert("failed to send inline action");
@@ -135,7 +135,7 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     from.require_auth();
     to.is_account().assert("to account does not exist");
 
-    let receiver: AccountName = n!(eosiotoken).into();
+    let receiver = AccountName::receiver();
     let symbol_name = quantity.symbol.name();
     let stats_table = CurrencyStats::table(receiver, symbol_name);
     let cursor = stats_table
@@ -162,7 +162,7 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
 eosio_abi!(create, issue, transfer, open, close, retire);
 
 fn sub_balance(owner: AccountName, value: Asset) {
-    let receiver: AccountName = n!(eosiotoken).into();
+    let receiver = AccountName::receiver();
     let table = Account::table(receiver, owner);
     let cursor = table
         .find(value.symbol.name())

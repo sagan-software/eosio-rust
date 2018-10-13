@@ -30,6 +30,11 @@ pub type weight_type = u16;
 pub struct public_key {
     pub data: [::ctypes::c_char; 34usize],
 }
+impl Default for public_key {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
 /// @brief EOSIO Signature
 /// @details EOSIO Signature. It is 66 bytes.
 #[repr(C)]
@@ -37,17 +42,22 @@ pub struct public_key {
 pub struct signature {
     pub data: [u8; 66usize],
 }
+impl Default for signature {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
 /// @brief 256-bit hash
 /// @details 256-bit hash
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct checksum256 {
     pub hash: [u8; 32usize],
 }
 /// @brief 160-bit hash
 /// @details 160-bit hash
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct checksum160 {
     pub hash: [u8; 20usize],
     pub __bindgen_padding_0: [u32; 3usize],
@@ -59,12 +69,17 @@ pub struct checksum160 {
 pub struct checksum512 {
     pub hash: [u8; 64usize],
 }
+impl Default for checksum512 {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
 /// @brief Type of EOSIO Transaction Id
 /// @details Type of EOSIO Transaction Id. It is 256-bit hash
 pub type transaction_id_type = checksum256;
 pub type block_id_type = checksum256;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct account_permission {
     pub account: account_name,
     pub permission: permission_name,
