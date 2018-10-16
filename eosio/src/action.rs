@@ -1,4 +1,4 @@
-use account::{AccountName, PermissionLevel};
+use account::{AccountName, Permission};
 use bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
 
@@ -14,17 +14,17 @@ where
 eosio_name!(ActionName);
 
 #[derive(Clone, Debug)]
-pub struct InlineAction<Data>
+pub struct Action<Data>
 where
     Data: Write,
 {
     pub account: AccountName,
     pub name: ActionName,
-    pub authorization: Vec<PermissionLevel>,
+    pub authorization: Vec<Permission>,
     pub data: Data,
 }
 
-impl<Data> Write for InlineAction<Data>
+impl<Data> Write for Action<Data>
 where
     Data: Write,
 {
@@ -42,11 +42,14 @@ where
     }
 }
 
-impl<Data> InlineAction<Data>
+#[derive(Clone, Debug)]
+pub struct ActionId(u128);
+
+impl<Data> Action<Data>
 where
     Data: Write,
 {
-    pub fn send(&self) -> Result<(), WriteError> {
+    pub fn send_inline(&self) -> Result<(), WriteError> {
         let size = ::lib::size_of_val(self);
         let mut bytes = vec![0u8; size];
         let pos = self.write(&mut bytes, 0)?;
@@ -58,14 +61,32 @@ where
         }
         Ok(())
     }
+
+    pub fn send_deferred<P>(
+        &self,
+        id: ActionId,
+        payer: P,
+        replace_existing: bool,
+    ) -> Result<(), WriteError>
+    where
+        P: Into<u64>,
+    {
+        // TODO
+        Ok(())
+    }
+
+    pub fn cancel_deferred(id: ActionId) -> Result<(), ()> {
+        // TODO
+        Ok(())
+    }
 }
 
-pub trait Action: Read + Write + Clone {
+pub trait ActionFn: Read + Write + Clone {
     const NAME: u64;
 
     fn execute(self);
 
-    fn read_action_data() -> Result<(Self, usize), ReadError> {
+    fn read_data() -> Result<(Self, usize), ReadError> {
         // TODO: set the length of this to a fixed size based on the action inputs
         // let mut bytes = [0u8; 8];
         let num_bytes = unsafe { ::eosio_sys::action_data_size() };
@@ -78,8 +99,8 @@ pub trait Action: Read + Write + Clone {
         Self::read(&bytes, 0)
     }
 
-    fn to_inline_action(self, authorization: Vec<PermissionLevel>) -> InlineAction<Self> {
-        InlineAction {
+    fn to_action(self, authorization: Vec<Permission>) -> Action<Self> {
+        Action {
             account: AccountName::receiver(),
             name: Self::NAME.into(),
             authorization,
@@ -87,7 +108,7 @@ pub trait Action: Read + Write + Clone {
         }
     }
 
-    fn send(self, authorization: Vec<PermissionLevel>) -> Result<(), WriteError> {
-        self.to_inline_action(authorization).send()
+    fn send_inline(self, authorization: Vec<Permission>) -> Result<(), WriteError> {
+        self.to_action(authorization).send_inline()
     }
 }

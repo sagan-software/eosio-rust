@@ -122,17 +122,17 @@ pub fn name_to_string(name: u64) -> String {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum ToSymbolError {
+pub enum ParseSymbolError {
     IsEmpty,
     TooLong,
     BadChar(char),
 }
 
-pub fn string_to_symbol(precision: u8, s: &str) -> Result<u64, ToSymbolError> {
+pub fn string_to_symbol(precision: u8, s: &str) -> Result<u64, ParseSymbolError> {
     let mut result: u64 = 0;
     for (i, c) in s.chars().enumerate() {
         if c < 'A' || c > 'Z' {
-            return Err(ToSymbolError::BadChar(c));
+            return Err(ParseSymbolError::BadChar(c));
         } else {
             result |= (c as u64) << (8 * (i + 1));
         }

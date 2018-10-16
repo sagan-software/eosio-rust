@@ -16,13 +16,14 @@ test:
 	cargo test --features test
 
 docs:
+	rm -Rf target/doc
 	cargo doc \
 		--all \
 		--exclude addressbook \
 		--exclude eosio_token \
 		--exclude hello \
 		--exclude tictactoe \
-		--target wasm32-unknown-unknown --release --no-deps
+		--no-deps
 
 lint:
 	touch eosio/src/lib.rs

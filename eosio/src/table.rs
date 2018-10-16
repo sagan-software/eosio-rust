@@ -57,9 +57,7 @@ where
 {
     fn get(&self) -> Result<T, ReadError>;
     fn remove(&self) -> Result<T, ReadError>;
-    fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
-    where
-        P: Into<AccountName>;
+    fn update(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError>;
 }
 
 pub trait TableIndex<'a, K, T>
@@ -73,12 +71,7 @@ where
     fn upper_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
     where
         N: Into<K>;
-    fn insert<P>(&'a self, payer: P, item: &'a T) -> Result<(), WriteError>
-    where
-        P: Into<AccountName>;
+    fn insert(&'a self, payer: AccountName, item: &'a T) -> Result<(), WriteError>;
 }
 
-pub trait TableIterator: Iterator {
-    fn asc(&self) -> Self;
-    fn desc(&self) -> Self;
-}
+pub trait TableIterator: DoubleEndedIterator {}

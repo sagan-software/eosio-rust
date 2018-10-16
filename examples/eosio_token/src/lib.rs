@@ -10,14 +10,14 @@ fn create(issuer: AccountName, max_supply: Asset) {
     receiver.require_auth();
 
     let symbol = max_supply.symbol;
-    eosio_assert!(max_supply.amount > 0, "max-supply must be positive");
+    eosio_assert(max_supply.amount > 0, "max-supply must be positive");
 
     let symbol_name = symbol.name();
     let table = CurrencyStats::table(receiver, symbol_name);
 
-    eosio_assert!(
+    eosio_assert(
         !table.exists(symbol_name),
-        "token with symbol already exists"
+        "token with symbol already exists",
     );
 
     let stats = CurrencyStats {
@@ -54,7 +54,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     );
 
     st.supply += quantity;
-    cursor.update(0, &st).assert("write");
+    cursor.update(None, &st).assert("write");
 
     add_balance(st.issuer, quantity, st.issuer);
 
@@ -66,7 +66,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             memo,
         };
         action
-            .send(vec![PermissionLevel {
+            .send_inline(vec![Permission {
                 account: st.issuer,
                 permission: n!(active).into(),
             }])
@@ -99,16 +99,16 @@ fn close(owner: AccountName, symbol: Symbol) {
 
     let account = cursor.get().assert("read");
 
-    eosio_assert!(
+    eosio_assert(
         account.balance.amount == 0,
-        "Cannot close because the balance is not zero."
+        "Cannot close because the balance is not zero.",
     );
     cursor.remove().assert("read");
 }
 
 #[eosio_action]
 fn retire(quantity: Asset, memo: String) {
-    eosio_assert!(memo.len() <= 256, "memo has more than 256 bytes");
+    eosio_assert(memo.len() <= 256, "memo has more than 256 bytes");
 
     let receiver = AccountName::receiver();
     let symbol = quantity.symbol;
@@ -119,19 +119,19 @@ fn retire(quantity: Asset, memo: String) {
 
     let mut st = cursor.get().assert("error reading stats table");
     st.issuer.require_auth();
-    eosio_assert!(quantity.amount > 0, "must retire positive quantity");
-    eosio_assert!(
+    eosio_assert(quantity.amount > 0, "must retire positive quantity");
+    eosio_assert(
         quantity.symbol == st.supply.symbol,
-        "symbol precision mismatch"
+        "symbol precision mismatch",
     );
 
     st.supply -= quantity;
-    cursor.update(0, &st).assert("write");
+    cursor.update(None, &st).assert("write");
 }
 
 #[eosio_action]
 fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
-    eosio_assert!(from != to, "cannot transfer to self");
+    eosio_assert(from != to, "cannot transfer to self");
     from.require_auth();
     to.is_account().assert("to account does not exist");
 
@@ -146,12 +146,12 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     from.require_recipient();
     to.require_recipient();
 
-    eosio_assert!(quantity.amount > 0, "must transfer positive quantity");
-    eosio_assert!(
+    eosio_assert(quantity.amount > 0, "must transfer positive quantity");
+    eosio_assert(
         quantity.symbol == st.supply.symbol,
-        "symbol precision mismatch"
+        "symbol precision mismatch",
     );
-    eosio_assert!(memo.len() <= 256, "memo has more than 256 bytes");
+    eosio_assert(memo.len() <= 256, "memo has more than 256 bytes");
 
     let payer = if to.has_auth() { to } else { from };
 
@@ -172,7 +172,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
 
     account.balance -= value;
 
-    cursor.update(owner, &account).assert("write");
+    cursor.update(Some(owner), &account).assert("write");
 }
 
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
@@ -183,7 +183,7 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
         Some(cursor) => {
             let mut account = cursor.get().assert("read");
             account.balance += value;
-            cursor.update(ram_payer, &account).assert("write");
+            cursor.update(Some(ram_payer), &account).assert("write");
         }
         None => {
             let account = Account { balance: value };

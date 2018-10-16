@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
 use syn::parse::Parser;
 use syn::punctuated::Punctuated;
-use syn::{Expr, Lit};
+use syn::Expr;
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;

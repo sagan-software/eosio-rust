@@ -61,7 +61,7 @@ fn update(
     address.state = state;
     address.zip = zip;
 
-    cursor.update(account, &address).assert("write");
+    cursor.update(Some(account), &address).assert("write");
 }
 
 #[eosio_action]
@@ -87,7 +87,9 @@ fn like(account: AccountName) {
 
     let mut address = cursor.get().assert("read");
     address.liked += 1;
-    cursor.update(address.account, &address).assert("write");
+    cursor
+        .update(Some(address.account), &address)
+        .assert("write");
 }
 
 #[eosio_action]
@@ -100,7 +102,7 @@ fn likezip(zip: u32) {
             break;
         }
         addr.liked += 1;
-        cursor.update(0, &addr).assert("write");
+        cursor.update(None, &addr).assert("write");
     }
 }
 

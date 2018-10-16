@@ -37,9 +37,9 @@ where
     T: TableRow,
 {
     fn print(&self) {
-        c!("PrimaryTableCursor(").print();
+        "PrimaryTableCursor(".print();
         self.value.print();
-        c!(")").print();
+        ")".print();
     }
 }
 
@@ -76,10 +76,7 @@ where
         Ok(item)
     }
 
-    fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
-    where
-        P: Into<AccountName>,
-    {
+    fn update(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError> {
         let table = PrimaryTableIndex::new(self.code, self.scope, self.table);
         table.update(&self, payer, item)
     }
@@ -144,6 +141,33 @@ where
         Some(cursor)
     }
 }
+
+impl<T> DoubleEndedIterator for PrimaryTableIterator<T>
+where
+    T: TableRow,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        if self.value == -1 {
+            return None;
+        }
+
+        let cursor = PrimaryTableCursor {
+            value: self.value,
+            code: self.code,
+            scope: self.scope,
+            table: self.table,
+            _data: PhantomData,
+        };
+
+        let mut pk = 0u64;
+        let ptr: *mut u64 = &mut pk;
+        self.value = unsafe { ::eosio_sys::db_previous_i64(self.value, ptr) };
+
+        Some(cursor)
+    }
+}
+
+impl<T> TableIterator for PrimaryTableIterator<T> where T: TableRow {}
 
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableIndex<T>
@@ -218,18 +242,15 @@ where
         }
     }
 
-    fn insert<P>(&self, payer: P, item: &T) -> Result<(), WriteError>
-    where
-        P: Into<AccountName>,
-    {
+    fn insert(&self, payer: AccountName, item: &T) -> Result<(), WriteError> {
         let id = item.primary_key();
-        let payer = payer.into();
 
         let size = ::lib::size_of_val(item);
+        // TODO: the next two lines cause issues when used in inline actions
         let mut bytes = vec![0u8; size];
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-        let itr = unsafe {
+        unsafe {
             ::eosio_sys::db_store_i64(
                 self.scope.into(),
                 self.name.into(),
@@ -305,20 +326,22 @@ where
         }
     }
 
-    fn update<P>(
+    pub fn available_primary_key(&self) -> Option<u64> {
+        // TODO
+        None
+    }
+
+    fn update(
         &self,
         itr: &PrimaryTableCursor<T>,
-        payer: P,
+        payer: Option<AccountName>,
         item: &T,
-    ) -> Result<usize, WriteError>
-    where
-        P: Into<AccountName>,
-    {
+    ) -> Result<usize, WriteError> {
         let size = ::lib::size_of_val(item);
         let mut bytes = vec![0u8; size];
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-        let payer: AccountName = payer.into();
+        let payer = payer.unwrap_or_else(|| 0u64.into());
         unsafe { ::eosio_sys::db_update_i64(itr.value, payer.into(), ptr, pos as u32) }
 
         let pk = item.primary_key();

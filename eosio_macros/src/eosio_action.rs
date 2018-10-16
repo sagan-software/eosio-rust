@@ -39,7 +39,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         #[automatically_derived]
-        impl ::eosio::Action for #struct_ident {
+        impl ::eosio::ActionFn for #struct_ident {
             const NAME: u64 = n!(#ident);
 
             fn execute(self) {
@@ -50,7 +50,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         // TODO: keep original function intact so it can be called like normal
         #vis fn #ident() {
-            let (s, _) = #struct_ident::read_action_data().assert("read");
+            let (s, _) = #struct_ident::read_data().assert("read");
             s.execute();
         }
     };

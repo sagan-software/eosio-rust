@@ -13,14 +13,12 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
-mod c;
 mod derive_print;
 mod derive_read;
 mod derive_table_row;
 mod derive_write;
 mod eosio_abi;
 mod eosio_action;
-mod eosio_assert;
 mod eosio_name;
 mod eosio_print;
 mod eosio_table;
@@ -30,11 +28,6 @@ mod s;
 use proc_macro::TokenStream;
 
 #[proc_macro]
-pub fn c(input: TokenStream) -> TokenStream {
-    ::c::expand(input)
-}
-
-#[proc_macro]
 pub fn eosio_abi(input: TokenStream) -> TokenStream {
     ::eosio_abi::expand(input)
 }
@@ -42,11 +35,6 @@ pub fn eosio_abi(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
     ::eosio_action::expand(args, input)
-}
-
-#[proc_macro]
-pub fn eosio_assert(input: TokenStream) -> TokenStream {
-    ::eosio_assert::expand(input)
 }
 
 #[proc_macro]

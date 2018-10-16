@@ -99,3 +99,19 @@ impl Print for char {
         unsafe { ::eosio_sys::prints_l(ptr, 1) }
     }
 }
+
+impl<P> Print for Option<P>
+where
+    P: Print,
+{
+    fn print(&self) {
+        match self {
+            Some(p) => {
+                "Some(".print();
+                p.print();
+                ")".print();
+            }
+            None => "None".print(),
+        }
+    }
+}

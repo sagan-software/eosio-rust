@@ -336,10 +336,7 @@ where
         }
     }
 
-    fn update<P>(&self, payer: P, item: &T) -> Result<usize, WriteError>
-    where
-        P: Into<AccountName>,
-    {
+    fn update(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError> {
         let table = self.index.to_primary_index();
         match table.find(self.pk) {
             Some(cursor) => cursor.update(payer, item),
@@ -401,19 +398,6 @@ where
             return None;
         }
 
-        let pk_itr = unsafe {
-            ::eosio_sys::db_find_i64(
-                self.index.code.into(),
-                self.index.scope.into(),
-                self.index.table.0.into(),
-                self.pk,
-            )
-        };
-
-        if pk_itr == self.pk_end {
-            return None;
-        }
-
         let cursor = SecondaryTableCursor {
             value: self.value,
             pk: self.pk,
@@ -426,6 +410,35 @@ where
         Some(cursor)
     }
 }
+
+impl<'a, K, T> DoubleEndedIterator for SecondaryTableIterator<'a, K, T>
+where
+    K: SecondaryTableKey,
+    T: TableRow,
+{
+    fn next_back(&mut self) -> Option<Self::Item> {
+        if self.value == -1 {
+            return None;
+        }
+
+        let cursor = SecondaryTableCursor {
+            value: self.value,
+            pk: self.pk,
+            index: self.index,
+        };
+        let (itr, pk) = self.index.key.previous(self.value);
+        self.value = itr;
+        self.pk = pk;
+
+        Some(cursor)
+    }
+}
+
+impl<'a, K, T> TableIterator for SecondaryTableIterator<'a, K, T>
+where
+    K: SecondaryTableKey,
+    T: TableRow,
+{}
 
 #[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIndex<K, T>
@@ -514,10 +527,7 @@ where
         }
     }
 
-    fn insert<P>(&self, payer: P, item: &T) -> Result<(), WriteError>
-    where
-        P: Into<AccountName>,
-    {
+    fn insert(&self, payer: AccountName, item: &T) -> Result<(), WriteError> {
         let table = self.to_primary_index();
         table.insert(payer, item)
     }

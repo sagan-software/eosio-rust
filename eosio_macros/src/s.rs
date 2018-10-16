@@ -1,4 +1,4 @@
-use eosio_sys::{string_to_symbol, ToSymbolError};
+use eosio_sys::{string_to_symbol, ParseSymbolError};
 use proc_macro::{Span, TokenStream};
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{Ident, LitInt};
@@ -26,13 +26,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
         Err(error) => {
             let span = Span::call_site();
             let err = match error {
-                ToSymbolError::IsEmpty => span
+                ParseSymbolError::IsEmpty => span
                     .error("symbol is empty")
                     .help("EOSIO symbols must be 1-12 characters long"),
-                ToSymbolError::TooLong => span
+                ParseSymbolError::TooLong => span
                     .error("name is too long")
                     .help("EOSIO symbols must be 1-12 characters long"),
-                ToSymbolError::BadChar(c) => {
+                ParseSymbolError::BadChar(c) => {
                     let error_message = format!("name has bad character '{}'", c);
                     let help_message = "EOSIO symbols can only contain uppercase letters A-Z";
                     span.error(error_message).help(help_message)

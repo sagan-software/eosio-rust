@@ -6,21 +6,21 @@ pub trait Hasher: Assert<()> {
     fn new(data: &str) -> Self;
 }
 
-#[derive(Read, Write, Default, Clone, Copy)]
-pub struct Checksum160([u8; 20usize]);
+#[derive(Read, Write, Default, Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct Ripemd160([u8; 20usize]);
 
-impl Hasher for Checksum160 {
+impl Hasher for Ripemd160 {
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum160::default();
         let c_hash_ptr: *mut capi_checksum160 = &mut c_hash as *mut _ as *mut capi_checksum160;
         unsafe { ::eosio_sys::ripemd160(data_ptr, data_len, c_hash_ptr) }
-        Checksum160(c_hash.hash)
+        Ripemd160(c_hash.hash)
     }
 }
 
-impl Assert<()> for Checksum160 {
+impl Assert<()> for Ripemd160 {
     fn assert(self, data: &str) -> () {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -33,21 +33,48 @@ impl Assert<()> for Checksum160 {
     }
 }
 
-#[derive(Read, Write, Default, Clone, Copy)]
-pub struct Checksum256([u8; 32usize]);
+#[derive(Read, Write, Default, Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct Sha1([u8; 20usize]);
 
-impl Hasher for Checksum256 {
+impl Hasher for Sha1 {
+    fn new(data: &str) -> Self {
+        let data_ptr = data.as_ptr();
+        let data_len = data.len() as u32;
+        let mut c_hash = capi_checksum160::default();
+        let c_hash_ptr: *mut capi_checksum160 = &mut c_hash as *mut _ as *mut capi_checksum160;
+        unsafe { ::eosio_sys::sha1(data_ptr, data_len, c_hash_ptr) }
+        Sha1(c_hash.hash)
+    }
+}
+
+impl Assert<()> for Sha1 {
+    fn assert(self, data: &str) -> () {
+        let data_ptr = data.as_ptr();
+        let data_len = data.len() as u32;
+        let c_hash = capi_checksum160 {
+            hash: self.0,
+            __bindgen_padding_0: [0u32; 3],
+        };
+        let c_hash_ptr: *const capi_checksum160 = &c_hash as *const capi_checksum160;
+        unsafe { ::eosio_sys::assert_sha1(data_ptr, data_len, c_hash_ptr) }
+    }
+}
+
+#[derive(Read, Write, Default, Clone, Copy)]
+pub struct Sha256([u8; 32usize]);
+
+impl Hasher for Sha256 {
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum256::default();
         let c_hash_ptr: *mut capi_checksum256 = &mut c_hash as *mut _ as *mut capi_checksum256;
         unsafe { ::eosio_sys::sha256(data_ptr, data_len, c_hash_ptr) }
-        Checksum256(c_hash.hash)
+        Sha256(c_hash.hash)
     }
 }
 
-impl Assert<()> for Checksum256 {
+impl Assert<()> for Sha256 {
     fn assert(self, data: &str) -> () {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -58,20 +85,20 @@ impl Assert<()> for Checksum256 {
 }
 
 #[derive(Read, Write, Clone, Copy)]
-pub struct Checksum512([u8; 64usize]);
+pub struct Sha512([u8; 64usize]);
 
-impl Hasher for Checksum512 {
+impl Hasher for Sha512 {
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum512::default();
         let c_hash_ptr: *mut capi_checksum512 = &mut c_hash as *mut _ as *mut capi_checksum512;
         unsafe { ::eosio_sys::sha512(data_ptr, data_len, c_hash_ptr) }
-        Checksum512(c_hash.hash)
+        Sha512(c_hash.hash)
     }
 }
 
-impl Assert<()> for Checksum512 {
+impl Assert<()> for Sha512 {
     fn assert(self, data: &str) -> () {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;

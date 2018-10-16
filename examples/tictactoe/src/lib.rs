@@ -11,15 +11,15 @@ const BOARD_AREA: usize = (BOARD_WIDTH * BOARD_HEIGHT) as usize;
 #[eosio_action]
 fn create(challenger: AccountName, host: AccountName) {
     host.require_auth();
-    eosio_assert!(
+    eosio_assert(
         challenger != host,
-        "challenger shouldn't be the same as host"
+        "challenger shouldn't be the same as host",
     );
 
     let code = AccountName::receiver();
     let table = Game::table(code, host);
 
-    eosio_assert!(!table.exists(challenger), "game already exists");
+    eosio_assert(!table.exists(challenger), "game already exists");
 
     let game = Game {
         challenger,
@@ -41,16 +41,16 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     let cursor = table.find(challenger).assert("game doesn't exist");
     let mut game = cursor.get().assert("read");
 
-    eosio_assert!(
+    eosio_assert(
         by == game.host || by == game.challenger,
-        "this is not your game"
+        "this is not your game",
     );
 
     game.board = [0; BOARD_AREA];
     game.turn = host;
     game.winner = n!(none).into();
 
-    cursor.update(host, &game).assert("write");
+    cursor.update(Some(host), &game).assert("write");
 }
 
 #[eosio_action]
@@ -77,19 +77,19 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
     let mut game = cursor.get().assert("read");
 
     // Check if this game hasn't ended yet
-    eosio_assert!(game.winner == n!(none).into(), "the game has ended!");
+    eosio_assert(game.winner == n!(none).into(), "the game has ended!");
     // Check if this game belongs to the action sender
-    eosio_assert!(
+    eosio_assert(
         by == game.host || by == game.challenger,
-        "this is not your game"
+        "this is not your game",
     );
     // Check if this is the  action sender's turn
-    eosio_assert!(by == game.turn, "it's not your turn yet!");
+    eosio_assert(by == game.turn, "it's not your turn yet!");
 
     // Check if user makes a valid movement
-    eosio_assert!(
+    eosio_assert(
         is_valid_move(row, col, &game.board),
-        "not a valid movement!"
+        "not a valid movement!",
     );
 
     let loc = movement_location(row, col);
@@ -108,7 +108,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
         }
     }
     game.winner = game.get_winner();
-    cursor.update(host, &game).assert("write");
+    cursor.update(Some(host), &game).assert("write");
 }
 
 eosio_abi!(create, restart, close, makemove);

@@ -63,7 +63,10 @@ pub use self::table::*;
 pub use self::table_primary::*;
 pub use self::table_secondary::*;
 pub use self::time::*;
-pub use eosio_macros::*;
+pub use eosio_macros::{
+    eosio_abi, eosio_action, eosio_name, eosio_print, eosio_table, n, s, Read, TableRow, Write,
+};
+pub use eosio_sys::{ParseNameError, ParseSymbolError};
 
 mod eosio {
     pub use super::bytes::*;
