@@ -11,6 +11,9 @@
 extern crate alloc;
 extern crate eosio_macros;
 extern crate eosio_sys;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 
 mod lib {
     mod core {
@@ -44,12 +47,17 @@ mod assert;
 mod asset;
 mod bytes;
 mod crypto;
+pub mod json;
 mod print;
 mod symbol;
 mod table;
 mod table_primary;
 mod table_secondary;
 mod time;
+
+pub mod sys {
+    pub use eosio_sys::*;
+}
 
 pub use self::account::*;
 pub use self::action::*;
@@ -63,13 +71,21 @@ pub use self::table::*;
 pub use self::table_primary::*;
 pub use self::table_secondary::*;
 pub use self::time::*;
+
 pub use eosio_macros::{
     eosio_abi, eosio_action, eosio_name, eosio_print, eosio_table, n, s, Read, TableRow, Write,
 };
+
 pub use eosio_sys::{ParseNameError, ParseSymbolError};
 
 mod eosio {
+    pub use super::account::*;
     pub use super::bytes::*;
+    pub use super::json;
     pub use super::print::*;
-    pub use eosio_sys::*;
+    pub use super::sys;
+    pub use super::table::*;
+    pub use super::table_primary::*;
+    pub use super::table_secondary::*;
+    pub use eosio_sys::{ParseNameError, ParseSymbolError};
 }

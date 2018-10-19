@@ -1,13 +1,44 @@
 use eosio_macros::*;
+use serde_derive::*;
 use time::Time;
 
 eosio_name!(AccountName);
 eosio_name!(PermissionName);
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Default,
+    Read,
+    Write,
+    Hash,
+    PartialOrd,
+    Ord,
+    Serialize,
+    Deserialize,
+)]
 pub struct Permission {
     pub account: AccountName,
     pub permission: PermissionName,
+}
+
+impl Permission {
+    pub fn active(account: AccountName) -> Permission {
+        Permission {
+            account,
+            permission: n!(active).into(),
+        }
+    }
+
+    pub fn owner(account: AccountName) -> Permission {
+        Permission {
+            account,
+            permission: n!(owner).into(),
+        }
+    }
 }
 
 pub struct RamBytes(i64);

@@ -33,7 +33,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let struct_ident = Ident::new(format!("{}Action", struct_name).as_str(), call_site);
 
     let expanded = quote! {
-        #[derive(Read, Write, Clone)]
+        #[derive(Clone, Read, Write)]
         struct #struct_ident {
             #(#struct_fields)*
         }

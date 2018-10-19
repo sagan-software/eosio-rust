@@ -18,8 +18,3 @@ fn test_s() {
     assert_eq!(s!(0, EOS), 1_397_703_936);
     assert_eq!(s!(1, EDNA), 280_485_971_201);
 }
-
-#[test]
-fn test_c() {
-    assert_eq!(c!("Hello"), "Hello\0");
-}

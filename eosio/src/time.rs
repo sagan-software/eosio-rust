@@ -1,8 +1,10 @@
 use assert::*;
 use eosio_macros::*;
 use lib::*;
+use serde::de;
+use std::fmt;
 
-#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash)]
+#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash, ::serde_derive::Serialize)]
 pub struct Time(u64);
 
 impl Time {
@@ -53,6 +55,50 @@ impl Time {
 
     pub fn from_seconds(seconds: u32) -> Self {
         Time(u64::from(seconds) * Self::SECOND)
+    }
+}
+
+impl ::print::Print for Time {
+    fn print(&self) {
+        "Time(".print();
+        self.0.print();
+        ")".print();
+    }
+}
+
+struct TimeVisitor;
+
+impl<'de> de::Visitor<'de> for TimeVisitor {
+    type Value = Time;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("struct Time")
+    }
+
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        match value.parse::<u64>() {
+            Ok(n) => Ok(Time(n)),
+            Err(e) => Err(de::Error::custom(e)),
+        }
+    }
+
+    fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Ok(Time(value))
+    }
+}
+
+impl<'de> de::Deserialize<'de> for Time {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: de::Deserializer<'de>,
+    {
+        deserializer.deserialize_i32(TimeVisitor)
     }
 }
 

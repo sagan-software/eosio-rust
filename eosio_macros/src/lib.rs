@@ -1,4 +1,4 @@
-#![recursion_limit = "128"]
+#![recursion_limit = "256"]
 #![feature(
     proc_macro_non_items,
     proc_macro_diagnostic,
@@ -21,6 +21,7 @@ mod eosio_abi;
 mod eosio_action;
 mod eosio_name;
 mod eosio_print;
+mod eosio_struct;
 mod eosio_table;
 mod n;
 mod s;
@@ -45,6 +46,11 @@ pub fn eosio_name(input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn eosio_print(input: TokenStream) -> TokenStream {
     ::eosio_print::expand(input)
+}
+
+#[proc_macro_attribute]
+pub fn eosio_struct(args: TokenStream, input: TokenStream) -> TokenStream {
+    ::eosio_struct::expand(args, input)
 }
 
 #[proc_macro_attribute]

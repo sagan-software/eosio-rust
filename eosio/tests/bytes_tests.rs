@@ -2,7 +2,7 @@
 
 extern crate eosio;
 
-use eosio::prelude::*;
+use eosio::*;
 
 macro_rules! test_type {
     ($($i:ident, $t:ty, $e:expr)*) => ($(
@@ -11,7 +11,7 @@ macro_rules! test_type {
             let mut bytes = [0u8; 100];
             let thing: $t = $e;
             thing.write(&mut bytes, 0).unwrap();
-            let (result, _) = <$t as ::eosio::bytes::Read>::read(&bytes, 0).unwrap();
+            let (result, _) = <$t as ::eosio::Read>::read(&bytes, 0).unwrap();
             assert_eq!($e, result);
         }
     )*)

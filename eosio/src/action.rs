@@ -1,6 +1,7 @@
 use account::{AccountName, Permission};
 use bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
+use serde::{Deserialize, Serialize};
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
 pub fn eosio_exit<C>(code: C)
@@ -13,10 +14,10 @@ where
 
 eosio_name!(ActionName);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Action<Data>
 where
-    Data: Write,
+    Data: Write + Sized,
 {
     pub account: AccountName,
     pub name: ActionName,

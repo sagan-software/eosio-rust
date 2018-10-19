@@ -1,6 +1,6 @@
 extern crate eosio;
 
-use eosio::prelude::*;
+use eosio::*;
 
 #[test]
 fn basic_symbol_tests() {
