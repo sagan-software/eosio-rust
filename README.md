@@ -13,7 +13,7 @@
 ## Quickstart
 
 ```rust
-#![feature(proc_macro_non_items)]
+#![feature(proc_macro_hygiene)]
 
 extern crate eosio;
 

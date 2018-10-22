@@ -1,7 +1,7 @@
 #![cfg_attr(feature = "alloc", feature(alloc))]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(
-    proc_macro_non_items,
+    proc_macro_hygiene,
     try_from,
     custom_attribute,
     concat_idents
