@@ -1,6 +1,6 @@
-<img src="logo.svg" alt="eosio-rs" width="300"/>
+<img src="logo.svg" alt="rust-eos" width="300"/>
 
-# eosio-rs [![Build Status](https://travis-ci.org/paritytech/parity-wasm.svg?branch=master)](https://travis-ci.org/paritytech/parity-wasm) [![crates.io link](https://img.shields.io/crates/v/eosio.svg)](https://crates.io/crates/eosio)
+# rust-eos [![Build Status](https://travis-ci.org/paritytech/parity-wasm.svg?branch=master)](https://travis-ci.org/paritytech/parity-wasm) [![crates.io link](https://img.shields.io/crates/v/eosio.svg)](https://crates.io/crates/eosio)
 
 **Rust crates for building full-stack smart contract applications on EOSIO blockchains.**
 
@@ -25,9 +25,9 @@ For a detailed look at planned features please see our [roadmap](#roadmap).
 
 [wasm_bindgen]: https://github.com/rustwasm/wasm-bindgen/
 [stdweb]: https://github.com/koute/stdweb/
-[eosio]: https://sagan-software.github.io/eosio-rs/eosio/
-[eosio_macros]: https://sagan-software.github.io/eosio-rs/eosio_macros/
-[eosio_sys]: https://sagan-software.github.io/eosio-rs/eosio_sys/
+[eosio]: https://sagan-software.github.io/rust-eos/eosio/
+[eosio_macros]: https://sagan-software.github.io/rust-eos/eosio_macros/
+[eosio_sys]: https://sagan-software.github.io/rust-eos/eosio_sys/
 
 ## Table of Contents
 
@@ -69,7 +69,7 @@ Otherwise if you are stuck on something or run into problems, here are some reso
   - [Ask on the Rust user forums](https://users.rust-lang.org/)
   - [Ask on r/rust](https://www.reddit.com/r/rust)
 
-[open an issue]: https://github.com/sagan-software/eosio-rs/issues/new
+[open an issue]: https://github.com/sagan-software/rust-eos/issues/new
 
 ## Installation
 
@@ -350,7 +350,7 @@ fn hi(name: AccountName) {
 eosio_abi!(hi);                     // Create the 'apply' function
 ```
 
-See the [API documentation](https://sagan-software.github.io/eosio-rs/) for more details on what this code is doing.
+See the [API documentation](https://sagan-software.github.io/rust-eos/) for more details on what this code is doing.
 
 Let's recompile our project and minify the the WASM file again:
 
