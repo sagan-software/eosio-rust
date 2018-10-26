@@ -10,7 +10,7 @@
 | [`eosio_macros`][eosio_macros] | Procedural macros for EOSIO smart contract development.      |
 | [`eosio_sys`][eosio_sys]       | Low-level FFI bindings for EOSIO smart contract development. |
 
-> **DISCLAIMER:** _This project is in early development and we looking for feedback on all APIS and features. All APIs and features should be considered unstable and insecure until version `1.0` is released. This code is not yet suitable for production environments where user funds are at risk. Thank you._
+> **DISCLAIMER:** _This project is in early development and we looking for feedback on all APIs and features. All APIs and features should be considered unstable and insecure until version `1.0` is released. This code is not yet suitable for production environments where user funds are at risk. Thank you._
 
 This project enables developers to write full-stack EOSIO applications using the Rust programming language. We believe Rust is an excellent choice for EOSIO smart contract development with its focus on safety, speed, and WebAssembly. Furthermore, projects like [wasm-bindgen][wasm_bindgen] and [stdweb] make it possible to write full-stack Rust web applications, limiting the need for Javascript and enabling code reuse between browsers, servers, and smart contracts.
 
