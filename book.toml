@@ -1,9 +1,0 @@
-[book]
-title = "eosio-rs Book"
-authors = ["Sagan Software"]
-src = "book"
-multilingual = false
-
-[build]
-build-dir = "docs"
-create-missing = true

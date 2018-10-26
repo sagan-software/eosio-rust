@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   nodeosd:
     hostname: nodeosd
     image: eosio/eos:v1.3.0
@@ -18,7 +17,6 @@ services:
       --plugin eosio::history_api_plugin
       --chain-state-db-size-mb=8192
       --reversible-blocks-db-size-mb=340
-
       --producer-name=eosio
     volumes:
       - nodeos-data-volume:/opt/eosio/bin/data-dir
@@ -47,6 +45,7 @@ services:
       - keosd-data-volume:/opt/eosio/bin/data-dir
       - ./target/wasm32-unknown-unknown/release:/mnt/dev/release:ro
       - ./examples:/mnt/dev/examples:ro
+      - ./:/mnt/dev/project:ro
     links:
       - nodeosd
     stop_grace_period: 10m

@@ -8,16 +8,14 @@ install:
 	rustup default nightly
 	cargo install --force wasm-gc
 	cargo install --force bindgen
-	cargo install --force mdbook
 
 build:
-	cargo build --release --target=wasm32-unknown-unknown
+	cargo build --release --target=wasm32-unknown-unknown -vv
 
 test:
 	cargo test --features test
 
 docs:
-	mdbook build
 	rm -Rf target/doc
 	cargo doc \
 		--all \
@@ -26,8 +24,7 @@ docs:
 		--exclude hello \
 		--exclude tictactoe \
 		--no-deps
-	mkdir -p target/docs/api
-	mv target/doc docs/api
+	mv target/doc docs
 
 lint:
 	touch eosio/src/lib.rs
