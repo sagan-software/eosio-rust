@@ -159,7 +159,7 @@ File `Cargo.toml`:
 crate-type = ["cdylib"]
 
 [dependencies]
-eosio = "0.1"
+eosio = "0.2"
 
 [profile.release]
 lto = true
@@ -293,7 +293,7 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-eosio = "0.1"
+eosio = "0.2"
 ```
 
 #### Generating and Optimizing a WASM File
