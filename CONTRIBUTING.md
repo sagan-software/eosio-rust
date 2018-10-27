@@ -12,12 +12,7 @@ That will clone the repo, install Rust, build crates, and run unit tests.
 
 ### Optional Dependencies
 
-To test out smart contracts on a local node you will need to have these dependencies installed:
-
-1. **Docker**: used to start test nodes and deploy smart contracts.
-    - [Docker Community Edition for Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
-2. **Binaryen**: used to optimize `.wasm` files and generate `.wat` files.
-    - For [Homebrew](https://brew.sh/) users: `brew install binaryen`
+Please be sure to install all the [optional dependencies](README.md#optional-dependencies) listed in the README.
 
 ### Hello World
 
@@ -31,8 +26,8 @@ Then in a new terminal window:
 
 ```bash
 make wallet
-make hello_account
-make hello_example
+make accounts
+make examples
 make say_hi
 ```
 

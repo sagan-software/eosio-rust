@@ -1,8 +1,10 @@
 <img src="logo.svg" alt="rust-eos" width="300"/>
 
-# rust-eos ![Travis (.org)](https://img.shields.io/travis/sagan-software/rust-eos.svg) ![Crates.io](https://img.shields.io/crates/v/eosio.svg) ![Crates.io](https://img.shields.io/crates/l/eosio.svg)
+# rust-eos
 
 **Rust crates for building EOSIO smart contracts and full-stack applications.**
+
+[![Travis (.org)](https://img.shields.io/travis/sagan-software/rust-eos.svg)](https://travis-ci.org/sagan-software/rust-eos) [![Crates.io](https://img.shields.io/crates/v/eosio.svg)](https://crates.io/crates/eosio) [![Crates.io](https://img.shields.io/crates/l/eosio.svg)](https://crates.io/crates/eosio)
 
 | Crate                          | Description                                                  |
 | ------------------------------ | ------------------------------------------------------------ |

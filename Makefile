@@ -13,7 +13,7 @@ build:
 	cargo build --release --target=wasm32-unknown-unknown -vv
 
 test:
-	cargo test --features test
+	cargo test
 
 docs:
 	rm -Rf target/doc
@@ -55,7 +55,7 @@ wallet:
 %_account:
 	$(CLEOS) create account eosio $* $(PUBKEY) $(PUBKEY)
 
-accounts: hello_account tictactoe_account alice_account bob_account carol_account dan_account eosiotoken_account addressbook_account eosiotkncpp_account hellobare_account hellocpp_account tests_account
+accounts: hello_account tictactoe_account alice_account bob_account carol_account dan_account eosiotoken_account addressbook_account eosiotkncpp_account hellobare_account hellocpp_account
 
 %_permissions:
 	$(CLEOS) set account permission $* active \
@@ -77,7 +77,7 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 	$(CLEOS) set abi $(subst _,,$*) /mnt/dev/examples/$*/$*.abi.json
 	$(CLEOS) set code $(subst _,,$*) /mnt/dev/release/$*_gc_opt.wasm
 
-examples: addressbook_example eosio_token_example hello_example hello_bare_example tictactoe_example tests_example
+examples: addressbook_example eosio_token_example hello_example hello_bare_example tictactoe_example
 
 say_hi:
 	$(CLEOS) push action hello hi '["contributor"]' -p 'hello@active'
