@@ -1,8 +1,8 @@
 <img src="logo.svg" alt="rust-eos" width="300"/>
 
-# rust-eos [![Build Status](https://travis-ci.org/paritytech/parity-wasm.svg?branch=master)](https://travis-ci.org/paritytech/parity-wasm) [![crates.io link](https://img.shields.io/crates/v/eosio.svg)](https://crates.io/crates/eosio)
+# rust-eos ![Travis (.org)](https://img.shields.io/travis/sagan-software/rust-eos.svg) ![Crates.io](https://img.shields.io/crates/v/eosio.svg) ![Crates.io](https://img.shields.io/crates/l/eosio.svg)
 
-**Rust crates for building smart contracts and full-stack applications on EOSIO blockchains.**
+**Rust crates for building EOSIO smart contracts and full-stack applications.**
 
 | Crate                          | Description                                                  |
 | ------------------------------ | ------------------------------------------------------------ |
@@ -249,7 +249,7 @@ If all went well you should see `Hello, world` in the console.
 
 In this section we will walk through writing the [`hello` C++ example](https://github.com/EOSIO/eosio.cdt/tree/master/examples/hello) in Rust. In this example you will learn how to setup and optimize a basic smart contract, accept an input, and print to the console.
 
-#### Create the project
+#### Creating the project
 
 First, let's create a new project with Cargo and change directories:
 
@@ -266,7 +266,7 @@ src/
 Cargo.toml
 ```
 
-#### Configure Cargo
+#### Configuring Cargo
 
 The `Cargo.toml` file is used by Rust to manage dependencies and other configuration options. If you open this file now it should look similar to this:
 
@@ -284,7 +284,7 @@ Let's change this to add `eosio` as a dependency, and change the crate type so t
 
 ```toml
 [package]
-name = "hello-world"
+name = "hello"
 version = "0.1.0"
 authors = []
 edition = "2018"
@@ -296,7 +296,7 @@ crate-type = ["cdylib"]
 eosio = "0.1"
 ```
 
-#### Generate and Optimize a WASM File
+#### Generating and Optimizing a WASM File
 
 At this point we can compile our project to produce a `.wasm` file:
 
@@ -339,7 +339,7 @@ $ ls -lh | grep wasm
 -rw-r--r-- 1 sagan sagan  116 Oct 25 16:56 hello_gc.wasm
 ```
 
-By using `wasm-gc` and `wasm-opt` we are able to get the file size down to just over 100 bytes, but this is before we've added any code. Realistically you can expect simple contracts to be under 15KB.
+By using `wasm-gc` and `wasm-opt` we are able to get the file size down to just over 100 bytes! But this is before we've added any code. Realistically you can expect simple contracts to be under 15KB.
 
 #### Writing the Smart Contract
 
@@ -494,17 +494,17 @@ Examples can be found in the [`examples`](examples) directory. The equivalent C+
 
 | Directory                             | Description                                                            |
 | ------------------------------------- | ---------------------------------------------------------------------- |
+| [`addressbook`](examples/addressbook) | An example of how to interact with tables using secondary indexes.     |
+| [`eosio_token`](examples/eosio_token) | The standard `eosio.token` contract ported to Rust.                    |
 | [`hello`](examples/hello)             | The most basic contract using the `eosio` crate.                       |
 | [`hello_bare`](examples/hello_bare)   | A bare bones version of the `hello` contract without any dependencies. |
 | [`tictactoe`](examples/tictactoe)     | An example of how to interact with EOSIO tables.                       |
-| [`addressbook`](examples/addressbook) | An example of how to interact with tables using secondary indexes.     |
-| [`eosio_token`](examples/eosio_token) | The standard `eosio.token` contract ported to Rust.                    |
 
 ## Roadmap
 
 _See the [1.0 milestone](https://github.com/sagan-software/rust-eos/milestone/1) for a full list of fixes and features planned for 1.0._
 
-Listed below are features that are planned for the 1.0 release. The goal is to have a 1.0 release candidate with all these features by Q1 2019, but this may change depending on community feedback.
+Listed below are features that are planned for the 1.0 release. The goal is to have a 1.0 release candidate with all these features by Q1 2019, but this may change depending on community feedback and support.
 
 ### Unit Testing
 
@@ -521,7 +521,7 @@ EOS already supports unit tests for smart contracts (see [`eosio.contracts`](htt
 
 _Tracking this feature in [issue #5](https://github.com/sagan-software/rust-eos/issues/5)_
 
-Hand-written ABI files are unnecessary and expose developers to risk if they aren't kept up-to-date.
+Hand-written ABI files are unnecessary and expose developers to risk if they aren't kept updated.
 
 Since we already have `#[eosio_action]` and `#[eosio_table]` attributes, it should be fairly straightforward to implement this feature by detecting these attributes and generating a JSON file.
 
@@ -547,7 +547,14 @@ _Tracking this feature in [issue #8](https://github.com/sagan-software/rust-eos/
 
 All EOS apps need a way to talk to EOS nodes, to fetch table rows and to send transactions. In order for full-stack Rust-based EOS applications to come to fruition, there needs to be a solid RPC API. In Javascript there is `eosjs`, and something similar should exist for Rust.
 
-Implementing this will be a little tricky since we need to support browsers and server environments. In the browser we will need to support [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) and [`stdweb`](https://github.com/koute/stdweb/), and on the server we should support [`hyper`](https://hyper.rs/guides/client/basic/). This could get even more complicated if we decide to optionally support futures. This may be a 1.0+ feature.
+Implementing this will be tricky since we need to support browser and server environments.
+
+- For browsers we need to support [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) and [`stdweb`](https://github.com/koute/stdweb/)
+- For servers we need to support [`hyper`](https://hyper.rs/guides/client/basic/)
+
+This could get even more complicated if we decide to optionally support [futures](https://github.com/rust-lang-nursery/futures-rs). For the initial release futures will probably be mandatory.
+
+There are a lot of things to consider so this may be a 1.0+ feature.
 
 ### `rust-eos` CLI
 
@@ -598,6 +605,6 @@ for inclusion in the work, as defined in the Apache-2.0 license, shall be
 dual-licensed as above, without any additional terms or conditions.
 
 [guide]: https://sagan-software.github.io/rust-eos/
-[telegram]: https://t.me/SaganSoftware
+[telegram]: https://t.me/rust_eos
 [website]: https://sagan-software.github.io/rust-eos/
 [docs]: https://sagan-software.github.io/rust-eos/docs/

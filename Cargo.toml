@@ -13,6 +13,5 @@ members = [
     "examples/eosio_token",
     "examples/hello",
     "examples/hello_bare",
-    "examples/tests",
     "examples/tictactoe"
 ]

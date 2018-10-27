@@ -180,8 +180,5 @@ likezip_address:
 get_addresses:
 	$(CLEOS) get table addressbook addressbook address
 
-tests:
-	$(CLEOS) push action tests crypto '["testing"]' -p 'alice@active'
-
 .PHONY: install build test clean docker wallet accounts hello docs
 .SECONDARY:

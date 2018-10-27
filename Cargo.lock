@@ -92,13 +92,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tests"
-version = "0.1.0"
-dependencies = [
- "eosio 0.1.0",
-]
-
-[[package]]
 name = "tictactoe"
 version = "0.1.0"
 dependencies = [
