@@ -2,7 +2,7 @@
 
 # rust-eos [![Build Status](https://travis-ci.org/paritytech/parity-wasm.svg?branch=master)](https://travis-ci.org/paritytech/parity-wasm) [![crates.io link](https://img.shields.io/crates/v/eosio.svg)](https://crates.io/crates/eosio)
 
-**Rust crates for building full-stack smart contract applications on EOSIO blockchains.**
+**Rust crates for building smart contracts and full-stack applications on EOSIO blockchains.**
 
 | Crate                          | Description                                                  |
 | ------------------------------ | ------------------------------------------------------------ |
