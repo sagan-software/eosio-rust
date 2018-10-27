@@ -141,7 +141,7 @@ fn test_read_pos() {
 
 #[test]
 fn test_write_pos() {
-    let mut bytes = &mut [0u8; 1000];
+    let bytes = &mut [0u8; 1000];
     let pos = 0;
 
     let pos = 1u8.write(bytes, pos).unwrap();

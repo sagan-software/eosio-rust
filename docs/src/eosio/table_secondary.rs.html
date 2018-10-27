@@ -532,13 +532,14 @@
 <span id="532">532</span>
 <span id="533">533</span>
 <span id="534">534</span>
+<span id="535">535</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">account</span>::<span class="ident">AccountName</span>;
-<span class="kw">use</span> <span class="ident">bytes</span>::{<span class="ident">ReadError</span>, <span class="ident">WriteError</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::<span class="ident">AccountName</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">bytes</span>::{<span class="ident">ReadError</span>, <span class="ident">WriteError</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="ident">PhantomData</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">table</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">table_primary</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">eosio_sys</span>::<span class="ident">ctypes</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">lib</span>::<span class="ident">PhantomData</span>;
-<span class="kw">use</span> <span class="ident">table</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">table_primary</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Hash</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SecondaryTableName</span>(<span class="ident">PrimaryTableName</span>, <span class="ident">usize</span>);
@@ -973,7 +974,8 @@
 <span class="kw">where</span>
     <span class="ident">K</span>: <span class="ident">SecondaryTableKey</span>,
     <span class="ident">T</span>: <span class="ident">TableRow</span>,
-{}
+{
+}
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SecondaryTableIndex</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">T</span><span class="op">&gt;</span>

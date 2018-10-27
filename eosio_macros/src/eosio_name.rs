@@ -5,15 +5,18 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let ident = parse_macro_input!(input as Ident);
     let eosio = crate::paths::eosio();
     let expanded = quote! {
-        #[derive(Read, Write, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord, ::serde_derive::Serialize, ::serde_derive::Deserialize)]
+        #[derive(Read, Write, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
+        #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
         pub struct #ident(u64);
 
+        #[automatically_derived]
         impl From<u64> for #ident {
             fn from(n: u64) -> Self {
                 #ident(n)
             }
         }
 
+        #[automatically_derived]
         impl From<#ident> for u64 {
             fn from(i: #ident) -> Self {
                 i.0
@@ -21,20 +24,23 @@ pub fn expand(input: TokenStream) -> TokenStream {
         }
 
         // TODO: no_std
+        #[automatically_derived]
         impl std::str::FromStr for #ident {
             type Err = #eosio::ParseNameError;
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                let name = crate::sys::string_to_name(s)?;
+                let name = #eosio::sys::string_to_name(s)?;
                 Ok(name.into())
             }
         }
 
+        #[automatically_derived]
         impl #eosio::Print for #ident {
             fn print(&self) {
                 unsafe { #eosio::sys::printn(self.0) }
             }
         }
 
+        #[automatically_derived]
         impl From<#ident> for String {
             fn from(i: #ident) -> Self {
                 i.to_string()
@@ -42,6 +48,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         }
 
         // TODO: no_std
+        #[automatically_derived]
         impl std::fmt::Display for #ident {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 let s = unsafe { #eosio::sys::name_to_string(self.0) };
@@ -49,6 +56,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
         }
 
+        #[automatically_derived]
         impl #eosio::SecondaryTableKey for #ident {
             fn end(
                 &self,

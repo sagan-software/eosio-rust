@@ -65,12 +65,14 @@
 <span id="65">65</span>
 <span id="66">66</span>
 <span id="67">67</span>
+<span id="68">68</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">FnArg</span>, <span class="ident">Ident</span>, <span class="ident">ItemFn</span>};
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand</span>(<span class="ident">_args</span>: <span class="ident">TokenStream</span>, <span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">parse_macro_input</span><span class="macro">!</span>(<span class="ident">input</span> <span class="kw">as</span> <span class="ident">ItemFn</span>);
+    <span class="kw">let</span> <span class="ident">eosio</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">paths</span>::<span class="ident">eosio</span>();
     <span class="kw">let</span> <span class="ident">ident</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">ident</span>;
     <span class="kw">let</span> <span class="ident">decl</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">decl</span>;
     <span class="kw">let</span> <span class="ident">inputs</span> <span class="op">=</span> <span class="ident">decl</span>.<span class="ident">inputs</span>;
@@ -107,7 +109,7 @@
         }
 
         <span class="attribute">#[<span class="ident">automatically_derived</span>]</span>
-        <span class="kw">impl</span> ::<span class="ident">eosio</span>::<span class="ident">ActionFn</span> <span class="kw">for</span> #<span class="ident">struct_ident</span> {
+        <span class="kw">impl</span> #<span class="ident">eosio</span>::<span class="ident">ActionFn</span> <span class="kw">for</span> #<span class="ident">struct_ident</span> {
             <span class="kw">const</span> <span class="ident">NAME</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="macro">n</span><span class="macro">!</span>(#<span class="ident">ident</span>);
 
             <span class="kw">fn</span> <span class="ident">execute</span>(<span class="self">self</span>) {

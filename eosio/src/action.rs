@@ -1,7 +1,6 @@
 use crate::account::{AccountName, Permission};
 use crate::bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
-use serde_derive::{Deserialize, Serialize};
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
 pub fn eosio_exit<C>(code: C)
@@ -14,7 +13,8 @@ where
 
 eosio_name!(ActionName);
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 pub struct Action<Data>
 where
     Data: Write + Sized,
@@ -65,9 +65,9 @@ where
 
     pub fn send_deferred<P>(
         &self,
-        id: ActionId,
-        payer: P,
-        replace_existing: bool,
+        _id: ActionId,
+        _payer: P,
+        _replace_existing: bool,
     ) -> Result<(), WriteError>
     where
         P: Into<u64>,
@@ -76,7 +76,7 @@ where
         Ok(())
     }
 
-    pub fn cancel_deferred(id: ActionId) -> Result<(), ()> {
+    pub fn cancel_deferred(_id: ActionId) -> Result<(), ()> {
         // TODO
         Ok(())
     }

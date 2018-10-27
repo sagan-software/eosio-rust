@@ -134,20 +134,22 @@
 <span id="134">134</span>
 <span id="135">135</span>
 <span id="136">136</span>
+<span id="137">137</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
 <span class="kw">use</span> <span class="ident">proc_macro2</span>::{<span class="ident">Ident</span>, <span class="ident">Span</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">Data</span>, <span class="ident">DeriveInput</span>, <span class="ident">Fields</span>, <span class="ident">GenericParam</span>, <span class="ident">Meta</span>};
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">parse_macro_input</span><span class="macro">!</span>(<span class="ident">input</span> <span class="kw">as</span> <span class="ident">DeriveInput</span>);
+    <span class="kw">let</span> <span class="ident">eosio</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">paths</span>::<span class="ident">eosio</span>();
 
     <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">ident</span>.<span class="ident">clone</span>();
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">generics</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">generics</span>.<span class="ident">clone</span>();
     <span class="kw">for</span> <span class="ident">param</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">generics</span>.<span class="ident">params</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">type_param</span>) <span class="op">=</span> <span class="kw-2">*</span><span class="ident">param</span> {
-            <span class="ident">type_param</span>.<span class="ident">bounds</span>.<span class="ident">push</span>(<span class="macro">parse_quote</span><span class="macro">!</span>(::<span class="ident">eosio</span>::<span class="ident">Read</span>));
+            <span class="ident">type_param</span>.<span class="ident">bounds</span>.<span class="ident">push</span>(<span class="macro">parse_quote</span><span class="macro">!</span>(#<span class="ident">eosio</span>::<span class="ident">Read</span>));
         }
     }
     <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="ident">ty_generics</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
@@ -225,12 +227,12 @@
                             <span class="ident">secondary_keys_constructors</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> {
                                 #<span class="ident">secondary_keys_constructors</span>
 
-                                <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">ident</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">code</span>: <span class="ident">C</span>, <span class="ident">scope</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">SecondaryTableIndex</span><span class="op">&lt;</span>#<span class="ident">ty</span>, <span class="self">Self</span><span class="op">&gt;</span>
+                                <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">ident</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">code</span>: <span class="ident">C</span>, <span class="ident">scope</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> #<span class="ident">eosio</span>::<span class="ident">SecondaryTableIndex</span><span class="op">&lt;</span>#<span class="ident">ty</span>, <span class="self">Self</span><span class="op">&gt;</span>
                                 <span class="kw">where</span>
-                                    <span class="ident">C</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">AccountName</span><span class="op">&gt;</span>,
-                                    <span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">TableScope</span><span class="op">&gt;</span>,
+                                    <span class="ident">C</span>: <span class="ident">Into</span><span class="op">&lt;</span>#<span class="ident">eosio</span>::<span class="ident">AccountName</span><span class="op">&gt;</span>,
+                                    <span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span>#<span class="ident">eosio</span>::<span class="ident">TableScope</span><span class="op">&gt;</span>,
                                 {
-                                    <span class="ident">SecondaryTableIndex</span>::<span class="ident">new</span>(<span class="ident">code</span>, <span class="ident">scope</span>, <span class="macro">n</span><span class="macro">!</span>(#<span class="ident">table_name</span>), #<span class="ident">ty</span>::<span class="ident">default</span>(), #<span class="ident">i</span>)
+                                    #<span class="ident">eosio</span>::<span class="ident">SecondaryTableIndex</span>::<span class="ident">new</span>(<span class="ident">code</span>, <span class="ident">scope</span>, #<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(#<span class="ident">table_name</span>), #<span class="ident">ty</span>::<span class="ident">default</span>(), #<span class="ident">i</span>)
                                 }
                             };
                         }
@@ -245,13 +247,13 @@
 
                 <span class="macro">quote</span><span class="macro">!</span> {
                     <span class="attribute">#[<span class="ident">automatically_derived</span>]</span>
-                    <span class="kw">impl</span> #<span class="ident">impl_generics</span> ::<span class="ident">eosio</span>::<span class="ident">TableRow</span> <span class="kw">for</span> #<span class="ident">name</span> #<span class="ident">ty_generics</span> #<span class="ident">where_clause</span> {
-                        <span class="kw">const</span> <span class="ident">NAME</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="macro">n</span><span class="macro">!</span>(#<span class="ident">table_name</span>);
+                    <span class="kw">impl</span> #<span class="ident">impl_generics</span> #<span class="ident">eosio</span>::<span class="ident">TableRow</span> <span class="kw">for</span> #<span class="ident">name</span> #<span class="ident">ty_generics</span> #<span class="ident">where_clause</span> {
+                        <span class="kw">const</span> <span class="ident">NAME</span>: <span class="ident">u64</span> <span class="op">=</span> #<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(#<span class="ident">table_name</span>);
 
                         <span class="kw">fn</span> <span class="ident">primary_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
                             <span class="self">self</span>.#<span class="ident">primary_key</span>.<span class="ident">into</span>()
                         }
-                        <span class="kw">fn</span> <span class="ident">secondary_keys</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> [<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">SecondaryTableKey</span><span class="op">&gt;</span>; <span class="number">16</span>] {
+                        <span class="kw">fn</span> <span class="ident">secondary_keys</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> [<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>#<span class="ident">eosio</span>::<span class="ident">SecondaryTableKey</span><span class="op">&gt;</span>; <span class="number">16</span>] {
                             [
                                 #<span class="ident">secondary_keys_expanded</span>
                             ]

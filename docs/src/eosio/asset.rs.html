@@ -276,11 +276,11 @@
 <span id="276">276</span>
 <span id="277">277</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">account</span>::<span class="ident">AccountName</span>;
-<span class="kw">use</span> <span class="ident">assert</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::<span class="ident">AccountName</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">assert</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbol</span>::<span class="ident">Symbol</span>;
 <span class="kw">use</span> <span class="ident">eosio_macros</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">lib</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">symbol</span>::<span class="ident">Symbol</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Read</span>, <span class="ident">Write</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Asset</span> {

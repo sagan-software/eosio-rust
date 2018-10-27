@@ -22,9 +22,10 @@ docs:
 		--exclude addressbook \
 		--exclude eosio_token \
 		--exclude hello \
+		--exclude hello_bare \
 		--exclude tictactoe \
 		--no-deps
-	mv target/doc docs
+	cp -rf target/doc/* docs/
 
 lint:
 	touch eosio/src/lib.rs

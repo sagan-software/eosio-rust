@@ -51,6 +51,7 @@ pub trait TableRow: Read + Write {
     }
 }
 
+/// Table Cursor
 pub trait TableCursor<T>: IntoIterator
 where
     T: TableRow,
@@ -60,6 +61,7 @@ where
     fn update(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError>;
 }
 
+/// Table index
 pub trait TableIndex<'a, K, T>
 where
     T: TableRow + 'a,
@@ -74,4 +76,5 @@ where
     fn insert(&'a self, payer: AccountName, item: &'a T) -> Result<(), WriteError>;
 }
 
+/// Table iterator
 pub trait TableIterator: DoubleEndedIterator {}

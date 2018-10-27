@@ -114,10 +114,9 @@
 <span id="114">114</span>
 <span id="115">115</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">account</span>::{<span class="ident">AccountName</span>, <span class="ident">Permission</span>};
-<span class="kw">use</span> <span class="ident">bytes</span>::{<span class="ident">Read</span>, <span class="ident">ReadError</span>, <span class="ident">Write</span>, <span class="ident">WriteError</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::{<span class="ident">AccountName</span>, <span class="ident">Permission</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">bytes</span>::{<span class="ident">Read</span>, <span class="ident">ReadError</span>, <span class="ident">Write</span>, <span class="ident">WriteError</span>};
 <span class="kw">use</span> <span class="ident">eosio_macros</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
 <span class="doccomment">/// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_exit</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">code</span>: <span class="ident">C</span>)
@@ -130,7 +129,8 @@
 
 <span class="macro">eosio_name</span><span class="macro">!</span>(<span class="ident">ActionName</span>);
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(::<span class="ident">serde</span>::<span class="ident">Serialize</span>, ::<span class="ident">serde</span>::<span class="ident">Deserialize</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">Data</span>: <span class="ident">Write</span> <span class="op">+</span> <span class="ident">Sized</span>,
@@ -150,7 +150,7 @@
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">write</span>(<span class="ident">bytes</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">authorization</span>.<span class="ident">write</span>(<span class="ident">bytes</span>, <span class="ident">pos</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">data_size</span> <span class="op">=</span> ::<span class="ident">lib</span>::<span class="ident">size_of_val</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">data_size</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="ident">size_of_val</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">data</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data_bytes</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0u8</span>; <span class="ident">data_size</span>];
         <span class="kw">let</span> <span class="ident">data_size</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">data_bytes</span>, <span class="number">0</span>)<span class="question-mark">?</span>;
 
@@ -167,7 +167,7 @@
     <span class="ident">Data</span>: <span class="ident">Write</span>,
 {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send_inline</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">WriteError</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> ::<span class="ident">lib</span>::<span class="ident">size_of_val</span>(<span class="self">self</span>);
+        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="ident">size_of_val</span>(<span class="self">self</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0u8</span>; <span class="ident">size</span>];
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>, <span class="number">0</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">bytes</span>[..].<span class="ident">as_mut_ptr</span>();
@@ -181,9 +181,9 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send_deferred</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">id</span>: <span class="ident">ActionId</span>,
-        <span class="ident">payer</span>: <span class="ident">P</span>,
-        <span class="ident">replace_existing</span>: <span class="ident">bool</span>,
+        <span class="ident">_id</span>: <span class="ident">ActionId</span>,
+        <span class="ident">_payer</span>: <span class="ident">P</span>,
+        <span class="ident">_replace_existing</span>: <span class="ident">bool</span>,
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">WriteError</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">P</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
@@ -192,7 +192,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cancel_deferred</span>(<span class="ident">id</span>: <span class="ident">ActionId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cancel_deferred</span>(<span class="ident">_id</span>: <span class="ident">ActionId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
         <span class="comment">// TODO</span>
         <span class="prelude-val">Ok</span>(())
     }

@@ -111,9 +111,9 @@
 <span id="111">111</span>
 <span id="112">112</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">account</span>::<span class="ident">AccountName</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::<span class="ident">AccountName</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">print</span>::<span class="ident">Print</span>;
 <span class="kw">use</span> <span class="ident">eosio_macros</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">print</span>::<span class="ident">Print</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">Hash</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SymbolName</span>(<span class="ident">u64</span>);

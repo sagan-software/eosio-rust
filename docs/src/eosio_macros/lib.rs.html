@@ -82,13 +82,17 @@
 <span id="82">82</span>
 <span id="83">83</span>
 <span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
 </pre><pre class="rust ">
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
-<span class="attribute">#![<span class="ident">feature</span>(
-    <span class="ident">proc_macro_hygiene</span>,
-    <span class="ident">proc_macro_diagnostic</span>,
-    <span class="ident">proc_macro_quote</span>
-)]</span>
+<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">proc_macro_hygiene</span>, <span class="ident">proc_macro_diagnostic</span>, <span class="ident">proc_macro_quote</span>)]</span>
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">eosio_sys</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
@@ -111,61 +115,73 @@
 <span class="kw">mod</span> <span class="ident">n</span>;
 <span class="kw">mod</span> <span class="ident">s</span>;
 
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
+<span class="kw">mod</span> <span class="ident">paths</span> {
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;internal&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio</span>() <span class="op">-&gt;</span> ::<span class="ident">proc_macro2</span>::<span class="ident">TokenStream</span> {
+        <span class="macro">quote</span><span class="macro">!</span>(<span class="kw">crate</span>)
+    }
+
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;internal&quot;</span>))]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio</span>() <span class="op">-&gt;</span> ::<span class="ident">proc_macro2</span>::<span class="ident">TokenStream</span> {
+        <span class="macro">quote</span><span class="macro">!</span>(::<span class="ident">eosio</span>)
+    }
+}
+
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
 
 <span class="attribute">#[<span class="ident">proc_macro</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_abi</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">eosio_abi</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">eosio_abi</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro_attribute</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_action</span>(<span class="ident">args</span>: <span class="ident">TokenStream</span>, <span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">eosio_action</span>::<span class="ident">expand</span>(<span class="ident">args</span>, <span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">eosio_action</span>::<span class="ident">expand</span>(<span class="ident">args</span>, <span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_name</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">eosio_name</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">eosio_name</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_print</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">eosio_print</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">eosio_print</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro_attribute</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_struct</span>(<span class="ident">args</span>: <span class="ident">TokenStream</span>, <span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">eosio_struct</span>::<span class="ident">expand</span>(<span class="ident">args</span>, <span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">eosio_struct</span>::<span class="ident">expand</span>(<span class="ident">args</span>, <span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro_attribute</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eosio_table</span>(<span class="ident">args</span>: <span class="ident">TokenStream</span>, <span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">eosio_table</span>::<span class="ident">expand</span>(<span class="ident">args</span>, <span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">eosio_table</span>::<span class="ident">expand</span>(<span class="ident">args</span>, <span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">n</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">n</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">n</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">s</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">s</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">s</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">Write</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">derive_write</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">derive_write</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">derive_write</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">Read</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">derive_read</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">derive_read</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">derive_read</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 
 <span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">TableRow</span>, <span class="ident">attributes</span>(<span class="ident">table_name</span>, <span class="ident">primary</span>, <span class="ident">secondary</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">derive_table_row</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    ::<span class="ident">derive_table_row</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
+    <span class="kw">crate</span>::<span class="ident">derive_table_row</span>::<span class="ident">expand</span>(<span class="ident">input</span>)
 }
 </pre>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "eosio_macros";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

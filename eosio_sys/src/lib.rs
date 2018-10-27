@@ -111,7 +111,7 @@ pub fn name_to_string(name: u64) -> String {
     let mut t = name;
     for i in 0..13 {
         let charmap_index = t & if i == 0 { 15 } else { 31 };
-        let mut c = NAME_CHARS[charmap_index as usize];
+        let c = NAME_CHARS[charmap_index as usize];
         chars[12 - i] = c;
         t >>= if i == 0 { 4 } else { 5 };
     }

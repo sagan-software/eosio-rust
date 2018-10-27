@@ -34,36 +34,38 @@
 <span id="34">34</span>
 <span id="35">35</span>
 <span id="36">36</span>
+<span id="37">37</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">parse</span>::<span class="ident">Parser</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">punctuated</span>::<span class="ident">Punctuated</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">Ident</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
     <span class="kw">let</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Punctuated</span>::<span class="op">&lt;</span><span class="ident">Ident</span>, <span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span>::<span class="ident">parse_separated_nonempty</span>;
+    <span class="kw">let</span> <span class="ident">eosio</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">paths</span>::<span class="ident">eosio</span>();
     <span class="kw">let</span> <span class="ident">args</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">parse</span>(<span class="ident">input</span>).<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">actions</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span>();
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">args</span>.<span class="ident">iter</span>() {
         <span class="ident">actions</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> {
             #<span class="ident">actions</span>
-            ::<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(#<span class="ident">i</span>) <span class="op">=&gt;</span> #<span class="ident">i</span>(),
+            #<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(#<span class="ident">i</span>) <span class="op">=&gt;</span> #<span class="ident">i</span>(),
         };
     }
     <span class="kw">let</span> <span class="ident">expanded</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> {
         <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
         <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">apply</span>(<span class="ident">receiver</span>: <span class="ident">u64</span>, <span class="ident">code</span>: <span class="ident">u64</span>, <span class="ident">action</span>: <span class="ident">u64</span>) {
-            <span class="kw">if</span> <span class="ident">action</span> <span class="op">==</span> ::<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(<span class="ident">onerror</span>) {
-                ::<span class="ident">eosio</span>::<span class="ident">eosio_assert</span>(
-                    <span class="ident">code</span> <span class="op">==</span> ::<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(<span class="ident">eosio</span>),
+            <span class="kw">if</span> <span class="ident">action</span> <span class="op">==</span> #<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(<span class="ident">onerror</span>) {
+                #<span class="ident">eosio</span>::<span class="ident">eosio_assert</span>(
+                    <span class="ident">code</span> <span class="op">==</span> #<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(<span class="ident">eosio</span>),
                     <span class="string">&quot;onerror action&#39;s are only valid from the \&quot;eosio\&quot; system account&quot;</span>
                 );
             }
-            <span class="kw">if</span> <span class="ident">code</span> <span class="op">==</span> <span class="ident">receiver</span> <span class="op">||</span> <span class="ident">action</span> <span class="op">==</span> ::<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(<span class="ident">onerror</span>) {
+            <span class="kw">if</span> <span class="ident">code</span> <span class="op">==</span> <span class="ident">receiver</span> <span class="op">||</span> <span class="ident">action</span> <span class="op">==</span> #<span class="ident">eosio</span>::<span class="macro">n</span><span class="macro">!</span>(<span class="ident">onerror</span>) {
                 <span class="kw">match</span> <span class="ident">action</span> {
                     #<span class="ident">actions</span>
                     <span class="kw">_</span> <span class="op">=&gt;</span> {
-                        ::<span class="ident">eosio</span>::<span class="ident">eosio_assert</span>(<span class="bool-val">false</span>, <span class="string">&quot;unknown action&quot;</span>);
+                        #<span class="ident">eosio</span>::<span class="ident">eosio_assert</span>(<span class="bool-val">false</span>, <span class="string">&quot;unknown action&quot;</span>);
                     }
                 }
             }

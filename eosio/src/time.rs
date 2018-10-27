@@ -1,10 +1,9 @@
 use crate::assert::*;
 use crate::lib::*;
 use eosio_macros::*;
-use serde::de;
-use std::fmt;
 
-#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash, ::serde_derive::Serialize)]
+#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash)]
+#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 pub struct Time(u64);
 
 impl Time {
@@ -68,10 +67,11 @@ impl crate::print::Print for Time {
 
 struct TimeVisitor;
 
-impl<'de> de::Visitor<'de> for TimeVisitor {
+#[cfg(feature = "serde")]
+impl<'de> ::serde::de::Visitor<'de> for TimeVisitor {
     type Value = Time;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         formatter.write_str("struct Time")
     }
 
@@ -81,7 +81,7 @@ impl<'de> de::Visitor<'de> for TimeVisitor {
     {
         match value.parse::<u64>() {
             Ok(n) => Ok(Time(n)),
-            Err(e) => Err(de::Error::custom(e)),
+            Err(e) => Err(::serde::de::Error::custom(e)),
         }
     }
 
@@ -93,10 +93,11 @@ impl<'de> de::Visitor<'de> for TimeVisitor {
     }
 }
 
-impl<'de> de::Deserialize<'de> for Time {
+#[cfg(feature = "serde")]
+impl<'de> ::serde::de::Deserialize<'de> for Time {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: de::Deserializer<'de>,
+        D: ::serde::de::Deserializer<'de>,
     {
         deserializer.deserialize_i32(TimeVisitor)
     }

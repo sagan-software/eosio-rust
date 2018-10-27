@@ -1,25 +1,13 @@
 use crate::time::Time;
 use eosio_macros::*;
-use serde_derive::*;
 
 eosio_name!(AccountName);
+
 eosio_name!(PermissionName);
 
-#[derive(
-    Debug,
-    PartialEq,
-    Eq,
-    Clone,
-    Copy,
-    Default,
-    Read,
-    Write,
-    Hash,
-    PartialOrd,
-    Ord,
-    Serialize,
-    Deserialize,
-)]
+/// A permission
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 pub struct Permission {
     pub account: AccountName,
     pub permission: PermissionName,

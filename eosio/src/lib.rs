@@ -32,6 +32,7 @@ mod assert;
 mod asset;
 mod bytes;
 mod crypto;
+#[cfg(feature = "serde")]
 pub mod json;
 mod print;
 mod symbol;

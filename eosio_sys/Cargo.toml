@@ -3,7 +3,7 @@ name = "eosio_sys"
 version = "0.2.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT/Apache-2.0"
-description = "System bindings for EOSIO blockchains"
+description = "Low-level FFI bindings for EOSIO smart contract development"
 edition = "2018"
 
 [lib]

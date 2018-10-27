@@ -365,7 +365,7 @@
 <span id="365">365</span>
 <span id="366">366</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">lib</span>::<span class="ident">TryInto</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="ident">TryInto</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)))]</span>
 <span class="kw">use</span> <span class="ident">lib</span>::{<span class="ident">String</span>, <span class="ident">ToString</span>, <span class="ident">Vec</span>};
