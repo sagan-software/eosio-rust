@@ -1,6 +1,6 @@
+use crate::time::Time;
 use eosio_macros::*;
 use serde_derive::*;
-use time::Time;
 
 eosio_name!(AccountName);
 eosio_name!(PermissionName);
@@ -106,7 +106,7 @@ impl AccountName {
     pub fn active_producers() -> [Option<Self>; 21] {
         let mut producers = [0u64; 21];
         let producers_ptr: *mut u64 = &mut producers as *mut _ as *mut u64;
-        let producers_len = (::lib::size_of::<u64>() * 21) as u32;
+        let producers_len = (crate::lib::size_of::<u64>() * 21) as u32;
         unsafe { ::eosio_sys::get_active_producers(producers_ptr, producers_len) };
 
         let mut options = [None; 21];

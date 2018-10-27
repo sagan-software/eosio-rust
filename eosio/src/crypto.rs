@@ -1,4 +1,4 @@
-use assert::Assert;
+use crate::assert::Assert;
 use eosio_macros::*;
 use eosio_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 

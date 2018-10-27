@@ -1,7 +1,5 @@
 #![feature(proc_macro_hygiene)]
 
-extern crate eosio;
-
 use eosio::*;
 
 const BOARD_WIDTH: u16 = 3;

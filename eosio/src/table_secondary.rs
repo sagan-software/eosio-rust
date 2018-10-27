@@ -1,9 +1,9 @@
-use account::AccountName;
-use bytes::{ReadError, WriteError};
+use crate::account::AccountName;
+use crate::bytes::{ReadError, WriteError};
+use crate::lib::PhantomData;
+use crate::table::*;
+use crate::table_primary::*;
 use eosio_sys::ctypes::*;
-use lib::PhantomData;
-use table::*;
-use table_primary::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
 pub struct SecondaryTableName(PrimaryTableName, usize);
@@ -438,7 +438,8 @@ impl<'a, K, T> TableIterator for SecondaryTableIterator<'a, K, T>
 where
     K: SecondaryTableKey,
     T: TableRow,
-{}
+{
+}
 
 #[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIndex<K, T>

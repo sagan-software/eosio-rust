@@ -1,8 +1,9 @@
-use proc_macro::TokenStream;
+use crate::proc_macro::TokenStream;
 use syn::{FnArg, Ident, ItemFn};
 
 pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
+    let eosio = crate::paths::eosio();
     let ident = input.ident;
     let decl = input.decl;
     let inputs = decl.inputs;
@@ -39,7 +40,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         #[automatically_derived]
-        impl ::eosio::ActionFn for #struct_ident {
+        impl #eosio::ActionFn for #struct_ident {
             const NAME: u64 = n!(#ident);
 
             fn execute(self) {

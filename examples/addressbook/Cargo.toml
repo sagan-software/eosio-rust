@@ -2,10 +2,10 @@
 name = "addressbook"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
 
 [lib]
 crate-type = ["cdylib"]
-doc = false
 
 [dependencies]
-eosio = { path = "../../eosio", version = "0.1" }
+eosio = { path = "../../eosio", version = "0.2" }

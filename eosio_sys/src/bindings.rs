@@ -43,7 +43,7 @@ extern "C" {
     /// @endcode
     ///
     /// @param msg - a null terminated string explaining the reason for failure
-    pub fn eosio_assert(test: u32, msg: *const ::ctypes::c_char);
+    pub fn eosio_assert(test: u32, msg: *const crate::ctypes::c_char);
 }
 extern "C" {
     /// Aborts processing of this action and unwinds all pending changes if the test condition is true
@@ -51,7 +51,7 @@ extern "C" {
     /// @param test - 0 to abort, 1 to ignore
     /// @param msg - a pointer to the start of string explaining the reason for failure
     /// @param msg_len - length of the string
-    pub fn eosio_assert_message(test: u32, msg: *const ::ctypes::c_char, msg_len: u32);
+    pub fn eosio_assert_message(test: u32, msg: *const crate::ctypes::c_char, msg_len: u32);
 }
 extern "C" {
     /// Aborts processing of this action and unwinds all pending changes if the test condition is true
@@ -89,7 +89,7 @@ extern "C" {
     /// @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
     /// @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
     /// @post `msg` is filled with packed action data
-    pub fn read_action_data(msg: *mut ::ctypes::c_void, len: u32) -> u32;
+    pub fn read_action_data(msg: *mut crate::ctypes::c_void, len: u32) -> u32;
 }
 extern "C" {
     /// Get the length of the current action's data field. This method is useful for dynamically sized actions
@@ -136,7 +136,7 @@ extern "C" {
     /// @param serialized_action - serialized action
     /// @param size - size of serialized action in bytes
     /// @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
-    pub fn send_inline(serialized_action: *mut ::ctypes::c_char, size: usize);
+    pub fn send_inline(serialized_action: *mut crate::ctypes::c_char, size: usize);
 }
 extern "C" {
     /// Send an inline context free action in the context of this action's parent transaction
@@ -144,7 +144,7 @@ extern "C" {
     /// @param serialized_action - serialized action
     /// @param size - size of serialized action in bytes
     /// @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
-    pub fn send_context_free_inline(serialized_action: *mut ::ctypes::c_char, size: usize);
+    pub fn send_context_free_inline(serialized_action: *mut crate::ctypes::c_char, size: usize);
 }
 extern "C" {
     /// Returns the time in microseconds from 1970 of the publication_time
@@ -199,7 +199,11 @@ extern "C" {
     /// //If the sha256 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha256 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha256(data: *const ::ctypes::c_char, length: u32, hash: *const capi_checksum256);
+    pub fn assert_sha256(
+        data: *const crate::ctypes::c_char,
+        length: u32,
+        hash: *const capi_checksum256,
+    );
 }
 extern "C" {
     /// Tests if the sha1 hash generated from data matches the provided checksum.
@@ -223,7 +227,11 @@ extern "C" {
     /// //If the sha1 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha1 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha1(data: *const ::ctypes::c_char, length: u32, hash: *const capi_checksum160);
+    pub fn assert_sha1(
+        data: *const crate::ctypes::c_char,
+        length: u32,
+        hash: *const capi_checksum160,
+    );
 }
 extern "C" {
     /// Tests if the sha512 hash generated from data matches the provided checksum.
@@ -247,7 +255,11 @@ extern "C" {
     /// //If the sha512 hash generated from data does not equal provided hash, anything below will never fire.
     /// eosio::print("sha512 hash generated from data equals provided hash");
     /// @endcode
-    pub fn assert_sha512(data: *const ::ctypes::c_char, length: u32, hash: *const capi_checksum512);
+    pub fn assert_sha512(
+        data: *const crate::ctypes::c_char,
+        length: u32,
+        hash: *const capi_checksum512,
+    );
 }
 extern "C" {
     /// Tests if the ripemod160 hash generated from data matches the provided checksum.
@@ -271,7 +283,7 @@ extern "C" {
     /// eosio::print("ripemod160 hash generated from data equals provided hash");
     /// @endcode
     pub fn assert_ripemd160(
-        data: *const ::ctypes::c_char,
+        data: *const crate::ctypes::c_char,
         length: u32,
         hash: *const capi_checksum160,
     );
@@ -291,7 +303,7 @@ extern "C" {
     /// sha256( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha256(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum256);
+    pub fn sha256(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum256);
 }
 extern "C" {
     /// Hashes `data` using `sha1` and stores result in memory pointed to by hash.
@@ -308,7 +320,7 @@ extern "C" {
     /// sha1( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha1(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
+    pub fn sha1(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
 }
 extern "C" {
     /// Hashes `data` using `sha512` and stores result in memory pointed to by hash.
@@ -325,7 +337,7 @@ extern "C" {
     /// sha512( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn sha512(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum512);
+    pub fn sha512(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum512);
 }
 extern "C" {
     /// Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
@@ -342,7 +354,7 @@ extern "C" {
     /// ripemod160( data, length, &calc_hash );
     /// eos_assert( calc_hash == hash, "invalid hash" );
     /// @endcode
-    pub fn ripemd160(data: *const ::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
+    pub fn ripemd160(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
 }
 extern "C" {
     /// Calculates the public key used for a given signature and hash used to create a message.
@@ -360,11 +372,11 @@ extern "C" {
     /// @endcode
     pub fn recover_key(
         digest: *const capi_checksum256,
-        sig: *const ::ctypes::c_char,
+        sig: *const crate::ctypes::c_char,
         siglen: usize,
-        pub_: *mut ::ctypes::c_char,
+        pub_: *mut crate::ctypes::c_char,
         publen: usize,
-    ) -> ::ctypes::c_int;
+    ) -> crate::ctypes::c_int;
 }
 extern "C" {
     /// Tests a given public key with the generated key from digest and the signature.
@@ -393,9 +405,9 @@ extern "C" {
     /// @endcode
     pub fn assert_recover_key(
         digest: *const capi_checksum256,
-        sig: *const ::ctypes::c_char,
+        sig: *const crate::ctypes::c_char,
         siglen: usize,
-        pub_: *const ::ctypes::c_char,
+        pub_: *const crate::ctypes::c_char,
         publen: usize,
     );
 }
@@ -418,7 +430,7 @@ extern "C" {
         table: capi_name,
         payer: capi_name,
         id: u64,
-        data: *const ::ctypes::c_void,
+        data: *const crate::ctypes::c_void,
         len: u32,
     ) -> i32;
 }
@@ -434,7 +446,12 @@ extern "C" {
     /// @pre `*((uint64_t*)data)` stores the primary key
     /// @pre `iterator` points to an existing table row in the table
     /// @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
-    pub fn db_update_i64(iterator: i32, payer: capi_name, data: *const ::ctypes::c_void, len: u32);
+    pub fn db_update_i64(
+        iterator: i32,
+        payer: capi_name,
+        data: *const crate::ctypes::c_void,
+        len: u32,
+    );
 }
 extern "C" {
     /// Remove a record from a primary 64-bit integer index table
@@ -473,7 +490,7 @@ extern "C" {
     /// eosio_assert(len <= 50, "buffer to small to store retrieved record");
     /// db_get_i64(itr, value, len);
     /// @endcode
-    pub fn db_get_i64(iterator: i32, data: *const ::ctypes::c_void, len: u32) -> i32;
+    pub fn db_get_i64(iterator: i32, data: *const crate::ctypes::c_void, len: u32) -> i32;
 }
 extern "C" {
     /// Find the table row following the referenced table row in a primary 64-bit integer index table
@@ -1343,11 +1360,11 @@ extern "C" {
     ///
     /// @return 1 if the transaction is authorized, 0 otherwise
     pub fn check_transaction_authorization(
-        trx_data: *const ::ctypes::c_char,
+        trx_data: *const crate::ctypes::c_char,
         trx_size: u32,
-        pubkeys_data: *const ::ctypes::c_char,
+        pubkeys_data: *const crate::ctypes::c_char,
         pubkeys_size: u32,
-        perms_data: *const ::ctypes::c_char,
+        perms_data: *const crate::ctypes::c_char,
         perms_size: u32,
     ) -> i32;
 }
@@ -1366,9 +1383,9 @@ extern "C" {
     pub fn check_permission_authorization(
         account: capi_name,
         permission: capi_name,
-        pubkeys_data: *const ::ctypes::c_char,
+        pubkeys_data: *const crate::ctypes::c_char,
         pubkeys_size: u32,
-        perms_data: *const ::ctypes::c_char,
+        perms_data: *const crate::ctypes::c_char,
         perms_size: u32,
         delay_us: u64,
     ) -> i32;
@@ -1400,7 +1417,7 @@ extern "C" {
     /// @code
     /// prints("Hello World!"); // Output: Hello World!
     /// @endcode
-    pub fn prints(cstr: *const ::ctypes::c_char);
+    pub fn prints(cstr: *const crate::ctypes::c_char);
 }
 extern "C" {
     /// Prints string up to given length
@@ -1413,7 +1430,7 @@ extern "C" {
     /// @code
     /// prints_l("Hello World!", 5); // Output: Hello
     /// @endcode
-    pub fn prints_l(cstr: *const ::ctypes::c_char, len: u32);
+    pub fn prints_l(cstr: *const crate::ctypes::c_char, len: u32);
 }
 extern "C" {
     /// Prints value as a 64 bit signed integer
@@ -1517,7 +1534,7 @@ extern "C" {
 }
 extern "C" {
 
-    pub fn printhex(data: *const ::ctypes::c_void, datalen: u32);
+    pub fn printhex(data: *const crate::ctypes::c_void, datalen: u32);
 }
 extern "C" {
     /// @brief Get the resource limits of an account
@@ -1554,7 +1571,7 @@ extern "C" {
     ///
     /// @return -1 if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule
     pub fn set_proposed_producers(
-        producer_data: *mut ::ctypes::c_char,
+        producer_data: *mut crate::ctypes::c_char,
         producer_data_size: u32,
     ) -> i64;
 }
@@ -1564,7 +1581,7 @@ extern "C" {
     /// @param producer_data - pointer to producer schedule packed as bytes
     /// @param producer_data_size - size of the packed producer schedule
     /// @pre `producer_data` is a valid pointer to a range of memory at least `producer_data_size` bytes long that contains serialized produced schedule data
-    pub fn set_active_producers(producer_data: *mut ::ctypes::c_char, producer_data_size: u32);
+    pub fn set_active_producers(producer_data: *mut crate::ctypes::c_char, producer_data_size: u32);
 }
 extern "C" {
     /// @brief Check if an account is privileged
@@ -1587,7 +1604,7 @@ extern "C" {
     /// @param data - pointer to blockchain parameters packed as bytes
     /// @param datalen - size of the packed blockchain parameters
     /// @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long that contains packed blockchain params data
-    pub fn set_blockchain_parameters_packed(data: *mut ::ctypes::c_char, datalen: u32);
+    pub fn set_blockchain_parameters_packed(data: *mut crate::ctypes::c_char, datalen: u32);
 }
 extern "C" {
     /// @brief Retrieve the blolckchain parameters
@@ -1597,7 +1614,7 @@ extern "C" {
     /// @return size of the blockchain parameters
     /// @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long
     /// @post `data` is filled with packed blockchain parameters
-    pub fn get_blockchain_parameters_packed(data: *mut ::ctypes::c_char, datalen: u32) -> u32;
+    pub fn get_blockchain_parameters_packed(data: *mut crate::ctypes::c_char, datalen: u32) -> u32;
 }
 extern "C" {
     /// @brief Activate new feature
@@ -1617,7 +1634,7 @@ extern "C" {
     pub fn send_deferred(
         sender_id: *const uint128_t,
         payer: capi_name,
-        serialized_transaction: *const ::ctypes::c_char,
+        serialized_transaction: *const crate::ctypes::c_char,
         size: usize,
         replace_existing: u32,
     );
@@ -1640,7 +1657,7 @@ extern "C" {
     /// id = 0xffffffffffffffff
     /// cancel_deferred( id );
     /// @endcode
-    pub fn cancel_deferred(sender_id: *const uint128_t) -> ::ctypes::c_int;
+    pub fn cancel_deferred(sender_id: *const uint128_t) -> crate::ctypes::c_int;
 }
 extern "C" {
     /// Access a copy of the currently executing transaction.
@@ -1649,7 +1666,7 @@ extern "C" {
     /// @param buffer - a buffer to write the current transaction to
     /// @param size - the size of the buffer, 0 to return required size
     /// @return the size of the transaction written to the buffer, or number of bytes that can be copied if size==0 passed
-    pub fn read_transaction(buffer: *mut ::ctypes::c_char, size: usize) -> usize;
+    pub fn read_transaction(buffer: *mut crate::ctypes::c_char, size: usize) -> usize;
 }
 extern "C" {
     /// Gets the size of the currently executing transaction.
@@ -1667,7 +1684,7 @@ extern "C" {
     /// @code
     /// int tbn = tapos_block_num();
     /// @endcode
-    pub fn tapos_block_num() -> ::ctypes::c_int;
+    pub fn tapos_block_num() -> crate::ctypes::c_int;
 }
 extern "C" {
     /// Gets the block prefix used for TAPOS on the currently executing transaction.
@@ -1678,7 +1695,7 @@ extern "C" {
     /// @code
     /// int tbp = tapos_block_prefix();
     /// @endcode
-    pub fn tapos_block_prefix() -> ::ctypes::c_int;
+    pub fn tapos_block_prefix() -> crate::ctypes::c_int;
 }
 extern "C" {
     /// Gets the expiration of the currently executing transaction.
@@ -1704,9 +1721,9 @@ extern "C" {
     pub fn get_action(
         type_: u32,
         index: u32,
-        buff: *mut ::ctypes::c_char,
+        buff: *mut crate::ctypes::c_char,
         size: usize,
-    ) -> ::ctypes::c_int;
+    ) -> crate::ctypes::c_int;
 }
 extern "C" {
     /// Retrieve the signed_transaction.context_free_data[index].
@@ -1718,7 +1735,7 @@ extern "C" {
     /// @return size copied, or context_free_data[index].size() if 0 passed for size, or -1 if index not valid
     pub fn get_context_free_data(
         index: u32,
-        buff: *mut ::ctypes::c_char,
+        buff: *mut crate::ctypes::c_char,
         size: usize,
-    ) -> ::ctypes::c_int;
+    ) -> crate::ctypes::c_int;
 }

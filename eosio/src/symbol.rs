@@ -1,6 +1,6 @@
-use account::AccountName;
+use crate::account::AccountName;
+use crate::print::Print;
 use eosio_macros::*;
-use print::Print;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, Hash, PartialOrd, Ord)]
 pub struct SymbolName(u64);

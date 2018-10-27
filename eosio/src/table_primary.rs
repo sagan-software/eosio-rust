@@ -1,10 +1,10 @@
-use account::AccountName;
-use bytes::{ReadError, WriteError};
+use crate::account::AccountName;
+use crate::bytes::{ReadError, WriteError};
+use crate::lib::PhantomData;
+use crate::print::Print;
+use crate::table::*;
 use eosio_macros::*;
 use eosio_sys::ctypes::*;
-use lib::PhantomData;
-use print::Print;
-use table::*;
 
 eosio_name!(PrimaryTableName);
 
@@ -65,7 +65,7 @@ where
 
         for (i, k) in item.secondary_keys().iter().enumerate() {
             if let Some(k) = k {
-                let table = ::table_secondary::SecondaryTableName::new(self.table, i);
+                let table = crate::table_secondary::SecondaryTableName::new(self.table, i);
                 let end = k.end(self.code, self.scope, table);
                 let itr = k.find_primary(self.code, self.scope, table, pk);
                 if itr != end {
@@ -245,7 +245,7 @@ where
     fn insert(&self, payer: AccountName, item: &T) -> Result<(), WriteError> {
         let id = item.primary_key();
 
-        let size = ::lib::size_of_val(item);
+        let size = crate::lib::size_of_val(item);
         // TODO: the next two lines cause issues when used in inline actions
         let mut bytes = vec![0u8; size];
         let pos = item.write(&mut bytes, 0)?;
@@ -264,7 +264,7 @@ where
         // store secondary indexes
         for (i, k) in item.secondary_keys().iter().enumerate() {
             if let Some(k) = k {
-                let table = ::table_secondary::SecondaryTableName::new(self.name, i);
+                let table = crate::table_secondary::SecondaryTableName::new(self.name, i);
                 k.store(self.scope, table, payer, id);
             }
         }
@@ -337,7 +337,7 @@ where
         payer: Option<AccountName>,
         item: &T,
     ) -> Result<usize, WriteError> {
-        let size = ::lib::size_of_val(item);
+        let size = crate::lib::size_of_val(item);
         let mut bytes = vec![0u8; size];
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
@@ -348,7 +348,7 @@ where
 
         for (i, k) in item.secondary_keys().iter().enumerate() {
             if let Some(k) = k {
-                let table = ::table_secondary::SecondaryTableName::new(self.name, i);
+                let table = crate::table_secondary::SecondaryTableName::new(self.name, i);
                 k.upsert(self.code, self.scope, table, payer, pk);
             }
         }

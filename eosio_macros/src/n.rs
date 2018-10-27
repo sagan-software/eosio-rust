@@ -1,5 +1,5 @@
+use crate::proc_macro::{Span, TokenStream};
 use eosio_sys::{string_to_name, ParseNameError, NAME_CHARS};
-use proc_macro::{Span, TokenStream};
 use std::str;
 use syn::Expr;
 

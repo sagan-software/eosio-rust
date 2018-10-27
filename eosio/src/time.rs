@@ -1,6 +1,6 @@
-use assert::*;
+use crate::assert::*;
+use crate::lib::*;
 use eosio_macros::*;
-use lib::*;
 use serde::de;
 use std::fmt;
 
@@ -58,7 +58,7 @@ impl Time {
     }
 }
 
-impl ::print::Print for Time {
+impl crate::print::Print for Time {
     fn print(&self) {
         "Time(".print();
         self.0.print();

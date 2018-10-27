@@ -1,16 +1,17 @@
-use proc_macro::TokenStream;
+use crate::proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use syn::{Data, DeriveInput, Fields, GenericParam, Meta};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
+    let eosio = crate::paths::eosio();
 
     let name = input.ident.clone();
 
     let mut generics = input.generics.clone();
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(::eosio::Read));
+            type_param.bounds.push(parse_quote!(#eosio::Read));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -88,12 +89,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             secondary_keys_constructors = quote! {
                                 #secondary_keys_constructors
 
-                                pub fn #ident<C, S>(code: C, scope: S) -> SecondaryTableIndex<#ty, Self>
+                                pub fn #ident<C, S>(code: C, scope: S) -> #eosio::SecondaryTableIndex<#ty, Self>
                                 where
-                                    C: Into<AccountName>,
-                                    S: Into<TableScope>,
+                                    C: Into<#eosio::AccountName>,
+                                    S: Into<#eosio::TableScope>,
                                 {
-                                    SecondaryTableIndex::new(code, scope, n!(#table_name), #ty::default(), #i)
+                                    #eosio::SecondaryTableIndex::new(code, scope, #eosio::n!(#table_name), #ty::default(), #i)
                                 }
                             };
                         }
@@ -108,13 +109,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
                 quote! {
                     #[automatically_derived]
-                    impl #impl_generics ::eosio::TableRow for #name #ty_generics #where_clause {
-                        const NAME: u64 = n!(#table_name);
+                    impl #impl_generics #eosio::TableRow for #name #ty_generics #where_clause {
+                        const NAME: u64 = #eosio::n!(#table_name);
 
                         fn primary_key(&self) -> u64 {
                             self.#primary_key.into()
                         }
-                        fn secondary_keys(&self) -> [Option<&SecondaryTableKey>; 16] {
+                        fn secondary_keys(&self) -> [Option<&#eosio::SecondaryTableKey>; 16] {
                             [
                                 #secondary_keys_expanded
                             ]

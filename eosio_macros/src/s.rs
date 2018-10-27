@@ -1,5 +1,5 @@
+use crate::proc_macro::{Span, TokenStream};
 use eosio_sys::{string_to_symbol, ParseSymbolError};
-use proc_macro::{Span, TokenStream};
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{Ident, LitInt};
 

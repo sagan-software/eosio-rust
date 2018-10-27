@@ -18,11 +18,12 @@ impl Parse for Assert {
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let Assert { test, message } = parse_macro_input!(input as Assert);
+    let eosio = crate::paths::eosio();
     let expanded = quote! {
         unsafe {
-            ::eosio::eosio_assert(
+            #eosio::eosio_assert(
                 #test,
-                ::eosio::c!(#message)
+                #eosio::c!(#message)
             )
         }
     };

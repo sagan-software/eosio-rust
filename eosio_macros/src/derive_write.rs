@@ -1,18 +1,17 @@
-use proc_macro::TokenStream;
+use crate::proc_macro::TokenStream;
 use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Fields, GenericParam, Index, Path};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
+    let eosio = crate::paths::eosio();
 
     let name = input.ident;
-
-    let write_path: Path = parse_quote!(::eosio);
 
     let mut generics = input.generics;
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#write_path::Write));
+            type_param.bounds.push(parse_quote!(#eosio::Write));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -26,7 +25,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let name = &f.ident;
                     let access = quote_spanned!(call_site => #var.#name);
                     quote_spanned! { f.span() =>
-                        let pos = #write_path::Write::write(&#access, bytes, pos)?;
+                        let pos = #eosio::Write::write(&#access, bytes, pos)?;
                     }
                 });
                 quote! {
@@ -42,7 +41,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     };
                     let access = quote_spanned!(call_site => #var.#index);
                     quote_spanned! { f.span() =>
-                        let pos = #write_path::Write::write(&#access, bytes, pos)?;
+                        let pos = #eosio::Write::write(&#access, bytes, pos)?;
                     }
                 });
                 quote! {
@@ -61,8 +60,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         #[automatically_derived]
-        impl #impl_generics #write_path::Write for #name #ty_generics #where_clause {
-            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, #write_path::WriteError> {
+        impl #impl_generics #eosio::Write for #name #ty_generics #where_clause {
+            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, #eosio::WriteError> {
                 #writes
             }
         }

@@ -1,8 +1,8 @@
-use account::AccountName;
-use assert::*;
+use crate::account::AccountName;
+use crate::assert::*;
+use crate::lib::*;
+use crate::symbol::Symbol;
 use eosio_macros::*;
-use lib::*;
-use symbol::Symbol;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write)]
 pub struct Asset {

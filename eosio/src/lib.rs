@@ -1,19 +1,4 @@
-#![cfg_attr(feature = "alloc", feature(alloc))]
-#![cfg_attr(not(feature = "std"), no_std)]
-#![feature(
-    proc_macro_hygiene,
-    try_from,
-    custom_attribute,
-    concat_idents
-)]
-
-#[cfg(all(feature = "alloc", not(feature = "std")))]
-extern crate alloc;
-extern crate eosio_macros;
-extern crate eosio_sys;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
+#![feature(proc_macro_hygiene, try_from, custom_attribute, concat_idents)]
 
 mod lib {
     mod core {
@@ -77,15 +62,3 @@ pub use eosio_macros::{
 };
 
 pub use eosio_sys::{ParseNameError, ParseSymbolError};
-
-mod eosio {
-    pub use super::account::*;
-    pub use super::bytes::*;
-    pub use super::json;
-    pub use super::print::*;
-    pub use super::sys;
-    pub use super::table::*;
-    pub use super::table_primary::*;
-    pub use super::table_secondary::*;
-    pub use eosio_sys::{ParseNameError, ParseSymbolError};
-}

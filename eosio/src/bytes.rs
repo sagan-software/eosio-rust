@@ -1,4 +1,4 @@
-use lib::TryInto;
+use crate::lib::TryInto;
 
 #[cfg(all(feature = "alloc", not(feature = "std")))]
 use lib::{String, ToString, Vec};

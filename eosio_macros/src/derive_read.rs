@@ -1,4 +1,4 @@
-use proc_macro::TokenStream;
+use crate::proc_macro::TokenStream;
 use syn::spanned::Spanned;
 use syn::{Data, DeriveInput, Fields, GenericParam, Ident, Path};
 
@@ -7,12 +7,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let name = input.ident;
 
-    let read_path: Path = parse_quote!(::eosio);
+    let eosio = crate::paths::eosio();
 
     let mut generics = input.generics;
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#read_path));
+            type_param.bounds.push(parse_quote!(#eosio));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -25,7 +25,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ident = &f.ident;
                     let ty = &f.ty;
                     quote_spanned! {f.span() =>
-                        let (#ident, pos) = <#ty as #read_path::Read>::read(bytes, pos)?;
+                        let (#ident, pos) = <#ty as #eosio::Read>::read(bytes, pos)?;
                     }
                 });
                 let field_names = fields.named.iter().map(|f| {
@@ -47,7 +47,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ty = &f.ty;
                     let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
                     quote_spanned! {f.span() =>
-                        let (#ident, pos) = <#ty as #read_path::Read>::read(bytes, pos)?;
+                        let (#ident, pos) = <#ty as #eosio::Read>::read(bytes, pos)?;
                     }
                 });
                 let fields_list = fields.unnamed.iter().enumerate().map(|(i, _f)| {
@@ -73,8 +73,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         #[automatically_derived]
-        impl #impl_generics #read_path::Read for #name #ty_generics #where_clause {
-            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), #read_path::ReadError> {
+        impl #impl_generics #eosio::Read for #name #ty_generics #where_clause {
+            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), #eosio::ReadError> {
                 #reads
             }
         }

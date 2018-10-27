@@ -1,4 +1,4 @@
-use lib::String;
+use crate::lib::String;
 
 pub trait Print {
     fn print(&self);

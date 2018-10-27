@@ -1,9 +1,10 @@
 [package]
 name = "eosio"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT/Apache-2.0"
 description = "Library for building smart contracts on EOSIO blockchains"
+edition = "2018"
 
 [features]
 default = ["std", "contract"]
@@ -13,7 +14,7 @@ contract = []
 stdweb = []
 
 [dependencies]
-eosio_macros = { path = "../eosio_macros", version = "0.1" }
-eosio_sys = { path = "../eosio_sys", version = "0.1" }
+eosio_macros = { path = "../eosio_macros", version = "0.2", features = ["internal"] }
+eosio_sys = { path = "../eosio_sys", version = "0.2" }
 serde = "1.0"
 serde_derive = "1.0"

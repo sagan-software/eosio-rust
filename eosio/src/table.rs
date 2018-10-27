@@ -1,7 +1,7 @@
-use account::AccountName;
-use bytes::{Read, ReadError, Write, WriteError};
+use crate::account::AccountName;
+use crate::bytes::{Read, ReadError, Write, WriteError};
+use crate::symbol::SymbolName;
 use eosio_macros::*;
-use symbol::SymbolName;
 
 eosio_name!(TableScope);
 
@@ -38,16 +38,16 @@ pub trait TableRow: Read + Write {
 
     fn primary_key(&self) -> u64;
 
-    fn secondary_keys(&self) -> [Option<&::table_secondary::SecondaryTableKey>; 16] {
+    fn secondary_keys(&self) -> [Option<&crate::table_secondary::SecondaryTableKey>; 16] {
         [None; 16]
     }
 
-    fn table<C, S>(code: C, scope: S) -> ::table_primary::PrimaryTableIndex<Self>
+    fn table<C, S>(code: C, scope: S) -> crate::table_primary::PrimaryTableIndex<Self>
     where
         C: Into<AccountName>,
         S: Into<TableScope>,
     {
-        ::table_primary::PrimaryTableIndex::new(code, scope, Self::NAME)
+        crate::table_primary::PrimaryTableIndex::new(code, scope, Self::NAME)
     }
 }
 

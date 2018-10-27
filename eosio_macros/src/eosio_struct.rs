@@ -1,4 +1,4 @@
-use proc_macro::TokenStream;
+use crate::proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use syn::{DeriveInput, LitStr};
 

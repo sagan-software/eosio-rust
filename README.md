@@ -179,8 +179,6 @@ File `src/lib.rs`:
 ```rust
 #![feature(proc_macro_hygiene)]
 
-extern crate eosio;
-
 use eosio::*;
 
 #[eosio_action]
@@ -349,8 +347,6 @@ Now that we know how to prepare the `.wasm` file, let's start coding. Open up `s
 
 ```rust
 #![feature(proc_macro_hygiene)]     // Required for procedural macros
-
-extern crate eosio;                 // Declare that we are using the eosio crate
 
 use eosio::*;                       // Include everything from the eosio crate
 

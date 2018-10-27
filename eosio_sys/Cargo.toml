@@ -1,9 +1,10 @@
 [package]
 name = "eosio_sys"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT/Apache-2.0"
 description = "System bindings for EOSIO blockchains"
+edition = "2018"
 
 [lib]
 test = false

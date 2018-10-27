@@ -1,15 +1,20 @@
 [package]
 name = "eosio_macros"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT/Apache-2.0"
 description = "Macros for interacting with EOSIO blockchains"
+edition = "2018"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-syn = { version = "0.15.4", features = ["full", "fold"] }
-proc-macro2 = "0.4"
+syn = { version = "0.15", features = ["full", "fold"] }
+proc-macro2 = { version = "0.4", features = ["nightly"] }
 quote = "0.6"
-eosio_sys = { path = "../eosio_sys", version = "0.1" }
+eosio_sys = { path = "../eosio_sys", version = "0.2" }
+lazy_static = "1.1.0"
+
+[features]
+internal = []

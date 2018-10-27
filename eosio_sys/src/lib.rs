@@ -13,7 +13,7 @@ pub use self::bindings::*;
 pub use self::ctypes::*;
 
 pub mod ctypes {
-    pub use bindings::{int128_t, uint128_t};
+    pub use crate::bindings::{int128_t, uint128_t};
     pub use std::ffi::*;
     pub type c_char = c_uchar;
     pub type c_int = i32;

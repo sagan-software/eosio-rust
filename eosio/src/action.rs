@@ -1,7 +1,7 @@
-use account::{AccountName, Permission};
-use bytes::{Read, ReadError, Write, WriteError};
+use crate::account::{AccountName, Permission};
+use crate::bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
-use serde::{Deserialize, Serialize};
+use serde_derive::{Deserialize, Serialize};
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
 pub fn eosio_exit<C>(code: C)
@@ -34,7 +34,7 @@ where
         let pos = self.name.write(bytes, pos)?;
         let pos = self.authorization.write(bytes, pos)?;
 
-        let data_size = ::lib::size_of_val(&self.data);
+        let data_size = crate::lib::size_of_val(&self.data);
         let mut data_bytes = vec![0u8; data_size];
         let data_size = self.data.write(&mut data_bytes, 0)?;
 
@@ -51,7 +51,7 @@ where
     Data: Write,
 {
     pub fn send_inline(&self) -> Result<(), WriteError> {
-        let size = ::lib::size_of_val(self);
+        let size = crate::lib::size_of_val(self);
         let mut bytes = vec![0u8; size];
         let pos = self.write(&mut bytes, 0)?;
         let ptr = bytes[..].as_mut_ptr();
