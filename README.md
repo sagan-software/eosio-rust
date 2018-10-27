@@ -249,6 +249,8 @@ If all went well you should see `Hello, world` in the console.
 
 In this section we will walk through writing the [`hello` C++ example](https://github.com/EOSIO/eosio.cdt/tree/master/examples/hello) in Rust. In this example you will learn how to setup and optimize a basic smart contract, accept an input, and print to the console.
 
+#### Create the project
+
 First, let's create a new project with Cargo and change directories:
 
 ```sh
@@ -263,6 +265,8 @@ src/
   lib.rs
 Cargo.toml
 ```
+
+#### Configure Cargo
 
 The `Cargo.toml` file is used by Rust to manage dependencies and other configuration options. If you open this file now it should look similar to this:
 
@@ -291,6 +295,8 @@ crate-type = ["cdylib"]
 [dependencies]
 eosio = "0.1"
 ```
+
+#### Generate and Optimize a WASM File
 
 At this point we can compile our project to produce a `.wasm` file:
 
@@ -335,6 +341,8 @@ $ ls -lh | grep wasm
 
 By using `wasm-gc` and `wasm-opt` we are able to get the file size down to just over 100 bytes, but this is before we've added any code. Realistically you can expect simple contracts to be under 15KB.
 
+#### Writing the Smart Contract
+
 Now that we know how to prepare the `.wasm` file, let's start coding. Open up `src/lib.rs` and replace its contents with this:
 
 ```rust
@@ -362,7 +370,9 @@ wasm-gc target/wasm32-unknown-unknown/release/hello.wasm hello_gc.wasm
 wasm-opt hello_gc.wasm --output hello_gc_opt.wasm -Oz
 ```
 
-Now we have our WASM file, so we just need an ABI file. In the future ABI files will be automatically generated, but for now they must be typed out manually. Copy this code into a file called `hello.abi.json`:
+#### Creating the ABI File
+
+In the future ABI files will be [automatically generated](#abi-generation), but for now they must be typed out manually. Copy this code into a file called `hello.abi.json`:
 
 ```json
 {
@@ -388,7 +398,11 @@ Now we have our WASM file, so we just need an ABI file. In the future ABI files 
 }
 ```
 
-At this point we have our WASM and ABI files and we're ready to deploy our smart contract. For this you will need to have access to an EOS node; please see the [Installing EOS](#installing-eos) section for instructions. The instructions below will assume that you have started `nodeos` and `keosd` containers with Docker Compose per the instructions above.
+#### Deploying, First Attempt
+
+At this point we have our WASM and ABI files, so we're ready to deploy our smart contract.
+
+For this you will need to have access to an EOS node. Please see the [Installing EOS](#installing-eos) section for instructions. The code below will assume that you've started `nodeos` and `keosd` containers using Docker Compose.
 
 First create an alias for `cleos`:
 
@@ -396,7 +410,7 @@ First create an alias for `cleos`:
 alias cleos='docker-compose exec keosd cleos --url http://nodeosd:8888 --wallet-url http://127.0.0.1:8900'
 ```
 
-Create a wallet, import a private key, and create the `hello` account:
+Then create a wallet, import a private key, and create the `hello` account:
 
 ```sh
 PUBKEY=EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
@@ -440,7 +454,11 @@ pending console output:
      thread-0  apply_context.cpp:72 exec_one
 ```
 
-This is happening because Rust by default reserves 1MB for the stack, but EOS expects data to be within the first 64KB. We can fix this by telling the Rust compiler to reserve less than 64KB for the stack. Create a new file at `.cargo/config` with these contents:
+This is happening because Rust by default reserves 1MB for the stack, but EOS expects data to be [within the first 64KB](https://github.com/EOSIO/eos/issues/5604).
+
+#### Deploying, Second Attempt
+
+We can fix this by telling the Rust compiler to reserve less than 64KB for the stack. Create a new file at `.cargo/config` with these contents:
 
 ```toml
 [target.wasm32-unknown-unknown]
@@ -448,6 +466,8 @@ rustflags = [
   "-C", "link-args=-z stack-size=48000"
 ]
 ```
+
+48KB seems to be a reasonable number, but feel free to experiment.
 
 Now let's try to rebuild and redeploy our contract:
 
@@ -463,6 +483,8 @@ Finally, say hello:
 ```sh
 cleos push action hello hi '["world"]' -p 'hello@active'
 ```
+
+#### Success!
 
 If all went well you should see `Hi, world` in the console. Otherwise, if the transaction was sent successfully but you don't see any output, you may need to use the `--contract-console` option with `nodeos`.
 
