@@ -486,7 +486,7 @@ cleos push action hello hi '["world"]' -p 'hello@active'
 
 #### Success!
 
-If all went well you should see `Hi, world` in the console. Otherwise, if the transaction was sent successfully but you don't see any output, you may need to use the `--contract-console` option with `nodeos`.
+If all went well you should see `Hello, world` in the console. Otherwise, if the transaction was sent successfully but you don't see any output, you may need to use the `--contract-console` option with `nodeos`.
 
 ## Examples
 
