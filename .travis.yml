@@ -3,3 +3,5 @@ rust:
   - nightly
 matrix:
   fast_finish: true
+git:
+  submodules: false
