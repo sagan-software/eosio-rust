@@ -8,9 +8,21 @@ install:
 	rustup default nightly
 	cargo install --force wasm-gc
 	cargo install --force bindgen
+	cargo install --force wasm-bindgen
+	cd examples/tictactoe_ui && yarn install
 
 build:
 	cargo build --release --target=wasm32-unknown-unknown -vv
+
+build_ui: build target/wasm32-unknown-unknown/release/tictactoe_ui_gc_opt_wat.wasm
+	mkdir -p docs/tictactoe
+	wasm-bindgen \
+		target/wasm32-unknown-unknown/release/tictactoe_ui.wasm \
+		--out-dir docs/tictactoe
+	yarn --cwd examples/tictactoe_ui build
+
+serve_ui: build_ui
+	yarn --cwd examples/tictactoe_ui serve
 
 test:
 	cargo test
@@ -44,6 +56,11 @@ docker:
 	docker volume create --name=nodeos-data-volume
 	docker volume create --name=keosd-data-volume
 	docker-compose up
+
+publish:
+	cd eosio_sys && cargo publish
+	cd eosio_macros && cargo publish
+	cd eosio && cargo publish
 
 CLEOS := docker-compose exec keosd cleos --url http://nodeosd:8888 --wallet-url http://127.0.0.1:8900
 PUBKEY := EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV

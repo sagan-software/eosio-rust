@@ -11,10 +11,9 @@ proc-macro = true
 
 [dependencies]
 syn = { version = "0.15", features = ["full", "fold"] }
-proc-macro2 = { version = "0.4", features = ["nightly"] }
+proc-macro2 = { version = "0.4" }
 quote = "0.6"
 eosio_sys = { path = "../eosio_sys", version = "0.2" }
-lazy_static = "1.1.0"
 
 [features]
 internal = []
