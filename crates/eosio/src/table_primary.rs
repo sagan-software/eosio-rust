@@ -47,10 +47,12 @@ where
     T: TableRow,
 {
     fn get(&self) -> Result<T, ReadError> {
-        let mut bytes = [0u8; 1000]; // TODO: don't hardcode this
+        let nullptr: *mut c_void = ::std::ptr::null_mut() as *mut _ as *mut c_void;
+        let size = unsafe { ::eosio_sys::db_get_i64(self.value, nullptr, 0) };
+        let mut bytes = vec![0u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db_get_i64(self.value, ptr, 1000);
+            ::eosio_sys::db_get_i64(self.value, ptr, size as u32);
         }
         T::read(&bytes, 0).map(|(t, _)| t)
     }
