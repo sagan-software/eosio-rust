@@ -5,7 +5,7 @@ use eosio::*;
 #[eosio_action]
 fn create(issuer: AccountName, max_supply: Asset) {
     let receiver = AccountName::receiver();
-    receiver.require_auth();
+    require_auth(receiver);
 
     let symbol = max_supply.symbol;
     eosio_assert(max_supply.amount > 0, "max-supply must be positive");
@@ -15,7 +15,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
 
     eosio_assert(
         !table.exists(symbol_name),
-        "token with symbol already exists",
+        "token with symbol already existss",
     );
 
     let stats = CurrencyStats {
@@ -24,7 +24,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
         issuer,
     };
 
-    table.insert(receiver, &stats).assert("write");
+    table.emplace(receiver, &stats).assert("write");
 }
 
 #[eosio_action]
@@ -39,7 +39,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
         .assert("token with symbol does not exist, create token before issue");
 
     let mut st = cursor.get().assert("read");
-    st.issuer.require_auth();
+    require_auth(st.issuer);
 
     eosio_assert(quantity.amount > 0, "must issue positive quantity");
     eosio_assert(
@@ -52,7 +52,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     );
 
     st.supply += quantity;
-    cursor.update(None, &st).assert("write");
+    cursor.modify(None, &st).assert("write");
 
     add_balance(st.issuer, quantity, st.issuer);
 
@@ -64,8 +64,8 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             memo,
         };
         action
-            .send_inline(vec![Permission {
-                account: st.issuer,
+            .send_inline(vec![Authorization {
+                actor: st.issuer,
                 permission: n!(active).into(),
             }])
             .assert("failed to send inline action");
@@ -74,7 +74,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
 
 #[eosio_action]
 fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
-    ram_payer.require_auth();
+    require_auth(ram_payer);
     let receiver = AccountName::receiver();
     let accounts_table = Account::table(receiver, symbol.name());
     let cursor = accounts_table.find(symbol.name());
@@ -82,13 +82,13 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
         let account = Account {
             balance: Asset { amount: 0, symbol },
         };
-        accounts_table.insert(ram_payer, &account).assert("write");
+        accounts_table.emplace(ram_payer, &account).assert("write");
     }
 }
 
 #[eosio_action]
 fn close(owner: AccountName, symbol: Symbol) {
-    owner.require_auth();
+    require_auth(owner);
     let receiver = AccountName::receiver();
     let accounts_table = Account::table(receiver, symbol.name());
     let cursor = accounts_table
@@ -116,7 +116,7 @@ fn retire(quantity: Asset, memo: String) {
         .assert("token with symbol does not exist");
 
     let mut st = cursor.get().assert("error reading stats table");
-    st.issuer.require_auth();
+    require_auth(st.issuer);
     eosio_assert(quantity.amount > 0, "must retire positive quantity");
     eosio_assert(
         quantity.symbol == st.supply.symbol,
@@ -124,13 +124,13 @@ fn retire(quantity: Asset, memo: String) {
     );
 
     st.supply -= quantity;
-    cursor.update(None, &st).assert("write");
+    cursor.modify(None, &st).assert("write");
 }
 
 #[eosio_action]
 fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     eosio_assert(from != to, "cannot transfer to self");
-    from.require_auth();
+    require_auth(from);
     to.is_account().assert("to account does not exist");
 
     let receiver = AccountName::receiver();
@@ -141,8 +141,8 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
         .assert("token with symbol does not exist");
     let st = cursor.get().assert("read");
 
-    from.require_recipient();
-    to.require_recipient();
+    require_recipient(from);
+    require_recipient(to);
 
     eosio_assert(quantity.amount > 0, "must transfer positive quantity");
     eosio_assert(
@@ -170,7 +170,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
 
     account.balance -= value;
 
-    cursor.update(Some(owner), &account).assert("write");
+    cursor.modify(Some(owner), &account).assert("write");
 }
 
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
@@ -181,16 +181,16 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
         Some(cursor) => {
             let mut account = cursor.get().assert("read");
             account.balance += value;
-            cursor.update(Some(ram_payer), &account).assert("write");
+            cursor.modify(Some(ram_payer), &account).assert("write");
         }
         None => {
             let account = Account { balance: value };
-            accounts_table.insert(ram_payer, &account).assert("write");
+            accounts_table.emplace(ram_payer, &account).assert("write");
         }
     }
 }
 
-#[derive(Read, Write, Copy, Clone)]
+#[derive(Read, Write, NumBytes, Copy, Clone)]
 struct Account {
     balance: Asset,
 }
@@ -203,7 +203,7 @@ impl TableRow for Account {
     }
 }
 
-#[derive(Read, Write, Copy, Clone)]
+#[derive(Read, Write, NumBytes, Copy, Clone)]
 struct CurrencyStats {
     supply: Asset,
     max_supply: Asset,

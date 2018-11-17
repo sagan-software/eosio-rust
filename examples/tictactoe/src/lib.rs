@@ -8,7 +8,7 @@ const BOARD_AREA: usize = (BOARD_WIDTH * BOARD_HEIGHT) as usize;
 
 #[eosio_action]
 fn create(challenger: AccountName, host: AccountName) {
-    host.require_auth();
+    require_auth(host);
     eosio_assert(
         challenger != host,
         "challenger shouldn't be the same as host",
@@ -27,12 +27,12 @@ fn create(challenger: AccountName, host: AccountName) {
         board: [0; BOARD_AREA],
     };
 
-    table.insert(host, &game).assert("write");
+    table.emplace(host, &game).assert("write");
 }
 
 #[eosio_action]
 fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
-    by.require_auth();
+    require_auth(by);
 
     let code = AccountName::receiver();
     let table = Game::table(code, host);
@@ -48,12 +48,12 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     game.turn = host;
     game.winner = n!(none).into();
 
-    cursor.update(Some(host), &game).assert("write");
+    cursor.modify(Some(host), &game).assert("write");
 }
 
 #[eosio_action]
 fn close(challenger: AccountName, host: AccountName) {
-    host.require_auth();
+    require_auth(host);
 
     let code = AccountName::receiver();
     let table = Game::table(code, host);
@@ -64,7 +64,7 @@ fn close(challenger: AccountName, host: AccountName) {
 
 #[eosio_action]
 fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u16, col: u16) {
-    by.require_auth();
+    require_auth(by);
 
     // Check if game exists
 
@@ -106,7 +106,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
         }
     }
     game.winner = game.get_winner();
-    cursor.update(Some(host), &game).assert("write");
+    cursor.modify(Some(host), &game).assert("write");
 }
 
 eosio_abi!(create, restart, close, makemove);

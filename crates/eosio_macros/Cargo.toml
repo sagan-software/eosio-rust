@@ -1,0 +1,20 @@
+[package]
+name = "eosio_macros"
+version = "0.2.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+license = "MIT/Apache-2.0"
+description = "Procedural macros for EOSIO smart contract development"
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "0.15", features = ["full", "fold"] }
+proc-macro2 = { version = "0.4" }
+quote = "0.6"
+eosio_sys = { path = "../eosio_sys" }
+
+[features]
+internal = []
+contract = []

@@ -12,7 +12,7 @@ fn add(
     state: String,
     zip: u32,
 ) {
-    account.require_auth();
+    require_auth(account);
 
     let code = AccountName::receiver();
     let table = Address::table(code, code);
@@ -32,7 +32,7 @@ fn add(
         zip,
         liked: 0,
     };
-    table.insert(account, &address).assert("write");
+    table.emplace(account, &address).assert("write");
 }
 
 #[eosio_action]
@@ -45,7 +45,7 @@ fn update(
     state: String,
     zip: u32,
 ) {
-    account.require_auth();
+    require_auth(account);
 
     let code = AccountName::receiver();
     let table = Address::table(code, code);
@@ -59,12 +59,12 @@ fn update(
     address.state = state;
     address.zip = zip;
 
-    cursor.update(Some(account), &address).assert("write");
+    cursor.modify(Some(account), &address).assert("write");
 }
 
 #[eosio_action]
 fn remove(account: AccountName) {
-    account.require_auth();
+    require_auth(account);
 
     let code = AccountName::receiver();
     let addresses = Address::table(code, code);
@@ -86,7 +86,7 @@ fn like(account: AccountName) {
     let mut address = cursor.get().assert("read");
     address.liked += 1;
     cursor
-        .update(Some(address.account), &address)
+        .modify(Some(address.account), &address)
         .assert("write");
 }
 
@@ -100,7 +100,7 @@ fn likezip(zip: u32) {
             break;
         }
         addr.liked += 1;
-        cursor.update(None, &addr).assert("write");
+        cursor.modify(None, &addr).assert("write");
     }
 }
 
