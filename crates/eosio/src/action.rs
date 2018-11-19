@@ -14,16 +14,25 @@ where
 
 eosio_name!(ActionName);
 
-#[derive(Clone, Debug, NumBytes)]
+#[derive(Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
-pub struct Action<Data>
-where
-    Data: NumBytes,
-{
+pub struct Action<Data> {
     pub account: AccountName,
     pub name: ActionName,
     pub authorization: Vec<Authorization>,
     pub data: Data,
+}
+
+impl<Data> NumBytes for Action<Data>
+where
+    Data: NumBytes,
+{
+    fn num_bytes(&self) -> usize {
+        self.account.num_bytes()
+            + self.name.num_bytes()
+            + self.authorization.num_bytes()
+            + self.data.num_bytes()
+    }
 }
 
 #[cfg(feature = "contract")]

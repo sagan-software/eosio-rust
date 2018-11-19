@@ -59,7 +59,7 @@ fn close(challenger: AccountName, host: AccountName) {
     let table = Game::table(code, host);
     let cursor = table.find(challenger).assert("game doesn't exist");
 
-    cursor.remove().assert("read");
+    cursor.erase().assert("read");
 }
 
 #[eosio_action]

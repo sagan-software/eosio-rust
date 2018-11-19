@@ -27,7 +27,7 @@ pub trait SecondaryTableKey {
 
     fn next(&self, iterator: i32) -> (i32, u64);
 
-    fn remove(&self, iterator: i32);
+    fn erase(&self, iterator: i32);
 
     fn previous(&self, iterator: i32) -> (i32, u64);
 
@@ -100,8 +100,8 @@ macro_rules! secondary_keys_converted {
             fn previous(&self, iterator: i32) -> (i32, u64) {
                 <$to as From<$from>>::from(*self).previous(iterator)
             }
-            fn remove(&self, iterator: i32) {
-                <$to as From<$from>>::from(*self).remove(iterator)
+            fn erase(&self, iterator: i32) {
+                <$to as From<$from>>::from(*self).erase(iterator)
             }
             fn store(
                 &self,
@@ -173,7 +173,7 @@ macro_rules! secondary_keys_impl {
                 let itr = unsafe { concat_idents!(db_, $i, _previous)(iterator, ptr) };
                 (itr, pk)
             }
-            fn remove(&self, iterator: i32) {
+            fn erase(&self, iterator: i32) {
                 use ::eosio_sys::*;
                 unsafe { concat_idents!(db_, $i, _remove)(iterator) }
             }
@@ -330,10 +330,10 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    fn remove(&self) -> Result<T, ReadError> {
+    fn erase(&self) -> Result<T, ReadError> {
         let table = self.index.to_primary_index();
         match table.find(self.pk) {
-            Some(cursor) => cursor.remove(),
+            Some(cursor) => cursor.erase(),
             None => Err(ReadError::NotEnoughBytes), // TODO: better error
         }
     }

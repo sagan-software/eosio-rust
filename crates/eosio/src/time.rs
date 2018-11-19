@@ -82,6 +82,7 @@ impl crate::print::Print for Time {
     }
 }
 
+#[cfg(feature = "serde")]
 struct TimeVisitor;
 
 #[cfg(feature = "serde")]
@@ -89,7 +90,7 @@ impl<'de> ::serde::de::Visitor<'de> for TimeVisitor {
     type Value = Time;
 
     fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        formatter.write_str("struct Time")
+        formatter.write_str("a microsecond timestamp as a number or string")
     }
 
     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
@@ -116,7 +117,7 @@ impl<'de> ::serde::de::Deserialize<'de> for Time {
     where
         D: ::serde::de::Deserializer<'de>,
     {
-        deserializer.deserialize_i32(TimeVisitor)
+        deserializer.deserialize_any(TimeVisitor)
     }
 }
 

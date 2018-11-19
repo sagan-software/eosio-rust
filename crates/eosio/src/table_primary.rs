@@ -57,7 +57,7 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
-    fn remove(&self) -> Result<T, ReadError> {
+    fn erase(&self) -> Result<T, ReadError> {
         let item = self.get()?;
         let pk = item.primary_key();
         unsafe {
@@ -70,7 +70,7 @@ where
                 let end = k.end(self.code, self.scope, table);
                 let itr = k.find_primary(self.code, self.scope, table, pk);
                 if itr != end {
-                    k.remove(itr);
+                    k.erase(itr);
                 }
             }
         }

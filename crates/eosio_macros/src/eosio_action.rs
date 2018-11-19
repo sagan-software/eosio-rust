@@ -75,7 +75,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let struct_ident = Ident::new(format!("{}Action", struct_name).as_str(), call_site);
 
     let expanded = quote! {
-        #[derive(Clone, Read, Write)]
+        #[derive(Clone, #eosio::Read, #eosio::Write, #eosio::NumBytes)]
         struct #struct_ident {
             #(#struct_fields)*
         }

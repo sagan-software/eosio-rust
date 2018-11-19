@@ -63,7 +63,7 @@ fn update(
 }
 
 #[eosio_action]
-fn remove(account: AccountName) {
+fn erase(account: AccountName) {
     require_auth(account);
 
     let code = AccountName::receiver();
@@ -72,7 +72,7 @@ fn remove(account: AccountName) {
         .find(account)
         .assert("Address for account not found");
 
-    cursor.remove().assert("read");
+    cursor.erase().assert("read");
 }
 
 #[eosio_action]
@@ -104,7 +104,7 @@ fn likezip(zip: u32) {
     }
 }
 
-eosio_abi!(add, update, remove, like, likezip);
+eosio_abi!(add, update, erase, like, likezip);
 
 #[eosio_table(address)]
 struct Address {

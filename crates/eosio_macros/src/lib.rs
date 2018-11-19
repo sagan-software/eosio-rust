@@ -1,4 +1,4 @@
-#![recursion_limit = "256"]
+#![recursion_limit = "512"]
 #![feature(proc_macro_hygiene, proc_macro_diagnostic, proc_macro_quote)]
 
 extern crate eosio_sys;

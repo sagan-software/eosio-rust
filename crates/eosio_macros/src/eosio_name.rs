@@ -11,6 +11,28 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let identlitstr = LitStr::new(identstr.as_str(), call_site);
     let identvisitor = Ident::new(format!("{}Visitor", identstr).as_str(), call_site);
 
+    let scope_name_converters = if identstr == "ScopeName" {
+        quote!()
+    } else {
+        quote! {
+            #[automatically_derived]
+            impl From<#eosio::ScopeName> for #ident {
+                fn from(scope: #eosio::ScopeName) -> Self {
+                    let value: u64 = scope.into();
+                    value.into()
+                }
+            }
+
+            #[automatically_derived]
+            impl From<#ident> for #eosio::ScopeName {
+                fn from(name: #ident) -> Self {
+                    let value: u64 = name.into();
+                    value.into()
+                }
+            }
+        }
+    };
+
     let expanded = quote! {
         #[derive(#eosio::Read, #eosio::Write, #eosio::NumBytes, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
         pub struct #ident(u64);
@@ -28,6 +50,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 i.0
             }
         }
+
+        #scope_name_converters
 
         // TODO: no_std
         #[automatically_derived]
@@ -147,6 +171,30 @@ pub fn expand(input: TokenStream) -> TokenStream {
 pub fn expand(input: TokenStream) -> TokenStream {
     let ident = parse_macro_input!(input as Ident);
     let eosio = crate::paths::eosio();
+    let identstr = ident.to_string();
+
+    let scope_name_converters = if identstr == "ScopeName" {
+        quote!()
+    } else {
+        quote! {
+            #[automatically_derived]
+            impl From<#eosio::ScopeName> for #ident {
+                fn from(scope: #eosio::ScopeName) -> Self {
+                    let value: u64 = scope.into();
+                    value.into()
+                }
+            }
+
+            #[automatically_derived]
+            impl From<#ident> for #eosio::ScopeName {
+                fn from(name: #ident) -> Self {
+                    let value: u64 = name.into();
+                    value.into()
+                }
+            }
+        }
+    };
+
     let expanded = quote! {
         #[derive(#eosio::Read, #eosio::Write, #eosio::NumBytes, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
         #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
@@ -165,6 +213,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 i.0
             }
         }
+
+        #scope_name_converters
 
         // TODO: no_std
         #[automatically_derived]
@@ -222,8 +272,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
             fn previous(&self, iterator: i32) -> (i32, u64) {
                 u64::from(*self).previous(iterator)
             }
-            fn remove(&self, iterator: i32) {
-                u64::from(*self).remove(iterator)
+            fn erase(&self, iterator: i32) {
+                u64::from(*self).erase(iterator)
             }
             fn store(
                 &self,

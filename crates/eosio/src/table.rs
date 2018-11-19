@@ -7,19 +7,19 @@ eosio_name!(TableName);
 
 eosio_name!(ScopeName);
 
-impl From<AccountName> for ScopeName {
-    fn from(account: AccountName) -> Self {
-        let value: u64 = account.into();
-        value.into()
-    }
-}
+// impl From<AccountName> for ScopeName {
+//     fn from(account: AccountName) -> Self {
+//         let value: u64 = account.into();
+//         value.into()
+//     }
+// }
 
-impl From<ScopeName> for AccountName {
-    fn from(scope: ScopeName) -> Self {
-        let value: u64 = scope.into();
-        value.into()
-    }
-}
+// impl From<ScopeName> for AccountName {
+//     fn from(scope: ScopeName) -> Self {
+//         let value: u64 = scope.into();
+//         value.into()
+//     }
+// }
 
 impl From<SymbolName> for ScopeName {
     fn from(symbol: SymbolName) -> Self {
@@ -61,7 +61,7 @@ where
     T: TableRow,
 {
     fn get(&self) -> Result<T, ReadError>;
-    fn remove(&self) -> Result<T, ReadError>;
+    fn erase(&self) -> Result<T, ReadError>;
     fn modify(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError>;
 }
 
