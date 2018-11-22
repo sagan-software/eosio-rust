@@ -3,7 +3,9 @@ use crate::assert::*;
 use crate::lib::*;
 use eosio_macros::*;
 
-#[derive(Read, Write, NumBytes, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash)]
+#[derive(
+    Read, Write, NumBytes, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash, Default,
+)]
 #[cfg_attr(feature = "serde", derive(::serde::Serialize))]
 pub struct Time(u64);
 
