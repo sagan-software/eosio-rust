@@ -1,0 +1,16 @@
+[package]
+name = "eosio_token"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+eosio = { path = "../eosio" }
+
+[features]
+default = ["contract"]
+contract = ["eosio/contract"]
+serde = ["eosio/serde"]

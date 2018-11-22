@@ -159,6 +159,7 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
 
 eosio_abi!(create, issue, transfer, open, close, retire);
 
+#[cfg(feature = "contract")]
 fn sub_balance(owner: AccountName, value: Asset) {
     let receiver = AccountName::receiver();
     let table = Account::table(receiver, owner);
@@ -173,6 +174,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
     cursor.modify(Some(owner), &account).assert("write");
 }
 
+#[cfg(feature = "contract")]
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
     let receiver = AccountName::receiver();
     let accounts_table = Account::table(receiver, owner);
@@ -191,10 +193,11 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
 }
 
 #[derive(Read, Write, NumBytes, Copy, Clone)]
-struct Account {
+pub struct Account {
     balance: Asset,
 }
 
+#[cfg(feature = "contract")]
 impl TableRow for Account {
     const NAME: u64 = n!(accounts);
 
@@ -204,12 +207,13 @@ impl TableRow for Account {
 }
 
 #[derive(Read, Write, NumBytes, Copy, Clone)]
-struct CurrencyStats {
+pub struct CurrencyStats {
     supply: Asset,
     max_supply: Asset,
     issuer: AccountName,
 }
 
+#[cfg(feature = "contract")]
 impl TableRow for CurrencyStats {
     const NAME: u64 = n!(stat);
 
