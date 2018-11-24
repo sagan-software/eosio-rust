@@ -8,9 +8,10 @@ edition = "2018"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-eosio = { path = "../eosio" }
+eosio = { path = "../eosio", default-features = false }
+serde = { version = "1.0", optional = true, features = ["derive"] }
 
 [features]
 default = ["contract"]
 contract = ["eosio/contract"]
-serde = ["eosio/serde"]
+web = ["serde", "eosio/serde"]

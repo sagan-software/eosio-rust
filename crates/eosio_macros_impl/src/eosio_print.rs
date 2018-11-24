@@ -1,7 +1,8 @@
 use crate::proc_macro::TokenStream;
+use quote::quote;
 use syn::parse::Parser;
 use syn::punctuated::Punctuated;
-use syn::Expr;
+use syn::{Expr, Token};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;

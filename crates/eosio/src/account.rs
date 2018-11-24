@@ -1,5 +1,5 @@
 use crate::time::Time;
-use eosio_macros::*;
+use crate::{eosio_name, n, NumBytes, Read, Write};
 
 eosio_name!(AccountName);
 

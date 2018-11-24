@@ -5,6 +5,7 @@ use crate::symbol::Symbol;
 use eosio_macros::*;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
+#[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 pub struct Asset {
     pub amount: i64,
     pub symbol: Symbol,
@@ -13,6 +14,43 @@ pub struct Asset {
 impl Asset {
     pub fn is_valid(&self) -> bool {
         self.symbol.is_valid()
+    }
+}
+
+impl ToString for Asset {
+    fn to_string(&self) -> String {
+        let precision = self.symbol.precision();
+        let amount = (self.amount as f64) / 10f64.powf(precision as f64);
+        let symbol_name = self.symbol.name().to_string();
+        let mut s = amount.to_string();
+        let mut decimals = if s.contains('.') {
+            s.as_str()
+                .rsplit('.')
+                .next()
+                .map(|x| x.len() as u64)
+                .unwrap_or_else(|| 0u64)
+        } else {
+            s.push_str(".");
+            0u64
+        };
+        while decimals < precision {
+            s.push_str("0");
+            decimals += 1;
+        }
+        s.push_str(" ");
+        s.push_str(&symbol_name);
+        s
+    }
+}
+
+#[cfg(feature = "serde")]
+impl ::serde::Serialize for Asset {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: ::serde::Serializer,
+    {
+        let s = self.to_string();
+        serializer.serialize_str(s.as_str())
     }
 }
 

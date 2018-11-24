@@ -1,4 +1,4 @@
-#![feature(proc_macro_hygiene, try_from, custom_attribute, concat_idents)]
+#![feature(try_from, custom_attribute, concat_idents)]
 
 use static_assertions::assert_cfg;
 
@@ -72,12 +72,7 @@ pub use self::table_primary::*;
 #[cfg(feature = "contract")]
 pub use self::table_secondary::*;
 pub use self::time::*;
-
-pub use eosio_macros::{
-    eosio_abi, eosio_action, eosio_name, eosio_print, eosio_table, n, s, NumBytes, Read, TableRow,
-    Write,
-};
-
+pub use eosio_macros::*;
 pub use eosio_sys::{ParseNameError, ParseSymbolError};
 
 #[cfg(all(feature = "serde", feature = "stdweb"))]

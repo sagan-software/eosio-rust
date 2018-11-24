@@ -1,4 +1,4 @@
-use proc_macro::TokenStream;
+use crate::proc_macro::TokenStream;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{Expr, LitStr};
 

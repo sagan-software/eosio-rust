@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene)]
-
 use eosio::*;
 
 const BOARD_WIDTH: u16 = 3;

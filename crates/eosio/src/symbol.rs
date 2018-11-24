@@ -29,7 +29,8 @@ impl From<SymbolName> for [char; 7] {
 impl ToString for SymbolName {
     fn to_string(&self) -> String {
         let chars: [char; 7] = (*self).into();
-        chars.into_iter().collect()
+        let s: String = chars.into_iter().collect();
+        s.trim().to_string()
     }
 }
 

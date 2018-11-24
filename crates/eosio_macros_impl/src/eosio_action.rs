@@ -1,5 +1,6 @@
 use crate::proc_macro::TokenStream;
-use syn::{FnArg, Ident, ItemFn};
+use quote::quote;
+use syn::{parse_macro_input, FnArg, Ident, ItemFn};
 
 #[cfg(feature = "contract")]
 pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {

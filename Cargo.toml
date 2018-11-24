@@ -8,6 +8,7 @@ panic = "abort"
 members = [
     "crates/eosio",
     "crates/eosio_macros",
+    "crates/eosio_macros_impl",
     "crates/eosio_rpc",
     "crates/eosio_sys",
     "crates/eosio_token",

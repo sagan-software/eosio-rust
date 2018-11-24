@@ -1,7 +1,8 @@
 use crate::proc_macro::{Span, TokenStream};
 use eosio_sys::{string_to_symbol, ParseSymbolError};
+use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};
-use syn::{Ident, LitInt};
+use syn::{parse_macro_input, Ident, LitInt, Token};
 
 struct SymbolInput {
     precision: LitInt,

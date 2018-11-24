@@ -1,6 +1,7 @@
 use crate::proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
-use syn::{Data, DeriveInput, Fields, GenericParam, Meta};
+use quote::quote;
+use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam, Meta};
 
 #[cfg(not(feature = "contract"))]
 pub fn expand(input: TokenStream) -> TokenStream {

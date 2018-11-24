@@ -177,8 +177,6 @@ rustflags = [
 File `src/lib.rs`:
 
 ```rust
-#![feature(proc_macro_hygiene)]
-
 use eosio::*;
 
 #[eosio_action]
@@ -346,8 +344,6 @@ By using `wasm-gc` and `wasm-opt` we are able to get the file size down to just 
 Now that we know how to prepare the `.wasm` file, let's start coding. Open up `src/lib.rs` and replace its contents with this:
 
 ```rust
-#![feature(proc_macro_hygiene)]     // Required for procedural macros
-
 use eosio::*;                       // Include everything from the eosio crate
 
 #[eosio_action]                     // Mark this function as an action
