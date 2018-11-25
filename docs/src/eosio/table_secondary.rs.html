@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `eosio/src/table_secondary.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>table_secondary.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `crates/eosio/src/table_secondary.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>table_secondary.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -533,19 +533,24 @@
 <span id="533">533</span>
 <span id="534">534</span>
 <span id="535">535</span>
-</pre><pre class="rust ">
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+</pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::<span class="ident">AccountName</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">bytes</span>::{<span class="ident">ReadError</span>, <span class="ident">WriteError</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="ident">PhantomData</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">table</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">table_primary</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::<span class="ident">Time</span>;
 <span class="kw">use</span> <span class="ident">eosio_sys</span>::<span class="ident">ctypes</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Hash</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SecondaryTableName</span>(<span class="ident">PrimaryTableName</span>, <span class="ident">usize</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SecondaryTableName</span>(<span class="ident">TableName</span>, <span class="ident">usize</span>);
 
 <span class="kw">impl</span> <span class="ident">SecondaryTableName</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">primary</span>: <span class="ident">PrimaryTableName</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">primary</span>: <span class="ident">TableName</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="ident">SecondaryTableName</span>(<span class="ident">primary</span>, <span class="ident">index</span>)
     }
 }
@@ -559,42 +564,42 @@
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SecondaryTableKey</span> {
-    <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">code</span>: <span class="ident">AccountName</span>, <span class="ident">scope</span>: <span class="ident">TableScope</span>, <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>) <span class="op">-&gt;</span> <span class="ident">i32</span>;
+    <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">code</span>: <span class="ident">AccountName</span>, <span class="ident">scope</span>: <span class="ident">ScopeName</span>, <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>) <span class="op">-&gt;</span> <span class="ident">i32</span>;
 
     <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>);
 
-    <span class="kw">fn</span> <span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>);
+    <span class="kw">fn</span> <span class="ident">erase</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>);
 
     <span class="kw">fn</span> <span class="ident">previous</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>);
 
     <span class="kw">fn</span> <span class="ident">store</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+        <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
         <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
         <span class="ident">payer</span>: <span class="ident">AccountName</span>,
         <span class="ident">id</span>: <span class="ident">u64</span>,
     ) <span class="op">-&gt;</span> <span class="ident">i32</span>;
 
-    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>);
+    <span class="kw">fn</span> <span class="ident">modify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>);
 
     <span class="kw">fn</span> <span class="ident">lower_bound</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">code</span>: <span class="ident">AccountName</span>,
-        <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+        <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
         <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
     ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>);
 
     <span class="kw">fn</span> <span class="ident">upper_bound</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">code</span>: <span class="ident">AccountName</span>,
-        <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+        <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
         <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
     ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>);
 
     <span class="kw">fn</span> <span class="ident">find_primary</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">code</span>: <span class="ident">AccountName</span>,
-        <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+        <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
         <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
         <span class="ident">primary</span>: <span class="ident">u64</span>,
     ) <span class="op">-&gt;</span> <span class="ident">i32</span>;
@@ -602,14 +607,14 @@
     <span class="kw">fn</span> <span class="ident">find_secondary</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">code</span>: <span class="ident">AccountName</span>,
-        <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+        <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
         <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
     ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>);
 
     <span class="kw">fn</span> <span class="ident">upsert</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">code</span>: <span class="ident">AccountName</span>,
-        <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+        <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
         <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
         <span class="ident">payer</span>: <span class="ident">AccountName</span>,
         <span class="ident">id</span>: <span class="ident">u64</span>,
@@ -619,7 +624,7 @@
         <span class="kw">if</span> <span class="ident">itr</span> <span class="op">==</span> <span class="ident">end</span> {
             <span class="self">self</span>.<span class="ident">store</span>(<span class="ident">scope</span>, <span class="ident">table</span>, <span class="ident">payer</span>, <span class="ident">id</span>);
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">update</span>(<span class="ident">itr</span>, <span class="ident">payer</span>);
+            <span class="self">self</span>.<span class="ident">modify</span>(<span class="ident">itr</span>, <span class="ident">payer</span>);
         }
     }
 }
@@ -627,7 +632,7 @@
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">secondary_keys_converted</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span>:<span class="ident">ty</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(
         <span class="kw">impl</span> <span class="ident">SecondaryTableKey</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span> {
-            <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">code</span>: <span class="ident">AccountName</span>, <span class="ident">scope</span>: <span class="ident">TableScope</span>, <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
+            <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">code</span>: <span class="ident">AccountName</span>, <span class="ident">scope</span>: <span class="ident">ScopeName</span>, <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
                 <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">end</span>(<span class="ident">code</span>, <span class="ident">scope</span>, <span class="ident">table</span>)
             }
             <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
@@ -636,25 +641,25 @@
             <span class="kw">fn</span> <span class="ident">previous</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">previous</span>(<span class="ident">iterator</span>)
             }
-            <span class="kw">fn</span> <span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) {
-                <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">remove</span>(<span class="ident">iterator</span>)
+            <span class="kw">fn</span> <span class="ident">erase</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) {
+                <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">erase</span>(<span class="ident">iterator</span>)
             }
             <span class="kw">fn</span> <span class="ident">store</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
                 <span class="ident">payer</span>: <span class="ident">AccountName</span>,
                 <span class="ident">id</span>: <span class="ident">u64</span>,
             ) <span class="op">-&gt;</span> <span class="ident">i32</span> {
                 <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">store</span>(<span class="ident">scope</span>, <span class="ident">table</span>, <span class="ident">payer</span>, <span class="ident">id</span>)
             }
-            <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>) {
-                <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">update</span>(<span class="ident">iterator</span>, <span class="ident">payer</span>)
+            <span class="kw">fn</span> <span class="ident">modify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>) {
+                <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">modify</span>(<span class="ident">iterator</span>, <span class="ident">payer</span>)
             }
             <span class="kw">fn</span> <span class="ident">lower_bound</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
             ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">lower_bound</span>(<span class="ident">code</span>, <span class="ident">scope</span>, <span class="ident">table</span>)
@@ -662,7 +667,7 @@
             <span class="kw">fn</span> <span class="ident">upper_bound</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
             ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">upper_bound</span>(<span class="ident">code</span>, <span class="ident">scope</span>, <span class="ident">table</span>)
@@ -670,7 +675,7 @@
             <span class="kw">fn</span> <span class="ident">find_primary</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
                 <span class="ident">primary</span>: <span class="ident">u64</span>,
             ) <span class="op">-&gt;</span> <span class="ident">i32</span> {
@@ -679,7 +684,7 @@
             <span class="kw">fn</span> <span class="ident">find_secondary</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
             ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">to</span> <span class="kw">as</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">from</span><span class="op">&gt;&gt;</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">find_secondary</span>(<span class="ident">code</span>, <span class="ident">scope</span>, <span class="ident">table</span>)
@@ -691,7 +696,7 @@
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">secondary_keys_impl</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(
         <span class="kw">impl</span> <span class="ident">SecondaryTableKey</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
-            <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">code</span>: <span class="ident">AccountName</span>, <span class="ident">scope</span>: <span class="ident">TableScope</span>, <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
+            <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">code</span>: <span class="ident">AccountName</span>, <span class="ident">scope</span>: <span class="ident">ScopeName</span>, <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
                 <span class="kw">use</span> ::<span class="ident">eosio_sys</span>::<span class="kw-2">*</span>;
                 <span class="kw">unsafe</span> { <span class="macro">concat_idents</span><span class="macro">!</span>(<span class="ident">db_</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>, <span class="ident">_end</span>)(<span class="ident">code</span>.<span class="ident">into</span>(), <span class="ident">scope</span>.<span class="ident">into</span>(), <span class="ident">table</span>.<span class="ident">into</span>()) }
             }
@@ -709,13 +714,13 @@
                 <span class="kw">let</span> <span class="ident">itr</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="macro">concat_idents</span><span class="macro">!</span>(<span class="ident">db_</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>, <span class="ident">_previous</span>)(<span class="ident">iterator</span>, <span class="ident">ptr</span>) };
                 (<span class="ident">itr</span>, <span class="ident">pk</span>)
             }
-            <span class="kw">fn</span> <span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) {
+            <span class="kw">fn</span> <span class="ident">erase</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>) {
                 <span class="kw">use</span> ::<span class="ident">eosio_sys</span>::<span class="kw-2">*</span>;
                 <span class="kw">unsafe</span> { <span class="macro">concat_idents</span><span class="macro">!</span>(<span class="ident">db_</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>, <span class="ident">_remove</span>)(<span class="ident">iterator</span>) }
             }
             <span class="kw">fn</span> <span class="ident">store</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
                 <span class="ident">payer</span>: <span class="ident">AccountName</span>,
                 <span class="ident">id</span>: <span class="ident">u64</span>,
@@ -726,7 +731,7 @@
                     <span class="macro">concat_idents</span><span class="macro">!</span>(<span class="ident">db_</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>, <span class="ident">_store</span>)(<span class="ident">scope</span>.<span class="ident">into</span>(), <span class="ident">table</span>.<span class="ident">into</span>(), <span class="ident">payer</span>.<span class="ident">into</span>(), <span class="ident">id</span>, <span class="ident">secondary</span>)
                 }
             }
-            <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>) {
+            <span class="kw">fn</span> <span class="ident">modify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iterator</span>: <span class="ident">i32</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>) {
                 <span class="kw">use</span> ::<span class="ident">eosio_sys</span>::<span class="kw-2">*</span>;
                 <span class="kw">let</span> <span class="ident">secondary</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span> <span class="op">=</span> <span class="self">self</span>;
                 <span class="kw">unsafe</span> {
@@ -736,7 +741,7 @@
             <span class="kw">fn</span> <span class="ident">lower_bound</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
             ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="kw">use</span> ::<span class="ident">eosio_sys</span>::<span class="kw-2">*</span>;
@@ -756,7 +761,7 @@
             <span class="kw">fn</span> <span class="ident">upper_bound</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
             ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="kw">use</span> ::<span class="ident">eosio_sys</span>::<span class="kw-2">*</span>;
@@ -776,7 +781,7 @@
             <span class="kw">fn</span> <span class="ident">find_primary</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
                 <span class="ident">primary</span>: <span class="ident">u64</span>,
             ) <span class="op">-&gt;</span> <span class="ident">i32</span> {
@@ -795,7 +800,7 @@
             <span class="kw">fn</span> <span class="ident">find_secondary</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>,
                 <span class="ident">code</span>: <span class="ident">AccountName</span>,
-                <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+                <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
                 <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
             ) <span class="op">-&gt;</span> (<span class="ident">i32</span>, <span class="ident">u64</span>) {
                 <span class="kw">use</span> ::<span class="ident">eosio_sys</span>::<span class="kw-2">*</span>;
@@ -829,6 +834,7 @@
     <span class="ident">u64</span>, <span class="ident">u16</span>
     <span class="ident">u64</span>, <span class="ident">u32</span>
     <span class="ident">f64</span>, <span class="ident">f32</span>
+    <span class="ident">u64</span>, <span class="ident">Time</span>
 );
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
@@ -856,26 +862,28 @@
                 <span class="self">self</span>.<span class="ident">pk</span>,
             )
         };
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">1000</span>]; <span class="comment">// TODO: don&#39;t hardcode this</span>
+        <span class="kw">let</span> <span class="ident">nullptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>;
+        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">eosio_sys</span>::<span class="ident">db_get_i64</span>(<span class="self">self</span>.<span class="ident">value</span>, <span class="ident">nullptr</span>, <span class="number">0</span>) };
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0u8</span>; <span class="ident">size</span> <span class="kw">as</span> <span class="ident">usize</span>];
         <span class="kw">let</span> <span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>[..] <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>;
         <span class="kw">unsafe</span> {
-            ::<span class="ident">eosio_sys</span>::<span class="ident">db_get_i64</span>(<span class="ident">pk_itr</span>, <span class="ident">ptr</span>, <span class="number">1000</span>);
+            ::<span class="ident">eosio_sys</span>::<span class="ident">db_get_i64</span>(<span class="ident">pk_itr</span>, <span class="ident">ptr</span>, <span class="ident">size</span> <span class="kw">as</span> <span class="ident">u32</span>);
         }
         <span class="ident">T</span>::<span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>, <span class="number">0</span>).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">t</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">t</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">ReadError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">erase</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">ReadError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">table</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">index</span>.<span class="ident">to_primary_index</span>();
         <span class="kw">match</span> <span class="ident">table</span>.<span class="ident">find</span>(<span class="self">self</span>.<span class="ident">pk</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">cursor</span>) <span class="op">=&gt;</span> <span class="ident">cursor</span>.<span class="ident">remove</span>(),
+            <span class="prelude-val">Some</span>(<span class="ident">cursor</span>) <span class="op">=&gt;</span> <span class="ident">cursor</span>.<span class="ident">erase</span>(),
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">ReadError</span>::<span class="ident">NotEnoughBytes</span>), <span class="comment">// TODO: better error</span>
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountName</span><span class="op">&gt;</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">WriteError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">modify</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountName</span><span class="op">&gt;</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">WriteError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">table</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">index</span>.<span class="ident">to_primary_index</span>();
         <span class="kw">match</span> <span class="ident">table</span>.<span class="ident">find</span>(<span class="self">self</span>.<span class="ident">pk</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">cursor</span>) <span class="op">=&gt;</span> <span class="ident">cursor</span>.<span class="ident">update</span>(<span class="ident">payer</span>, <span class="ident">item</span>),
+            <span class="prelude-val">Some</span>(<span class="ident">cursor</span>) <span class="op">=&gt;</span> <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="ident">payer</span>, <span class="ident">item</span>),
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">WriteError</span>::<span class="ident">NotEnoughSpace</span>), <span class="comment">// TODO: better error</span>
         }
     }
@@ -984,7 +992,7 @@
     <span class="ident">T</span>: <span class="ident">TableRow</span>,
 {
     <span class="ident">code</span>: <span class="ident">AccountName</span>,
-    <span class="ident">scope</span>: <span class="ident">TableScope</span>,
+    <span class="ident">scope</span>: <span class="ident">ScopeName</span>,
     <span class="ident">table</span>: <span class="ident">SecondaryTableName</span>,
     <span class="ident">key</span>: <span class="ident">K</span>,
     <span class="ident">_data</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
@@ -1004,8 +1012,8 @@
     ) <span class="op">-&gt;</span> <span class="ident">SecondaryTableIndex</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">C</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">AccountName</span><span class="op">&gt;</span>,
-        <span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">TableScope</span><span class="op">&gt;</span>,
-        <span class="ident">N</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">PrimaryTableName</span><span class="op">&gt;</span>,
+        <span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">ScopeName</span><span class="op">&gt;</span>,
+        <span class="ident">N</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">TableName</span><span class="op">&gt;</span>,
     {
         <span class="ident">SecondaryTableIndex</span> {
             <span class="ident">code</span>: <span class="ident">code</span>.<span class="ident">into</span>(),
@@ -1064,10 +1072,10 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">WriteError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">emplace</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">payer</span>: <span class="ident">AccountName</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">WriteError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">table</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_primary_index</span>();
-        <span class="ident">table</span>.<span class="ident">insert</span>(<span class="ident">payer</span>, <span class="ident">item</span>)
+        <span class="ident">table</span>.<span class="ident">emplace</span>(<span class="ident">payer</span>, <span class="ident">item</span>)
     }
 }
-</pre>
+</pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "eosio";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

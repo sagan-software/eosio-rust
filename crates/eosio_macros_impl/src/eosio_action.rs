@@ -58,9 +58,12 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         #[automatically_derived]
-        impl #eosio::ActionFn for #struct_ident {
+        impl #eosio::ToAction for #struct_ident {
             const NAME: u64 = n!(#ident);
+        }
 
+        #[automatically_derived]
+        impl #eosio::ActionFn for #struct_ident {
             fn execute(self) {
                 #(#assign_args)*
                 #block
@@ -128,7 +131,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         #[automatically_derived]
-        impl #eosio::ActionFn for #struct_ident {
+        impl #eosio::ToAction for #struct_ident {
             const NAME: u64 = n!(#ident);
         }
 

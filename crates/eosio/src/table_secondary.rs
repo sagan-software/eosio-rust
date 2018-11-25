@@ -3,6 +3,7 @@ use crate::bytes::{ReadError, WriteError};
 use crate::lib::PhantomData;
 use crate::table::*;
 use crate::table_primary::*;
+use crate::time::Time;
 use eosio_sys::ctypes::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
@@ -293,6 +294,7 @@ secondary_keys_converted!(
     u64, u16
     u64, u32
     f64, f32
+    u64, Time
 );
 
 #[derive(Debug, Copy, Clone)]

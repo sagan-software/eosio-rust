@@ -197,7 +197,7 @@ pub struct Account {
 
 #[cfg(feature = "contract")]
 impl TableRow for Account {
-    const NAME: u64 = n!(accounts);
+    const TABLE_NAME: u64 = n!(accounts);
 
     fn primary_key(&self) -> u64 {
         self.balance.symbol.name().into()
@@ -213,7 +213,7 @@ pub struct CurrencyStats {
 
 #[cfg(feature = "contract")]
 impl TableRow for CurrencyStats {
-    const NAME: u64 = n!(stat);
+    const TABLE_NAME: u64 = n!(stat);
 
     fn primary_key(&self) -> u64 {
         self.supply.symbol.name().into()

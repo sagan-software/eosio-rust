@@ -96,25 +96,8 @@ where
     }
 }
 
-pub trait ActionFn: Read + Write + NumBytes + Clone {
+pub trait ToAction: Sized {
     const NAME: u64;
-
-    #[cfg(feature = "contract")]
-    fn execute(self);
-
-    #[cfg(feature = "contract")]
-    fn read_data() -> Result<(Self, usize), ReadError> {
-        // TODO: set the length of this to a fixed size based on the action inputs
-        // let mut bytes = [0u8; 8];
-        let num_bytes = unsafe { ::eosio_sys::action_data_size() };
-        let mut bytes = vec![0u8; num_bytes as usize];
-        let ptr: *mut ::eosio_sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio_sys::c_void;
-        unsafe {
-            ::eosio_sys::read_action_data(ptr, num_bytes);
-        }
-
-        Self::read(&bytes, 0)
-    }
 
     fn to_action(self, account: AccountName, authorization: Vec<Authorization>) -> Action<Self> {
         Action {
@@ -123,6 +106,23 @@ pub trait ActionFn: Read + Write + NumBytes + Clone {
             authorization,
             data: self,
         }
+    }
+}
+
+pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
+    #[cfg(feature = "contract")]
+    fn execute(self);
+
+    #[cfg(feature = "contract")]
+    fn read_data() -> Result<(Self, usize), ReadError> {
+        let num_bytes = unsafe { ::eosio_sys::action_data_size() };
+        let mut bytes = vec![0u8; num_bytes as usize];
+        let ptr: *mut ::eosio_sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio_sys::c_void;
+        unsafe {
+            ::eosio_sys::read_action_data(ptr, num_bytes);
+        }
+
+        Self::read(&bytes, 0)
     }
 
     #[cfg(feature = "contract")]

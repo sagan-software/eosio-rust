@@ -27,7 +27,7 @@ impl Hasher for Ripemd160 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Ripemd160 {
-    fn assert(self, data: &str) -> () {
+    fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
@@ -58,7 +58,7 @@ impl Hasher for Sha1 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Sha1 {
-    fn assert(self, data: &str) -> () {
+    fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
@@ -87,7 +87,7 @@ impl Hasher for Sha256 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Sha256 {
-    fn assert(self, data: &str) -> () {
+    fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum256 { hash: self.0 };
@@ -113,7 +113,7 @@ impl Hasher for Sha512 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Sha512 {
-    fn assert(self, data: &str) -> () {
+    fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum512 { hash: self.0 };

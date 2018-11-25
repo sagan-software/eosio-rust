@@ -3,7 +3,6 @@ use crate::bytes::{ReadError, WriteError};
 use crate::lib::PhantomData;
 use crate::print::Print;
 use crate::table::*;
-use eosio_macros::*;
 use eosio_sys::ctypes::*;
 
 #[derive(Copy, Clone, Debug)]
@@ -199,9 +198,7 @@ where
                 key.into(),
             )
         };
-        let end = unsafe {
-            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
-        };
+        let end = self.end();
         if itr != end {
             Some(PrimaryTableCursor {
                 value: itr,
@@ -227,9 +224,7 @@ where
                 key.into(),
             )
         };
-        let end = unsafe {
-            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
-        };
+        let end = self.end();
         if itr != end {
             Some(PrimaryTableCursor {
                 value: itr,
@@ -290,11 +285,36 @@ where
         }
     }
 
+    pub fn begin(&self) -> Option<PrimaryTableCursor<T>> {
+        self.lower_bound(::std::u64::MIN)
+    }
+
+    pub fn iter(&self) -> PrimaryTableIterator<T> {
+        self.begin()
+            .map(|c| c.into_iter())
+            .unwrap_or_else(|| PrimaryTableIterator {
+                value: 0,
+                end: 0,
+                code: self.code,
+                scope: self.scope,
+                table: self.name,
+                _data: PhantomData,
+            })
+    }
+
+    pub fn count(&self) -> usize {
+        self.iter().count()
+    }
+
     pub fn exists<Id>(&self, id: Id) -> bool
     where
         Id: Into<u64>,
     {
         self.find(id).is_some()
+    }
+
+    fn end(&self) -> i32 {
+        unsafe { ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into()) }
     }
 
     pub fn find<Id>(&self, id: Id) -> Option<PrimaryTableCursor<T>>
@@ -309,9 +329,7 @@ where
                 id.into(),
             )
         };
-        let end = unsafe {
-            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
-        };
+        let end = self.end();
         if itr == end {
             None
         } else {
@@ -326,8 +344,19 @@ where
     }
 
     pub fn available_primary_key(&self) -> Option<u64> {
-        // TODO
-        None
+        if self.begin().is_none() {
+            return Some(0);
+        }
+
+        let end = self.end();
+        let mut pk = 0u64;
+        let ptr: *mut u64 = &mut pk;
+        unsafe { ::eosio_sys::db_previous_i64(end, ptr) };
+        if pk >= ::std::u64::MAX {
+            None
+        } else {
+            Some(pk + 1)
+        }
     }
 
     fn modify(

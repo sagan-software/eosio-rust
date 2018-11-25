@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `eosio/src/asset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>asset.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `crates/eosio/src/asset.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>asset.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -275,14 +275,53 @@
 <span id="275">275</span>
 <span id="276">276</span>
 <span id="277">277</span>
-</pre><pre class="rust ">
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+</pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::<span class="ident">AccountName</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">assert</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbol</span>::<span class="ident">Symbol</span>;
 <span class="kw">use</span> <span class="ident">eosio_macros</span>::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Read</span>, <span class="ident">Write</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">NumBytes</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(::<span class="ident">serde</span>::<span class="ident">Deserialize</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Asset</span> {
     <span class="kw">pub</span> <span class="ident">amount</span>: <span class="ident">i64</span>,
     <span class="kw">pub</span> <span class="ident">symbol</span>: <span class="ident">Symbol</span>,
@@ -291,6 +330,43 @@
 <span class="kw">impl</span> <span class="ident">Asset</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_valid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">is_valid</span>()
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">ToString</span> <span class="kw">for</span> <span class="ident">Asset</span> {
+    <span class="kw">fn</span> <span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+        <span class="kw">let</span> <span class="ident">precision</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">precision</span>();
+        <span class="kw">let</span> <span class="ident">amount</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">amount</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">/</span> <span class="number">10f64</span>.<span class="ident">powf</span>(<span class="ident">precision</span> <span class="kw">as</span> <span class="ident">f64</span>);
+        <span class="kw">let</span> <span class="ident">symbol_name</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">name</span>().<span class="ident">to_string</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">amount</span>.<span class="ident">to_string</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decimals</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">contains</span>(<span class="string">&#39;.&#39;</span>) {
+            <span class="ident">s</span>.<span class="ident">as_str</span>()
+                .<span class="ident">rsplit</span>(<span class="string">&#39;.&#39;</span>)
+                .<span class="ident">next</span>()
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>)
+                .<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="number">0u64</span>)
+        } <span class="kw">else</span> {
+            <span class="ident">s</span>.<span class="ident">push_str</span>(<span class="string">&quot;.&quot;</span>);
+            <span class="number">0u64</span>
+        };
+        <span class="kw">while</span> <span class="ident">decimals</span> <span class="op">&lt;</span> <span class="ident">precision</span> {
+            <span class="ident">s</span>.<span class="ident">push_str</span>(<span class="string">&quot;0&quot;</span>);
+            <span class="ident">decimals</span> <span class="op">+=</span> <span class="number">1</span>;
+        }
+        <span class="ident">s</span>.<span class="ident">push_str</span>(<span class="string">&quot; &quot;</span>);
+        <span class="ident">s</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">symbol_name</span>);
+        <span class="ident">s</span>
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">impl</span> ::<span class="ident">serde</span>::<span class="ident">Serialize</span> <span class="kw">for</span> <span class="ident">Asset</span> {
+    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S</span>::<span class="prelude-val">Ok</span>, <span class="ident">S</span>::<span class="ident">Error</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: ::<span class="ident">serde</span>::<span class="ident">Serializer</span>,
+    {
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_string</span>();
+        <span class="ident">serializer</span>.<span class="ident">serialize_str</span>(<span class="ident">s</span>.<span class="ident">as_str</span>())
     }
 }
 
@@ -464,94 +540,94 @@
     <span class="kw">pub</span> <span class="ident">contract</span>: <span class="ident">AccountName</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">Add</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="ident">ExtendedAsset</span> {
-            <span class="ident">quantity</span>: <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">quantity</span>,
-            <span class="ident">contract</span>: <span class="self">self</span>.<span class="ident">contract</span>,
-        }
-    }
-}
+<span class="comment">// impl Add for ExtendedAsset {</span>
+<span class="comment">//     type Output = Self;</span>
+<span class="comment">//     fn add(self, other: Self) -&gt; Self {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         ExtendedAsset {</span>
+<span class="comment">//             quantity: self.quantity + other.quantity,</span>
+<span class="comment">//             contract: self.contract,</span>
+<span class="comment">//         }</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">AddAssign</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">fn</span> <span class="ident">add_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">+=</span> <span class="ident">other</span>.<span class="ident">quantity</span>
-    }
-}
+<span class="comment">// impl AddAssign for ExtendedAsset {</span>
+<span class="comment">//     fn add_assign(&amp;mut self, other: Self) {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         self.quantity += other.quantity</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">Sub</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="ident">ExtendedAsset</span> {
-            <span class="ident">quantity</span>: <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">-</span> <span class="ident">other</span>.<span class="ident">quantity</span>,
-            <span class="ident">contract</span>: <span class="self">self</span>.<span class="ident">contract</span>,
-        }
-    }
-}
+<span class="comment">// impl Sub for ExtendedAsset {</span>
+<span class="comment">//     type Output = Self;</span>
+<span class="comment">//     fn sub(self, other: Self) -&gt; Self {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         ExtendedAsset {</span>
+<span class="comment">//             quantity: self.quantity - other.quantity,</span>
+<span class="comment">//             contract: self.contract,</span>
+<span class="comment">//         }</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">SubAssign</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">fn</span> <span class="ident">sub_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">-=</span> <span class="ident">other</span>.<span class="ident">quantity</span>
-    }
-}
+<span class="comment">// impl SubAssign for ExtendedAsset {</span>
+<span class="comment">//     fn sub_assign(&amp;mut self, other: Self) {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         self.quantity -= other.quantity</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">Mul</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="ident">ExtendedAsset</span> {
-            <span class="ident">quantity</span>: <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">*</span> <span class="ident">other</span>.<span class="ident">quantity</span>,
-            <span class="ident">contract</span>: <span class="self">self</span>.<span class="ident">contract</span>,
-        }
-    }
-}
+<span class="comment">// impl Mul for ExtendedAsset {</span>
+<span class="comment">//     type Output = Self;</span>
+<span class="comment">//     fn mul(self, other: Self) -&gt; Self {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         ExtendedAsset {</span>
+<span class="comment">//             quantity: self.quantity * other.quantity,</span>
+<span class="comment">//             contract: self.contract,</span>
+<span class="comment">//         }</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">MulAssign</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">fn</span> <span class="ident">mul_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">*=</span> <span class="ident">other</span>.<span class="ident">quantity</span>
-    }
-}
+<span class="comment">// impl MulAssign for ExtendedAsset {</span>
+<span class="comment">//     fn mul_assign(&amp;mut self, other: Self) {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         self.quantity *= other.quantity</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">Div</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">div</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="ident">ExtendedAsset</span> {
-            <span class="ident">quantity</span>: <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">/</span> <span class="ident">other</span>.<span class="ident">quantity</span>,
-            <span class="ident">contract</span>: <span class="self">self</span>.<span class="ident">contract</span>,
-        }
-    }
-}
+<span class="comment">// impl Div for ExtendedAsset {</span>
+<span class="comment">//     type Output = Self;</span>
+<span class="comment">//     fn div(self, other: Self) -&gt; Self {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         ExtendedAsset {</span>
+<span class="comment">//             quantity: self.quantity / other.quantity,</span>
+<span class="comment">//             contract: self.contract,</span>
+<span class="comment">//         }</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">DivAssign</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">fn</span> <span class="ident">div_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">/=</span> <span class="ident">other</span>.<span class="ident">quantity</span>
-    }
-}
+<span class="comment">// impl DivAssign for ExtendedAsset {</span>
+<span class="comment">//     fn div_assign(&amp;mut self, other: Self) {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         self.quantity /= other.quantity</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">Rem</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">rem</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="ident">ExtendedAsset</span> {
-            <span class="ident">quantity</span>: <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">%</span> <span class="ident">other</span>.<span class="ident">quantity</span>,
-            <span class="ident">contract</span>: <span class="self">self</span>.<span class="ident">contract</span>,
-        }
-    }
-}
+<span class="comment">// impl Rem for ExtendedAsset {</span>
+<span class="comment">//     type Output = Self;</span>
+<span class="comment">//     fn rem(self, other: Self) -&gt; Self {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         ExtendedAsset {</span>
+<span class="comment">//             quantity: self.quantity % other.quantity,</span>
+<span class="comment">//             contract: self.contract,</span>
+<span class="comment">//         }</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
 
-<span class="kw">impl</span> <span class="ident">RemAssign</span> <span class="kw">for</span> <span class="ident">ExtendedAsset</span> {
-    <span class="kw">fn</span> <span class="ident">rem_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) {
-        <span class="ident">eosio_assert</span>(<span class="self">self</span>.<span class="ident">contract</span> <span class="op">==</span> <span class="ident">other</span>.<span class="ident">contract</span>, <span class="string">&quot;type mismatch&quot;</span>);
-        <span class="self">self</span>.<span class="ident">quantity</span> <span class="op">%=</span> <span class="ident">other</span>.<span class="ident">quantity</span>
-    }
-}
-</pre>
+<span class="comment">// impl RemAssign for ExtendedAsset {</span>
+<span class="comment">//     fn rem_assign(&amp;mut self, other: Self) {</span>
+<span class="comment">//         eosio_assert(self.contract == other.contract, &quot;type mismatch&quot;);</span>
+<span class="comment">//         self.quantity %= other.quantity</span>
+<span class="comment">//     }</span>
+<span class="comment">// }</span>
+</pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "eosio";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

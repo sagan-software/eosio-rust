@@ -2,13 +2,8 @@
 
 use static_assertions::assert_cfg;
 
-// TODO: wasm-bindgen/js-sys/web-sys
-// TODO: neither contract or stdweb
 assert_cfg!(
-    all(
-        any(feature = "contract", feature = "stdweb"),
-        not(all(feature = "contract", feature = "stdweb"))
-    ),
+    not(all(feature = "contract", feature = "stdweb")),
     "feature = 'contract' and feature = 'stdweb' cannot both be enabled"
 );
 

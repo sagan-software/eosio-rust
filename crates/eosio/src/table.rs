@@ -35,9 +35,16 @@ impl From<ScopeName> for SymbolName {
     }
 }
 
+#[cfg(not(feature = "contract"))]
+pub trait TableRow: NumBytes {
+    const TABLE_NAME: u64;
+
+    fn primary_key(&self) -> u64;
+}
+
 #[cfg(feature = "contract")]
 pub trait TableRow: Read + Write + NumBytes {
-    const NAME: u64;
+    const TABLE_NAME: u64;
 
     fn primary_key(&self) -> u64;
 
@@ -50,7 +57,7 @@ pub trait TableRow: Read + Write + NumBytes {
         C: Into<AccountName>,
         S: Into<ScopeName>,
     {
-        crate::table_primary::PrimaryTableIndex::new(code, scope, Self::NAME)
+        crate::table_primary::PrimaryTableIndex::new(code, scope, Self::TABLE_NAME)
     }
 }
 

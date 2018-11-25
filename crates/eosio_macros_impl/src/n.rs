@@ -5,13 +5,13 @@ use quote::quote;
 use quote::{ToTokens, TokenStreamExt};
 use std::str;
 use syn::parse::{Parse, ParseStream, Result};
-use syn::{parse_macro_input, Ident};
+use syn::{parse_macro_input, Expr};
 
 pub struct EosioName(u64);
 
 impl Parse for EosioName {
     fn parse(input: ParseStream) -> Result<Self> {
-        let expr: Ident = input.parse()?;
+        let expr: Expr = input.parse()?;
         let expr_string = format!("{}", quote!(#expr));
         let expr_str = expr_string.as_str().replace(' ', "");
         string_to_name(&expr_str)

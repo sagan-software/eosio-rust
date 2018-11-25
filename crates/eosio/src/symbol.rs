@@ -29,7 +29,7 @@ impl From<SymbolName> for [char; 7] {
 impl ToString for SymbolName {
     fn to_string(&self) -> String {
         let chars: [char; 7] = (*self).into();
-        let s: String = chars.into_iter().collect();
+        let s: String = chars.iter().collect();
         s.trim().to_string()
     }
 }
@@ -110,6 +110,12 @@ impl Print for Symbol {
         self.precision().print();
         ','.print();
         self.name().print();
+    }
+}
+
+impl PartialEq<u64> for Symbol {
+    fn eq(&self, other: &u64) -> bool {
+        self.value() == *other
     }
 }
 

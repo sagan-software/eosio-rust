@@ -3,7 +3,7 @@ use crate::proc_macro::TokenStream;
 use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
-use syn::{parse_macro_input, Ident, Token};
+use syn::{parse_macro_input, Expr, Ident, Token};
 
 #[cfg(not(feature = "contract"))]
 pub fn expand(input: TokenStream) -> TokenStream {
@@ -11,24 +11,25 @@ pub fn expand(input: TokenStream) -> TokenStream {
 }
 
 struct AbiPair {
-    code: Option<Ident>,
+    code: Option<Expr>,
     action: Ident,
 }
 
 impl Parse for AbiPair {
     fn parse(input: ParseStream) -> Result<Self> {
         let action: Ident = input.parse()?;
-        Ok(AbiPair { code: None, action })
-        // match input.parse::<Token![@]>() {
-        //     Ok(_) => {
-        //         let code: EosioName = input.parse()?;
-        //         Ok(AbiPair {
-        //             code: Some(code),
-        //             action,
-        //         })
-        //     }
-        //     Err(_) => Ok(AbiPair { code: None, action }),
-        // }
+        // Ok(AbiPair { code: None, action })
+        // TODO
+        match input.parse::<Token![@]>() {
+            Ok(_) => {
+                let code: Expr = input.parse()?;
+                Ok(AbiPair {
+                    code: Some(code),
+                    action,
+                })
+            }
+            Err(_) => Ok(AbiPair { code: None, action }),
+        }
     }
 }
 

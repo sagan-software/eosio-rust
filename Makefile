@@ -36,6 +36,7 @@ docs:
 		--exclude hello \
 		--exclude hello_bare \
 		--exclude tictactoe \
+		--exclude tictactoe_ui \
 		--no-deps
 	cp -rf target/doc/* docs/
 

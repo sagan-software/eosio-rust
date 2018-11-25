@@ -12,8 +12,8 @@ fn create(challenger: AccountName, host: AccountName) {
         "challenger shouldn't be the same as host",
     );
 
-    let code = AccountName::receiver();
-    let table = Game::table(code, host);
+    let _self = AccountName::receiver();
+    let table = Game::table(_self, host);
 
     eosio_assert(!table.exists(challenger), "game already exists");
 
@@ -32,8 +32,8 @@ fn create(challenger: AccountName, host: AccountName) {
 fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     require_auth(by);
 
-    let code = AccountName::receiver();
-    let table = Game::table(code, host);
+    let _self = AccountName::receiver();
+    let table = Game::table(_self, host);
     let cursor = table.find(challenger).assert("game doesn't exist");
     let mut game = cursor.get().assert("read");
 
@@ -46,15 +46,15 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     game.turn = host;
     game.winner = n!(none).into();
 
-    cursor.modify(Some(host), &game).assert("write");
+    cursor.modify(None, &game).assert("write");
 }
 
 #[eosio_action]
 fn close(challenger: AccountName, host: AccountName) {
     require_auth(host);
 
-    let code = AccountName::receiver();
-    let table = Game::table(code, host);
+    let _self = AccountName::receiver();
+    let table = Game::table(_self, host);
     let cursor = table.find(challenger).assert("game doesn't exist");
 
     cursor.erase().assert("read");
@@ -66,8 +66,8 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
     // Check if game exists
 
-    let code = AccountName::receiver();
-    let table = Game::table(code, host);
+    let _self = AccountName::receiver();
+    let table = Game::table(_self, host);
     let cursor = table.find(challenger).assert("game doesn't exist");
 
     let mut game = cursor.get().assert("read");
@@ -104,7 +104,7 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
         }
     }
     game.winner = game.get_winner();
-    cursor.modify(Some(host), &game).assert("write");
+    cursor.modify(None, &game).assert("write");
 }
 
 eosio_abi!(create, restart, close, makemove);

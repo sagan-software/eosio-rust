@@ -13,6 +13,9 @@ impl Time {
     pub const MICROSECOND: u64 = 1;
     pub const MILLISECOND: u64 = Self::MICROSECOND * 1_000;
     pub const SECOND: u64 = Self::MILLISECOND * 1_000;
+    pub const MINUTE: u64 = Self::SECOND * 60;
+    pub const HOUR: u64 = Self::MINUTE * 60;
+    pub const DAY: u64 = Self::HOUR * 24;
 
     #[cfg(feature = "contract")]
     pub fn now() -> Self {
@@ -72,6 +75,38 @@ impl Time {
 
     pub fn from_seconds(seconds: u32) -> Self {
         Time(u64::from(seconds) * Self::SECOND)
+    }
+
+    pub fn minutes(self) -> u32 {
+        (self.0 / Self::MINUTE) as u32
+    }
+
+    pub fn from_minutes(minutes: u32) -> Self {
+        Time(u64::from(minutes) * Self::MINUTE)
+    }
+
+    pub fn hours(self) -> u32 {
+        (self.0 / Self::HOUR) as u32
+    }
+
+    pub fn from_hours(hours: u32) -> Self {
+        Time(u64::from(hours) * Self::HOUR)
+    }
+
+    pub fn days(self) -> u32 {
+        (self.0 / Self::HOUR) as u32
+    }
+
+    pub fn from_days(days: u32) -> Self {
+        Time(u64::from(days) * Self::DAY)
+    }
+
+    pub fn max(&self, other: Self) -> Self {
+        Time(self.0.max(other.0))
+    }
+
+    pub fn min(&self, other: Self) -> Self {
+        Time(self.0.min(other.0))
     }
 }
 
