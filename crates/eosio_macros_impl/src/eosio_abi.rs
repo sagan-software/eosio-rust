@@ -1,4 +1,3 @@
-use crate::n::EosioName;
 use crate::proc_macro::TokenStream;
 use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};

@@ -8,6 +8,8 @@ if ! command_exists bindgen; then
     cargo install bindgen
 fi
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+pushd ${DIR}/../crates/eosio_sys
 bindgen \
     --distrust-clang-mangling \
     --no-layout-tests \
@@ -19,6 +21,8 @@ bindgen \
     --with-derive-ord \
     --with-derive-partialeq \
     --with-derive-partialord \
+    --impl-debug \
+    --impl-partialeq \
     --whitelist-function action_data_size \
     --whitelist-function current_receiver \
     --whitelist-function has_auth \
@@ -68,25 +72,14 @@ bindgen \
     --whitelist-function send_deferred \
     --whitelist-function tapos_.+ \
     --whitelist-function transaction_size \
-    --whitelist-type account_name \
-    --whitelist-type account_permission \
-    --whitelist-type action_name \
-    --whitelist-type block_id_type \
-    --whitelist-type checksum160 \
-    --whitelist-type checksum256 \
-    --whitelist-type checksum512 \
-    --whitelist-type permission_name \
-    --whitelist-type public_key \
-    --whitelist-type scope_name \
-    --whitelist-type signature \
-    --whitelist-type table_name \
-    --whitelist-type time \
-    --whitelist-type transaction_id_type \
-    --whitelist-type weight_type \
+    --whitelist-type capi_name \
+    --whitelist-type capi_public_key \
+    --whitelist-type capi_signature \
+    --whitelist-type capi_checksum256 \
+    --whitelist-type capi_checksum160 \
+    --whitelist-type capi_checksum512 \
     wrapper.hpp \
     -- \
-    -I ../external/eosio.cdt/libraries/boost/include \
-    -I ../external/eosio.cdt/libraries/libc++/libcxx/include \
-    -I ../external/eosio.cdt/libraries/libc/musl/include \
-    -I ../external/eosio.cdt/libraries \
+    -I ../../external/eosio.cdt/libraries \
     --std=c++14
+popd

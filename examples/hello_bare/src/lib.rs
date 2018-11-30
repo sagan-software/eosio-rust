@@ -1,5 +1,3 @@
-#![feature(int_to_from_bytes)]
-
 extern "C" {
     pub fn prints_l(cstr: *const u8, len: u32);
     pub fn printn(name: u64);

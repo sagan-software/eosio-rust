@@ -1,6 +1,7 @@
 #[cfg(feature = "contract")]
 use crate::assert::Assert;
 use eosio_macros::*;
+#[cfg(feature = "contract")]
 use eosio_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 
 #[cfg(feature = "contract")]

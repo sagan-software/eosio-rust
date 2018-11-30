@@ -50,7 +50,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 }
             }
             Fields::Unit => {
-                quote!{}
+                quote! {}
             }
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),

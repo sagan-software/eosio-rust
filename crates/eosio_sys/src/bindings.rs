@@ -3,6 +3,66 @@
 pub type uint128_t = [u64; 2];
 pub type int128_t = [u64; 2];
 pub type capi_name = u64;
+/// @brief EOSIO Public Key
+/// @details EOSIO Public Key. It is 34 bytes.
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct capi_public_key {
+    pub data: [crate::ctypes::c_char; 34usize],
+}
+impl Default for capi_public_key {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::fmt::Debug for capi_public_key {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "capi_public_key {{ data: [{}] }}",
+            self.data
+                .iter()
+                .enumerate()
+                .map(|(i, v)| format!("{}{:?}", if i > 0 { ", " } else { "" }, v))
+                .collect::<String>()
+        )
+    }
+}
+impl ::std::cmp::PartialEq for capi_public_key {
+    fn eq(&self, other: &capi_public_key) -> bool {
+        &self.data[..] == &other.data[..]
+    }
+}
+/// @brief EOSIO Signature
+/// @details EOSIO Signature. It is 66 bytes.
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct capi_signature {
+    pub data: [u8; 66usize],
+}
+impl Default for capi_signature {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::fmt::Debug for capi_signature {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "capi_signature {{ data: [{}] }}",
+            self.data
+                .iter()
+                .enumerate()
+                .map(|(i, v)| format!("{}{:?}", if i > 0 { ", " } else { "" }, v))
+                .collect::<String>()
+        )
+    }
+}
+impl ::std::cmp::PartialEq for capi_signature {
+    fn eq(&self, other: &capi_signature) -> bool {
+        &self.data[..] == &other.data[..]
+    }
+}
 /// @brief 256-bit hash
 /// @details 256-bit hash
 #[repr(C)]
@@ -30,65 +90,83 @@ impl Default for capi_checksum512 {
         unsafe { ::std::mem::zeroed() }
     }
 }
+impl ::std::fmt::Debug for capi_checksum512 {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "capi_checksum512 {{ hash: [{}] }}",
+            self.hash
+                .iter()
+                .enumerate()
+                .map(|(i, v)| format!("{}{:?}", if i > 0 { ", " } else { "" }, v))
+                .collect::<String>()
+        )
+    }
+}
+impl ::std::cmp::PartialEq for capi_checksum512 {
+    fn eq(&self, other: &capi_checksum512) -> bool {
+        &self.hash[..] == &other.hash[..]
+    }
+}
 extern "C" {
-    /// Aborts processing of this action and unwinds all pending changes if the test condition is true
-    /// @brief Aborts processing of this action and unwinds all pending changes
-    /// @param test - 0 to abort, 1 to ignore
+    ///  Aborts processing of this action and unwinds all pending changes if the test condition is true
+    ///  @brief Aborts processing of this action and unwinds all pending changes
+    ///  @param test - 0 to abort, 1 to ignore
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// eosio_assert(1 == 2, "One is not equal to two.");
-    /// eosio_assert(1 == 1, "One is not equal to one.");
-    /// @endcode
+    ///  @code
+    ///  eosio_assert(1 == 2, "One is not equal to two.");
+    ///  eosio_assert(1 == 1, "One is not equal to one.");
+    ///  @endcode
     ///
-    /// @param msg - a null terminated string explaining the reason for failure
+    ///  @param msg - a null terminated string explaining the reason for failure
     pub fn eosio_assert(test: u32, msg: *const crate::ctypes::c_char);
 }
 extern "C" {
-    /// Aborts processing of this action and unwinds all pending changes if the test condition is true
-    /// @brief Aborts processing of this action and unwinds all pending changes
-    /// @param test - 0 to abort, 1 to ignore
-    /// @param msg - a pointer to the start of string explaining the reason for failure
-    /// @param msg_len - length of the string
+    ///  Aborts processing of this action and unwinds all pending changes if the test condition is true
+    ///  @brief Aborts processing of this action and unwinds all pending changes
+    ///  @param test - 0 to abort, 1 to ignore
+    ///  @param msg - a pointer to the start of string explaining the reason for failure
+    ///  @param msg_len - length of the string
     pub fn eosio_assert_message(test: u32, msg: *const crate::ctypes::c_char, msg_len: u32);
 }
 extern "C" {
-    /// Aborts processing of this action and unwinds all pending changes if the test condition is true
-    /// @brief Aborts processing of this action and unwinds all pending changes
-    /// @param test - 0 to abort, 1 to ignore
-    /// @param code - the error code
+    ///  Aborts processing of this action and unwinds all pending changes if the test condition is true
+    ///  @brief Aborts processing of this action and unwinds all pending changes
+    ///  @param test - 0 to abort, 1 to ignore
+    ///  @param code - the error code
     pub fn eosio_assert_code(test: u32, code: u64);
 }
 extern "C" {
-    /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
-    /// @brief Aborts execution of wasm without failing the contract
-    /// @param code - the exit code
-    /// Example:
+    ///  This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
+    ///  @brief Aborts execution of wasm without failing the contract
+    ///  @param code - the exit code
+    ///  Example:
     ///
-    /// @code
-    /// eosio_exit(0);
-    /// eosio_exit(1);
-    /// eosio_exit(2);
-    /// eosio_exit(3);
-    /// @endcode
+    ///  @code
+    ///  eosio_exit(0);
+    ///  eosio_exit(1);
+    ///  eosio_exit(2);
+    ///  eosio_exit(3);
+    ///  @endcode
     pub fn eosio_exit(code: i32);
 }
 extern "C" {
-    /// Returns the time in microseconds from 1970 of the current block
-    /// @brief Get time of the current block (i.e. the block including this action)
-    /// @return time in microseconds from 1970 of the current block
+    ///  Returns the time in microseconds from 1970 of the current block
+    ///  @brief Get time of the current block (i.e. the block including this action)
+    ///  @return time in microseconds from 1970 of the current block
     pub fn current_time() -> u64;
 }
 extern "C" {
-    /// Copy up to @ref len bytes of current action data to the specified location
+    ///  Copy up to @ref len bytes of current action data to the specified location
     ///
-    /// @brief Copy current action data to the specified location
-    /// @param msg - a pointer where up to @ref len bytes of the current action data will be copied
-    /// @param len - len of the current action data to be copied, 0 to report required size
-    /// @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
-    /// @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
-    /// @post `msg` is filled with packed action data
+    ///  @brief Copy current action data to the specified location
+    ///  @param msg - a pointer where up to @ref len bytes of the current action data will be copied
+    ///  @param len - len of the current action data to be copied, 0 to report required size
+    ///  @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed
+    ///  @pre `msg` is a valid pointer to a range of memory at least `len` bytes long
+    ///  @post `msg` is filled with packed action data
     pub fn read_action_data(msg: *mut crate::ctypes::c_void, len: u32) -> u32;
 }
 extern "C" {
@@ -99,106 +177,110 @@ extern "C" {
     pub fn action_data_size() -> u32;
 }
 extern "C" {
-    /// Add the specified account to set of accounts to be notified
+    ///  Add the specified account to set of accounts to be notified
     ///
-    /// @brief Add the specified account to set of accounts to be notified
-    /// @param name - name of the account to be verified
+    ///  @brief Add the specified account to set of accounts to be notified
+    ///  @param name - name of the account to be verified
     pub fn require_recipient(name: capi_name);
 }
 extern "C" {
-    /// Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
+    ///  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
     ///
-    /// @brief Verify specified account exists in the set of provided auths
-    /// @param name - name of the account to be verified
+    ///  @brief Verify specified account exists in the set of provided auths
+    ///  @param name - name of the account to be verified
     pub fn require_auth(name: capi_name);
 }
 extern "C" {
-    /// Verifies that @ref name has auth.
+    ///  Verifies that @ref name has auth.
     ///
-    /// @brief Verifies that @ref name has auth.
-    /// @param name - name of the account to be verified
+    ///  @brief Verifies that @ref name has auth.
+    ///  @param name - name of the account to be verified
     pub fn has_auth(name: capi_name) -> bool;
 }
 extern "C" {
-    /// Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
+    ///  Verifies that @ref name exists in the set of provided auths on a action. Throws if not found.
     ///
-    /// @brief Verify specified account exists in the set of provided auths
-    /// @param name - name of the account to be verified
-    /// @param permission - permission level to be verified
+    ///  @brief Verify specified account exists in the set of provided auths
+    ///  @param name - name of the account to be verified
+    ///  @param permission - permission level to be verified
     pub fn require_auth2(name: capi_name, permission: capi_name);
 }
 extern "C" {
+    ///  Verifies that @ref name is an existing account.
+    ///
+    ///  @brief Verifies that @ref name is an existing account.
+    ///  @param name - name of the account to check
     pub fn is_account(name: capi_name) -> bool;
 }
 extern "C" {
-    /// Send an inline action in the context of this action's parent transaction
+    ///  Send an inline action in the context of this action's parent transaction
     ///
-    /// @param serialized_action - serialized action
-    /// @param size - size of serialized action in bytes
-    /// @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
+    ///  @param serialized_action - serialized action
+    ///  @param size - size of serialized action in bytes
+    ///  @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
     pub fn send_inline(serialized_action: *mut crate::ctypes::c_char, size: usize);
 }
 extern "C" {
-    /// Send an inline context free action in the context of this action's parent transaction
+    ///  Send an inline context free action in the context of this action's parent transaction
     ///
-    /// @param serialized_action - serialized action
-    /// @param size - size of serialized action in bytes
-    /// @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
+    ///  @param serialized_action - serialized action
+    ///  @param size - size of serialized action in bytes
+    ///  @pre `serialized_action` is a valid pointer to an array at least `size` bytes long
     pub fn send_context_free_inline(serialized_action: *mut crate::ctypes::c_char, size: usize);
 }
 extern "C" {
-    /// Returns the time in microseconds from 1970 of the publication_time
-    /// @brief Get the publication time
-    /// @return the time in microseconds from 1970 of the publication_time
+    ///  Returns the time in microseconds from 1970 of the publication_time
+    ///  @brief Get the publication time
+    ///  @return the time in microseconds from 1970 of the publication_time
     pub fn publication_time() -> u64;
 }
 extern "C" {
-    /// Get the current receiver of the action
-    /// @brief Get the current receiver of the action
-    /// @return the account which specifies the current receiver of the action
+    ///  Get the current receiver of the action
+    ///  @brief Get the current receiver of the action
+    ///  @return the account which specifies the current receiver of the action
     pub fn current_receiver() -> capi_name;
 }
 extern "C" {
-    /// Gets the set of active producers.
-    /// @brief Gets the set of active producers.
+    ///  Gets the set of active producers.
+    ///  @brief Gets the set of active producers.
     ///
-    /// @param producers - Pointer to a buffer of account names
-    /// @param datalen - Byte length of buffer, when passed 0 will return the size required to store full output.
+    ///  @param producers - Pointer to a buffer of account names
+    ///  @param datalen - Byte length of buffer, when passed 0 will return the size required to store full output.
     ///
-    /// @return uint32_t - Number of bytes actually populated
-    /// @pre `producers` is a pointer to a range of memory at least `datalen` bytes long
-    /// @post the passed in `producers` pointer gets the array of active producers.
+    ///  @return uint32_t - Number of bytes actually populated
+    ///  @pre `producers` is a pointer to a range of memory at least `datalen` bytes long
+    ///  @post the passed in `producers` pointer gets the array of active producers.
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// capi_name producers[21];
-    /// uint32_t bytes_populated = get_active_producers(producers, sizeof(capi_name)*21);
-    /// @endcode
+    ///  @code
+    ///  capi_name producers[21];
+    ///  uint32_t bytes_populated = get_active_producers(producers, sizeof(capi_name)*21);
+    ///  @endcode
     pub fn get_active_producers(producers: *mut capi_name, datalen: u32) -> u32;
 }
 extern "C" {
-    /// Tests if the sha256 hash generated from data matches the provided checksum.
-    /// This method is optimized to a NO-OP when in fast evaluation mode.
-    /// @brief Tests if the sha256 hash generated from data matches the provided checksum.
+    ///  Tests if the sha256 hash generated from data matches the provided checksum.
+    ///  This method is optimized to a NO-OP when in fast evaluation mode.
+    ///  @brief Tests if the sha256 hash generated from data matches the provided checksum.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - `capi_checksum256*` hash to compare to
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - `capi_checksum256*` hash to compare to
     ///
-    /// @pre **assert256 hash** of `data` equals provided `hash` parameter.
-    /// @post Executes next statement. If was not `true`, hard return.
+    ///  @pre **assert256 hash** of `data` equals provided `hash` parameter.
+    ///  @post Executes next statement. If was not `true`, hard return.
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum hash;
-    /// char data;
-    /// uint32_t length;
-    /// assert_sha256( data, length, hash )
-    /// //If the sha256 hash generated from data does not equal provided hash, anything below will never fire.
-    /// eosio::print("sha256 hash generated from data equals provided hash");
-    /// @endcode
+    ///  @code
+    ///  checksum hash;
+    ///  char data;
+    ///  uint32_t length;
+    ///  assert_sha256( data, length, hash )
+    ///  //If the sha256 hash generated from data does not equal provided hash, anything below will never fire.
+    ///  eosio::print("sha256 hash generated from data equals provided hash");
+    ///  @endcode
     pub fn assert_sha256(
         data: *const crate::ctypes::c_char,
         length: u32,
@@ -206,27 +288,27 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Tests if the sha1 hash generated from data matches the provided checksum.
-    /// This method is optimized to a NO-OP when in fast evaluation mode.
-    /// @brief Tests if the sha1 hash generated from data matches the provided checksum.
+    ///  Tests if the sha1 hash generated from data matches the provided checksum.
+    ///  This method is optimized to a NO-OP when in fast evaluation mode.
+    ///  @brief Tests if the sha1 hash generated from data matches the provided checksum.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - `capi_checksum160*` hash to compare to
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - `capi_checksum160*` hash to compare to
     ///
-    /// @pre **sha1 hash** of `data` equals provided `hash` parameter.
-    /// @post Executes next statement. If was not `true`, hard return.
+    ///  @pre **sha1 hash** of `data` equals provided `hash` parameter.
+    ///  @post Executes next statement. If was not `true`, hard return.
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum hash;
-    /// char data;
-    /// uint32_t length;
-    /// assert_sha1( data, length, hash )
-    /// //If the sha1 hash generated from data does not equal provided hash, anything below will never fire.
-    /// eosio::print("sha1 hash generated from data equals provided hash");
-    /// @endcode
+    ///  @code
+    ///  checksum hash;
+    ///  char data;
+    ///  uint32_t length;
+    ///  assert_sha1( data, length, hash )
+    ///  //If the sha1 hash generated from data does not equal provided hash, anything below will never fire.
+    ///  eosio::print("sha1 hash generated from data equals provided hash");
+    ///  @endcode
     pub fn assert_sha1(
         data: *const crate::ctypes::c_char,
         length: u32,
@@ -234,27 +316,27 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Tests if the sha512 hash generated from data matches the provided checksum.
-    /// This method is optimized to a NO-OP when in fast evaluation mode.
-    /// @brief Tests if the sha512 hash generated from data matches the provided checksum.
+    ///  Tests if the sha512 hash generated from data matches the provided checksum.
+    ///  This method is optimized to a NO-OP when in fast evaluation mode.
+    ///  @brief Tests if the sha512 hash generated from data matches the provided checksum.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - `capi_checksum512*` hash to compare to
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - `capi_checksum512*` hash to compare to
     ///
-    /// @pre **assert512 hash** of `data` equals provided `hash` parameter.
-    /// @post Executes next statement. If was not `true`, hard return.
+    ///  @pre **assert512 hash** of `data` equals provided `hash` parameter.
+    ///  @post Executes next statement. If was not `true`, hard return.
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum hash;
-    /// char data;
-    /// uint32_t length;
-    /// assert_sha512( data, length, hash )
-    /// //If the sha512 hash generated from data does not equal provided hash, anything below will never fire.
-    /// eosio::print("sha512 hash generated from data equals provided hash");
-    /// @endcode
+    ///  @code
+    ///  checksum hash;
+    ///  char data;
+    ///  uint32_t length;
+    ///  assert_sha512( data, length, hash )
+    ///  //If the sha512 hash generated from data does not equal provided hash, anything below will never fire.
+    ///  eosio::print("sha512 hash generated from data equals provided hash");
+    ///  @endcode
     pub fn assert_sha512(
         data: *const crate::ctypes::c_char,
         length: u32,
@@ -262,26 +344,26 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Tests if the ripemod160 hash generated from data matches the provided checksum.
-    /// @brief Tests if the ripemod160 hash generated from data matches the provided checksum.
+    ///  Tests if the ripemod160 hash generated from data matches the provided checksum.
+    ///  @brief Tests if the ripemod160 hash generated from data matches the provided checksum.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - `capi_checksum160*` hash to compare to
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - `capi_checksum160*` hash to compare to
     ///
-    /// @pre **assert160 hash** of `data` equals provided `hash` parameter.
-    /// @post Executes next statement. If was not `true`, hard return.
+    ///  @pre **assert160 hash** of `data` equals provided `hash` parameter.
+    ///  @post Executes next statement. If was not `true`, hard return.
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum hash;
-    /// char data;
-    /// uint32_t length;
-    /// assert_ripemod160( data, length, hash )
-    /// //If the ripemod160 hash generated from data does not equal provided hash, anything below will never fire.
-    /// eosio::print("ripemod160 hash generated from data equals provided hash");
-    /// @endcode
+    ///  @code
+    ///  checksum hash;
+    ///  char data;
+    ///  uint32_t length;
+    ///  assert_ripemod160( data, length, hash )
+    ///  //If the ripemod160 hash generated from data does not equal provided hash, anything below will never fire.
+    ///  eosio::print("ripemod160 hash generated from data equals provided hash");
+    ///  @endcode
     pub fn assert_ripemd160(
         data: *const crate::ctypes::c_char,
         length: u32,
@@ -289,87 +371,88 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Hashes `data` using `sha256` and stores result in memory pointed to by hash.
-    /// @brief Hashes `data` using `sha256` and stores result in memory pointed to by hash.
+    ///  Hashes `data` using `sha256` and stores result in memory pointed to by hash.
+    ///  @brief Hashes `data` using `sha256` and stores result in memory pointed to by hash.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - Hash pointer
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - Hash pointer
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum calc_hash;
-    /// sha256( data, length, &calc_hash );
-    /// eos_assert( calc_hash == hash, "invalid hash" );
-    /// @endcode
+    ///  @code
+    ///  checksum calc_hash;
+    ///  sha256( data, length, &calc_hash );
+    ///  eos_assert( calc_hash == hash, "invalid hash" );
+    ///  @endcode
     pub fn sha256(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum256);
 }
 extern "C" {
-    /// Hashes `data` using `sha1` and stores result in memory pointed to by hash.
-    /// @brief Hashes `data` using `sha1` and stores result in memory pointed to by hash.
+    ///  Hashes `data` using `sha1` and stores result in memory pointed to by hash.
+    ///  @brief Hashes `data` using `sha1` and stores result in memory pointed to by hash.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - Hash pointer
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - Hash pointer
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum calc_hash;
-    /// sha1( data, length, &calc_hash );
-    /// eos_assert( calc_hash == hash, "invalid hash" );
-    /// @endcode
+    ///  @code
+    ///  checksum calc_hash;
+    ///  sha1( data, length, &calc_hash );
+    ///  eos_assert( calc_hash == hash, "invalid hash" );
+    ///  @endcode
     pub fn sha1(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
 }
 extern "C" {
-    /// Hashes `data` using `sha512` and stores result in memory pointed to by hash.
-    /// @brief Hashes `data` using `sha512` and stores result in memory pointed to by hash.
+    ///  Hashes `data` using `sha512` and stores result in memory pointed to by hash.
+    ///  @brief Hashes `data` using `sha512` and stores result in memory pointed to by hash.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - Hash pointer
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - Hash pointer
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum calc_hash;
-    /// sha512( data, length, &calc_hash );
-    /// eos_assert( calc_hash == hash, "invalid hash" );
-    /// @endcode
+    ///  @code
+    ///  checksum calc_hash;
+    ///  sha512( data, length, &calc_hash );
+    ///  eos_assert( calc_hash == hash, "invalid hash" );
+    ///  @endcode
     pub fn sha512(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum512);
 }
 extern "C" {
-    /// Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
-    /// @brief Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
+    ///  Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
+    ///  @brief Hashes `data` using `ripemod160` and stores result in memory pointed to by hash.
     ///
-    /// @param data - Data you want to hash
-    /// @param length - Data length
-    /// @param hash - Hash pointer
+    ///  @param data - Data you want to hash
+    ///  @param length - Data length
+    ///  @param hash - Hash pointer
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum calc_hash;
-    /// ripemod160( data, length, &calc_hash );
-    /// eos_assert( calc_hash == hash, "invalid hash" );
-    /// @endcode
+    ///  @code
+    ///  checksum calc_hash;
+    ///  ripemod160( data, length, &calc_hash );
+    ///  eos_assert( calc_hash == hash, "invalid hash" );
+    ///  @endcode
     pub fn ripemd160(data: *const crate::ctypes::c_char, length: u32, hash: *mut capi_checksum160);
 }
 extern "C" {
-    /// Calculates the public key used for a given signature and hash used to create a message.
-    /// @brief Calculates the public key used for a given signature and hash used to create a message.
+    ///  Calculates the public key used for a given signature and hash used to create a message.
+    ///  @brief Calculates the public key used for a given signature and hash used to create a message.
     ///
-    /// @param digest - Hash used to create a message
-    /// @param sig - Signature
-    /// @param siglen - Signature length
-    /// @param pub - Public key
-    /// @param publen - Public key length
+    ///  @param digest - Hash used to create a message
+    ///  @param sig - Signature
+    ///  @param siglen - Signature length
+    ///  @param pub - Public key
+    ///  @param publen - Public key length
+    ///   @return int - number of bytes written to pub
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// @endcode
+    ///  @code
+    ///  @endcode
     pub fn recover_key(
         digest: *const capi_checksum256,
         sig: *const crate::ctypes::c_char,
@@ -379,30 +462,30 @@ extern "C" {
     ) -> crate::ctypes::c_int;
 }
 extern "C" {
-    /// Tests a given public key with the generated key from digest and the signature.
-    /// @brief Tests a given public key with the generated key from digest and the signature.
+    ///  Tests a given public key with the generated key from digest and the signature.
+    ///  @brief Tests a given public key with the generated key from digest and the signature.
     ///
-    /// @param digest - What the key will be generated from
-    /// @param sig - Signature
-    /// @param siglen - Signature length
-    /// @param pub - Public key
-    /// @param publen - Public key length
+    ///  @param digest - What the key will be generated from
+    ///  @param sig - Signature
+    ///  @param siglen - Signature length
+    ///  @param pub - Public key
+    ///  @param publen - Public key length
     ///
-    /// @pre **assert recovery key** of `pub` equals the key generated from the `digest` parameter
-    /// @post Executes next statement. If was not `true`, hard return.
+    ///  @pre **assert recovery key** of `pub` equals the key generated from the `digest` parameter
+    ///  @post Executes next statement. If was not `true`, hard return.
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// checksum digest;
-    /// char sig;
-    /// size_t siglen;
-    /// char pub;
-    /// size_t publen;
-    /// assert_recover_key( digest, sig, siglen, pub, publen )
-    /// // If the given public key does not match with the generated key from digest and the signature, anything below will never fire.
-    /// eosio::print("pub key matches the pub key generated from digest");
-    /// @endcode
+    ///  @code
+    ///  checksum digest;
+    ///  char sig;
+    ///  size_t siglen;
+    ///  char pub;
+    ///  size_t publen;
+    ///  assert_recover_key( digest, sig, siglen, pub, publen )
+    ///  // If the given public key does not match with the generated key from digest and the signature, anything below will never fire.
+    ///  eosio::print("pub key matches the pub key generated from digest");
+    ///  @endcode
     pub fn assert_recover_key(
         digest: *const capi_checksum256,
         sig: *const crate::ctypes::c_char,
@@ -412,19 +495,19 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Store a record in a primary 64-bit integer index table
+    ///  Store a record in a primary 64-bit integer index table
     ///
-    /// @brief Store a record in a primary 64-bit integer index table
-    /// @param scope - The scope where the table resides (implied to be within the code of the current receiver)
-    /// @param table - The table name
-    /// @param payer - The account that pays for the storage costs
-    /// @param id - ID of the entry
-    /// @param data - Record to store
-    /// @param len - Size of data
-    /// @pre `data` is a valid pointer to a range of memory at least `len` bytes long
-    /// @pre `*((uint64_t*)data)` stores the primary key
-    /// @return iterator to the newly created table row
-    /// @post a new entry is created in the table
+    ///  @brief Store a record in a primary 64-bit integer index table
+    ///  @param scope - The scope where the table resides (implied to be within the code of the current receiver)
+    ///  @param table - The table name
+    ///  @param payer - The account that pays for the storage costs
+    ///  @param id - ID of the entry
+    ///  @param data - Record to store
+    ///  @param len - Size of data
+    ///  @pre `data` is a valid pointer to a range of memory at least `len` bytes long
+    ///  @pre `*((uint64_t*)data)` stores the primary key
+    ///  @return iterator to the newly created table row
+    ///  @post a new entry is created in the table
     pub fn db_store_i64(
         scope: u64,
         table: capi_name,
@@ -435,17 +518,17 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Update a record in a primary 64-bit integer index table
+    ///  Update a record in a primary 64-bit integer index table
     ///
-    /// @brief Update a record in a primary 64-bit integer index table
-    /// @param iterator - Iterator to the table row containing the record to update
-    /// @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
-    /// @param data - New updated record
-    /// @param len - Size of data
-    /// @pre `data` is a valid pointer to a range of memory at least `len` bytes long
-    /// @pre `*((uint64_t*)data)` stores the primary key
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
+    ///  @brief Update a record in a primary 64-bit integer index table
+    ///  @param iterator - Iterator to the table row containing the record to update
+    ///  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
+    ///  @param data - New updated record
+    ///  @param len - Size of data
+    ///  @pre `data` is a valid pointer to a range of memory at least `len` bytes long
+    ///  @pre `*((uint64_t*)data)` stores the primary key
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record
     pub fn db_update_i64(
         iterator: i32,
         payer: capi_name,
@@ -454,145 +537,145 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Remove a record from a primary 64-bit integer index table
+    ///  Remove a record from a primary 64-bit integer index table
     ///
-    /// @brief Remove a record from a primary 64-bit integer index table
-    /// @param iterator - Iterator to the table row to remove
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
+    ///  @brief Remove a record from a primary 64-bit integer index table
+    ///  @param iterator - Iterator to the table row to remove
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// int32_t itr = db_find_i64(receiver, receiver, table1, N(alice));
-    /// eosio_assert(itr >= 0, "Alice cannot be removed since she was already not found in the table");
-    /// db_remove_i64(itr);
-    /// @endcode
+    ///  @code
+    ///  int32_t itr = db_find_i64(receiver, receiver, table1, "alice"_n);
+    ///  eosio_assert(itr >= 0, "Alice cannot be removed since she was already not found in the table");
+    ///  db_remove_i64(itr);
+    ///  @endcode
     pub fn db_remove_i64(iterator: i32);
 }
 extern "C" {
-    /// Get a record in a primary 64-bit integer index table
+    ///  Get a record in a primary 64-bit integer index table
     ///
-    /// @brief Get a record in a primary 64-bit integer index table
-    /// @param iterator - The iterator to the table row containing the record to retrieve
-    /// @param data - Pointer to the buffer which will be filled with the retrieved record
-    /// @param len - Size of the buffer
-    /// @return size of the data copied into the buffer if `len > 0`, or size of the retrieved record if `len == 0`.
-    /// @pre `iterator` points to an existing table row in the table
-    /// @pre `data` is a valid pointer to a range of memory at least `len` bytes long
-    /// @post `data` will be filled with the retrieved record (truncated to the first `len` bytes if necessary)
+    ///  @brief Get a record in a primary 64-bit integer index table
+    ///  @param iterator - The iterator to the table row containing the record to retrieve
+    ///  @param data - Pointer to the buffer which will be filled with the retrieved record
+    ///  @param len - Size of the buffer
+    ///  @return size of the data copied into the buffer if `len > 0`, or size of the retrieved record if `len == 0`.
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @pre `data` is a valid pointer to a range of memory at least `len` bytes long
+    ///  @post `data` will be filled with the retrieved record (truncated to the first `len` bytes if necessary)
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// char value[50];
-    /// auto len = db_get_i64(itr, value, 0);
-    /// eosio_assert(len <= 50, "buffer to small to store retrieved record");
-    /// db_get_i64(itr, value, len);
-    /// @endcode
+    ///  @code
+    ///  char value[50];
+    ///  auto len = db_get_i64(itr, value, 0);
+    ///  eosio_assert(len <= 50, "buffer to small to store retrieved record");
+    ///  db_get_i64(itr, value, len);
+    ///  @endcode
     pub fn db_get_i64(iterator: i32, data: *const crate::ctypes::c_void, len: u32) -> i32;
 }
 extern "C" {
-    /// Find the table row following the referenced table row in a primary 64-bit integer index table
+    ///  Find the table row following the referenced table row in a primary 64-bit integer index table
     ///
-    /// @brief Find the table row following the referenced table row in a primary 64-bit integer index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
-    /// @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row following the referenced table row in a primary 64-bit integer index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
+    ///  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// int32_t charlie_itr = db_find_i64(receiver, receiver, table1, N(charlie));
-    /// // expect nothing after charlie
-    /// uint64_t prim = 0
-    /// int32_t  end_itr = db_next_i64(charlie_itr, &prim);
-    /// eosio_assert(end_itr < -1, "Charlie was not the last entry in the table");
-    /// @endcode
+    ///  @code
+    ///  int32_t charlie_itr = db_find_i64(receiver, receiver, table1, "charlie"_n);
+    ///  // expect nothing after charlie
+    ///  uint64_t prim = 0
+    ///  int32_t  end_itr = db_next_i64(charlie_itr, &prim);
+    ///  eosio_assert(end_itr < -1, "Charlie was not the last entry in the table");
+    ///  @endcode
     pub fn db_next_i64(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find the table row preceding the referenced table row in a primary 64-bit integer index table
+    ///  Find the table row preceding the referenced table row in a primary 64-bit integer index table
     ///
-    /// @brief Find the table row preceding the referenced table row in a primary 64-bit integer index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
-    /// @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
-    /// @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
-    /// @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row preceding the referenced table row in a primary 64-bit integer index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
+    ///  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
+    ///  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
+    ///  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// uint64_t prim = 0;
-    /// int32_t  itr_prev = db_previous_i64(itr, &prim);
-    /// @endcode
+    ///  @code
+    ///  uint64_t prim = 0;
+    ///  int32_t  itr_prev = db_previous_i64(itr, &prim);
+    ///  @endcode
     pub fn db_previous_i64(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find a table row in a primary 64-bit integer index table by primary key
+    ///  Find a table row in a primary 64-bit integer index table by primary key
     ///
-    /// @brief Find a table row in a primary 64-bit integer index table by primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param id - The primary key of the table row to look up
-    /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a primary 64-bit integer index table by primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param id - The primary key of the table row to look up
+    ///  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// int itr = db_find_i64(receiver, receiver, table1, N(charlie));
-    /// @endcode
+    ///  @code
+    ///  int itr = db_find_i64(receiver, receiver, table1, "charlie"_n);
+    ///  @endcode
     pub fn db_find_i64(code: capi_name, scope: u64, table: capi_name, id: u64) -> i32;
 }
 extern "C" {
-    /// Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key
-    /// The table row that matches the lowerbound condition is the first table row in the table with the lowest primary key that is >= the given key
+    ///  Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key
+    ///  The table row that matches the lowerbound condition is the first table row in the table with the lowest primary key that is >= the given key
     ///
-    /// @brief Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param id - The primary key used to determine the lowerbound
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param id - The primary key used to determine the lowerbound
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_lowerbound_i64(code: capi_name, scope: u64, table: capi_name, id: u64) -> i32;
 }
 extern "C" {
-    /// Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key
-    /// The table row that matches the upperbound condition is the first table row in the table with the lowest primary key that is > the given key
+    ///  Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key
+    ///  The table row that matches the upperbound condition is the first table row in the table with the lowest primary key that is > the given key
     ///
-    /// @brief Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param id - The primary key used to determine the upperbound
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param id - The primary key used to determine the upperbound
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_upperbound_i64(code: capi_name, scope: u64, table: capi_name, id: u64) -> i32;
 }
 extern "C" {
-    /// Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table
+    ///  Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table
     ///
-    /// @brief Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @return end iterator of the table
+    ///  @brief Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @return end iterator of the table
     pub fn db_end_i64(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
-    /// Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
+    ///  Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
     ///
-    /// @brief Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
-    /// @param scope - The scope where the table resides (implied to be within the code of the current receiver)
-    /// @param table - The table name
-    /// @param payer - The account that pays for the storage costs
-    /// @param id - The primary key to which to associate the secondary key
-    /// @param secondary - Pointer to the secondary key
-    /// @return iterator to the newly created table row
-    /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 64-bit integer index table
+    ///  @brief Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
+    ///  @param scope - The scope where the table resides (implied to be within the code of the current receiver)
+    ///  @param table - The table name
+    ///  @param payer - The account that pays for the storage costs
+    ///  @param id - The primary key to which to associate the secondary key
+    ///  @param secondary - Pointer to the secondary key
+    ///  @return iterator to the newly created table row
+    ///  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 64-bit integer index table
     pub fn db_idx64_store(
         scope: u64,
         table: capi_name,
@@ -602,58 +685,58 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
+    ///  Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
     ///
-    /// @brief Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
-    /// @param iterator - The iterator to the table row containing the secondary key association to update
-    /// @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
-    /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
+    ///  @brief Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table
+    ///  @param iterator - The iterator to the table row containing the secondary key association to update
+    ///  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
+    ///  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
     pub fn db_idx64_update(iterator: i32, payer: capi_name, secondary: *const u64);
 }
 extern "C" {
-    /// Remove a table row from a secondary 64-bit integer index table
+    ///  Remove a table row from a secondary 64-bit integer index table
     ///
-    /// @brief Remove a table row from a secondary 64-bit integer index table
-    /// @param iterator - Iterator to the table row to remove
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
+    ///  @brief Remove a table row from a secondary 64-bit integer index table
+    ///  @param iterator - Iterator to the table row to remove
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
     pub fn db_idx64_remove(iterator: i32);
 }
 extern "C" {
-    /// Find the table row following the referenced table row in a secondary 64-bit integer index table
+    ///  Find the table row following the referenced table row in a secondary 64-bit integer index table
     ///
-    /// @brief Find the table row following the referenced table row in a secondary 64-bit integer index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
-    /// @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row following the referenced table row in a secondary 64-bit integer index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
+    ///  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx64_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find the table row preceding the referenced table row in a secondary 64-bit integer index table
+    ///  Find the table row preceding the referenced table row in a secondary 64-bit integer index table
     ///
-    /// @brief Find the table row preceding the referenced table row in a secondary 64-bit integer index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
-    /// @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
-    /// @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
-    /// @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row preceding the referenced table row in a secondary 64-bit integer index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
+    ///  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
+    ///  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
+    ///  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx64_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary 64-bit integer index table by primary key
+    ///  Find a table row in a secondary 64-bit integer index table by primary key
     ///
-    /// @brief Find a table row in a secondary 64-bit integer index table by primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to a `uint64_t` variable which will have its value set to the secondary key of the found table row
-    /// @param primary - The primary key of the table row to look up
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary 64-bit integer index table by primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to a `uint64_t` variable which will have its value set to the secondary key of the found table row
+    ///  @param primary - The primary key of the table row to look up
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx64_find_primary(
         code: capi_name,
         scope: u64,
@@ -663,16 +746,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary 64-bit integer index table by secondary key
+    ///  Find a table row in a secondary 64-bit integer index table by secondary key
     ///
-    /// @brief Find a table row in a secondary 64-bit integer index table by secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key used to lookup the table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary 64-bit integer index table by secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key used to lookup the table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx64_find_secondary(
         code: capi_name,
         scope: u64,
@@ -682,18 +765,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key
-    /// The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
+    ///  Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key
+    ///  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
     ///
-    /// @brief Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx64_lowerbound(
         code: capi_name,
         scope: u64,
@@ -703,18 +786,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key
-    /// The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
+    ///  Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key
+    ///  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
     ///
-    /// @brief Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx64_upperbound(
         code: capi_name,
         scope: u64,
@@ -724,26 +807,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table
+    ///  Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table
     ///
-    /// @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @return end iterator of the table
+    ///  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @return end iterator of the table
     pub fn db_idx64_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
-    /// Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
+    ///  Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
     ///
-    /// @brief Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
-    /// @param scope - The scope where the table resides (implied to be within the code of the current receiver)
-    /// @param table - The table name
-    /// @param payer - The account that pays for the storage costs
-    /// @param id - The primary key to which to associate the secondary key
-    /// @param secondary - Pointer to the secondary key
-    /// @return iterator to the newly created table row
-    /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 128-bit integer index table
+    ///  @brief Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
+    ///  @param scope - The scope where the table resides (implied to be within the code of the current receiver)
+    ///  @param table - The table name
+    ///  @param payer - The account that pays for the storage costs
+    ///  @param id - The primary key to which to associate the secondary key
+    ///  @param secondary - Pointer to the secondary key
+    ///  @return iterator to the newly created table row
+    ///  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 128-bit integer index table
     pub fn db_idx128_store(
         scope: u64,
         table: capi_name,
@@ -753,58 +836,58 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
+    ///  Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
     ///
-    /// @brief Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
-    /// @param iterator - The iterator to the table row containing the secondary key association to update
-    /// @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
-    /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
+    ///  @brief Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table
+    ///  @param iterator - The iterator to the table row containing the secondary key association to update
+    ///  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
+    ///  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
     pub fn db_idx128_update(iterator: i32, payer: capi_name, secondary: *const uint128_t);
 }
 extern "C" {
-    /// Remove a table row from a secondary 128-bit integer index table
+    ///  Remove a table row from a secondary 128-bit integer index table
     ///
-    /// @brief Remove a table row from a secondary 128-bit integer index table
-    /// @param iterator - Iterator to the table row to remove
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
+    ///  @brief Remove a table row from a secondary 128-bit integer index table
+    ///  @param iterator - Iterator to the table row to remove
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
     pub fn db_idx128_remove(iterator: i32);
 }
 extern "C" {
-    /// Find the table row following the referenced table row in a secondary 128-bit integer index table
+    ///  Find the table row following the referenced table row in a secondary 128-bit integer index table
     ///
-    /// @brief Find the table row following the referenced table row in a secondary 128-bit integer index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
-    /// @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row following the referenced table row in a secondary 128-bit integer index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
+    ///  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx128_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find the table row preceding the referenced table row in a secondary 128-bit integer index table
+    ///  Find the table row preceding the referenced table row in a secondary 128-bit integer index table
     ///
-    /// @brief Find the table row preceding the referenced table row in a secondary 128-bit integer index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
-    /// @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
-    /// @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
-    /// @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row preceding the referenced table row in a secondary 128-bit integer index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
+    ///  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
+    ///  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
+    ///  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx128_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary 128-bit integer index table by primary key
+    ///  Find a table row in a secondary 128-bit integer index table by primary key
     ///
-    /// @brief Find a table row in a secondary 128-bit integer index table by primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to a `uint128_t` variable which will have its value set to the secondary key of the found table row
-    /// @param primary - The primary key of the table row to look up
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary 128-bit integer index table by primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to a `uint128_t` variable which will have its value set to the secondary key of the found table row
+    ///  @param primary - The primary key of the table row to look up
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx128_find_primary(
         code: capi_name,
         scope: u64,
@@ -814,16 +897,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary 128-bit integer index table by secondary key
+    ///  Find a table row in a secondary 128-bit integer index table by secondary key
     ///
-    /// @brief Find a table row in a secondary 128-bit integer index table by secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key used to lookup the table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary 128-bit integer index table by secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key used to lookup the table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx128_find_secondary(
         code: capi_name,
         scope: u64,
@@ -833,18 +916,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key
-    /// The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
+    ///  Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key
+    ///  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
     ///
-    /// @brief Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx128_lowerbound(
         code: capi_name,
         scope: u64,
@@ -854,18 +937,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key
-    /// The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
+    ///  Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key
+    ///  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
     ///
-    /// @brief Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx128_upperbound(
         code: capi_name,
         scope: u64,
@@ -875,27 +958,27 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table
+    ///  Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table
     ///
-    /// @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @return end iterator of the table
+    ///  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @return end iterator of the table
     pub fn db_idx128_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
-    /// Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table
+    ///  Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table
     ///
-    /// @brief Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table
-    /// @param scope - The scope where the table resides (implied to be within the code of the current receiver)
-    /// @param table - The table name
-    /// @param payer - The account that pays for the storage costs
-    /// @param id - The primary key to which to associate the secondary key
-    /// @param data - Pointer to the secondary key data stored as an array of 2 `uint128_t` integers
-    /// @param data_len - Must be set to 2
-    /// @return iterator to the newly created table row
-    /// @post new secondary key association between primary key `id` and the specified secondary key is created in the secondary 256-bit index table
+    ///  @brief Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table
+    ///  @param scope - The scope where the table resides (implied to be within the code of the current receiver)
+    ///  @param table - The table name
+    ///  @param payer - The account that pays for the storage costs
+    ///  @param id - The primary key to which to associate the secondary key
+    ///  @param data - Pointer to the secondary key data stored as an array of 2 `uint128_t` integers
+    ///  @param data_len - Must be set to 2
+    ///  @return iterator to the newly created table row
+    ///  @post new secondary key association between primary key `id` and the specified secondary key is created in the secondary 256-bit index table
     pub fn db_idx256_store(
         scope: u64,
         table: capi_name,
@@ -906,60 +989,60 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table
+    ///  Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table
     ///
-    /// @brief Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table
-    /// @param iterator - The iterator to the table row containing the secondary key association to update
-    /// @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
-    /// @param data - Pointer to the **new** secondary key data (which is stored as an array of 2 `uint128_t` integers) that will replace the existing one of the association
-    /// @param data_len - Must be set to 2
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the secondary key of the table row pointed to by `iterator` is replaced by the specified secondary key
+    ///  @brief Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table
+    ///  @param iterator - The iterator to the table row containing the secondary key association to update
+    ///  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
+    ///  @param data - Pointer to the **new** secondary key data (which is stored as an array of 2 `uint128_t` integers) that will replace the existing one of the association
+    ///  @param data_len - Must be set to 2
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the secondary key of the table row pointed to by `iterator` is replaced by the specified secondary key
     pub fn db_idx256_update(iterator: i32, payer: capi_name, data: *const uint128_t, data_len: u32);
 }
 extern "C" {
-    /// Remove a table row from a secondary 256-bit index table
+    ///  Remove a table row from a secondary 256-bit index table
     ///
-    /// @brief Remove a table row from a secondary 256-bit index table
-    /// @param iterator - Iterator to the table row to remove
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
+    ///  @brief Remove a table row from a secondary 256-bit index table
+    ///  @param iterator - Iterator to the table row to remove
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
     pub fn db_idx256_remove(iterator: i32);
 }
 extern "C" {
-    /// Find the table row following the referenced table row in a secondary 256-bit index table
+    ///  Find the table row following the referenced table row in a secondary 256-bit index table
     ///
-    /// @brief Find the table row following the referenced table row in a secondary 256-bit index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
-    /// @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row following the referenced table row in a secondary 256-bit index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
+    ///  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx256_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find the table row preceding the referenced table row in a secondary 256-bit index table
+    ///  Find the table row preceding the referenced table row in a secondary 256-bit index table
     ///
-    /// @brief Find the table row preceding the referenced table row in a secondary 256-bit index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
-    /// @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
-    /// @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
-    /// @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row preceding the referenced table row in a secondary 256-bit index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
+    ///  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
+    ///  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
+    ///  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx256_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary 256-bit index table by primary key
+    ///  Find a table row in a secondary 256-bit index table by primary key
     ///
-    /// @brief Find a table row in a secondary 128-bit integer index table by primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param data - Pointer to the an array of 2 `uint128_t` integers which will act as the buffer to hold the retrieved secondary key of the found table row
-    /// @param data_len - Must be set to 2
-    /// @param primary - The primary key of the table row to look up
-    /// @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
-    /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary 128-bit integer index table by primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param data - Pointer to the an array of 2 `uint128_t` integers which will act as the buffer to hold the retrieved secondary key of the found table row
+    ///  @param data_len - Must be set to 2
+    ///  @param primary - The primary key of the table row to look up
+    ///  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
+    ///  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx256_find_primary(
         code: capi_name,
         scope: u64,
@@ -970,17 +1053,17 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary 256-bit index table by secondary key
+    ///  Find a table row in a secondary 256-bit index table by secondary key
     ///
-    /// @brief Find a table row in a secondary 256-bit index table by secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) used to lookup the table row
-    /// @param data_len - Must be set to 2
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the first table row with a secondary key equal to the specified secondary key or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary 256-bit index table by secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) used to lookup the table row
+    ///  @param data_len - Must be set to 2
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the first table row with a secondary key equal to the specified secondary key or the end iterator of the table if the table row could not be found
     pub fn db_idx256_find_secondary(
         code: capi_name,
         scope: u64,
@@ -991,19 +1074,19 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key
-    /// The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key (uses lexicographical ordering on the 256-bit keys)
+    ///  Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key
+    ///  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key (uses lexicographical ordering on the 256-bit keys)
     ///
-    /// @brief Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
-    /// @param data_len - Must be set to 2
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
+    ///  @param data_len - Must be set to 2
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx256_lowerbound(
         code: capi_name,
         scope: u64,
@@ -1014,19 +1097,19 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key
-    /// The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key (uses lexicographical ordering on the 256-bit keys)
+    ///  Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key
+    ///  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key (uses lexicographical ordering on the 256-bit keys)
     ///
-    /// @brief Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) first used to determine the upperbound and which is then replaced with the secondary key of the found table row
-    /// @param data_len - Must be set to 2
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) first used to determine the upperbound and which is then replaced with the secondary key of the found table row
+    ///  @param data_len - Must be set to 2
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx256_upperbound(
         code: capi_name,
         scope: u64,
@@ -1037,26 +1120,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table
+    ///  Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table
     ///
-    /// @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @return end iterator of the table
+    ///  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @return end iterator of the table
     pub fn db_idx256_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
-    /// Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
+    ///  Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
     ///
-    /// @brief Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
-    /// @param scope - The scope where the table resides (implied to be within the code of the current receiver)
-    /// @param table - The table name
-    /// @param payer - The account that pays for the storage costs
-    /// @param id - The primary key to which to associate the secondary key
-    /// @param secondary - Pointer to the secondary key
-    /// @return iterator to the newly created table row
-    /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary double-precision floating-point index table
+    ///  @brief Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
+    ///  @param scope - The scope where the table resides (implied to be within the code of the current receiver)
+    ///  @param table - The table name
+    ///  @param payer - The account that pays for the storage costs
+    ///  @param id - The primary key to which to associate the secondary key
+    ///  @param secondary - Pointer to the secondary key
+    ///  @return iterator to the newly created table row
+    ///  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary double-precision floating-point index table
     pub fn db_idx_double_store(
         scope: u64,
         table: capi_name,
@@ -1066,58 +1149,58 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
+    ///  Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
     ///
-    /// @brief Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
-    /// @param iterator - The iterator to the table row containing the secondary key association to update
-    /// @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
-    /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
+    ///  @brief Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table
+    ///  @param iterator - The iterator to the table row containing the secondary key association to update
+    ///  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
+    ///  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
     pub fn db_idx_double_update(iterator: i32, payer: capi_name, secondary: *const f64);
 }
 extern "C" {
-    /// Remove a table row from a secondary double-precision floating-point index table
+    ///  Remove a table row from a secondary double-precision floating-point index table
     ///
-    /// @brief Remove a table row from a secondary double-precision floating-point index table
-    /// @param iterator - Iterator to the table row to remove
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
+    ///  @brief Remove a table row from a secondary double-precision floating-point index table
+    ///  @param iterator - Iterator to the table row to remove
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
     pub fn db_idx_double_remove(iterator: i32);
 }
 extern "C" {
-    /// Find the table row following the referenced table row in a secondary double-precision floating-point index table
+    ///  Find the table row following the referenced table row in a secondary double-precision floating-point index table
     ///
-    /// @brief Find the table row following the referenced table row in a secondary double-precision floating-point index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
-    /// @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row following the referenced table row in a secondary double-precision floating-point index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
+    ///  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx_double_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find the table row preceding the referenced table row in a secondary double-precision floating-point index table
+    ///  Find the table row preceding the referenced table row in a secondary double-precision floating-point index table
     ///
-    /// @brief Find the table row preceding the referenced table row in a secondary double-precision floating-point index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
-    /// @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
-    /// @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
-    /// @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row preceding the referenced table row in a secondary double-precision floating-point index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
+    ///  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
+    ///  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
+    ///  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx_double_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary double-precision floating-point index table by primary key
+    ///  Find a table row in a secondary double-precision floating-point index table by primary key
     ///
-    /// @brief Find a table row in a secondary double-precision floating-point index table by primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to a `double` variable which will have its value set to the secondary key of the found table row
-    /// @param primary - The primary key of the table row to look up
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary double-precision floating-point index table by primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to a `double` variable which will have its value set to the secondary key of the found table row
+    ///  @param primary - The primary key of the table row to look up
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_find_primary(
         code: capi_name,
         scope: u64,
@@ -1127,16 +1210,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary double-precision floating-point index table by secondary key
+    ///  Find a table row in a secondary double-precision floating-point index table by secondary key
     ///
-    /// @brief Find a table row in a secondary double-precision floating-point index table by secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key used to lookup the table row
-    /// @param primary - Pointer to a `double` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary double-precision floating-point index table by secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key used to lookup the table row
+    ///  @param primary - Pointer to a `double` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_find_secondary(
         code: capi_name,
         scope: u64,
@@ -1146,18 +1229,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key
-    /// The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
+    ///  Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key
+    ///  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
     ///
-    /// @brief Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_lowerbound(
         code: capi_name,
         scope: u64,
@@ -1167,18 +1250,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key
-    /// The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
+    ///  Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key
+    ///  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
     ///
-    /// @brief Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_double_upperbound(
         code: capi_name,
         scope: u64,
@@ -1188,26 +1271,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table
+    ///  Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table
     ///
-    /// @brief Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @return end iterator of the table
+    ///  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @return end iterator of the table
     pub fn db_idx_double_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
-    /// Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
+    ///  Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
     ///
-    /// @brief Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
-    /// @param scope - The scope where the table resides (implied to be within the code of the current receiver)
-    /// @param table - The table name
-    /// @param payer - The account that pays for the storage costs
-    /// @param id - The primary key to which to associate the secondary key
-    /// @param secondary - Pointer to the secondary key
-    /// @return iterator to the newly created table row
-    /// @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary quadruple-precision floating-point index table
+    ///  @brief Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
+    ///  @param scope - The scope where the table resides (implied to be within the code of the current receiver)
+    ///  @param table - The table name
+    ///  @param payer - The account that pays for the storage costs
+    ///  @param id - The primary key to which to associate the secondary key
+    ///  @param secondary - Pointer to the secondary key
+    ///  @return iterator to the newly created table row
+    ///  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary quadruple-precision floating-point index table
     pub fn db_idx_long_double_store(
         scope: u64,
         table: capi_name,
@@ -1217,58 +1300,58 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
+    ///  Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
     ///
-    /// @brief Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
-    /// @param iterator - The iterator to the table row containing the secondary key association to update
-    /// @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
-    /// @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
+    ///  @brief Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table
+    ///  @param iterator - The iterator to the table row containing the secondary key association to update
+    ///  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)
+    ///  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`
     pub fn db_idx_long_double_update(iterator: i32, payer: capi_name, secondary: *const f64);
 }
 extern "C" {
-    /// Remove a table row from a secondary quadruple-precision floating-point index table
+    ///  Remove a table row from a secondary quadruple-precision floating-point index table
     ///
-    /// @brief Remove a table row from a secondary quadruple-precision floating-point index table
-    /// @param iterator - Iterator to the table row to remove
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
+    ///  @brief Remove a table row from a secondary quadruple-precision floating-point index table
+    ///  @param iterator - Iterator to the table row to remove
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer
     pub fn db_idx_long_double_remove(iterator: i32);
 }
 extern "C" {
-    /// Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table
+    ///  Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table
     ///
-    /// @brief Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
-    /// @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
-    /// @pre `iterator` points to an existing table row in the table
-    /// @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row
+    ///  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)
+    ///  @pre `iterator` points to an existing table row in the table
+    ///  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx_long_double_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table
+    ///  Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table
     ///
-    /// @brief Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table
-    /// @param iterator - The iterator to the referenced table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
-    /// @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
-    /// @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
-    /// @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
+    ///  @brief Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table
+    ///  @param iterator - The iterator to the referenced table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row
+    ///  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)
+    ///  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table
+    ///  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched
     pub fn db_idx_long_double_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary quadruple-precision floating-point index table by primary key
+    ///  Find a table row in a secondary quadruple-precision floating-point index table by primary key
     ///
-    /// @brief Find a table row in a secondary quadruple-precision floating-point index table by primary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to a `long double` variable which will have its value set to the secondary key of the found table row
-    /// @param primary - The primary key of the table row to look up
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary quadruple-precision floating-point index table by primary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to a `long double` variable which will have its value set to the secondary key of the found table row
+    ///  @param primary - The primary key of the table row to look up
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_find_primary(
         code: capi_name,
         scope: u64,
@@ -1278,16 +1361,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find a table row in a secondary quadruple-precision floating-point index table by secondary key
+    ///  Find a table row in a secondary quadruple-precision floating-point index table by secondary key
     ///
-    /// @brief Find a table row in a secondary quadruple-precision floating-point index table by secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key used to lookup the table row
-    /// @param primary - Pointer to a `long double` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
+    ///  @brief Find a table row in a secondary quadruple-precision floating-point index table by secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key used to lookup the table row
+    ///  @param primary - Pointer to a `long double` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_find_secondary(
         code: capi_name,
         scope: u64,
@@ -1297,18 +1380,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key
-    /// The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
+    ///  Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key
+    ///  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key
     ///
-    /// @brief Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_lowerbound(
         code: capi_name,
         scope: u64,
@@ -1318,18 +1401,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key
-    /// The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
+    ///  Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key
+    ///  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key
     ///
-    /// @brief Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
-    /// @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
-    /// @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
-    /// @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
-    /// @return iterator to the found table row or the end iterator of the table if the table row could not be found
+    ///  @brief Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row
+    ///  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row
+    ///  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row
+    ///  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row
+    ///  @return iterator to the found table row or the end iterator of the table if the table row could not be found
     pub fn db_idx_long_double_upperbound(
         code: capi_name,
         scope: u64,
@@ -1339,26 +1422,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table
+    ///  Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table
     ///
-    /// @brief Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table
-    /// @param code - The name of the owner of the table
-    /// @param scope - The scope where the table resides
-    /// @param table - The table name
-    /// @return end iterator of the table
+    ///  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table
+    ///  @param code - The name of the owner of the table
+    ///  @param scope - The scope where the table resides
+    ///  @param table - The table name
+    ///  @return end iterator of the table
     pub fn db_idx_long_double_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
-    /// @brief Checks if a transaction is authorized by a provided set of keys and permissions
+    ///  @brief Checks if a transaction is authorized by a provided set of keys and permissions
     ///
-    /// @param trx_data - pointer to the start of the serialized transaction
-    /// @param trx_size - size (in bytes) of the serialized transaction
-    /// @param pubkeys_data - pointer to the start of the serialized vector of provided public keys
-    /// @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)
-    /// @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)
-    /// @param perms_size - size (in bytes) of the serialized vector of provided permissions
+    ///  @param trx_data - pointer to the start of the serialized transaction
+    ///  @param trx_size - size (in bytes) of the serialized transaction
+    ///  @param pubkeys_data - pointer to the start of the serialized vector of provided public keys
+    ///  @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)
+    ///  @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)
+    ///  @param perms_size - size (in bytes) of the serialized vector of provided permissions
     ///
-    /// @return 1 if the transaction is authorized, 0 otherwise
+    ///  @return 1 if the transaction is authorized, 0 otherwise
     pub fn check_transaction_authorization(
         trx_data: *const crate::ctypes::c_char,
         trx_size: u32,
@@ -1369,17 +1452,17 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// @brief Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
+    ///  @brief Checks if a permission is authorized by a provided delay and a provided set of keys and permissions
     ///
-    /// @param account    - the account owner of the permission
-    /// @param permission - the name of the permission to check for authorization
-    /// @param pubkeys_data - pointer to the start of the serialized vector of provided public keys
-    /// @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)
-    /// @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)
-    /// @param perms_size - size (in bytes) of the serialized vector of provided permissions
-    /// @param delay_us - the provided delay in microseconds (cannot exceed INT64_MAX)
+    ///  @param account    - the account owner of the permission
+    ///  @param permission - the name of the permission to check for authorization
+    ///  @param pubkeys_data - pointer to the start of the serialized vector of provided public keys
+    ///  @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)
+    ///  @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)
+    ///  @param perms_size - size (in bytes) of the serialized vector of provided permissions
+    ///  @param delay_us - the provided delay in microseconds (cannot exceed INT64_MAX)
     ///
-    /// @return 1 if the permission is authorized, 0 otherwise
+    ///  @return 1 if the permission is authorized, 0 otherwise
     pub fn check_permission_authorization(
         account: capi_name,
         permission: capi_name,
@@ -1391,45 +1474,45 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
-    /// @brief Returns the last used time of a permission
+    ///  @brief Returns the last used time of a permission
     ///
-    /// @param account    - the account owner of the permission
-    /// @param permission - the name of the permission
+    ///  @param account    - the account owner of the permission
+    ///  @param permission - the name of the permission
     ///
-    /// @return the last used time (in microseconds since Unix epoch) of the permission
+    ///  @return the last used time (in microseconds since Unix epoch) of the permission
     pub fn get_permission_last_used(account: capi_name, permission: capi_name) -> i64;
 }
 extern "C" {
-    /// @brief Returns the creation time of an account
+    ///  @brief Returns the creation time of an account
     ///
-    /// @param account    - the account
+    ///  @param account    - the account
     ///
-    /// @return the creation time (in microseconds since Unix epoch) of the account
+    ///  @return the creation time (in microseconds since Unix epoch) of the account
     pub fn get_account_creation_time(account: capi_name) -> i64;
 }
 extern "C" {
-    /// Prints string
-    /// @brief Prints string
-    /// @param cstr - a null terminated string
+    ///  Prints string
+    ///  @brief Prints string
+    ///  @param cstr - a null terminated string
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// prints("Hello World!"); // Output: Hello World!
-    /// @endcode
+    ///  @code
+    ///  prints("Hello World!"); // Output: Hello World!
+    ///  @endcode
     pub fn prints(cstr: *const crate::ctypes::c_char);
 }
 extern "C" {
-    /// Prints string up to given length
-    /// @brief Prints string
-    /// @param cstr - pointer to string
-    /// @param len - len of string to be printed
+    ///  Prints string up to given length
+    ///  @brief Prints string
+    ///  @param cstr - pointer to string
+    ///  @param len - len of string to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// prints_l("Hello World!", 5); // Output: Hello
-    /// @endcode
+    ///  @code
+    ///  prints_l("Hello World!", 5); // Output: Hello
+    ///  @endcode
     pub fn prints_l(cstr: *const crate::ctypes::c_char, len: u32);
 }
 extern "C" {
@@ -1437,11 +1520,11 @@ extern "C" {
     /// @brief Prints value as a 64 bit signed integer
     /// @param value of 64 bit signed integer to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// printi(-1e+18); // Output: -1000000000000000000
-    /// @endcode
+    ///  @code
+    ///  printi(-1e+18); // Output: -1000000000000000000
+    ///  @endcode
     pub fn printi(value: i64);
 }
 extern "C" {
@@ -1449,11 +1532,11 @@ extern "C" {
     /// @brief Prints value as a 64 bit unsigned integer
     /// @param value of 64 bit unsigned integer to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// printui(1e+18); // Output: 1000000000000000000
-    /// @endcode
+    ///  @code
+    ///  printui(1e+18); // Output: 1000000000000000000
+    ///  @endcode
     pub fn printui(value: u64);
 }
 extern "C" {
@@ -1461,12 +1544,12 @@ extern "C" {
     /// @brief Prints value as a 128 bit signed integer
     /// @param value is a pointer to the 128 bit signed integer to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// int128_t large_int(-87654323456);
-    /// printi128(&large_int); // Output: -87654323456
-    /// @endcode
+    ///  @code
+    ///  int128_t large_int(-87654323456);
+    ///  printi128(&large_int); // Output: -87654323456
+    ///  @endcode
     pub fn printi128(value: *const int128_t);
 }
 extern "C" {
@@ -1474,12 +1557,12 @@ extern "C" {
     /// @brief Prints value as a 128 bit unsigned integer
     /// @param value is a pointer to the 128 bit unsigned integer to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// uint128_t large_int(87654323456);
-    /// printui128(&large_int); // Output: 87654323456
-    /// @endcode
+    ///  @code
+    ///  uint128_t large_int(87654323456);
+    ///  printui128(&large_int); // Output: 87654323456
+    ///  @endcode
     pub fn printui128(value: *const uint128_t);
 }
 extern "C" {
@@ -1487,12 +1570,12 @@ extern "C" {
     /// @brief Prints value as single-precision floating point number (i.e. float)
     /// @param value of float to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// float value = 5.0 / 10.0;
-    /// printsf(value); // Output: 0.5
-    /// @endcode
+    ///  @code
+    ///  float value = 5.0 / 10.0;
+    ///  printsf(value); // Output: 0.5
+    ///  @endcode
     pub fn printsf(value: f32);
 }
 extern "C" {
@@ -1500,12 +1583,12 @@ extern "C" {
     /// @brief Prints value as double-precision floating point number (i.e. double)
     /// @param value of double to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// double value = 5.0 / 10.0;
-    /// printdf(value); // Output: 0.5
-    /// @endcode
+    ///  @code
+    ///  double value = 5.0 / 10.0;
+    ///  printdf(value); // Output: 0.5
+    ///  @endcode
     pub fn printdf(value: f64);
 }
 extern "C" {
@@ -1513,12 +1596,12 @@ extern "C" {
     /// @brief Prints value as quadruple-precision floating point number (i.e. long double)
     /// @param value is a pointer to the long double to be printed
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// long double value = 5.0 / 10.0;
-    /// printqf(value); // Output: 0.5
-    /// @endcode
+    ///  @code
+    ///  long double value = 5.0 / 10.0;
+    ///  printqf(value); // Output: 0.5
+    ///  @endcode
     pub fn printqf(value: *const f64);
 }
 extern "C" {
@@ -1528,7 +1611,7 @@ extern "C" {
     ///
     /// Example:
     /// @code
-    /// printn(N(abcde)); // Output: abcde
+    /// printn("abcde"_n); // Output: abcde
     /// @endcode
     pub fn printn(name: u64);
 }
@@ -1623,14 +1706,14 @@ extern "C" {
     pub fn activate_feature(f: i64);
 }
 extern "C" {
-    /// Sends a deferred transaction.
+    ///  Sends a deferred transaction.
     ///
-    /// @brief Sends a deferred transaction.
-    /// @param sender_id - ID of sender
-    /// @param payer - Account paying for RAM
-    /// @param serialized_transaction - Pointer of serialized transaction to be deferred
-    /// @param size - Size to reserve
-    /// @param replace_existing - f this is `0` then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction
+    ///  @brief Sends a deferred transaction.
+    ///  @param sender_id - ID of sender
+    ///  @param payer - Account paying for RAM
+    ///  @param serialized_transaction - Pointer of serialized transaction to be deferred
+    ///  @param size - Size to reserve
+    ///  @param replace_existing - f this is `0` then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction
     pub fn send_deferred(
         sender_id: *const uint128_t,
         payer: capi_name,
@@ -1640,23 +1723,23 @@ extern "C" {
     );
 }
 extern "C" {
-    /// Cancels a deferred transaction.
+    ///  Cancels a deferred transaction.
     ///
-    /// @brief Cancels a deferred transaction.
-    /// @param sender_id - The id of the sender
+    ///  @brief Cancels a deferred transaction.
+    ///  @param sender_id - The id of the sender
     ///
-    /// @pre The deferred transaction ID exists.
-    /// @pre The deferred transaction ID has not yet been published.
-    /// @post Deferred transaction canceled.
+    ///  @pre The deferred transaction ID exists.
+    ///  @pre The deferred transaction ID has not yet been published.
+    ///  @post Deferred transaction canceled.
     ///
-    /// @return 1 if transaction was canceled, 0 if transaction was not found
+    ///  @return 1 if transaction was canceled, 0 if transaction was not found
     ///
-    /// Example:
+    ///  Example:
     ///
-    /// @code
-    /// id = 0xffffffffffffffff
-    /// cancel_deferred( id );
-    /// @endcode
+    ///  @code
+    ///  id = 0xffffffffffffffff
+    ///  cancel_deferred( id );
+    ///  @endcode
     pub fn cancel_deferred(sender_id: *const uint128_t) -> crate::ctypes::c_int;
 }
 extern "C" {

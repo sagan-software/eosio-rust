@@ -1,5 +1,3 @@
-extern crate eosio;
-
 use eosio::*;
 
 #[test]

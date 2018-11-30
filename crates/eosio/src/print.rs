@@ -1,5 +1,3 @@
-use crate::lib::String;
-
 pub trait Print {
     fn print(&self);
 }
@@ -71,7 +69,7 @@ impl<'a> Print for &'a str {
 
 #[cfg(feature = "contract")]
 #[cfg(any(feature = "std", feature = "alloc"))]
-impl<'a> Print for String {
+impl<'a> Print for crate::lib::String {
     fn print(&self) {
         self.as_str().print()
     }

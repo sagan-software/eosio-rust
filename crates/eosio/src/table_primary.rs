@@ -352,7 +352,7 @@ where
         let mut pk = 0u64;
         let ptr: *mut u64 = &mut pk;
         unsafe { ::eosio_sys::db_previous_i64(end, ptr) };
-        if pk >= ::std::u64::MAX {
+        if pk == ::std::u64::MAX {
             None
         } else {
             Some(pk + 1)

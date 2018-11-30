@@ -1,5 +1,7 @@
 use crate::account::{AccountName, Authorization};
-use crate::bytes::{NumBytes, Read, ReadError, Write, WriteError};
+use crate::bytes::NumBytes;
+#[cfg(feature = "contract")]
+use crate::bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
@@ -57,11 +59,11 @@ where
 #[derive(Clone, Debug)]
 pub struct ActionId(u128);
 
+#[cfg(feature = "contract")]
 impl<Data> Action<Data>
 where
     Data: Write + NumBytes,
 {
-    #[cfg(feature = "contract")]
     pub fn send_inline(&self) -> Result<(), WriteError> {
         let size = self.num_bytes() + 1; // 1 extra byte is needed
         let mut bytes = vec![0u8; size];
@@ -75,7 +77,6 @@ where
         Ok(())
     }
 
-    #[cfg(feature = "contract")]
     pub fn send_deferred<P>(
         &self,
         _id: ActionId,
@@ -89,7 +90,6 @@ where
         Ok(())
     }
 
-    #[cfg(feature = "contract")]
     pub fn cancel_deferred(_id: ActionId) -> Result<(), ()> {
         // TODO
         Ok(())
@@ -109,11 +109,10 @@ pub trait ToAction: Sized {
     }
 }
 
+#[cfg(feature = "contract")]
 pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
-    #[cfg(feature = "contract")]
     fn execute(self);
 
-    #[cfg(feature = "contract")]
     fn read_data() -> Result<(Self, usize), ReadError> {
         let num_bytes = unsafe { ::eosio_sys::action_data_size() };
         let mut bytes = vec![0u8; num_bytes as usize];
@@ -125,7 +124,6 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
         Self::read(&bytes, 0)
     }
 
-    #[cfg(feature = "contract")]
     fn send_inline(self, authorization: Vec<Authorization>) -> Result<(), WriteError> {
         self.to_action(AccountName::receiver(), authorization)
             .send_inline()

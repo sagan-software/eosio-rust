@@ -5,7 +5,6 @@ use eosio_macros::*;
 #[derive(
     Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, NumBytes, Hash, PartialOrd, Ord,
 )]
-#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 pub struct SymbolName(u64);
 
 impl From<u64> for SymbolName {

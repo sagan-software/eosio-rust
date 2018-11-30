@@ -1,6 +1,5 @@
 #[cfg(feature = "contract")]
 use crate::assert::*;
-use crate::lib::*;
 use eosio_macros::*;
 
 #[derive(
@@ -101,12 +100,20 @@ impl Time {
         Time(u64::from(days) * Self::DAY)
     }
 
-    pub fn max(&self, other: Self) -> Self {
-        Time(self.0.max(other.0))
+    pub fn max(self, other: Self) -> Self {
+        if self >= other {
+            self
+        } else {
+            other
+        }
     }
 
-    pub fn min(&self, other: Self) -> Self {
-        Time(self.0.min(other.0))
+    pub fn min(self, other: Self) -> Self {
+        if self <= other {
+            self
+        } else {
+            other
+        }
     }
 }
 

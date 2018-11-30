@@ -1,25 +1,14 @@
+#[cfg(feature = "contract")]
 use crate::account::AccountName;
-use crate::bytes::{NumBytes, Read, ReadError, Write, WriteError};
+use crate::bytes::NumBytes;
+#[cfg(feature = "contract")]
+use crate::bytes::{Read, ReadError, Write, WriteError};
 use crate::symbol::SymbolName;
 use eosio_macros::*;
 
 eosio_name!(TableName);
 
 eosio_name!(ScopeName);
-
-// impl From<AccountName> for ScopeName {
-//     fn from(account: AccountName) -> Self {
-//         let value: u64 = account.into();
-//         value.into()
-//     }
-// }
-
-// impl From<ScopeName> for AccountName {
-//     fn from(scope: ScopeName) -> Self {
-//         let value: u64 = scope.into();
-//         value.into()
-//     }
-// }
 
 impl From<SymbolName> for ScopeName {
     fn from(symbol: SymbolName) -> Self {

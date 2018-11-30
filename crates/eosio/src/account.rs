@@ -1,3 +1,4 @@
+#[cfg(feature = "contract")]
 use crate::time::Time;
 use crate::{eosio_name, n, NumBytes, Read, Write};
 

@@ -1,7 +1,3 @@
-#![feature(proc_macro_hygiene)]
-
-extern crate eosio;
-
 use eosio::*;
 
 macro_rules! test_type {
