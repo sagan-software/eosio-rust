@@ -20,6 +20,8 @@ test_string_to_name!(
     string_to_name_uppercase, "TEST", Err(ParseNameError::BadChar('T'))
     string_to_name_only_letters, "test", Ok(14_605_613_396_213_628_928)
     string_to_name_special_char, "test!", Err(ParseNameError::BadChar('!'))
+    string_to_name_with_periods, "a.b.c", Ok(3_462_709_561_541_001_216)
+    string_to_name_with_only_periods, "...", Ok(0) // TODO is this valid?
 );
 
 macro_rules! test_name_to_string {
@@ -36,6 +38,7 @@ test_name_to_string!(
     name_to_string_only_numbers, 614_251_535_012_020_768, "123451234512"
     name_to_string_only_letters, 14_605_613_396_213_628_928, "test"
     name_to_string_zero, 0, ""
+    name_to_string_with_periods, 3_462_709_561_541_001_216, "a.b.c"
 );
 
 macro_rules! test_symbol_name_length {
