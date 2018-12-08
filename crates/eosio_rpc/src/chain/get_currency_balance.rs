@@ -1,34 +1,29 @@
+use crate::{Builder, Client, Error};
 use eosio::AccountName;
 use serde_derive::Serialize;
 
-const PATH: &str = "/v1/chain/get_currency_balance";
-
 #[derive(Serialize)]
-struct Params {
+pub struct GetCurrencyBalanceBuilder {
     code: AccountName,
     account: AccountName,
     symbol: String,
 }
 
-pub type GetCurrencyBalance = Vec<String>;
-
-pub fn get_currency_balance<C, A>(
-    node: &str,
-    code: C,
-    account: A,
-    symbol: &str,
-) -> impl ::futures::Future<Item = GetCurrencyBalance, Error = crate::Error>
-where
-    C: Into<AccountName>,
-    A: Into<AccountName>,
-{
-    crate::http::post(
-        node,
-        PATH,
-        Params {
-            code: code.into(),
-            account: account.into(),
-            symbol: symbol.into(),
-        },
-    )
+impl Builder for GetCurrencyBalanceBuilder {
+    const PATH: &'static str = "/v1/chain/get_currency_balance";
+    type Output = GetCurrencyBalance;
 }
+
+pub fn get_currency_balance(
+    code: AccountName,
+    account: AccountName,
+    symbol: &str,
+) -> GetCurrencyBalanceBuilder {
+    GetCurrencyBalanceBuilder {
+        code,
+        account,
+        symbol: symbol.to_string(),
+    }
+}
+
+pub type GetCurrencyBalance = Vec<String>;

@@ -1,7 +1,18 @@
+use crate::{Client, Builder};
 use eosio::AccountName;
 use serde_derive::{Deserialize, Serialize};
 
-const PATH: &str = "/v1/chain/get_info";
+#[derive(Serialize)]
+pub struct GetInfoBuilder {}
+
+impl Builder for GetInfoBuilder {
+    const PATH: &'static str = "/v1/chain/get_info";
+    type Output = GetInfo;
+}
+
+pub fn get_info() -> GetInfoBuilder {
+    GetInfoBuilder {}
+}
 
 pub type ChainId = String;
 
@@ -28,8 +39,4 @@ pub struct GetInfo {
     pub virtual_block_net_limit: u32,
     pub block_cpu_limit: u32,
     pub block_net_limit: u32,
-}
-
-pub fn get_info(node: &str) -> impl ::futures::Future<Item = GetInfo, Error = crate::Error> {
-    crate::http::get(node, PATH)
 }
