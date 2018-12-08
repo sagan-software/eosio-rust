@@ -5,3 +5,4 @@
 *_gc_opt.wat
 *_gc_opt_wat.wasm
 node_modules
+Cargo.lock
