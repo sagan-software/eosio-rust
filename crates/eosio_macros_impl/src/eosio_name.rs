@@ -86,6 +86,10 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 let name = #eosio::sys::string_to_name(value.as_str())?;
                 Ok(name.into())
             }
+
+            pub fn as_u64(&self) -> u64 {
+                self.0
+            }
         }
 
         #[automatically_derived]
@@ -254,6 +258,10 @@ pub fn expand(input: TokenStream) -> TokenStream {
             pub fn from_string(value: String) -> Result<Self, #eosio::ParseNameError> {
                 let name = #eosio::sys::string_to_name(value.as_str())?;
                 Ok(name.into())
+            }
+
+            pub fn as_u64(&self) -> u64 {
+                self.0
             }
         }
 
