@@ -41,7 +41,7 @@ macro_rules! impl_num {
                 for i in 0..width {
                     match bytes.get(pos + i) {
                         Some(b) => {
-                            let shift = <$t as From<u8>>::from(i as u8) * <$t as From<u8>>::from(8_u8);
+                            let shift = <$t as From<u8>>::from(i as u8).saturating_mul(<$t as From<u8>>::from(8_u8));
                             num |= <$t as From<u8>>::from(*b) << shift;
                         }
                         None => return Err(ReadError::NotEnoughBytes),
@@ -65,7 +65,7 @@ macro_rules! impl_num {
                     match bytes.get_mut(pos.saturating_add(i)) {
                         Some(byte) => {
                             let ff = <$t as From<u8>>::from(0xff);
-                            let shift = <$t as From<u8>>::from(i as u8).saturating_add(<$t as From<u8>>::from(8_u8));
+                            let shift = <$t as From<u8>>::from(i as u8).saturating_mul(<$t as From<u8>>::from(8_u8));
                             let result = ((*self >> shift) & ff).try_into();
                             match result {
                                 Ok(b) => *byte = b,
