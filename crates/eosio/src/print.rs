@@ -4,6 +4,7 @@ pub trait Print {
 
 #[cfg(feature = "contract")]
 impl Print for u8 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printui(u64::from(*self)) }
     }
@@ -11,6 +12,7 @@ impl Print for u8 {
 
 #[cfg(feature = "contract")]
 impl Print for u16 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printui(u64::from(*self)) }
     }
@@ -18,6 +20,7 @@ impl Print for u16 {
 
 #[cfg(feature = "contract")]
 impl Print for u32 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printui(u64::from(*self)) }
     }
@@ -25,6 +28,7 @@ impl Print for u32 {
 
 #[cfg(feature = "contract")]
 impl Print for u64 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printui(*self) }
     }
@@ -32,6 +36,7 @@ impl Print for u64 {
 
 #[cfg(feature = "contract")]
 impl Print for i8 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printi(i64::from(*self)) }
     }
@@ -39,6 +44,7 @@ impl Print for i8 {
 
 #[cfg(feature = "contract")]
 impl Print for i16 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printi(i64::from(*self)) }
     }
@@ -46,6 +52,7 @@ impl Print for i16 {
 
 #[cfg(feature = "contract")]
 impl Print for i32 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printi(i64::from(*self)) }
     }
@@ -53,6 +60,7 @@ impl Print for i32 {
 
 #[cfg(feature = "contract")]
 impl Print for i64 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printi(*self) }
     }
@@ -60,6 +68,7 @@ impl Print for i64 {
 
 #[cfg(feature = "contract")]
 impl<'a> Print for &'a str {
+    #[inline]
     fn print(&self) {
         let ptr = self.as_ptr();
         let len = self.len() as u32;
@@ -70,6 +79,7 @@ impl<'a> Print for &'a str {
 #[cfg(feature = "contract")]
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl<'a> Print for crate::lib::String {
+    #[inline]
     fn print(&self) {
         self.as_str().print()
     }
@@ -77,6 +87,7 @@ impl<'a> Print for crate::lib::String {
 
 #[cfg(feature = "contract")]
 impl Print for bool {
+    #[inline]
     fn print(&self) {
         let out = if *self { "true" } else { "false" };
         unsafe { ::eosio_sys::prints(out.as_ptr()) }
@@ -85,6 +96,7 @@ impl Print for bool {
 
 #[cfg(feature = "contract")]
 impl Print for usize {
+    #[inline]
     fn print(&self) {
         (*self as u32).print()
     }
@@ -92,6 +104,7 @@ impl Print for usize {
 
 #[cfg(feature = "contract")]
 impl Print for f32 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printsf(*self) }
     }
@@ -99,6 +112,7 @@ impl Print for f32 {
 
 #[cfg(feature = "contract")]
 impl Print for f64 {
+    #[inline]
     fn print(&self) {
         unsafe { ::eosio_sys::printdf(*self) }
     }
@@ -106,6 +120,7 @@ impl Print for f64 {
 
 #[cfg(feature = "contract")]
 impl Print for char {
+    #[inline]
     fn print(&self) {
         let num = *self as u8;
         let ptr = &num as *const ::eosio_sys::c_char;
@@ -118,6 +133,7 @@ impl<P> Print for Option<P>
 where
     P: Print,
 {
+    #[inline]
     fn print(&self) {
         match self {
             Some(p) => {

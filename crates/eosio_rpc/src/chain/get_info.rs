@@ -1,4 +1,4 @@
-use crate::{Client, Builder};
+use crate::{Builder, Client};
 use eosio::AccountName;
 use serde_derive::{Deserialize, Serialize};
 

@@ -1,4 +1,5 @@
 /// Aborts processing of this action and unwinds all pending changes if the test condition is true
+#[inline]
 pub fn eosio_assert(test: bool, msg: &str) {
     #[cfg(feature = "contract")]
     {
@@ -10,6 +11,7 @@ pub fn eosio_assert(test: bool, msg: &str) {
 }
 
 /// Aborts processing of this action and unwinds all pending changes if the test condition is true
+#[inline]
 pub fn eosio_assert_code<C>(test: bool, code: C)
 where
     C: Into<u64>,
@@ -24,31 +26,32 @@ pub trait Assert<T> {
 }
 
 impl<T, E> Assert<T> for Result<T, E> {
+    #[inline]
     fn assert(self, msg: &str) -> T {
-        match self {
-            Ok(t) => t,
-            Err(_) => {
-                eosio_assert(false, msg);
-                unreachable!();
-            }
+        if let Ok(t) = self {
+            t
+        } else {
+            eosio_assert(false, msg);
+            unreachable!();
         }
     }
 }
 
 impl<T> Assert<T> for Option<T> {
+    #[inline]
     fn assert(self, msg: &str) -> T {
-        match self {
-            Some(t) => t,
-            None => {
-                eosio_assert(false, msg);
-                unreachable!();
-            }
+        if let Some(t) = self {
+            t
+        } else {
+            eosio_assert(false, msg);
+            unreachable!();
         }
     }
 }
 
 impl Assert<bool> for bool {
-    fn assert(self, msg: &str) -> bool {
+    #[inline]
+    fn assert(self, msg: &str) -> Self {
         if self {
             true
         } else {

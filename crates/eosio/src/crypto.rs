@@ -12,10 +12,11 @@ pub trait Hasher: Assert<()> {
 #[derive(
     Read, Write, NumBytes, Default, Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord,
 )]
-pub struct Ripemd160([u8; 20usize]);
+pub struct Ripemd160([u8; 20_usize]);
 
 #[cfg(feature = "contract")]
 impl Hasher for Ripemd160 {
+    #[inline]
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -28,12 +29,13 @@ impl Hasher for Ripemd160 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Ripemd160 {
+    #[inline]
     fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
             hash: self.0,
-            __bindgen_padding_0: [0u32; 3],
+            __bindgen_padding_0: [0_u32; 3],
         };
         let c_hash_ptr: *const capi_checksum160 = &c_hash as *const capi_checksum160;
         unsafe { ::eosio_sys::assert_ripemd160(data_ptr, data_len, c_hash_ptr) }
@@ -43,10 +45,11 @@ impl Assert<()> for Ripemd160 {
 #[derive(
     Read, Write, NumBytes, Default, Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord,
 )]
-pub struct Sha1([u8; 20usize]);
+pub struct Sha1([u8; 20_usize]);
 
 #[cfg(feature = "contract")]
 impl Hasher for Sha1 {
+    #[inline]
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -59,12 +62,13 @@ impl Hasher for Sha1 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Sha1 {
+    #[inline]
     fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
             hash: self.0,
-            __bindgen_padding_0: [0u32; 3],
+            __bindgen_padding_0: [0_u32; 3],
         };
         let c_hash_ptr: *const capi_checksum160 = &c_hash as *const capi_checksum160;
         unsafe { ::eosio_sys::assert_sha1(data_ptr, data_len, c_hash_ptr) }
@@ -72,10 +76,11 @@ impl Assert<()> for Sha1 {
 }
 
 #[derive(Read, Write, NumBytes, Default, Clone, Copy)]
-pub struct Sha256([u8; 32usize]);
+pub struct Sha256([u8; 32_usize]);
 
 #[cfg(feature = "contract")]
 impl Hasher for Sha256 {
+    #[inline]
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -88,6 +93,7 @@ impl Hasher for Sha256 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Sha256 {
+    #[inline]
     fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -98,10 +104,11 @@ impl Assert<()> for Sha256 {
 }
 
 #[derive(Read, Write, NumBytes, Clone, Copy)]
-pub struct Sha512([u8; 64usize]);
+pub struct Sha512([u8; 64_usize]);
 
 #[cfg(feature = "contract")]
 impl Hasher for Sha512 {
+    #[inline]
     fn new(data: &str) -> Self {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
@@ -114,6 +121,7 @@ impl Hasher for Sha512 {
 
 #[cfg(feature = "contract")]
 impl Assert<()> for Sha512 {
+    #[inline]
     fn assert(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;

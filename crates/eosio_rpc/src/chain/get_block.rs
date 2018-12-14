@@ -1,4 +1,4 @@
-use crate::{Builder, Client, Error};
+use crate::Builder;
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize)]

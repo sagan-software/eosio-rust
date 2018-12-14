@@ -59,6 +59,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         #[automatically_derived]
         impl #impl_generics #eosio::NumBytes for #name #ty_generics #where_clause {
+            #[inline]
             fn num_bytes(&self) -> usize {
                 let mut count = 0;
                 #add_to_count

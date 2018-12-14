@@ -62,6 +62,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         #[automatically_derived]
         impl #impl_generics #eosio::Write for #name #ty_generics #where_clause {
+            #[inline]
             fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, #eosio::WriteError> {
                 #writes
             }

@@ -8,24 +8,28 @@ use eosio_macros::*;
 pub struct SymbolName(u64);
 
 impl From<u64> for SymbolName {
+    #[inline]
     fn from(n: u64) -> Self {
         SymbolName(n)
     }
 }
 
 impl From<SymbolName> for u64 {
+    #[inline]
     fn from(s: SymbolName) -> Self {
         s.0
     }
 }
 
 impl From<SymbolName> for [char; 7] {
+    #[inline]
     fn from(s: SymbolName) -> Self {
         chars_from_symbol_value(s.0)
     }
 }
 
 impl ToString for SymbolName {
+    #[inline]
     fn to_string(&self) -> String {
         let chars: [char; 7] = (*self).into();
         let s: String = chars.iter().collect();
@@ -34,9 +38,10 @@ impl ToString for SymbolName {
 }
 
 impl SymbolName {
+    #[inline]
     pub fn is_valid(self) -> bool {
         let chars = chars_from_symbol_value(self.0);
-        for &c in chars.iter() {
+        for &c in &chars {
             if !('A' <= c && c <= 'Z') {
                 return false;
             }
@@ -49,7 +54,7 @@ fn chars_from_symbol_value(value: u64) -> [char; 7] {
     let mut sym = value;
     let ff: u64 = 0xff;
     let mut chars = [' '; 7];
-    for c in chars.iter_mut() {
+    for c in &mut chars {
         let b = sym & ff;
         if b == 0 {
             break;
@@ -62,9 +67,10 @@ fn chars_from_symbol_value(value: u64) -> [char; 7] {
 
 #[cfg(feature = "contract")]
 impl Print for SymbolName {
+    #[inline]
     fn print(&self) {
         let chars: [char; 7] = (*self).into();
-        for &c in chars.iter() {
+        for &c in &chars {
             if c == ' ' {
                 return;
             }
@@ -80,24 +86,30 @@ impl Print for SymbolName {
 pub struct Symbol(u64);
 
 impl Symbol {
+    #[inline]
     pub fn precision(self) -> u64 {
         self.0 & 255
     }
+    #[inline]
     pub fn name(self) -> SymbolName {
         SymbolName(self.0 >> 8)
     }
+    #[inline]
     pub fn name_length(self) -> usize {
         ::eosio_sys::symbol_name_length(self.0)
     }
+    #[inline]
     pub fn value(self) -> u64 {
         self.0
     }
+    #[inline]
     pub fn is_valid(self) -> bool {
         self.name().is_valid()
     }
 }
 
 impl From<u64> for Symbol {
+    #[inline]
     fn from(n: u64) -> Self {
         Symbol(n)
     }
@@ -105,6 +117,7 @@ impl From<u64> for Symbol {
 
 #[cfg(feature = "contract")]
 impl Print for Symbol {
+    #[inline]
     fn print(&self) {
         self.precision().print();
         ','.print();
@@ -113,6 +126,7 @@ impl Print for Symbol {
 }
 
 impl PartialEq<u64> for Symbol {
+    #[inline]
     fn eq(&self, other: &u64) -> bool {
         self.value() == *other
     }
@@ -126,6 +140,7 @@ pub struct ExtendedSymbol {
 
 #[cfg(feature = "contract")]
 impl Print for ExtendedSymbol {
+    #[inline]
     fn print(&self) {
         self.symbol.print();
         '@'.print();

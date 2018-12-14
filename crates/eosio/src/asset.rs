@@ -12,26 +12,27 @@ pub struct Asset {
 }
 
 impl Asset {
+    #[inline]
     pub fn is_valid(&self) -> bool {
         self.symbol.is_valid()
     }
 }
 
 impl ToString for Asset {
+    #[inline]
     fn to_string(&self) -> String {
         let precision = self.symbol.precision();
-        let amount = (self.amount as f64) / 10f64.powf(precision as f64);
+        let amount = (self.amount as f64) / 10_f64.powf(precision as f64);
         let symbol_name = self.symbol.name().to_string();
         let mut s = amount.to_string();
         let mut decimals = if s.contains('.') {
             s.as_str()
                 .rsplit('.')
                 .next()
-                .map(|x| x.len() as u64)
-                .unwrap_or_else(|| 0u64)
+                .map_or_else(|| 0_u64, |x| x.len() as u64)
         } else {
             s.push_str(".");
-            0u64
+            0_u64
         };
         while decimals < precision {
             s.push_str("0");
@@ -45,6 +46,7 @@ impl ToString for Asset {
 
 #[cfg(feature = "serde")]
 impl ::serde::Serialize for Asset {
+    #[inline]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: ::serde::Serializer,
@@ -56,6 +58,7 @@ impl ::serde::Serialize for Asset {
 
 impl Add for Asset {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         eosio_assert(
             self.symbol == other.symbol,
@@ -73,6 +76,7 @@ impl Add for Asset {
 }
 
 impl AddAssign for Asset {
+    #[inline]
     fn add_assign(&mut self, other: Self) {
         eosio_assert(
             self.symbol == other.symbol,
@@ -88,6 +92,7 @@ impl AddAssign for Asset {
 
 impl Sub for Asset {
     type Output = Self;
+    #[inline]
     fn sub(self, other: Self) -> Self {
         eosio_assert(
             self.symbol == other.symbol,
@@ -105,6 +110,7 @@ impl Sub for Asset {
 }
 
 impl SubAssign for Asset {
+    #[inline]
     fn sub_assign(&mut self, other: Self) {
         eosio_assert(
             self.symbol == other.symbol,
@@ -120,6 +126,7 @@ impl SubAssign for Asset {
 
 impl Mul for Asset {
     type Output = Self;
+    #[inline]
     fn mul(self, other: Self) -> Self {
         eosio_assert(
             self.symbol == other.symbol,
@@ -137,6 +144,7 @@ impl Mul for Asset {
 }
 
 impl MulAssign for Asset {
+    #[inline]
     fn mul_assign(&mut self, other: Self) {
         eosio_assert(
             self.symbol == other.symbol,
@@ -152,6 +160,7 @@ impl MulAssign for Asset {
 
 impl Div for Asset {
     type Output = Self;
+    #[inline]
     fn div(self, other: Self) -> Self {
         eosio_assert(
             self.symbol == other.symbol,
@@ -170,6 +179,7 @@ impl Div for Asset {
 }
 
 impl DivAssign for Asset {
+    #[inline]
     fn div_assign(&mut self, other: Self) {
         eosio_assert(
             self.symbol == other.symbol,
@@ -186,6 +196,7 @@ impl DivAssign for Asset {
 
 impl Rem for Asset {
     type Output = Self;
+    #[inline]
     fn rem(self, other: Self) -> Self {
         eosio_assert(
             self.symbol == other.symbol,
@@ -204,6 +215,7 @@ impl Rem for Asset {
 }
 
 impl RemAssign for Asset {
+    #[inline]
     fn rem_assign(&mut self, other: Self) {
         eosio_assert(
             self.symbol == other.symbol,

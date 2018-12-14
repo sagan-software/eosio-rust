@@ -14,14 +14,15 @@ where
     code: AccountName,
     scope: ScopeName,
     table: TableName,
-    _data: PhantomData<T>,
+    data: PhantomData<T>,
 }
 
 impl<T> PartialEq for PrimaryTableCursor<T>
 where
     T: TableRow,
 {
-    fn eq(&self, other: &PrimaryTableCursor<T>) -> bool {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
         self.value == other.value
             && self.code == other.code
             && self.scope == other.scope
@@ -34,6 +35,7 @@ impl<T> Print for PrimaryTableCursor<T>
 where
     T: TableRow,
 {
+    #[inline]
     fn print(&self) {
         "PrimaryTableCursor(".print();
         self.value.print();
@@ -45,10 +47,11 @@ impl<T> TableCursor<T> for PrimaryTableCursor<T>
 where
     T: TableRow,
 {
+    #[inline]
     fn get(&self) -> Result<T, ReadError> {
         let nullptr: *mut c_void = ::std::ptr::null_mut() as *mut _ as *mut c_void;
         let size = unsafe { ::eosio_sys::db_get_i64(self.value, nullptr, 0) };
-        let mut bytes = vec![0u8; size as usize];
+        let mut bytes = vec![0_u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
             ::eosio_sys::db_get_i64(self.value, ptr, size as u32);
@@ -56,6 +59,7 @@ where
         T::read(&bytes, 0).map(|(t, _)| t)
     }
 
+    #[inline]
     fn erase(&self) -> Result<T, ReadError> {
         let item = self.get()?;
         let pk = item.primary_key();
@@ -76,9 +80,10 @@ where
         Ok(item)
     }
 
+    #[inline]
     fn modify(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError> {
         let table = PrimaryTableIndex::new(self.code, self.scope, self.table);
-        table.modify(&self, payer, item)
+        table.modify(self, payer, item)
     }
 }
 
@@ -88,6 +93,7 @@ where
 {
     type Item = Self;
     type IntoIter = PrimaryTableIterator<T>;
+    #[inline]
     fn into_iter(self) -> Self::IntoIter {
         let end = unsafe {
             ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.into())
@@ -98,7 +104,7 @@ where
             code: self.code,
             scope: self.scope,
             table: self.table,
-            _data: PhantomData,
+            data: PhantomData,
         }
     }
 }
@@ -113,7 +119,7 @@ where
     code: AccountName,
     scope: ScopeName,
     table: TableName,
-    _data: PhantomData<T>,
+    data: PhantomData<T>,
 }
 
 impl<T> Iterator for PrimaryTableIterator<T>
@@ -121,6 +127,7 @@ where
     T: TableRow,
 {
     type Item = PrimaryTableCursor<T>;
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         if self.value == self.end {
             return None;
@@ -131,10 +138,10 @@ where
             code: self.code,
             scope: self.scope,
             table: self.table,
-            _data: PhantomData,
+            data: PhantomData,
         };
 
-        let mut pk = 0u64;
+        let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
         self.value = unsafe { ::eosio_sys::db_next_i64(self.value, ptr) };
 
@@ -146,6 +153,7 @@ impl<T> DoubleEndedIterator for PrimaryTableIterator<T>
 where
     T: TableRow,
 {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         if self.value == -1 {
             return None;
@@ -156,10 +164,10 @@ where
             code: self.code,
             scope: self.scope,
             table: self.table,
-            _data: PhantomData,
+            data: PhantomData,
         };
 
-        let mut pk = 0u64;
+        let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
         self.value = unsafe { ::eosio_sys::db_previous_i64(self.value, ptr) };
 
@@ -177,7 +185,7 @@ where
     code: AccountName,
     scope: ScopeName,
     name: TableName,
-    _data: PhantomData<T>,
+    data: PhantomData<T>,
 }
 
 impl<'a, T> TableIndex<'a, u64, T> for PrimaryTableIndex<T>
@@ -186,6 +194,7 @@ where
 {
     type Cursor = PrimaryTableCursor<T>;
 
+    #[inline]
     fn lower_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
     where
         N: Into<u64>,
@@ -199,19 +208,20 @@ where
             )
         };
         let end = self.end();
-        if itr != end {
+        if itr == end {
+            None
+        } else {
             Some(PrimaryTableCursor {
                 value: itr,
                 code: self.code,
                 scope: self.scope,
                 table: self.name,
-                _data: self._data,
+                data: self.data,
             })
-        } else {
-            None
         }
     }
 
+    #[inline]
     fn upper_bound<N>(&'a self, key: N) -> Option<Self::Cursor>
     where
         N: Into<u64>,
@@ -225,23 +235,24 @@ where
             )
         };
         let end = self.end();
-        if itr != end {
+        if itr == end {
+            None
+        } else {
             Some(PrimaryTableCursor {
                 value: itr,
                 code: self.code,
                 scope: self.scope,
                 table: self.name,
-                _data: self._data,
+                data: self.data,
             })
-        } else {
-            None
         }
     }
 
+    #[inline]
     fn emplace(&self, payer: AccountName, item: &T) -> Result<(), WriteError> {
         let id = item.primary_key();
         let size = item.num_bytes();
-        let mut bytes = vec![0u8; size];
+        let mut bytes = vec![0_u8; size];
         let pos = item.write(&mut bytes, 0)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         unsafe {
@@ -271,41 +282,44 @@ impl<T> PrimaryTableIndex<T>
 where
     T: TableRow,
 {
+    #[inline]
     pub fn new<C, S, N>(code: C, scope: S, name: N) -> Self
     where
         C: Into<AccountName>,
         S: Into<ScopeName>,
         N: Into<TableName>,
     {
-        PrimaryTableIndex {
+        Self {
             code: code.into(),
             scope: scope.into(),
             name: name.into(),
-            _data: PhantomData,
+            data: PhantomData,
         }
     }
 
+    #[inline]
     pub fn begin(&self) -> Option<PrimaryTableCursor<T>> {
-        self.lower_bound(::std::u64::MIN)
+        self.lower_bound(u64::min_value())
     }
 
+    #[inline]
     pub fn iter(&self) -> PrimaryTableIterator<T> {
-        self.begin()
-            .map(|c| c.into_iter())
-            .unwrap_or_else(|| PrimaryTableIterator {
-                value: 0,
-                end: 0,
-                code: self.code,
-                scope: self.scope,
-                table: self.name,
-                _data: PhantomData,
-            })
+        self.begin().map_or_else(|| PrimaryTableIterator {
+            value: 0,
+            end: 0,
+            code: self.code,
+            scope: self.scope,
+            table: self.name,
+            data: PhantomData,
+        }, |c| c.into_iter())
     }
 
+    #[inline]
     pub fn count(&self) -> usize {
         self.iter().count()
     }
 
+    #[inline]
     pub fn exists<Id>(&self, id: Id) -> bool
     where
         Id: Into<u64>,
@@ -317,6 +331,7 @@ where
         unsafe { ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into()) }
     }
 
+    #[inline]
     pub fn find<Id>(&self, id: Id) -> Option<PrimaryTableCursor<T>>
     where
         Id: Into<u64>,
@@ -338,25 +353,22 @@ where
                 code: self.code,
                 scope: self.scope,
                 table: self.name,
-                _data: self._data,
+                data: self.data,
             })
         }
     }
 
+    #[inline]
     pub fn available_primary_key(&self) -> Option<u64> {
         if self.begin().is_none() {
             return Some(0);
         }
 
         let end = self.end();
-        let mut pk = 0u64;
+        let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
         unsafe { ::eosio_sys::db_previous_i64(end, ptr) };
-        if pk == ::std::u64::MAX {
-            None
-        } else {
-            Some(pk + 1)
-        }
+        pk.checked_add(1)
     }
 
     fn modify(
@@ -366,11 +378,11 @@ where
         item: &T,
     ) -> Result<usize, WriteError> {
         let size = item.num_bytes();
-        let mut bytes = vec![0u8; size];
+        let mut bytes = vec![0_u8; size];
         let pos = item.write(&mut bytes, 0)?;
-        let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-        let payer = payer.unwrap_or_else(|| 0u64.into());
-        unsafe { ::eosio_sys::db_update_i64(itr.value, payer.into(), ptr, pos as u32) }
+        let bytes_ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
+        let payer = payer.unwrap_or_else(|| 0_u64.into());
+        unsafe { ::eosio_sys::db_update_i64(itr.value, payer.into(), bytes_ptr, pos as u32) }
 
         let pk = item.primary_key();
 

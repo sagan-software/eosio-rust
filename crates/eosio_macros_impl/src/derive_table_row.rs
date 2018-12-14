@@ -74,6 +74,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     impl #impl_generics #eosio::TableRow for #name #ty_generics #where_clause {
                         const TABLE_NAME: u64 = #eosio::n!(#table_name);
 
+                        #[inline]
                         fn primary_key(&self) -> u64 {
                             self.#primary_key.into()
                         }
@@ -176,6 +177,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             secondary_keys_constructors = quote! {
                                 #secondary_keys_constructors
 
+                                #[inline]
                                 pub fn #ident<C, S>(code: C, scope: S) -> #eosio::SecondaryTableIndex<#ty, Self>
                                 where
                                     C: Into<#eosio::AccountName>,
@@ -199,9 +201,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     impl #impl_generics #eosio::TableRow for #name #ty_generics #where_clause {
                         const TABLE_NAME: u64 = #eosio::n!(#table_name);
 
+                        #[inline]
                         fn primary_key(&self) -> u64 {
                             self.#primary_key.into()
                         }
+
+                        #[inline]
                         fn secondary_keys(&self) -> [Option<&#eosio::SecondaryTableKey>; 16] {
                             [
                                 #secondary_keys_expanded

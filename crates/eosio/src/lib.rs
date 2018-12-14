@@ -1,4 +1,13 @@
 #![feature(try_from, custom_attribute, concat_idents)]
+#![warn(
+    clippy::all,
+    clippy::restriction,
+    clippy::pedantic,
+    clippy::nursery,
+    clippy::cargo
+)]
+
+/// Docs
 
 use static_assertions::assert_cfg;
 
@@ -7,7 +16,9 @@ assert_cfg!(
     "feature = 'contract' and feature = 'stdweb' cannot both be enabled"
 );
 
+/// Docs
 mod lib {
+    /// Docs
     mod core {
         #[cfg(not(feature = "std"))]
         pub use core::*;
@@ -32,23 +43,49 @@ mod lib {
 
 }
 
+/// Docs
 mod account;
+
+/// Docs
 mod action;
+
+/// Docs
 mod assert;
+
+/// Docs
 mod asset;
+
+/// Docs
 mod bytes;
+
+/// Docs
 mod crypto;
+
+/// Docs
 #[cfg(feature = "serde")]
 pub mod json;
+
+/// Docs
 mod print;
+
+/// Docs
 mod symbol;
+
+/// Docs
 mod table;
+
+/// Docs
 #[cfg(feature = "contract")]
 mod table_primary;
+
+/// Docs
 #[cfg(feature = "contract")]
 mod table_secondary;
+
+/// Docs
 mod time;
 
+/// Docs
 pub mod sys {
     pub use eosio_sys::*;
 }
@@ -70,6 +107,7 @@ pub use self::time::*;
 pub use eosio_macros::*;
 pub use eosio_sys::{ParseNameError, ParseSymbolError};
 
+/// Docs
 #[cfg(all(feature = "serde", feature = "stdweb"))]
 mod stdweb_serializers {
     use super::*;
@@ -77,5 +115,7 @@ mod stdweb_serializers {
     js_serializable!(Authorization);
     js_deserializable!(Authorization);
 }
+
+/// Docs
 #[cfg(all(feature = "serde", feature = "stdweb"))]
 pub use self::stdweb_serializers::*;

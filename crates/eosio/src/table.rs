@@ -11,6 +11,7 @@ eosio_name!(TableName);
 eosio_name!(ScopeName);
 
 impl From<SymbolName> for ScopeName {
+    #[inline]
     fn from(symbol: SymbolName) -> Self {
         let value: u64 = symbol.into();
         value.into()
@@ -18,6 +19,7 @@ impl From<SymbolName> for ScopeName {
 }
 
 impl From<ScopeName> for SymbolName {
+    #[inline]
     fn from(scope: ScopeName) -> Self {
         let value: u64 = scope.into();
         value.into()
@@ -37,10 +39,12 @@ pub trait TableRow: Read + Write + NumBytes {
 
     fn primary_key(&self) -> u64;
 
+    #[inline]
     fn secondary_keys(&self) -> [Option<&crate::table_secondary::SecondaryTableKey>; 16] {
         [None; 16]
     }
 
+    #[inline]
     fn table<C, S>(code: C, scope: S) -> crate::table_primary::PrimaryTableIndex<Self>
     where
         C: Into<AccountName>,

@@ -75,6 +75,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         #[automatically_derived]
         impl #impl_generics #eosio::Read for #name #ty_generics #where_clause {
+            #[inline]
             fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), #eosio::ReadError> {
                 #reads
             }

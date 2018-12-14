@@ -1,6 +1,7 @@
 use serde::de;
 use serde::{Deserialize, Deserializer, Serializer};
 
+#[inline]
 pub fn bool_from_u8<'de, D>(deserializer: D) -> Result<bool, D::Error>
 where
     D: Deserializer<'de>,
@@ -9,6 +10,7 @@ where
     Ok(s == 1)
 }
 
+#[inline]
 pub fn bool_to_u8<S>(x: &bool, s: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
@@ -17,6 +19,7 @@ where
     s.serialize_u8(num)
 }
 
+#[inline]
 pub fn f64_from_string<'de, D>(deserializer: D) -> Result<f64, D::Error>
 where
     D: Deserializer<'de>,
@@ -25,6 +28,7 @@ where
     s.parse().map_err(de::Error::custom)
 }
 
+#[inline]
 pub fn u64_from_string<'de, D>(deserializer: D) -> Result<u64, D::Error>
 where
     D: Deserializer<'de>,
