@@ -51,17 +51,18 @@ where
     Data: Write + NumBytes,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let pos = self.account.write(bytes, pos)?;
-        let pos = self.name.write(bytes, pos)?;
-        let pos = self.authorization.write(bytes, pos)?;
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.account.write(bytes, pos)?;
+        self.name.write(bytes, pos)?;
+        self.authorization.write(bytes, pos)?;
 
         let data_size = self.data.num_bytes();
         let mut data_bytes = vec![0_u8; data_size];
-        self.data.write(&mut data_bytes, 0)?;
+        let mut data_pos = 0;
+        self.data.write(&mut data_bytes, &mut data_pos)?;
 
-        let pos = (&data_bytes[..]).write(bytes, pos)?;
-        Ok(pos)
+        (&data_bytes[..]).write(bytes, pos)?;
+        Ok(())
     }
 }
 
@@ -77,7 +78,8 @@ where
     pub fn send_inline(&self) -> Result<(), WriteError> {
         let size = self.num_bytes().saturating_add(1); // 1 extra byte is needed
         let mut bytes = vec![0_u8; size];
-        let pos = self.write(&mut bytes, 0)?;
+        let mut pos = 0;
+        self.write(&mut bytes, &mut pos)?;
         let ptr = bytes[..].as_mut_ptr();
         if self.authorization.is_empty() {
             unsafe { ::eosio_sys::send_context_free_inline(ptr, pos) }
@@ -127,7 +129,7 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
     fn execute(self);
 
     #[inline]
-    fn read_data() -> Result<(Self, usize), ReadError> {
+    fn read_data() -> Result<Self, ReadError> {
         let num_bytes = unsafe { ::eosio_sys::action_data_size() };
         let mut bytes = vec![0_u8; num_bytes as usize];
         let ptr: *mut ::eosio_sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio_sys::c_void;
@@ -135,7 +137,8 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
             ::eosio_sys::read_action_data(ptr, num_bytes);
         }
 
-        Self::read(&bytes, 0)
+        let mut pos = 0;
+        Self::read(&bytes, &mut pos)
     }
 
     #[inline]

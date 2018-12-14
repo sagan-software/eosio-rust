@@ -56,7 +56,8 @@ where
         unsafe {
             ::eosio_sys::db_get_i64(self.value, ptr, size as u32);
         }
-        T::read(&bytes, 0).map(|(t, _)| t)
+        let mut pos = 0;
+        T::read(&bytes, &mut pos)
     }
 
     #[inline]
@@ -253,7 +254,8 @@ where
         let id = item.primary_key();
         let size = item.num_bytes();
         let mut bytes = vec![0_u8; size];
-        let pos = item.write(&mut bytes, 0)?;
+        let mut pos = 0;
+        item.write(&mut bytes, &mut pos)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         unsafe {
             ::eosio_sys::db_store_i64(
@@ -304,14 +306,17 @@ where
 
     #[inline]
     pub fn iter(&self) -> PrimaryTableIterator<T> {
-        self.begin().map_or_else(|| PrimaryTableIterator {
-            value: 0,
-            end: 0,
-            code: self.code,
-            scope: self.scope,
-            table: self.name,
-            data: PhantomData,
-        }, |c| c.into_iter())
+        self.begin().map_or_else(
+            || PrimaryTableIterator {
+                value: 0,
+                end: 0,
+                code: self.code,
+                scope: self.scope,
+                table: self.name,
+                data: PhantomData,
+            },
+            |c| c.into_iter(),
+        )
     }
 
     #[inline]
@@ -379,7 +384,8 @@ where
     ) -> Result<usize, WriteError> {
         let size = item.num_bytes();
         let mut bytes = vec![0_u8; size];
-        let pos = item.write(&mut bytes, 0)?;
+        let mut pos = 0;
+        item.write(&mut bytes, &mut pos)?;
         let bytes_ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let payer = payer.unwrap_or_else(|| 0_u64.into());
         unsafe { ::eosio_sys::db_update_i64(itr.value, payer.into(), bytes_ptr, pos as u32) }

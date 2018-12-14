@@ -26,12 +26,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let name = &f.ident;
                     let access = quote_spanned!(call_site => #var.#name);
                     quote_spanned! { f.span() =>
-                        let pos = #eosio::Write::write(&#access, bytes, pos)?;
+                        #eosio::Write::write(&#access, bytes, pos)?;
                     }
                 });
                 quote! {
                     #(#recurse)*
-                    Ok(pos)
+                    Ok(())
                 }
             }
             Fields::Unnamed(ref fields) => {
@@ -42,17 +42,17 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     };
                     let access = quote_spanned!(call_site => #var.#index);
                     quote_spanned! { f.span() =>
-                        let pos = #eosio::Write::write(&#access, bytes, pos)?;
+                        #eosio::Write::write(&#access, bytes, pos)?;
                     }
                 });
                 quote! {
                     #(#recurse)*
-                    Ok(pos)
+                    Ok(())
                 }
             }
             Fields::Unit => {
                 quote! {
-                    Ok(pos)
+                    Ok(())
                 }
             }
         },
@@ -63,7 +63,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         #[automatically_derived]
         impl #impl_generics #eosio::Write for #name #ty_generics #where_clause {
             #[inline]
-            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, #eosio::WriteError> {
+            fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), #eosio::WriteError> {
                 #writes
             }
         }

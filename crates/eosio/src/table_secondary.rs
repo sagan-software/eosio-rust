@@ -353,7 +353,8 @@ where
         unsafe {
             ::eosio_sys::db_get_i64(pk_itr, ptr, size as u32);
         }
-        T::read(&bytes, 0).map(|(t, _)| t)
+        let mut pos = 0;
+        T::read(&bytes, &mut pos)
     }
 
     #[inline]
@@ -493,13 +494,7 @@ where
     T: TableRow,
 {
     #[inline]
-    pub fn new<C, S, N>(
-        code: C,
-        scope: S,
-        name: N,
-        key: K,
-        index: usize,
-    ) -> Self
+    pub fn new<C, S, N>(code: C, scope: S, name: N, key: K, index: usize) -> Self
     where
         C: Into<AccountName>,
         S: Into<ScopeName>,

@@ -26,7 +26,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ident = &f.ident;
                     let ty = &f.ty;
                     quote_spanned! {f.span() =>
-                        let (#ident, pos) = <#ty as #eosio::Read>::read(bytes, pos)?;
+                        let #ident = <#ty as #eosio::Read>::read(bytes, pos)?;
                     }
                 });
                 let field_names = fields.named.iter().map(|f| {
@@ -40,7 +40,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let item = #name {
                         #(#field_names)*
                     };
-                    Ok((item, pos))
+                    Ok(item)
                 }
             }
             Fields::Unnamed(ref fields) => {
@@ -48,7 +48,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ty = &f.ty;
                     let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
                     quote_spanned! {f.span() =>
-                        let (#ident, pos) = <#ty as #eosio::Read>::read(bytes, pos)?;
+                        let #ident = <#ty as #eosio::Read>::read(bytes, pos)?;
                     }
                 });
                 let fields_list = fields.unnamed.iter().enumerate().map(|(i, _f)| {
@@ -62,7 +62,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let item = #name(
                         #(#fields_list)*
                     );
-                    Ok((item, pos))
+                    Ok(item)
                 }
             }
             Fields::Unit => {
@@ -76,7 +76,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         #[automatically_derived]
         impl #impl_generics #eosio::Read for #name #ty_generics #where_clause {
             #[inline]
-            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), #eosio::ReadError> {
+            fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, #eosio::ReadError> {
                 #reads
             }
         }

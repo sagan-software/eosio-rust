@@ -8,7 +8,6 @@
 )]
 
 /// Docs
-
 use static_assertions::assert_cfg;
 
 assert_cfg!(

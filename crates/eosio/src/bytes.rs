@@ -9,7 +9,7 @@ pub enum ReadError {
 }
 
 pub trait Read: Sized {
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError>;
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError>;
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -19,7 +19,7 @@ pub enum WriteError {
 }
 
 pub trait Write: Sized {
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError>;
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError>;
 }
 
 pub trait NumBytes {
@@ -30,39 +30,32 @@ macro_rules! impl_num {
     ($($t:ty, $s:expr)*) => ($(
         impl Read for $t {
             #[inline]
-            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+            fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
                 let width: usize = $s;
-                let end_pos = pos + width;
-                if bytes.len() < end_pos {
-                    return Err(ReadError::NotEnoughBytes);
-                }
 
-                let mut num = <$t as From<u8>>::from(0 as u8);
+                let mut num = <$t as From<u8>>::from(0_u8);
                 for i in 0..width {
-                    match bytes.get(pos + i) {
+                    match bytes.get(*pos) {
                         Some(b) => {
                             let shift = <$t as From<u8>>::from(i as u8).saturating_mul(<$t as From<u8>>::from(8_u8));
                             num |= <$t as From<u8>>::from(*b) << shift;
                         }
                         None => return Err(ReadError::NotEnoughBytes),
                     }
+                    *pos = pos.saturating_add(1);
                 }
-                Ok((num, end_pos))
+                Ok(num)
             }
         }
 
         impl Write for $t
         {
             #[inline]
-            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+            fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
                 let width: usize = $s;
-                let end_pos = pos.saturating_add(width);
-                if bytes.len() < end_pos {
-                    return Err(WriteError::NotEnoughSpace);
-                }
 
                 for i in 0..width {
-                    match bytes.get_mut(pos.saturating_add(i)) {
+                    match bytes.get_mut(*pos) {
                         Some(byte) => {
                             let ff = <$t as From<u8>>::from(0xff);
                             let shift = <$t as From<u8>>::from(i as u8).saturating_mul(<$t as From<u8>>::from(8_u8));
@@ -74,9 +67,10 @@ macro_rules! impl_num {
                         }
                         None => return Err(WriteError::NotEnoughSpace),
                     }
+                    *pos = pos.saturating_add(1);
                 }
 
-                Ok(end_pos)
+                Ok(())
             }
         }
 
@@ -102,16 +96,16 @@ impl_num!(
 
 impl Read for f32 {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-        let (bits, pos) = u32::read(bytes, pos)?;
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let bits = u32::read(bytes, pos)?;
         let num = Self::from_bits(bits);
-        Ok((num, pos))
+        Ok(num)
     }
 }
 
 impl Write for f32 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
         self.to_bits().write(bytes, pos)
     }
 }
@@ -125,16 +119,16 @@ impl NumBytes for f32 {
 
 impl Read for f64 {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-        let (bits, pos) = u64::read(bytes, pos)?;
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let bits = u64::read(bytes, pos)?;
         let num = Self::from_bits(bits);
-        Ok((num, pos))
+        Ok(num)
     }
 }
 
 impl Write for f64 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
         self.to_bits().write(bytes, pos)
     }
 }
@@ -148,14 +142,14 @@ impl NumBytes for f64 {
 
 impl Read for bool {
     #[inline]
-    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
-        u8::read(bytes, offset).map(|(v, c)| (v == 1, c))
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        u8::read(bytes, pos).map(|v| v == 1)
     }
 }
 
 impl Write for bool {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
         let value: u8 = if *self { 1 } else { 0 };
         value.write(bytes, pos)
     }
@@ -170,15 +164,15 @@ impl NumBytes for bool {
 
 impl Read for usize {
     #[inline]
-    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
         // TODO: fix this. usize isn't always u8?
-        u8::read(bytes, offset).map(|(v, c)| (v as Self, c))
+        u8::read(bytes, pos).map(|v| v as Self)
     }
 }
 
 impl Write for usize {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
         // TODO: fix this when usize is larger than 1 byte?
         (*self as u8).write(bytes, pos)
     }
@@ -196,11 +190,11 @@ where
     T: Read,
 {
     #[inline]
-    fn read(bytes: &[u8], offset: usize) -> Result<(Self, usize), ReadError> {
-        let (is_some, offset) = bool::read(bytes, offset)?;
-        let (item, offset) = T::read(bytes, offset)?;
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let is_some = bool::read(bytes, pos)?;
+        let item = T::read(bytes, pos)?;
         let opt = if is_some { Some(item) } else { None };
-        Ok((opt, offset))
+        Ok(opt)
     }
 }
 
@@ -209,13 +203,13 @@ where
     T: Write + Default,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let pos = self.is_some().write(bytes, pos)?;
-        let pos = match self {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.is_some().write(bytes, pos)?;
+        match self {
             Some(item) => item.write(bytes, pos)?,
             None => T::default().write(bytes, pos)?,
         };
-        Ok(pos)
+        Ok(())
     }
 }
 
@@ -224,12 +218,12 @@ where
     T: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let mut pos = self.len().write(bytes, pos)?;
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.len().write(bytes, pos)?;
         for item in self.iter() {
-            pos = item.write(bytes, pos)?;
+            item.write(bytes, pos)?;
         }
-        Ok(pos)
+        Ok(())
     }
 }
 
@@ -239,20 +233,18 @@ where
     T: Read + Default + Clone,
 {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-        let (capacity, pos) = usize::read(bytes, pos)?;
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let capacity = usize::read(bytes, pos)?;
 
         let mut results = Self::new();
         results.resize(capacity, T::default());
 
-        let mut pos = pos;
         for item in &mut results {
-            let (r, p) = T::read(bytes, pos)?;
+            let r = T::read(bytes, pos)?;
             *item = r;
-            pos = p;
         }
 
-        Ok((results, pos))
+        Ok(results)
     }
 }
 
@@ -277,12 +269,12 @@ where
     T: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let mut pos = self.len().write(bytes, pos)?;
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.len().write(bytes, pos)?;
         for item in self.iter() {
-            pos = item.write(bytes, pos)?;
+            item.write(bytes, pos)?;
         }
-        Ok(pos)
+        Ok(())
     }
 }
 
@@ -293,18 +285,16 @@ macro_rules! impl_array {
             T: Read + Default + Copy,
         {
             #[inline]
-            fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-                let (_, pos) = usize::read(bytes, pos)?;
+            fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+                usize::read(bytes, pos)?;
 
                 let mut items = [T::default(); $x];
-                let mut pos = pos;
                 for item in items.iter_mut() {
-                    let (v, p) = T::read(bytes, pos)?;
+                    let v = T::read(bytes, pos)?;
                     *item = v;
-                    pos = p;
                 }
 
-                Ok((items, pos))
+                Ok(items)
             }
         }
 
@@ -313,7 +303,7 @@ macro_rules! impl_array {
             T: Write,
         {
             #[inline]
-            fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+            fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
                 (&self[..]).write(bytes, pos)
             }
         }
@@ -345,18 +335,18 @@ impl_array!(
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Read for String {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
         // TODO: may need to read this as a cstr
-        let (bytes, pos) = Vec::<u8>::read(bytes, pos)?;
-        let s = Self::from_utf8_lossy(&bytes);
-        Ok((s.into_owned(), pos))
+        let utf8 = Vec::<u8>::read(bytes, pos)?;
+        let s = Self::from_utf8_lossy(&utf8);
+        Ok(s.into_owned())
     }
 }
 
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Write for String {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
         self.as_bytes().write(bytes, pos)
     }
 }
@@ -371,7 +361,7 @@ impl NumBytes for String {
 
 impl<'a> Write for &'a str {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
         self.as_bytes().write(bytes, pos)
     }
 }
@@ -389,10 +379,10 @@ where
     B: Read,
 {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-        let (a, pos) = A::read(bytes, pos)?;
-        let (b, pos) = B::read(bytes, pos)?;
-        Ok(((a, b), pos))
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let a = A::read(bytes, pos)?;
+        let b = B::read(bytes, pos)?;
+        Ok((a, b))
     }
 }
 
@@ -413,10 +403,10 @@ where
     B: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let pos = self.0.write(bytes, pos)?;
-        let pos = self.1.write(bytes, pos)?;
-        Ok(pos)
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.0.write(bytes, pos)?;
+        self.1.write(bytes, pos)?;
+        Ok(())
     }
 }
 
@@ -427,11 +417,11 @@ where
     C: Read,
 {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-        let (a, pos) = A::read(bytes, pos)?;
-        let (b, pos) = B::read(bytes, pos)?;
-        let (c, pos) = C::read(bytes, pos)?;
-        Ok(((a, b, c), pos))
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let a = A::read(bytes, pos)?;
+        let b = B::read(bytes, pos)?;
+        let c = C::read(bytes, pos)?;
+        Ok((a, b, c))
     }
 }
 
@@ -443,7 +433,10 @@ where
 {
     #[inline]
     fn num_bytes(&self) -> usize {
-        self.0.num_bytes().saturating_add(self.1.num_bytes()).saturating_add(self.2.num_bytes())
+        self.0
+            .num_bytes()
+            .saturating_add(self.1.num_bytes())
+            .saturating_add(self.2.num_bytes())
     }
 }
 
@@ -454,11 +447,11 @@ where
     C: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let pos = self.0.write(bytes, pos)?;
-        let pos = self.1.write(bytes, pos)?;
-        let pos = self.2.write(bytes, pos)?;
-        Ok(pos)
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.0.write(bytes, pos)?;
+        self.1.write(bytes, pos)?;
+        self.2.write(bytes, pos)?;
+        Ok(())
     }
 }
 
@@ -470,12 +463,12 @@ where
     D: Read,
 {
     #[inline]
-    fn read(bytes: &[u8], pos: usize) -> Result<(Self, usize), ReadError> {
-        let (a, pos) = A::read(bytes, pos)?;
-        let (b, pos) = B::read(bytes, pos)?;
-        let (c, pos) = C::read(bytes, pos)?;
-        let (d, pos) = D::read(bytes, pos)?;
-        Ok(((a, b, c, d), pos))
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let a = A::read(bytes, pos)?;
+        let b = B::read(bytes, pos)?;
+        let c = C::read(bytes, pos)?;
+        let d = D::read(bytes, pos)?;
+        Ok((a, b, c, d))
     }
 }
 
@@ -488,7 +481,11 @@ where
 {
     #[inline]
     fn num_bytes(&self) -> usize {
-        self.0.num_bytes().saturating_add(self.1.num_bytes()).saturating_add(self.2.num_bytes()).saturating_add(self.3.num_bytes())
+        self.0
+            .num_bytes()
+            .saturating_add(self.1.num_bytes())
+            .saturating_add(self.2.num_bytes())
+            .saturating_add(self.3.num_bytes())
     }
 }
 
@@ -500,11 +497,11 @@ where
     D: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: usize) -> Result<usize, WriteError> {
-        let pos = self.0.write(bytes, pos)?;
-        let pos = self.1.write(bytes, pos)?;
-        let pos = self.2.write(bytes, pos)?;
-        let pos = self.3.write(bytes, pos)?;
-        Ok(pos)
+    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+        self.0.write(bytes, pos)?;
+        self.1.write(bytes, pos)?;
+        self.2.write(bytes, pos)?;
+        self.3.write(bytes, pos)?;
+        Ok(())
     }
 }
