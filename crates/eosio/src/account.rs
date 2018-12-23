@@ -21,19 +21,19 @@ pub struct Authorization {
 impl Authorization {
     /// Creates the 'active' authorization for an account
     #[inline]
-    pub fn active(actor: AccountName) -> Self {
+    pub const fn active(actor: AccountName) -> Self {
         Self {
             actor,
-            permission: n!(active).into(),
+            permission: PermissionName::from_u64(n!(active)),
         }
     }
 
     /// Creates the 'owner' authorization for an account
     #[inline]
-    pub fn owner(actor: AccountName) -> Self {
+    pub const fn owner(actor: AccountName) -> Self {
         Self {
             actor,
-            permission: n!(owner).into(),
+            permission: PermissionName::from_u64(n!(owner)),
         }
     }
 }

@@ -68,7 +68,7 @@ impl Add for Asset {
             .amount
             .checked_add(other.amount)
             .assert("addition overflow");
-        Asset {
+        Self {
             amount,
             symbol: self.symbol,
         }
@@ -102,7 +102,7 @@ impl Sub for Asset {
             .amount
             .checked_sub(other.amount)
             .assert("subtraction overflow");
-        Asset {
+        Self {
             amount,
             symbol: self.symbol,
         }
@@ -136,7 +136,7 @@ impl Mul for Asset {
             .amount
             .checked_mul(other.amount)
             .assert("multiplication overflow");
-        Asset {
+        Self {
             amount,
             symbol: self.symbol,
         }
@@ -171,7 +171,7 @@ impl Div for Asset {
             .amount
             .checked_div(other.amount)
             .assert("division overflow");
-        Asset {
+        Self {
             amount,
             symbol: self.symbol,
         }
@@ -207,7 +207,7 @@ impl Rem for Asset {
             .amount
             .checked_rem(other.amount)
             .assert("remainder overflow");
-        Asset {
+        Self {
             amount,
             symbol: self.symbol,
         }

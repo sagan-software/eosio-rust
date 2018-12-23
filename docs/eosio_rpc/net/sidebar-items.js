@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["connect",""],["connections",""],["disconnect",""],["status",""]]});
+initSidebarItems({});

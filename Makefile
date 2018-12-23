@@ -12,38 +12,33 @@ install:
 	cd examples/tictactoe_ui && yarn install
 
 build:
-	cargo build --release --target=wasm32-unknown-unknown -vv
-
-build_ui: build target/wasm32-unknown-unknown/release/tictactoe_ui_gc_opt_wat.wasm
-	mkdir -p docs/tictactoe
-	wasm-bindgen \
-		target/wasm32-unknown-unknown/release/tictactoe_ui.wasm \
-		--out-dir docs/tictactoe
-	yarn --cwd examples/tictactoe_ui build
-
-serve_ui: build_ui
-	yarn --cwd examples/tictactoe_ui serve
+	cargo +nightly-2018-11-26 build --release --target=wasm32-unknown-unknown -vv
 
 test:
-	cargo test
+	cargo test -p eosio -p eosio_macros -p eosio_sys
 
 docs:
 	rm -Rf target/doc
 	cargo doc \
 		--all \
 		--exclude addressbook \
-		--exclude eosio_token \
+		--exclude eosio_macros \
+		--exclude eosio_macros_impl \
 		--exclude hello \
 		--exclude hello_bare \
 		--exclude tictactoe \
-		--exclude tictactoe_ui \
 		--no-deps
 	cp -rf target/doc/* docs/
 
 lint:
-	touch eosio/src/lib.rs
-	touch eosio_sys/src/lib.rs
-	touch eosio_macros/src/lib.rs
+	touch crates/eosio/src/lib.rs
+	touch crates/eosio_abi/src/lib.rs
+	touch crates/eosio_macros/src/lib.rs
+	touch crates/eosio_macros_impl/src/lib.rs
+	touch crates/eosio_rpc/src/lib.rs
+	touch crates/eosio_sys/src/lib.rs
+	touch crates/eosio_system/src/lib.rs
+	touch crates/eosio_token/src/lib.rs
 	cargo clippy
 
 clean:
@@ -141,9 +136,9 @@ make_moves_bob:
 get_games_%:
 	$(CLEOS) get table tictactoe $* games
 
-eosio_token_cpp: examples/eosio_token/cpp/eosio.token_gc_opt_wat.wasm
-	$(CLEOS) set abi eosiotkncpp /mnt/dev/examples/eosio_token/eosio_token.abi.json
-	$(CLEOS) set code eosiotkncpp /mnt/dev/examples/eosio_token/cpp/eosio.token_gc_opt.wasm
+eosio_token_cpp: crates/eosio_token/cpp/eosio.token_gc_opt_wat.wasm
+	$(CLEOS) set abi eosiotkncpp /mnt/dev/project/crates/eosio_token/eosio_token.abi.json
+	$(CLEOS) set code eosiotkncpp /mnt/dev/project/crates/eosio_token/cpp/eosio.token_gc_opt.wasm
 
 create_token:
 	$(CLEOS) push action eosio.token create '["alice","1000.00 TGFT"]' -p 'eosio.token@active'
@@ -168,6 +163,53 @@ transfer_tokens:
 transfer_tokens_cpp:
 	$(CLEOS) push action eosiotkncpp transfer '["alice","bob","1.00 TGFT","here you go"]' -p 'alice@active'
 	$(CLEOS) push action eosiotkncpp transfer '["bob","alice","0.05 TGFT","here you go"]' -p 'bob@active'
+
+bench_rs:
+	make create_token
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make issue_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+	make transfer_tokens
+
+bench_cpp:
+	make create_token_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make issue_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+	make transfer_tokens_cpp
+
 
 get_currency_stats:
 	$(CLEOS) get table eosio.token TGFT stat
@@ -203,6 +245,9 @@ likezip_address:
 
 get_addresses:
 	$(CLEOS) get table addressbook addressbook address
+
+update_submodules:
+	git submodule foreach git pull origin master
 
 .PHONY: install build test clean docker wallet accounts hello docs
 .SECONDARY:

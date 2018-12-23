@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["chain",""],["history",""],["net",""],["producer",""]]});
+initSidebarItems({"enum":[["Error",""]],"mod":[["chain",""],["history",""],["net",""],["producer",""]],"struct":[["ErrorDetails",""],["ErrorMessage",""],["ErrorResponse",""]],"trait":[["Builder",""],["Client",""]]});

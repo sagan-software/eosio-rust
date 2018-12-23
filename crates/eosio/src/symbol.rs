@@ -87,11 +87,11 @@ pub struct Symbol(u64);
 
 impl Symbol {
     #[inline]
-    pub fn precision(self) -> u64 {
+    pub const fn precision(self) -> u64 {
         self.0 & 255
     }
     #[inline]
-    pub fn name(self) -> SymbolName {
+    pub const fn name(self) -> SymbolName {
         SymbolName(self.0 >> 8)
     }
     #[inline]
@@ -99,7 +99,7 @@ impl Symbol {
         ::eosio_sys::symbol_name_length(self.0)
     }
     #[inline]
-    pub fn value(self) -> u64 {
+    pub const fn value(self) -> u64 {
         self.0
     }
     #[inline]

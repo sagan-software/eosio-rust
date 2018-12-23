@@ -7,6 +7,10 @@
 @details 256-bit hash</p>
 </td></tr><tr class='module-item'><td><a class="struct" href="struct.capi_checksum512.html" title='eosio_sys::capi_checksum512 struct'>capi_checksum512</a></td><td class='docblock-short'><p>@brief 512-bit hash
 @details 512-bit hash</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.capi_public_key.html" title='eosio_sys::capi_public_key struct'>capi_public_key</a></td><td class='docblock-short'><p>@brief EOSIO Public Key
+@details EOSIO Public Key. It is 34 bytes.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.capi_signature.html" title='eosio_sys::capi_signature struct'>capi_signature</a></td><td class='docblock-short'><p>@brief EOSIO Signature
+@details EOSIO Signature. It is 66 bytes.</p>
 </td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table><tr class='module-item'><td><a class="enum" href="enum.ParseNameError.html" title='eosio_sys::ParseNameError enum'>ParseNameError</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.ParseSymbolError.html" title='eosio_sys::ParseSymbolError enum'>ParseSymbolError</a></td><td class='docblock-short'></td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
 <table><tr class='module-item'><td><a class="constant" href="constant.NAME_CHARS.html" title='eosio_sys::NAME_CHARS constant'>NAME_CHARS</a></td><td class='docblock-short'></td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
@@ -145,7 +149,8 @@ Get the resource limits of an account
 @param net_weight - pointer to <code>int64_t</code> to hold net limit
 @param cpu_weight - pointer to <code>int64_t</code> to hold cpu limit</p>
 </td></tr><tr class='module-item'><td><a class="fn" href="fn.has_auth.html" title='eosio_sys::has_auth fn'>has_auth</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Verifies that @ref name has auth.</p>
-</td></tr><tr class='module-item'><td><a class="fn" href="fn.is_account.html" title='eosio_sys::is_account fn'>is_account</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="fn" href="fn.is_privileged.html" title='eosio_sys::is_privileged fn'>is_privileged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>@brief Check if an account is privileged
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.is_account.html" title='eosio_sys::is_account fn'>is_account</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>Verifies that @ref name is an existing account.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.is_privileged.html" title='eosio_sys::is_privileged fn'>is_privileged</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td><td class='docblock-short'><p>@brief Check if an account is privileged
 Check if an account is privileged
 @param account - name of the account to be checked
 @return true if the account is privileged

@@ -96,8 +96,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
 
             #[inline]
-            pub fn as_u64(&self) -> u64 {
+            pub const fn as_u64(&self) -> u64 {
                 self.0
+            }
+
+            #[inline]
+            pub const fn from_u64(value: u64) -> Self {
+                #ident(value)
             }
         }
 
@@ -288,8 +293,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
 
             #[inline]
-            pub fn as_u64(&self) -> u64 {
+            pub const fn as_u64(&self) -> u64 {
                 self.0
+            }
+
+            #[inline]
+            pub const fn from_u64(value: u64) -> Self {
+                #ident(value)
             }
         }
 

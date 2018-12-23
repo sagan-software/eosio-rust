@@ -23,6 +23,8 @@ impl Time {
     /// One day
     pub const DAY: i64 = Self::HOUR * 24;
 
+    pub const UNIX_EPOCH: Time = Time(0);
+
     /// Gets the current time
     #[cfg(feature = "contract")]
     #[inline]
@@ -58,91 +60,79 @@ impl Time {
     #[inline]
     pub fn expiration() -> Self {
         let seconds = unsafe { ::eosio_sys::expiration() };
-        Self::from_seconds(seconds as i32)
-    }
-
-    /// Gets the zero time
-    #[inline]
-    pub fn zero() -> Self {
-        Time(0)
-    }
-
-    /// Returns true if 0
-    #[inline]
-    pub fn is_zero(self) -> bool {
-        self.0 == 0
-    }
-
-    /// Gets the microseconds
-    #[inline]
-    pub fn microseconds(self) -> i64 {
-        self.0
+        Self::from_secs(seconds as i64)
     }
 
     /// Creates a `Time` from microseconds
     #[inline]
-    pub fn from_microseconds(microseconds: i64) -> Self {
-        Time(microseconds)
-    }
-
-    /// Gets the milliseconds
-    #[inline]
-    pub fn milliseconds(self) -> i64 {
-        self.0 / Self::MILLISECOND
+    pub const fn from_micros(micros: i64) -> Self {
+        Time(micros)
     }
 
     /// Creates a `Time` from milliseconds
     #[inline]
-    pub fn from_milliseconds(milliseconds: i64) -> Self {
-        Time(milliseconds.saturating_mul(Self::MILLISECOND))
-    }
-
-    /// Gets the seconds
-    #[inline]
-    pub fn seconds(self) -> i32 {
-        (self.0 / Self::SECOND) as i32
+    pub fn from_millis(millis: i64) -> Self {
+        Time(millis.saturating_mul(Self::MILLISECOND))
     }
 
     /// Creates a `Time` from seconds
     #[inline]
-    pub fn from_seconds(seconds: i32) -> Self {
-        Time(i64::from(seconds).saturating_mul(Self::SECOND))
-    }
-
-    /// Gets the minutes
-    #[inline]
-    pub fn minutes(self) -> i32 {
-        (self.0 / Self::MINUTE) as i32
+    pub fn from_secs(secs: i64) -> Self {
+        Time(secs.saturating_mul(Self::SECOND))
     }
 
     /// Creates a `Time` from minutes
     #[inline]
-    pub fn from_minutes(minutes: i32) -> Self {
-        Time(i64::from(minutes).saturating_mul(Self::MINUTE))
-    }
-
-    /// Gets the hours
-    #[inline]
-    pub fn hours(self) -> i32 {
-        (self.0 / Self::HOUR) as i32
+    pub fn from_mins(mins: i64) -> Self {
+        Time(mins.saturating_mul(Self::MINUTE))
     }
 
     /// Creates a `Time` from hours
     #[inline]
-    pub fn from_hours(hours: i32) -> Self {
-        Time(i64::from(hours).saturating_mul(Self::HOUR))
-    }
-
-    /// Gets the days
-    #[inline]
-    pub fn days(self) -> i32 {
-        (self.0 / Self::HOUR) as i32
+    pub fn from_hours(hours: i64) -> Self {
+        Time(hours.saturating_mul(Self::HOUR))
     }
 
     /// Creates a `Time` from days
     #[inline]
-    pub fn from_days(days: i32) -> Self {
-        Time(i64::from(days).saturating_mul(Self::DAY))
+    pub fn from_days(days: i64) -> Self {
+        Time(days.saturating_mul(Self::DAY))
+    }
+
+    /// Gets the nanoseconds
+    #[inline]
+    pub const fn as_micros(self) -> i64 {
+        self.0
+    }
+
+    /// Gets the milliseconds
+    #[inline]
+    pub const fn as_millis(self) -> i64 {
+        self.0 / Self::MILLISECOND
+    }
+
+    /// Gets the seconds
+    #[inline]
+    pub const fn as_secs(self) -> i64 {
+        self.0 / Self::SECOND
+    }
+
+    /// Gets the minutes
+    #[inline]
+    pub const fn as_mins(self) -> i64 {
+        self.0 / Self::MINUTE
+    }
+
+    /// Gets the hours
+    #[inline]
+    pub const fn as_hours(self) -> i64 {
+        self.0 / Self::HOUR
+    }
+
+    /// Gets the days
+    #[inline]
+    pub const fn as_days(self) -> i64 {
+        self.0 / Self::DAY
     }
 
     /// Gets the max `Time` of two values
@@ -219,11 +209,6 @@ impl<'de> ::serde::de::Deserialize<'de> for Time {
     }
 }
 
-// TODO: TimeSpan ops similar to std::time::Duration
-
-#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash)]
-pub struct TimeSpan(u64);
-
 impl From<u64> for Time {
     #[inline]
     fn from(i: u64) -> Self {
@@ -252,13 +237,6 @@ impl From<Time> for i64 {
     }
 }
 
-impl From<Time> for i32 {
-    #[inline]
-    fn from(t: Time) -> Self {
-        t.seconds()
-    }
-}
-
 // impl Add for Time {
 //     type Output = Self;
 //     fn add(self, other: Self) -> Self {
@@ -378,3 +356,8 @@ impl From<Time> for i32 {
 //         self.0 = self.0.checked_div(other.0).assert("division overflow");
 //     }
 // }
+
+// TODO: Duration ops similar to std::time::Duration
+
+#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash)]
+pub struct Duration(i64);
