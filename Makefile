@@ -8,10 +8,9 @@ install:
 	rustup default nightly
 	cargo install --force wasm-gc
 	cargo install --force bindgen
-	cargo install --force wasm-bindgen
-	cd examples/tictactoe_ui && yarn install
 
 build:
+	RUSTFLAGS="-C link-args=-zstack-size=48000" \
 	cargo +nightly-2018-11-26 build --release --target=wasm32-unknown-unknown -vv
 
 test:
@@ -28,7 +27,10 @@ docs:
 		--exclude hello_bare \
 		--exclude tictactoe \
 		--no-deps
-	cp -rf target/doc/* docs/
+	git worktree remove --force ./gh-pages || exit 0
+	git worktree add ./gh-pages gh-pages
+	cp -rf target/doc/* gh-pages/
+	echo '<meta http-equiv="refresh" content="0;url=eosio/">' > gh-pages/index.html
 
 lint:
 	touch crates/eosio/src/lib.rs

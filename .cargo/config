@@ -1,5 +1,0 @@
-[target.wasm32-unknown-unknown]
-rustflags = [
-  "-C", "link-args=-z stack-size=48000"
-]
-# runner = 'wasm-bindgen-test-runner'

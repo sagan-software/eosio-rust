@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_block",""]],"struct":[["Action",""],["Extension",""],["GetBlock",""],["GetBlockBuilder",""],["NewProducers",""],["Transaction",""],["TransactionInner",""],["Trx",""]]});

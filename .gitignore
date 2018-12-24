@@ -6,3 +6,4 @@
 *_gc_opt_wat.wasm
 node_modules
 Cargo.lock
+/gh-pages

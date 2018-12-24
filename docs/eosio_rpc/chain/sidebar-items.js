@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["abi_bin_to_json",""],["abi_json_to_bin",""],["get_abi",""],["get_account",""],["get_block",""],["get_block_header_state",""],["get_currency_balance",""],["get_currency_stats",""],["get_info",""],["get_table_rows",""]]});

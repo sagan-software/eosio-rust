@@ -1,1 +1,0 @@
-initSidebarItems({"attr":[["eosio_action",""],["eosio_table",""]],"derive":[["NumBytes",""],["Read",""],["TableRow",""],["Write",""],["proc_macro_hack_eosio_print",""],["proc_macro_hack_n",""],["proc_macro_hack_s",""]],"macro":[["eosio_abi",""],["eosio_name",""]]});
