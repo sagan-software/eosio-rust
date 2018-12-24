@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["get_account",""]],"struct":[["GetAccount",""],["GetAccountBuilder",""],["KeyWeight",""],["Limit",""],["Permission",""],["PermissionLevelWeight",""],["RefundRequest",""],["RequiredAuth",""],["SelfDelegatedBandwidth",""],["TotalResources",""],["VoterInfo",""],["WaitWeight",""]]});
