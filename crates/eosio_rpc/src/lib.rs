@@ -1,4 +1,12 @@
 #![feature(async_await, await_macro, futures_api, pin)]
+#![warn(
+    clippy::all,
+    clippy::complexity,
+    clippy::style,
+    clippy::perf,
+    clippy::nursery,
+    clippy::cargo
+)]
 
 pub mod chain;
 pub mod history;

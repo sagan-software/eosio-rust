@@ -1,4 +1,3 @@
-use crate::{Client, Error};
 use eosio::{AccountName, ScopeName, TableName};
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;

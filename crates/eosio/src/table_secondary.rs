@@ -500,7 +500,7 @@ where
         S: Into<ScopeName>,
         N: Into<TableName>,
     {
-        SecondaryTableIndex {
+        Self {
             code: code.into(),
             scope: scope.into(),
             table: SecondaryTableName(name.into(), index),
@@ -545,9 +545,9 @@ where
     where
         N: Into<K>,
     {
-        let key = key.into();
-        let (value, pk) = key.upper_bound(self.code, self.scope, self.table);
-        let end = key.end(self.code, self.scope, self.table);
+        let k = key.into();
+        let (value, pk) = k.upper_bound(self.code, self.scope, self.table);
+        let end = k.end(self.code, self.scope, self.table);
         if value == end {
             None
         } else {

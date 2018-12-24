@@ -3,10 +3,11 @@
 pub fn eosio_assert(test: bool, msg: &str) {
     #[cfg(feature = "contract")]
     {
-        let test = if test { 1 } else { 0 };
-        let msg_ptr = msg.as_ptr();
-        let msg_len = msg.len() as u32;
-        unsafe { ::eosio_sys::eosio_assert_message(test, msg_ptr, msg_len) }
+        if !test {
+            let msg_ptr = msg.as_ptr();
+            let msg_len = msg.len() as u32;
+            unsafe { ::eosio_sys::eosio_assert_message(0, msg_ptr, msg_len) }
+        }
     }
 }
 
@@ -16,9 +17,12 @@ pub fn eosio_assert_code<C>(test: bool, code: C)
 where
     C: Into<u64>,
 {
-    let test = if test { 1 } else { 0 };
-    let code: u64 = code.into();
-    unsafe { ::eosio_sys::eosio_assert_code(test, code) }
+    #[cfg(feature = "contract")]
+    {
+        if !test {
+            unsafe { ::eosio_sys::eosio_assert_code(0, code.into()) }
+        }
+    }
 }
 
 pub trait Assert<T> {

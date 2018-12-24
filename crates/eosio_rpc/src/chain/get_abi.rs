@@ -1,4 +1,4 @@
-use crate::{Builder, Client, Error};
+use crate::Builder;
 use eosio::AccountName;
 use eosio_abi::Abi;
 use serde_derive::{Deserialize, Serialize};

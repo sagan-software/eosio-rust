@@ -1,8 +1,9 @@
 #![feature(try_from, custom_attribute, concat_idents)]
 #![warn(
     clippy::all,
-    clippy::restriction,
-    clippy::pedantic,
+    clippy::complexity,
+    clippy::style,
+    clippy::perf,
     clippy::nursery,
     clippy::cargo
 )]

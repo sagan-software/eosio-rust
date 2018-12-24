@@ -23,7 +23,7 @@ impl Time {
     /// One day
     pub const DAY: i64 = Self::HOUR * 24;
 
-    pub const UNIX_EPOCH: Time = Time(0);
+    pub const UNIX_EPOCH: Self = Time(0);
 
     /// Gets the current time
     #[cfg(feature = "contract")]
@@ -60,7 +60,7 @@ impl Time {
     #[inline]
     pub fn expiration() -> Self {
         let seconds = unsafe { ::eosio_sys::expiration() };
-        Self::from_secs(seconds as i64)
+        Self::from_secs(i64::from(seconds))
     }
 
     /// Creates a `Time` from microseconds
