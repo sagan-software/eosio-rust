@@ -1,11 +1,11 @@
 #[cfg(feature = "contract")]
-use crate::assert::Assert;
+use crate::check::Check;
 use eosio_macros::*;
 #[cfg(feature = "contract")]
 use eosio_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 
 #[cfg(feature = "contract")]
-pub trait Hasher: Assert<()> {
+pub trait Hasher: Check<()> {
     fn new(data: &str) -> Self;
 }
 
@@ -28,9 +28,9 @@ impl Hasher for Ripemd160 {
 }
 
 #[cfg(feature = "contract")]
-impl Assert<()> for Ripemd160 {
+impl Check<()> for Ripemd160 {
     #[inline]
-    fn assert(self, data: &str) {
+    fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
@@ -61,9 +61,9 @@ impl Hasher for Sha1 {
 }
 
 #[cfg(feature = "contract")]
-impl Assert<()> for Sha1 {
+impl Check<()> for Sha1 {
     #[inline]
-    fn assert(self, data: &str) {
+    fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
@@ -92,9 +92,9 @@ impl Hasher for Sha256 {
 }
 
 #[cfg(feature = "contract")]
-impl Assert<()> for Sha256 {
+impl Check<()> for Sha256 {
     #[inline]
-    fn assert(self, data: &str) {
+    fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum256 { hash: self.0 };
@@ -120,9 +120,9 @@ impl Hasher for Sha512 {
 }
 
 #[cfg(feature = "contract")]
-impl Assert<()> for Sha512 {
+impl Check<()> for Sha512 {
     #[inline]
-    fn assert(self, data: &str) {
+    fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum512 { hash: self.0 };

@@ -14,7 +14,7 @@ where
     unsafe { ::eosio_sys::eosio_exit(code.into()) }
 }
 
-eosio_name!(ActionName);
+name!(ActionName);
 
 /// Docs
 #[derive(Clone, Debug)]

@@ -517,7 +517,7 @@ _Tracking this feature in [issue #5](https://github.com/sagan-software/rust-eos/
 
 Hand-written ABI files are unnecessary and expose developers to risk if they aren't kept updated.
 
-Since we already have `#[eosio_action]` and `#[eosio_table]` attributes, it should be fairly straightforward to implement this feature by detecting these attributes and generating a JSON file.
+Since we already have `#[eosio::action]` and `#[eosio::table]` attributes, it should be fairly straightforward to implement this feature by detecting these attributes and generating a JSON file.
 
 ### ABI to Rust
 

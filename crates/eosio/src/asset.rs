@@ -1,5 +1,5 @@
 use crate::account::AccountName;
-use crate::assert::*;
+use crate::check::*;
 use crate::lib::*;
 use crate::symbol::Symbol;
 use eosio_macros::*;
@@ -60,14 +60,14 @@ impl Add for Asset {
     type Output = Self;
     #[inline]
     fn add(self, other: Self) -> Self {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to add asset with different symbol",
         );
         let amount = self
             .amount
             .checked_add(other.amount)
-            .assert("addition overflow");
+            .check("addition overflow");
         Self {
             amount,
             symbol: self.symbol,
@@ -78,14 +78,14 @@ impl Add for Asset {
 impl AddAssign for Asset {
     #[inline]
     fn add_assign(&mut self, other: Self) {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to add asset with different symbol",
         );
         let amount = self
             .amount
             .checked_add(other.amount)
-            .assert("addition overflow");
+            .check("addition overflow");
         self.amount = amount;
     }
 }
@@ -94,14 +94,14 @@ impl Sub for Asset {
     type Output = Self;
     #[inline]
     fn sub(self, other: Self) -> Self {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to subtract asset with different symbol",
         );
         let amount = self
             .amount
             .checked_sub(other.amount)
-            .assert("subtraction overflow");
+            .check("subtraction overflow");
         Self {
             amount,
             symbol: self.symbol,
@@ -112,14 +112,14 @@ impl Sub for Asset {
 impl SubAssign for Asset {
     #[inline]
     fn sub_assign(&mut self, other: Self) {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to subtract asset with different symbol",
         );
         let amount = self
             .amount
             .checked_sub(other.amount)
-            .assert("subtraction overflow");
+            .check("subtraction overflow");
         self.amount = amount;
     }
 }
@@ -128,14 +128,14 @@ impl Mul for Asset {
     type Output = Self;
     #[inline]
     fn mul(self, other: Self) -> Self {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to multiply asset with different symbol",
         );
         let amount = self
             .amount
             .checked_mul(other.amount)
-            .assert("multiplication overflow");
+            .check("multiplication overflow");
         Self {
             amount,
             symbol: self.symbol,
@@ -146,14 +146,14 @@ impl Mul for Asset {
 impl MulAssign for Asset {
     #[inline]
     fn mul_assign(&mut self, other: Self) {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to multiply asset with different symbol",
         );
         let amount = self
             .amount
             .checked_mul(other.amount)
-            .assert("multiplication overflow");
+            .check("multiplication overflow");
         self.amount = amount;
     }
 }
@@ -162,15 +162,15 @@ impl Div for Asset {
     type Output = Self;
     #[inline]
     fn div(self, other: Self) -> Self {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to divide asset with different symbol",
         );
-        eosio_assert(other.amount != 0, "divide by zero");
+        check(other.amount != 0, "divide by zero");
         let amount = self
             .amount
             .checked_div(other.amount)
-            .assert("division overflow");
+            .check("division overflow");
         Self {
             amount,
             symbol: self.symbol,
@@ -181,15 +181,15 @@ impl Div for Asset {
 impl DivAssign for Asset {
     #[inline]
     fn div_assign(&mut self, other: Self) {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to divide asset with different symbol",
         );
-        eosio_assert(other.amount != 0, "divide by zero");
+        check(other.amount != 0, "divide by zero");
         let amount = self
             .amount
             .checked_div(other.amount)
-            .assert("division overflow");
+            .check("division overflow");
         self.amount = amount;
     }
 }
@@ -198,15 +198,15 @@ impl Rem for Asset {
     type Output = Self;
     #[inline]
     fn rem(self, other: Self) -> Self {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to remainder asset with different symbol",
         );
-        eosio_assert(other.amount != 0, "remainder by zero");
+        check(other.amount != 0, "remainder by zero");
         let amount = self
             .amount
             .checked_rem(other.amount)
-            .assert("remainder overflow");
+            .check("remainder overflow");
         Self {
             amount,
             symbol: self.symbol,
@@ -217,15 +217,15 @@ impl Rem for Asset {
 impl RemAssign for Asset {
     #[inline]
     fn rem_assign(&mut self, other: Self) {
-        eosio_assert(
+        check(
             self.symbol == other.symbol,
             "attempt to remainder asset with different symbol",
         );
-        eosio_assert(other.amount != 0, "remainder by zero");
+        check(other.amount != 0, "remainder by zero");
         let amount = self
             .amount
             .checked_rem(other.amount)
-            .assert("remainder overflow");
+            .check("remainder overflow");
         self.amount = amount;
     }
 }
@@ -239,7 +239,7 @@ pub struct ExtendedAsset {
 // impl Add for ExtendedAsset {
 //     type Output = Self;
 //     fn add(self, other: Self) -> Self {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         ExtendedAsset {
 //             quantity: self.quantity + other.quantity,
 //             contract: self.contract,
@@ -249,7 +249,7 @@ pub struct ExtendedAsset {
 
 // impl AddAssign for ExtendedAsset {
 //     fn add_assign(&mut self, other: Self) {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         self.quantity += other.quantity
 //     }
 // }
@@ -257,7 +257,7 @@ pub struct ExtendedAsset {
 // impl Sub for ExtendedAsset {
 //     type Output = Self;
 //     fn sub(self, other: Self) -> Self {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         ExtendedAsset {
 //             quantity: self.quantity - other.quantity,
 //             contract: self.contract,
@@ -267,7 +267,7 @@ pub struct ExtendedAsset {
 
 // impl SubAssign for ExtendedAsset {
 //     fn sub_assign(&mut self, other: Self) {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         self.quantity -= other.quantity
 //     }
 // }
@@ -275,7 +275,7 @@ pub struct ExtendedAsset {
 // impl Mul for ExtendedAsset {
 //     type Output = Self;
 //     fn mul(self, other: Self) -> Self {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         ExtendedAsset {
 //             quantity: self.quantity * other.quantity,
 //             contract: self.contract,
@@ -285,7 +285,7 @@ pub struct ExtendedAsset {
 
 // impl MulAssign for ExtendedAsset {
 //     fn mul_assign(&mut self, other: Self) {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         self.quantity *= other.quantity
 //     }
 // }
@@ -293,7 +293,7 @@ pub struct ExtendedAsset {
 // impl Div for ExtendedAsset {
 //     type Output = Self;
 //     fn div(self, other: Self) -> Self {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         ExtendedAsset {
 //             quantity: self.quantity / other.quantity,
 //             contract: self.contract,
@@ -303,7 +303,7 @@ pub struct ExtendedAsset {
 
 // impl DivAssign for ExtendedAsset {
 //     fn div_assign(&mut self, other: Self) {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         self.quantity /= other.quantity
 //     }
 // }
@@ -311,7 +311,7 @@ pub struct ExtendedAsset {
 // impl Rem for ExtendedAsset {
 //     type Output = Self;
 //     fn rem(self, other: Self) -> Self {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         ExtendedAsset {
 //             quantity: self.quantity % other.quantity,
 //             contract: self.contract,
@@ -321,7 +321,7 @@ pub struct ExtendedAsset {
 
 // impl RemAssign for ExtendedAsset {
 //     fn rem_assign(&mut self, other: Self) {
-//         eosio_assert(self.contract == other.contract, "type mismatch");
+//         check(self.contract == other.contract, "type mismatch");
 //         self.quantity %= other.quantity
 //     }
 // }

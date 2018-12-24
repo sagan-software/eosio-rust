@@ -1,10 +1,9 @@
 #[cfg(feature = "contract")]
 use crate::time::Time;
-use crate::{eosio_name, n, NumBytes, Read, Write};
+use crate::{name, n, NumBytes, Read, Write};
 
-eosio_name!(AccountName);
-
-eosio_name!(PermissionName);
+name!(AccountName);
+name!(PermissionName);
 
 /// A permission
 #[derive(

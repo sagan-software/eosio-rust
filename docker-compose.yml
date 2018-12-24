@@ -31,7 +31,7 @@ services:
 
   keosd:
     hostname: keosd
-    image: eosio/eos:v1.4.1
+    image: eosio/eos:v1.6.0-rc1
     entrypoint: keosd
     command: >
       --wallet-dir /opt/eosio/bin/data-dir

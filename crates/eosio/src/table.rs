@@ -6,9 +6,8 @@ use crate::bytes::{Read, ReadError, Write, WriteError};
 use crate::symbol::SymbolName;
 use eosio_macros::*;
 
-eosio_name!(TableName);
-
-eosio_name!(ScopeName);
+name!(TableName);
+name!(ScopeName);
 
 impl From<SymbolName> for ScopeName {
     #[inline]

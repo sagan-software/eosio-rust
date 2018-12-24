@@ -1,8 +1,8 @@
 use eosio::*;
 
-#[eosio_action]
+#[eosio::action]
 fn hi(name: AccountName) {
-    eosio_print!("Hi, ", name);
+    eosio::print!("Hi, ", name);
 }
 
-eosio_abi!(hi);
+eosio::abi!(hi);

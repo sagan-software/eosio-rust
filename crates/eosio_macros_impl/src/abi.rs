@@ -62,14 +62,14 @@ pub fn expand(input: TokenStream) -> TokenStream {
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
             if action == #eosio::n!(onerror) {
-                #eosio::eosio_assert(
+                #eosio::check(
                     code == #eosio::n!(eosio),
                     "onerror action's are only valid from the \"eosio\" system account"
                 );
             }
             #(#actions)*
             else if code == receiver {
-                #eosio::eosio_assert(false, "unknown action");
+                #eosio::check(false, "unknown action");
             }
         }
     };

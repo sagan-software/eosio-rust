@@ -4,10 +4,10 @@ const BOARD_WIDTH: u16 = 3;
 const BOARD_HEIGHT: u16 = 3;
 const BOARD_AREA: usize = (BOARD_WIDTH * BOARD_HEIGHT) as usize;
 
-#[eosio_action]
+#[eosio::action]
 fn create(challenger: AccountName, host: AccountName) {
     require_auth(host);
-    eosio_assert(
+    check(
         challenger != host,
         "challenger shouldn't be the same as host",
     );
@@ -15,7 +15,7 @@ fn create(challenger: AccountName, host: AccountName) {
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
 
-    eosio_assert(!table.exists(challenger), "game already exists");
+    check(!table.exists(challenger), "game already exists");
 
     let game = Game {
         challenger,
@@ -25,19 +25,19 @@ fn create(challenger: AccountName, host: AccountName) {
         board: [0; BOARD_AREA],
     };
 
-    table.emplace(host, &game).assert("write");
+    table.emplace(host, &game).check("write");
 }
 
-#[eosio_action]
+#[eosio::action]
 fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     require_auth(by);
 
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
-    let cursor = table.find(challenger).assert("game doesn't exist");
-    let mut game = cursor.get().assert("read");
+    let cursor = table.find(challenger).check("game doesn't exist");
+    let mut game = cursor.get().check("read");
 
-    eosio_assert(
+    check(
         by == game.host || by == game.challenger,
         "this is not your game",
     );
@@ -46,21 +46,21 @@ fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
     game.turn = host;
     game.winner = n!(none).into();
 
-    cursor.modify(None, &game).assert("write");
+    cursor.modify(None, &game).check("write");
 }
 
-#[eosio_action]
+#[eosio::action]
 fn close(challenger: AccountName, host: AccountName) {
     require_auth(host);
 
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
-    let cursor = table.find(challenger).assert("game doesn't exist");
+    let cursor = table.find(challenger).check("game doesn't exist");
 
-    cursor.erase().assert("read");
+    cursor.erase().check("read");
 }
 
-#[eosio_action]
+#[eosio::action]
 fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u16, col: u16) {
     require_auth(by);
 
@@ -68,22 +68,22 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
 
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
-    let cursor = table.find(challenger).assert("game doesn't exist");
+    let cursor = table.find(challenger).check("game doesn't exist");
 
-    let mut game = cursor.get().assert("read");
+    let mut game = cursor.get().check("read");
 
     // Check if this game hasn't ended yet
-    eosio_assert(game.winner == n!(none).into(), "the game has ended!");
+    check(game.winner == n!(none).into(), "the game has ended!");
     // Check if this game belongs to the action sender
-    eosio_assert(
+    check(
         by == game.host || by == game.challenger,
         "this is not your game",
     );
     // Check if this is the  action sender's turn
-    eosio_assert(by == game.turn, "it's not your turn yet!");
+    check(by == game.turn, "it's not your turn yet!");
 
     // Check if user makes a valid movement
-    eosio_assert(
+    check(
         is_valid_move(row, col, &game.board),
         "not a valid movement!",
     );
@@ -104,12 +104,12 @@ fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u1
         }
     }
     game.winner = game.get_winner();
-    cursor.modify(None, &game).assert("write");
+    cursor.modify(None, &game).check("write");
 }
 
-eosio_abi!(create, restart, close, makemove);
+eosio::abi!(create, restart, close, makemove);
 
-#[eosio_table(games)]
+#[eosio::table(games)]
 struct Game {
     #[primary]
     challenger: AccountName,

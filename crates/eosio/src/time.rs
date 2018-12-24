@@ -292,7 +292,7 @@ impl From<Time> for i64 {
 
 // impl DivAssign for Time {
 //     fn div_assign(&mut self, other: Self) {
-//         eosio_assert(other.0 != 0, "divide by zero");
+//         check(other.0 != 0, "divide by zero");
 //         self.0 = self.0.checked_div(other.0).assert("division overflow");
 //     }
 // }
@@ -352,7 +352,7 @@ impl From<Time> for i64 {
 
 // impl DivAssign for Time {
 //     fn div_assign(&mut self, other: Self) {
-//         eosio_assert(other.0 != 0, "divide by zero");
+//         check(other.0 != 0, "divide by zero");
 //         self.0 = self.0.checked_div(other.0).assert("division overflow");
 //     }
 // }

@@ -1,10 +1,9 @@
 use proc_macro_hack::proc_macro_hack;
 
-// #[proc_macro_hack(support_nested)]
-pub use eosio_macros_impl::eosio_abi;
+pub use eosio_macros_impl::abi;
 
 #[proc_macro_hack(support_nested)]
-pub use eosio_macros_impl::eosio_print;
+pub use eosio_macros_impl::print;
 
 #[proc_macro_hack]
 pub use eosio_macros_impl::n;
@@ -12,6 +11,4 @@ pub use eosio_macros_impl::n;
 #[proc_macro_hack]
 pub use eosio_macros_impl::s;
 
-pub use eosio_macros_impl::{
-    eosio_action, eosio_name, eosio_table, NumBytes, Read, TableRow, Write,
-};
+pub use eosio_macros_impl::{action, name, table, NumBytes, Read, TableRow, Write};

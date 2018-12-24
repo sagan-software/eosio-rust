@@ -50,13 +50,13 @@ mod account;
 mod action;
 
 /// Docs
-mod assert;
-
-/// Docs
 mod asset;
 
 /// Docs
 mod bytes;
+
+/// Docs
+mod check;
 
 /// Docs
 mod crypto;
@@ -92,9 +92,9 @@ pub mod sys {
 
 pub use self::account::*;
 pub use self::action::*;
-pub use self::assert::*;
 pub use self::asset::*;
 pub use self::bytes::*;
+pub use self::check::*;
 pub use self::crypto::*;
 pub use self::print::*;
 pub use self::symbol::*;

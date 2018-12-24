@@ -4,18 +4,18 @@
 
 extern crate proc_macro;
 
+mod abi;
+mod action;
 mod derive_num_bytes;
 mod derive_print;
 mod derive_read;
 mod derive_table_row;
 mod derive_write;
-mod eosio_abi;
-mod eosio_action;
-mod eosio_name;
-mod eosio_print;
-mod eosio_table;
 mod n;
+mod name;
+mod print;
 mod s;
+mod table;
 
 mod paths {
     #[cfg(feature = "internal")]
@@ -33,28 +33,28 @@ use crate::proc_macro::TokenStream;
 use proc_macro_hack::proc_macro_hack;
 
 #[proc_macro]
-pub fn eosio_abi(input: TokenStream) -> TokenStream {
-    crate::eosio_abi::expand(input)
+pub fn abi(input: TokenStream) -> TokenStream {
+    crate::abi::expand(input)
 }
 
 #[proc_macro_attribute]
-pub fn eosio_action(args: TokenStream, input: TokenStream) -> TokenStream {
-    crate::eosio_action::expand(args, input)
+pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
+    crate::action::expand(args, input)
 }
 
 #[proc_macro]
-pub fn eosio_name(input: TokenStream) -> TokenStream {
-    crate::eosio_name::expand(input)
+pub fn name(input: TokenStream) -> TokenStream {
+    crate::name::expand(input)
 }
 
 #[proc_macro_hack]
-pub fn eosio_print(input: TokenStream) -> TokenStream {
-    crate::eosio_print::expand(input)
+pub fn print(input: TokenStream) -> TokenStream {
+    crate::print::expand(input)
 }
 
 #[proc_macro_attribute]
-pub fn eosio_table(args: TokenStream, input: TokenStream) -> TokenStream {
-    crate::eosio_table::expand(args, input)
+pub fn table(args: TokenStream, input: TokenStream) -> TokenStream {
+    crate::table::expand(args, input)
 }
 
 #[proc_macro_hack]
