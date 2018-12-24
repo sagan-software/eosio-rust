@@ -80,6 +80,6 @@ bindgen \
     --whitelist-type capi_checksum512 \
     wrapper.hpp \
     -- \
-    -I ../../external/eosio.cdt/libraries \
+    -I ./eosio.cdt/libraries \
     --std=c++14
 popd
