@@ -1,17 +1,14 @@
-use crate::Builder;
+use crate::builder;
 use eosio::AccountName;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Serialize)]
-pub struct GetInfoBuilder {}
+builder!("/v1/chain/get_info", GetInfoParams, GetInfo);
 
-impl Builder for GetInfoBuilder {
-    const PATH: &'static str = "/v1/chain/get_info";
-    type Output = GetInfo;
-}
+#[derive(Serialize, Clone)]
+pub struct GetInfoParams {}
 
-pub fn get_info() -> GetInfoBuilder {
-    GetInfoBuilder {}
+pub const fn get_info() -> GetInfoParams {
+    GetInfoParams {}
 }
 
 pub type ChainId = String;

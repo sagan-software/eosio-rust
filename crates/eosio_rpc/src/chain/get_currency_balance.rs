@@ -1,28 +1,29 @@
-use crate::Builder;
 use eosio::AccountName;
 use serde_derive::Serialize;
 
-#[derive(Serialize)]
-pub struct GetCurrencyBalanceBuilder {
+crate::builder!(
+    "/v1/chain/get_currency_balance",
+    GetCurrencyBalanceParams,
+    GetCurrencyBalance
+);
+
+#[derive(Serialize, Clone)]
+pub struct GetCurrencyBalanceParams {
     code: AccountName,
     account: AccountName,
-    symbol: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    symbol: Option<String>,
 }
 
-impl Builder for GetCurrencyBalanceBuilder {
-    const PATH: &'static str = "/v1/chain/get_currency_balance";
-    type Output = GetCurrencyBalance;
-}
-
-pub fn get_currency_balance(
-    code: AccountName,
-    account: AccountName,
-    symbol: &str,
-) -> GetCurrencyBalanceBuilder {
-    GetCurrencyBalanceBuilder {
-        code,
-        account,
-        symbol: symbol.to_string(),
+pub fn get_currency_balance<C: Into<AccountName>, A: Into<AccountName>, S: ToString>(
+    code: C,
+    account: A,
+    symbol: Option<S>,
+) -> GetCurrencyBalanceParams {
+    GetCurrencyBalanceParams {
+        code: code.into(),
+        account: account.into(),
+        symbol: symbol.map(|s| s.to_string()),
     }
 }
 

@@ -2,76 +2,73 @@ use crate::error::Error;
 use futures::future::Future;
 use serde::{Deserialize, Serialize};
 
-pub trait Client {
-    fn fetch<Output, Params>(
-        &self,
-        path: &str,
-        params: Option<Params>,
-    ) -> Box<Future<Item = Output, Error = Error>>
-    where
-        Output: 'static + for<'a> Deserialize<'a>,
-        Params: Serialize;
+pub struct Client {
+    node: String,
 }
 
-#[cfg(feature = "use-hyper")]
+impl Client {
+    pub fn new<S: ToString>(node: S) -> Self {
+        Self {
+            node: node.to_string(),
+        }
+    }
+}
+
+#[cfg(all(
+    feature = "hyper",
+    not(any(feature = "wasm-bindgen", feature = "stdweb"))
+))]
 mod hyper {
     use crate::error::Error;
+    use hyper;
     use hyper::rt::{self, Future, Stream};
-    use hyper::Client;
     use hyper_tls::HttpsConnector;
     use serde::{Deserialize, Serialize};
 
-    pub struct HyperClient<'a> {
-        node: &'a str,
-    }
-
-    impl<'a> HyperClient<'a> {
-        pub fn new(node: &'a str) -> Result<Self, String> {
-            Ok(HyperClient { node })
-        }
-    }
-
-    impl<'a> super::Client for HyperClient<'a> {
-        fn fetch<Output, Params>(
+    impl super::Client {
+        pub fn fetch<Output, Params>(
             &self,
             path: &str,
-            params: Option<Params>,
-        ) -> Box<Future<Item = Output, Error = Error>>
+            params: Params,
+        ) -> impl Future<Item = Output, Error = Error>
         where
             Output: 'static + for<'b> Deserialize<'b>,
             Params: Serialize,
         {
             let https = HttpsConnector::new(4).unwrap();
-            let client = Client::builder().build::<_, hyper::Body>(https);
+            let client = hyper::Client::builder().build::<_, hyper::Body>(https);
 
-            let mut url = node.to_owned();
+            let mut url = self.node.to_owned();
             url.push_str(path);
 
-            let url = url.parse().unwrap();
+            let uri: hyper::Uri = url.parse().unwrap();
 
-            let future = client
-                // Fetch the url...
-                .get(url)
-                // And then, if we get a response back...
-                .and_then(|res| {
-                    // asynchronously concatenate chunks of the body
-                    res.into_body().concat2()
-                })
+            let json = serde_json::to_string(&params).unwrap();
+            let mut req = hyper::Request::new(hyper::Body::from(json));
+            *req.method_mut() = hyper::Method::POST;
+            *req.uri_mut() = uri.clone();
+            req.headers_mut().insert(
+                hyper::header::CONTENT_TYPE,
+                hyper::header::HeaderValue::from_static("application/json"),
+            );
+
+            client
+                .request(req)
+                .and_then(|res| res.into_body().concat2())
                 .from_err::<Error>()
-                // use the body after concatenation
                 .and_then(|body| {
-                    // try to parse as json with serde_json
-                    let users = serde_json::from_slice(&body)?;
-
-                    Ok(users)
+                    let res = serde_json::from_slice(&body)?;
+                    Ok(res)
                 })
-                .from_err();
-            Box::new(future)
+                .from_err()
         }
     }
 }
 
-#[cfg(feature = "use-hyper")]
+#[cfg(all(
+    feature = "hyper",
+    not(any(feature = "wasm-bindgen", feature = "stdweb"))
+))]
 pub use self::hyper::*;
 
 #[cfg(feature = "use-stdweb")]

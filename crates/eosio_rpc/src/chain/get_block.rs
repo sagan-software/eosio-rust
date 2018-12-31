@@ -1,29 +1,23 @@
-use crate::Builder;
+use eosio::{AccountName, ActionName, Authorization};
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Serialize)]
-pub struct GetBlockBuilder {
+crate::builder!("/v1/chain/get_block", GetBlockParams, GetBlock);
+
+#[derive(Serialize, Clone)]
+pub struct GetBlockParams {
     block_num_or_id: String,
 }
 
-impl Builder for GetBlockBuilder {
-    const PATH: &'static str = "/v1/chain/get_block";
-    type Output = GetBlock;
-}
-
-pub fn get_block<B>(block_num_or_id: B) -> GetBlockBuilder
-where
-    B: ToString,
-{
-    GetBlockBuilder {
+pub fn get_block<B: ToString>(block_num_or_id: B) -> GetBlockParams {
+    GetBlockParams {
         block_num_or_id: block_num_or_id.to_string(),
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GetBlock {
     pub timestamp: String,
-    pub producer: String,
+    pub producer: AccountName,
     pub confirmed: u16,
     pub previous: String,
     pub transaction_mroot: String,
@@ -39,20 +33,20 @@ pub struct GetBlock {
     pub ref_block_prefix: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NewProducers {
     pub version: u32,
-    pub producers: Vec<String>,
+    pub producers: Vec<AccountName>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Extension {
     #[serde(rename = "type")]
     pub type_: u16,
     pub data: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Transaction {
     pub status: String,
     pub cpu_usage_us: u64,
@@ -60,7 +54,7 @@ pub struct Transaction {
     pub trx: Trx,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Trx {
     pub id: String,
     pub signatures: Vec<String>,
@@ -70,7 +64,7 @@ pub struct Trx {
     pub transaction: TransactionInner,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TransactionInner {
     pub expiration: String,
     pub ref_block_num: u64,
@@ -83,11 +77,11 @@ pub struct TransactionInner {
     pub transaction_extensions: Vec<Extension>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Action {
-    pub account: String,
-    pub name: String,
-    pub authorization: Vec<::eosio::Authorization>,
+    pub account: AccountName,
+    pub name: ActionName,
+    pub authorization: Vec<Authorization>,
     pub data: ::serde_json::Value,
     pub hex_data: String,
 }

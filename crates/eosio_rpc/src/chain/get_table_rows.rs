@@ -1,11 +1,8 @@
 use eosio::{AccountName, ScopeName, TableName};
 use serde::{Deserialize, Serialize};
-use std::marker::PhantomData;
 
-#[derive(Serialize)]
-pub struct GetTableRowsBuilder<Row> {
-    #[serde(skip)]
-    _data: PhantomData<Row>,
+#[derive(Serialize, Clone)]
+pub struct GetTableRowsParams {
     scope: ScopeName,
     code: AccountName,
     table: TableName,
@@ -18,15 +15,7 @@ pub struct GetTableRowsBuilder<Row> {
     limit: Option<u32>,
 }
 
-impl<Row> crate::builder::Builder for GetTableRowsBuilder<Row>
-where
-    Row: for<'a> Deserialize<'a> + 'static,
-{
-    const PATH: &'static str = "/v1/chain/get_table_rows";
-    type Output = GetTableRows<Row>;
-}
-
-impl<Row> GetTableRowsBuilder<Row> {
+impl GetTableRowsParams {
     pub fn json(&mut self, value: bool) -> &mut Self {
         self.json = value;
         self
@@ -61,21 +50,30 @@ impl<Row> GetTableRowsBuilder<Row> {
         self.limit = None;
         self
     }
+
+    pub fn fetch<Row>(
+        &self,
+        client: &crate::Client,
+    ) -> impl futures::future::Future<Item = GetTableRows<Row>, Error = crate::Error>
+    where
+        Row: for<'a> Deserialize<'a> + 'static,
+    {
+        client.fetch::<GetTableRows<Row>, GetTableRowsParams>(
+            "/v1/chain/get_table_rows",
+            self.clone(),
+        )
+    }
 }
 
-pub fn get_table_rows<Row>(
-    code: AccountName,
-    scope: ScopeName,
-    table: TableName,
-) -> GetTableRowsBuilder<Row>
-where
-    Row: for<'a> Deserialize<'a> + 'static,
-{
-    GetTableRowsBuilder {
-        _data: PhantomData,
-        code,
-        scope,
-        table,
+pub fn get_table_rows<C: Into<AccountName>, S: Into<ScopeName>, T: Into<TableName>>(
+    code: C,
+    scope: S,
+    table: T,
+) -> GetTableRowsParams {
+    GetTableRowsParams {
+        code: code.into(),
+        scope: scope.into(),
+        table: table.into(),
         json: true,
         lower_bound: None,
         upper_bound: None,

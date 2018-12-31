@@ -1,20 +1,16 @@
-use crate::Builder;
 use eosio::AccountName;
 use eosio_abi::Abi;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Serialize)]
-pub struct GetAbiBuilder {
+crate::builder!("/v1/chain/get_abi", GetAbiParams, GetAbi);
+
+#[derive(Serialize, Clone)]
+pub struct GetAbiParams {
     account_name: AccountName,
 }
 
-impl Builder for GetAbiBuilder {
-    const PATH: &'static str = "/v1/chain/get_abi";
-    type Output = GetAbi;
-}
-
-pub fn get_abi(account_name: AccountName) -> GetAbiBuilder {
-    GetAbiBuilder { account_name }
+pub const fn get_abi(account_name: AccountName) -> GetAbiParams {
+    GetAbiParams { account_name }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
