@@ -122,6 +122,13 @@ pub trait ToAction: Sized {
             data: self,
         }
     }
+
+    #[inline]
+    #[cfg(feature = "contract")]
+    fn send_inline(self, authorization: Vec<Authorization>) -> Result<(), WriteError> {
+        self.to_action(AccountName::receiver(), authorization)
+            .send_inline()
+    }
 }
 
 #[cfg(feature = "contract")]
@@ -139,11 +146,5 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
 
         let mut pos = 0;
         Self::read(&bytes, &mut pos)
-    }
-
-    #[inline]
-    fn send_inline(self, authorization: Vec<Authorization>) -> Result<(), WriteError> {
-        self.to_action(AccountName::receiver(), authorization)
-            .send_inline()
     }
 }

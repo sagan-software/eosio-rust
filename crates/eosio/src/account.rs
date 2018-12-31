@@ -1,6 +1,6 @@
 #[cfg(feature = "contract")]
 use crate::time::Time;
-use crate::{name, n, NumBytes, Read, Write};
+use crate::{n, name, NumBytes, Read, Write};
 
 name!(AccountName);
 name!(PermissionName);
