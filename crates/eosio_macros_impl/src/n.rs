@@ -29,7 +29,7 @@ impl Parse for EosioName {
             .map(EosioName)
             .map_err(|e| {
                 let message = match e {
-                    ParseNameError::IsEmpty => "expected EOSIO name".to_string(),
+                    // ParseNameError::IsEmpty => "expected EOSIO name".to_string(),
                     ParseNameError::TooLong => {
                         format!("unexpected input; EOSIO name is {} characters long but must be 12 characters or less", username.len())
                     },

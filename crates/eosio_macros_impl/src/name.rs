@@ -91,7 +91,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
         impl #ident {
             #[inline]
             pub fn from_string(value: String) -> Result<Self, #eosio::ParseNameError> {
-                let name = #eosio::sys::string_to_name(value.as_str())?;
+                Self::from_str(value.as_str())
+            }
+
+            #[inline]
+            pub fn from_str(value: &str) -> Result<Self, #eosio::ParseNameError> {
+                let name = #eosio::sys::string_to_name(value)?;
                 Ok(name.into())
             }
 
@@ -288,7 +293,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
         impl #ident {
             #[inline]
             pub fn from_string(value: String) -> Result<Self, #eosio::ParseNameError> {
-                let name = #eosio::sys::string_to_name(value.as_str())?;
+                Self::from_str(value.as_str())
+            }
+
+            #[inline]
+            pub fn from_str(value: &str) -> Result<Self, #eosio::ParseNameError> {
+                let name = #eosio::sys::string_to_name(value)?;
                 Ok(name.into())
             }
 
