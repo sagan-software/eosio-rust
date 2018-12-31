@@ -12,7 +12,7 @@ macro_rules! test_string_to_name {
 }
 
 test_string_to_name!(
-    string_to_name_empty, "", Err(ParseNameError::IsEmpty)
+    string_to_name_empty, "", Ok(0)
     string_to_name_single_char, "a", Ok(3_458_764_513_820_540_928)
     string_to_name_bad_number, "123456789012", Err(ParseNameError::BadChar('6'))
     string_to_name_only_numbers, "123451234512", Ok(614_251_535_012_020_768)

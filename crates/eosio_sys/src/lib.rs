@@ -66,7 +66,7 @@ fn char_to_symbol(c: char) -> Option<char> {
 
 #[derive(Debug, PartialEq)]
 pub enum ParseNameError {
-    IsEmpty,
+    // IsEmpty,
     TooLong,
     BadChar(char),
 }
@@ -74,7 +74,7 @@ pub enum ParseNameError {
 impl ::std::fmt::Display for ParseNameError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            ParseNameError::IsEmpty => write!(f, "empty string is not a valid EOSIO name"),
+            // ParseNameError::IsEmpty => write!(f, "empty string is not a valid EOSIO name"),
             ParseNameError::TooLong => write!(f, "name is too long, must be 12 chars or less"),
             ParseNameError::BadChar(c) => write!(f, "name contains invalid character '{}'", c),
         }
@@ -82,9 +82,9 @@ impl ::std::fmt::Display for ParseNameError {
 }
 
 pub fn string_to_name(s: &str) -> Result<u64, ParseNameError> {
-    if s.is_empty() {
-        return Err(ParseNameError::IsEmpty);
-    }
+    // if s.is_empty() {
+    //     return Err(ParseNameError::IsEmpty);
+    // }
 
     if s.len() > 12 {
         return Err(ParseNameError::TooLong);
