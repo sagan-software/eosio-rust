@@ -1,3 +1,6 @@
+mod abigen;
+mod codegen;
+
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -70,6 +73,3 @@ pub struct AbiExtension {
     pub type_: u16,
     pub data: String,
 }
-
-// #[derive(Serialize, Deserialize, Debug)]
-// pub struct Variant {}
