@@ -1,0 +1,1502 @@
+create_token_cpp
+200 us
+
+ITERATION 1:
+open_token_cpp
+341 us
+100 us
+issue_tokens_cpp
+183 us
+779 us
+transfer_tokens_cpp
+341 us
+242 us
+retire_tokens_cpp
+170 us
+close_token_cpp
+111 us
+
+ITERATION 2:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+661 us
+321 us
+transfer_tokens_cpp
+180 us
+200 us
+retire_tokens_cpp
+185 us
+close_token_cpp
+119 us
+
+ITERATION 3:
+open_token_cpp
+100 us
+106 us
+issue_tokens_cpp
+308 us
+251 us
+transfer_tokens_cpp
+324 us
+197 us
+retire_tokens_cpp
+215 us
+close_token_cpp
+286 us
+
+ITERATION 4:
+open_token_cpp
+179 us
+397 us
+issue_tokens_cpp
+250 us
+298 us
+transfer_tokens_cpp
+270 us
+174 us
+retire_tokens_cpp
+134 us
+close_token_cpp
+117 us
+
+ITERATION 5:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+161 us
+518 us
+transfer_tokens_cpp
+203 us
+176 us
+retire_tokens_cpp
+143 us
+close_token_cpp
+256 us
+
+ITERATION 6:
+open_token_cpp
+108 us
+100 us
+issue_tokens_cpp
+173 us
+278 us
+transfer_tokens_cpp
+359 us
+324 us
+retire_tokens_cpp
+168 us
+close_token_cpp
+156 us
+
+ITERATION 7:
+open_token_cpp
+233 us
+100 us
+issue_tokens_cpp
+186 us
+1801 us
+transfer_tokens_cpp
+332 us
+187 us
+retire_tokens_cpp
+273 us
+close_token_cpp
+108 us
+
+ITERATION 8:
+open_token_cpp
+100 us
+119 us
+issue_tokens_cpp
+186 us
+290 us
+transfer_tokens_cpp
+184 us
+195 us
+retire_tokens_cpp
+168 us
+close_token_cpp
+112 us
+
+ITERATION 9:
+open_token_cpp
+100 us
+461 us
+issue_tokens_cpp
+419 us
+325 us
+transfer_tokens_cpp
+316 us
+177 us
+retire_tokens_cpp
+146 us
+close_token_cpp
+173 us
+
+ITERATION 10:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+539 us
+407 us
+transfer_tokens_cpp
+180 us
+172 us
+retire_tokens_cpp
+188 us
+close_token_cpp
+119 us
+
+ITERATION 11:
+open_token_cpp
+162 us
+100 us
+issue_tokens_cpp
+431 us
+401 us
+transfer_tokens_cpp
+164 us
+237 us
+retire_tokens_cpp
+155 us
+close_token_cpp
+219 us
+
+ITERATION 12:
+open_token_cpp
+107 us
+100 us
+issue_tokens_cpp
+215 us
+291 us
+transfer_tokens_cpp
+440 us
+153 us
+retire_tokens_cpp
+358 us
+close_token_cpp
+118 us
+
+ITERATION 13:
+open_token_cpp
+113 us
+100 us
+issue_tokens_cpp
+216 us
+278 us
+transfer_tokens_cpp
+199 us
+351 us
+retire_tokens_cpp
+150 us
+close_token_cpp
+159 us
+
+ITERATION 14:
+open_token_cpp
+100 us
+188 us
+issue_tokens_cpp
+255 us
+551 us
+transfer_tokens_cpp
+175 us
+184 us
+retire_tokens_cpp
+192 us
+close_token_cpp
+164 us
+
+ITERATION 15:
+open_token_cpp
+110 us
+100 us
+issue_tokens_cpp
+207 us
+414 us
+transfer_tokens_cpp
+154 us
+221 us
+retire_tokens_cpp
+188 us
+close_token_cpp
+175 us
+
+ITERATION 16:
+open_token_cpp
+100 us
+112 us
+issue_tokens_cpp
+206 us
+265 us
+transfer_tokens_cpp
+215 us
+180 us
+retire_tokens_cpp
+221 us
+close_token_cpp
+130 us
+
+ITERATION 17:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+175 us
+530 us
+transfer_tokens_cpp
+184 us
+224 us
+retire_tokens_cpp
+244 us
+close_token_cpp
+137 us
+
+ITERATION 18:
+open_token_cpp
+108 us
+170 us
+issue_tokens_cpp
+152 us
+312 us
+transfer_tokens_cpp
+190 us
+177 us
+retire_tokens_cpp
+165 us
+close_token_cpp
+152 us
+
+ITERATION 19:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+149 us
+257 us
+transfer_tokens_cpp
+247 us
+274 us
+retire_tokens_cpp
+148 us
+close_token_cpp
+117 us
+
+ITERATION 20:
+open_token_cpp
+100 us
+487 us
+issue_tokens_cpp
+160 us
+305 us
+transfer_tokens_cpp
+230 us
+176 us
+retire_tokens_cpp
+139 us
+close_token_cpp
+116 us
+
+ITERATION 21:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+201 us
+368 us
+transfer_tokens_cpp
+186 us
+168 us
+retire_tokens_cpp
+135 us
+close_token_cpp
+114 us
+
+ITERATION 22:
+open_token_cpp
+100 us
+203 us
+issue_tokens_cpp
+146 us
+297 us
+transfer_tokens_cpp
+187 us
+203 us
+retire_tokens_cpp
+198 us
+close_token_cpp
+140 us
+
+ITERATION 23:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+148 us
+312 us
+transfer_tokens_cpp
+177 us
+255 us
+retire_tokens_cpp
+165 us
+close_token_cpp
+173 us
+
+ITERATION 24:
+open_token_cpp
+228 us
+196 us
+issue_tokens_cpp
+261 us
+248 us
+transfer_tokens_cpp
+245 us
+249 us
+retire_tokens_cpp
+195 us
+close_token_cpp
+123 us
+
+ITERATION 25:
+open_token_cpp
+152 us
+100 us
+issue_tokens_cpp
+236 us
+271 us
+transfer_tokens_cpp
+264 us
+251 us
+retire_tokens_cpp
+220 us
+close_token_cpp
+145 us
+
+ITERATION 26:
+open_token_cpp
+100 us
+163 us
+issue_tokens_cpp
+183 us
+289 us
+transfer_tokens_cpp
+188 us
+159 us
+retire_tokens_cpp
+223 us
+close_token_cpp
+115 us
+
+ITERATION 27:
+open_token_cpp
+144 us
+102 us
+issue_tokens_cpp
+170 us
+283 us
+transfer_tokens_cpp
+197 us
+432 us
+retire_tokens_cpp
+199 us
+close_token_cpp
+134 us
+
+ITERATION 28:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+192 us
+408 us
+transfer_tokens_cpp
+192 us
+205 us
+retire_tokens_cpp
+129 us
+close_token_cpp
+116 us
+
+ITERATION 29:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+240 us
+315 us
+transfer_tokens_cpp
+219 us
+173 us
+retire_tokens_cpp
+248 us
+close_token_cpp
+108 us
+
+ITERATION 30:
+open_token_cpp
+100 us
+137 us
+issue_tokens_cpp
+476 us
+302 us
+transfer_tokens_cpp
+179 us
+250 us
+retire_tokens_cpp
+194 us
+close_token_cpp
+117 us
+
+ITERATION 31:
+open_token_cpp
+191 us
+100 us
+issue_tokens_cpp
+173 us
+266 us
+transfer_tokens_cpp
+272 us
+215 us
+retire_tokens_cpp
+252 us
+close_token_cpp
+142 us
+
+ITERATION 32:
+open_token_cpp
+144 us
+100 us
+issue_tokens_cpp
+177 us
+322 us
+transfer_tokens_cpp
+207 us
+170 us
+retire_tokens_cpp
+181 us
+close_token_cpp
+109 us
+
+ITERATION 33:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+207 us
+568 us
+transfer_tokens_cpp
+150 us
+170 us
+retire_tokens_cpp
+150 us
+close_token_cpp
+399 us
+
+ITERATION 34:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+169 us
+259 us
+transfer_tokens_cpp
+260 us
+292 us
+retire_tokens_cpp
+141 us
+close_token_cpp
+160 us
+
+ITERATION 35:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+171 us
+357 us
+transfer_tokens_cpp
+484 us
+306 us
+retire_tokens_cpp
+151 us
+close_token_cpp
+152 us
+
+ITERATION 36:
+open_token_cpp
+134 us
+100 us
+issue_tokens_cpp
+277 us
+289 us
+transfer_tokens_cpp
+342 us
+170 us
+retire_tokens_cpp
+526 us
+close_token_cpp
+114 us
+
+ITERATION 37:
+open_token_cpp
+115 us
+117 us
+issue_tokens_cpp
+248 us
+356 us
+transfer_tokens_cpp
+218 us
+176 us
+retire_tokens_cpp
+190 us
+close_token_cpp
+183 us
+
+ITERATION 38:
+open_token_cpp
+104 us
+121 us
+issue_tokens_cpp
+237 us
+663 us
+transfer_tokens_cpp
+186 us
+452 us
+retire_tokens_cpp
+183 us
+close_token_cpp
+141 us
+
+ITERATION 39:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+159 us
+335 us
+transfer_tokens_cpp
+166 us
+166 us
+retire_tokens_cpp
+199 us
+close_token_cpp
+139 us
+
+ITERATION 40:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+158 us
+273 us
+transfer_tokens_cpp
+182 us
+170 us
+retire_tokens_cpp
+155 us
+close_token_cpp
+111 us
+
+ITERATION 41:
+open_token_cpp
+111 us
+172 us
+issue_tokens_cpp
+167 us
+303 us
+transfer_tokens_cpp
+225 us
+175 us
+retire_tokens_cpp
+176 us
+close_token_cpp
+154 us
+
+ITERATION 42:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+151 us
+398 us
+transfer_tokens_cpp
+179 us
+173 us
+retire_tokens_cpp
+155 us
+close_token_cpp
+146 us
+
+ITERATION 43:
+open_token_cpp
+100 us
+120 us
+issue_tokens_cpp
+194 us
+509 us
+transfer_tokens_cpp
+333 us
+172 us
+retire_tokens_cpp
+159 us
+close_token_cpp
+176 us
+
+ITERATION 44:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+160 us
+374 us
+transfer_tokens_cpp
+323 us
+201 us
+retire_tokens_cpp
+283 us
+close_token_cpp
+140 us
+
+ITERATION 45:
+open_token_cpp
+100 us
+106 us
+issue_tokens_cpp
+147 us
+274 us
+transfer_tokens_cpp
+220 us
+201 us
+retire_tokens_cpp
+144 us
+close_token_cpp
+132 us
+
+ITERATION 46:
+open_token_cpp
+233 us
+100 us
+issue_tokens_cpp
+205 us
+314 us
+transfer_tokens_cpp
+341 us
+793 us
+retire_tokens_cpp
+271 us
+close_token_cpp
+114 us
+
+ITERATION 47:
+open_token_cpp
+100 us
+140 us
+issue_tokens_cpp
+249 us
+276 us
+transfer_tokens_cpp
+203 us
+172 us
+retire_tokens_cpp
+144 us
+close_token_cpp
+102 us
+
+ITERATION 48:
+open_token_cpp
+100 us
+101 us
+issue_tokens_cpp
+178 us
+272 us
+transfer_tokens_cpp
+190 us
+247 us
+retire_tokens_cpp
+207 us
+close_token_cpp
+120 us
+
+ITERATION 49:
+open_token_cpp
+100 us
+103 us
+issue_tokens_cpp
+447 us
+4546 us
+transfer_tokens_cpp
+181 us
+249 us
+retire_tokens_cpp
+177 us
+close_token_cpp
+193 us
+
+ITERATION 50:
+open_token_cpp
+117 us
+100 us
+issue_tokens_cpp
+145 us
+287 us
+transfer_tokens_cpp
+200 us
+344 us
+retire_tokens_cpp
+204 us
+close_token_cpp
+171 us
+
+ITERATION 51:
+open_token_cpp
+222 us
+100 us
+issue_tokens_cpp
+271 us
+466 us
+transfer_tokens_cpp
+707 us
+336 us
+retire_tokens_cpp
+156 us
+close_token_cpp
+104 us
+
+ITERATION 52:
+open_token_cpp
+230 us
+108 us
+issue_tokens_cpp
+160 us
+411 us
+transfer_tokens_cpp
+279 us
+435 us
+retire_tokens_cpp
+154 us
+close_token_cpp
+196 us
+
+ITERATION 53:
+open_token_cpp
+163 us
+100 us
+issue_tokens_cpp
+279 us
+296 us
+transfer_tokens_cpp
+179 us
+200 us
+retire_tokens_cpp
+135 us
+close_token_cpp
+137 us
+
+ITERATION 54:
+open_token_cpp
+100 us
+115 us
+issue_tokens_cpp
+160 us
+305 us
+transfer_tokens_cpp
+185 us
+147 us
+retire_tokens_cpp
+230 us
+close_token_cpp
+166 us
+
+ITERATION 55:
+open_token_cpp
+210 us
+151 us
+issue_tokens_cpp
+191 us
+271 us
+transfer_tokens_cpp
+594 us
+168 us
+retire_tokens_cpp
+144 us
+close_token_cpp
+110 us
+
+ITERATION 56:
+open_token_cpp
+104 us
+100 us
+issue_tokens_cpp
+142 us
+325 us
+transfer_tokens_cpp
+222 us
+192 us
+retire_tokens_cpp
+147 us
+close_token_cpp
+109 us
+
+ITERATION 57:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+191 us
+261 us
+transfer_tokens_cpp
+160 us
+190 us
+retire_tokens_cpp
+150 us
+close_token_cpp
+200 us
+
+ITERATION 58:
+open_token_cpp
+100 us
+117 us
+issue_tokens_cpp
+163 us
+346 us
+transfer_tokens_cpp
+160 us
+171 us
+retire_tokens_cpp
+131 us
+close_token_cpp
+166 us
+
+ITERATION 59:
+open_token_cpp
+105 us
+172 us
+issue_tokens_cpp
+136 us
+275 us
+transfer_tokens_cpp
+178 us
+151 us
+retire_tokens_cpp
+163 us
+close_token_cpp
+119 us
+
+ITERATION 60:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+165 us
+283 us
+transfer_tokens_cpp
+175 us
+191 us
+retire_tokens_cpp
+141 us
+close_token_cpp
+172 us
+
+ITERATION 61:
+open_token_cpp
+114 us
+123 us
+issue_tokens_cpp
+243 us
+479 us
+transfer_tokens_cpp
+236 us
+176 us
+retire_tokens_cpp
+137 us
+close_token_cpp
+206 us
+
+ITERATION 62:
+open_token_cpp
+100 us
+351 us
+issue_tokens_cpp
+155 us
+258 us
+transfer_tokens_cpp
+246 us
+164 us
+retire_tokens_cpp
+125 us
+close_token_cpp
+108 us
+
+ITERATION 63:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+212 us
+517 us
+transfer_tokens_cpp
+225 us
+352 us
+retire_tokens_cpp
+182 us
+close_token_cpp
+121 us
+
+ITERATION 64:
+open_token_cpp
+122 us
+100 us
+issue_tokens_cpp
+197 us
+270 us
+transfer_tokens_cpp
+152 us
+217 us
+retire_tokens_cpp
+240 us
+close_token_cpp
+151 us
+
+ITERATION 65:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+257 us
+306 us
+transfer_tokens_cpp
+332 us
+154 us
+retire_tokens_cpp
+148 us
+close_token_cpp
+133 us
+
+ITERATION 66:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+157 us
+260 us
+transfer_tokens_cpp
+152 us
+177 us
+retire_tokens_cpp
+132 us
+close_token_cpp
+138 us
+
+ITERATION 67:
+open_token_cpp
+307 us
+100 us
+issue_tokens_cpp
+212 us
+282 us
+transfer_tokens_cpp
+147 us
+166 us
+retire_tokens_cpp
+140 us
+close_token_cpp
+118 us
+
+ITERATION 68:
+open_token_cpp
+100 us
+135 us
+issue_tokens_cpp
+221 us
+267 us
+transfer_tokens_cpp
+303 us
+153 us
+retire_tokens_cpp
+132 us
+close_token_cpp
+112 us
+
+ITERATION 69:
+open_token_cpp
+105 us
+100 us
+issue_tokens_cpp
+200 us
+298 us
+transfer_tokens_cpp
+172 us
+1464 us
+retire_tokens_cpp
+130 us
+close_token_cpp
+984 us
+
+ITERATION 70:
+open_token_cpp
+100 us
+128 us
+issue_tokens_cpp
+167 us
+273 us
+transfer_tokens_cpp
+295 us
+156 us
+retire_tokens_cpp
+143 us
+close_token_cpp
+115 us
+
+ITERATION 71:
+open_token_cpp
+205 us
+100 us
+issue_tokens_cpp
+256 us
+335 us
+transfer_tokens_cpp
+169 us
+381 us
+retire_tokens_cpp
+230 us
+close_token_cpp
+352 us
+
+ITERATION 72:
+open_token_cpp
+101 us
+115 us
+issue_tokens_cpp
+184 us
+404 us
+transfer_tokens_cpp
+173 us
+184 us
+retire_tokens_cpp
+193 us
+close_token_cpp
+119 us
+
+ITERATION 73:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+165 us
+259 us
+transfer_tokens_cpp
+237 us
+180 us
+retire_tokens_cpp
+171 us
+close_token_cpp
+144 us
+
+ITERATION 74:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+464 us
+295 us
+transfer_tokens_cpp
+163 us
+260 us
+retire_tokens_cpp
+125 us
+close_token_cpp
+136 us
+
+ITERATION 75:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+135 us
+408 us
+transfer_tokens_cpp
+175 us
+148 us
+retire_tokens_cpp
+137 us
+close_token_cpp
+100 us
+
+ITERATION 76:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+242 us
+261 us
+transfer_tokens_cpp
+501 us
+198 us
+retire_tokens_cpp
+139 us
+close_token_cpp
+116 us
+
+ITERATION 77:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+147 us
+346 us
+transfer_tokens_cpp
+163 us
+173 us
+retire_tokens_cpp
+155 us
+close_token_cpp
+119 us
+
+ITERATION 78:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+183 us
+313 us
+transfer_tokens_cpp
+157 us
+274 us
+retire_tokens_cpp
+128 us
+close_token_cpp
+232 us
+
+ITERATION 79:
+open_token_cpp
+100 us
+120 us
+issue_tokens_cpp
+140 us
+307 us
+transfer_tokens_cpp
+140 us
+191 us
+retire_tokens_cpp
+147 us
+close_token_cpp
+100 us
+
+ITERATION 80:
+open_token_cpp
+100 us
+129 us
+issue_tokens_cpp
+166 us
+270 us
+transfer_tokens_cpp
+265 us
+155 us
+retire_tokens_cpp
+163 us
+close_token_cpp
+100 us
+
+ITERATION 81:
+open_token_cpp
+100 us
+243 us
+issue_tokens_cpp
+158 us
+354 us
+transfer_tokens_cpp
+157 us
+155 us
+retire_tokens_cpp
+169 us
+close_token_cpp
+109 us
+
+ITERATION 82:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+282 us
+286 us
+transfer_tokens_cpp
+158 us
+287 us
+retire_tokens_cpp
+152 us
+close_token_cpp
+417 us
+
+ITERATION 83:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+205 us
+295 us
+transfer_tokens_cpp
+247 us
+224 us
+retire_tokens_cpp
+137 us
+close_token_cpp
+100 us
+
+ITERATION 84:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+286 us
+232 us
+transfer_tokens_cpp
+180 us
+156 us
+retire_tokens_cpp
+138 us
+close_token_cpp
+130 us
+
+ITERATION 85:
+open_token_cpp
+100 us
+111 us
+issue_tokens_cpp
+158 us
+348 us
+transfer_tokens_cpp
+201 us
+170 us
+retire_tokens_cpp
+197 us
+close_token_cpp
+143 us
+
+ITERATION 86:
+open_token_cpp
+100 us
+125 us
+issue_tokens_cpp
+134 us
+261 us
+transfer_tokens_cpp
+158 us
+238 us
+retire_tokens_cpp
+157 us
+close_token_cpp
+119 us
+
+ITERATION 87:
+open_token_cpp
+103 us
+100 us
+issue_tokens_cpp
+172 us
+322 us
+transfer_tokens_cpp
+155 us
+176 us
+retire_tokens_cpp
+154 us
+close_token_cpp
+148 us
+
+ITERATION 88:
+open_token_cpp
+129 us
+100 us
+issue_tokens_cpp
+182 us
+290 us
+transfer_tokens_cpp
+226 us
+161 us
+retire_tokens_cpp
+163 us
+close_token_cpp
+100 us
+
+ITERATION 89:
+open_token_cpp
+100 us
+125 us
+issue_tokens_cpp
+203 us
+368 us
+transfer_tokens_cpp
+159 us
+151 us
+retire_tokens_cpp
+140 us
+close_token_cpp
+112 us
+
+ITERATION 90:
+open_token_cpp
+100 us
+108 us
+issue_tokens_cpp
+148 us
+253 us
+transfer_tokens_cpp
+189 us
+218 us
+retire_tokens_cpp
+148 us
+close_token_cpp
+103 us
+
+ITERATION 91:
+open_token_cpp
+119 us
+100 us
+issue_tokens_cpp
+395 us
+272 us
+transfer_tokens_cpp
+168 us
+238 us
+retire_tokens_cpp
+131 us
+close_token_cpp
+128 us
+
+ITERATION 92:
+open_token_cpp
+111 us
+100 us
+issue_tokens_cpp
+157 us
+285 us
+transfer_tokens_cpp
+207 us
+243 us
+retire_tokens_cpp
+133 us
+close_token_cpp
+186 us
+
+ITERATION 93:
+open_token_cpp
+145 us
+143 us
+issue_tokens_cpp
+182 us
+254 us
+transfer_tokens_cpp
+154 us
+169 us
+retire_tokens_cpp
+143 us
+close_token_cpp
+170 us
+
+ITERATION 94:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+148 us
+299 us
+transfer_tokens_cpp
+182 us
+462 us
+retire_tokens_cpp
+133 us
+close_token_cpp
+167 us
+
+ITERATION 95:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+176 us
+580 us
+transfer_tokens_cpp
+208 us
+169 us
+retire_tokens_cpp
+194 us
+close_token_cpp
+183 us
+
+ITERATION 96:
+open_token_cpp
+100 us
+155 us
+issue_tokens_cpp
+142 us
+273 us
+transfer_tokens_cpp
+181 us
+244 us
+retire_tokens_cpp
+414 us
+close_token_cpp
+117 us
+
+ITERATION 97:
+open_token_cpp
+141 us
+100 us
+issue_tokens_cpp
+164 us
+291 us
+transfer_tokens_cpp
+164 us
+171 us
+retire_tokens_cpp
+288 us
+close_token_cpp
+856 us
+
+ITERATION 98:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+155 us
+314 us
+transfer_tokens_cpp
+152 us
+234 us
+retire_tokens_cpp
+183 us
+close_token_cpp
+111 us
+
+ITERATION 99:
+open_token_cpp
+112 us
+109 us
+issue_tokens_cpp
+159 us
+317 us
+transfer_tokens_cpp
+155 us
+275 us
+retire_tokens_cpp
+147 us
+close_token_cpp
+118 us
+
+ITERATION 100:
+open_token_cpp
+100 us
+100 us
+issue_tokens_cpp
+176 us
+252 us
+transfer_tokens_cpp
+172 us
+143 us
+retire_tokens_cpp
+149 us
+close_token_cpp
+128 us
