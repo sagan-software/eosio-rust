@@ -1,6 +1,5 @@
 use crate::account::{AccountName, Authorization};
 use crate::bytes::NumBytes;
-#[cfg(feature = "contract")]
 use crate::bytes::{Read, ReadError, Write, WriteError};
 use eosio_macros::*;
 
@@ -110,7 +109,7 @@ where
     }
 }
 
-pub trait ToAction: Sized {
+pub trait ToAction: Sized + Write + NumBytes {
     const NAME: u64;
 
     #[inline]

@@ -1,19 +1,50 @@
 use eosio::*;
 
+#[derive(Read, Write, NumBytes, Copy, Clone)]
+pub struct Account {
+    balance: Asset,
+}
+
+#[cfg(feature = "contract")]
+impl TableRow for Account {
+    const TABLE_NAME: u64 = n!(accounts);
+
+    fn primary_key(&self) -> u64 {
+        self.balance.symbol.code().into()
+    }
+}
+
+#[derive(Read, Write, NumBytes, Copy, Clone)]
+pub struct CurrencyStats {
+    supply: Asset,
+    max_supply: Asset,
+    issuer: AccountName,
+}
+
+#[cfg(feature = "contract")]
+impl TableRow for CurrencyStats {
+    const TABLE_NAME: u64 = n!(stat);
+
+    fn primary_key(&self) -> u64 {
+        self.supply.symbol.code().into()
+    }
+}
+
 #[eosio::action]
 fn create(issuer: AccountName, max_supply: Asset) {
-    let receiver = AccountName::receiver();
-    require_auth(receiver);
+    let _self = AccountName::receiver();
+    require_auth(_self);
 
     let symbol = max_supply.symbol;
+    check(symbol.is_valid(), "invalid symbol name");
+    check(max_supply.is_valid(), "invalid supply");
     check(max_supply.amount > 0, "max-supply must be positive");
 
-    let symbol_name = symbol.name();
-    let table = CurrencyStats::table(receiver, symbol_name);
-
+    let symbol_code = symbol.code();
+    let stats_table = CurrencyStats::table(_self, symbol_code);
     check(
-        !table.exists(symbol_name),
-        "token with symbol already existss",
+        stats_table.find(symbol_code).is_none(),
+        "token with symbol already exists",
     );
 
     let stats = CurrencyStats {
@@ -22,23 +53,25 @@ fn create(issuer: AccountName, max_supply: Asset) {
         issuer,
     };
 
-    table.emplace(receiver, &stats).check("write");
+    stats_table.emplace(_self, &stats).check("write");
 }
 
 #[eosio::action]
 fn issue(to: AccountName, quantity: Asset, memo: String) {
-    let receiver = AccountName::receiver();
     let symbol = quantity.symbol;
-
+    check(symbol.is_valid(), "invalid symbol name");
     check(memo.len() <= 256, "memo has more than 256 bytes");
-    let table = CurrencyStats::table(receiver, symbol.name());
-    let cursor = table
-        .find(symbol.name())
+
+    let _self = AccountName::receiver();
+    let symbol_code = symbol.code();
+    let stats_table = CurrencyStats::table(_self, symbol_code);
+    let cursor = stats_table
+        .find(symbol_code)
         .check("token with symbol does not exist, create token before issue");
 
     let mut st = cursor.get().check("read");
     require_auth(st.issuer);
-
+    check(quantity.is_valid(), "invalid quantity");
     check(quantity.amount > 0, "must issue positive quantity");
     check(
         quantity.symbol == st.supply.symbol,
@@ -71,77 +104,47 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
 }
 
 #[eosio::action]
-fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
-    require_auth(ram_payer);
-    let receiver = AccountName::receiver();
-    let accounts_table = Account::table(receiver, symbol.name());
-    let cursor = accounts_table.find(symbol.name());
-    if cursor.is_none() {
-        let account = Account {
-            balance: Asset { amount: 0, symbol },
-        };
-        accounts_table.emplace(ram_payer, &account).check("write");
-    }
-}
-
-#[eosio::action]
-fn close(owner: AccountName, symbol: Symbol) {
-    require_auth(owner);
-    let receiver = AccountName::receiver();
-    let accounts_table = Account::table(receiver, symbol.name());
-    let cursor = accounts_table
-        .find(symbol.name())
-        .check("Balance row already deleted or never existed. Action won't have any effect.");
-
-    let account = cursor.get().check("read");
-
-    check(
-        account.balance.amount == 0,
-        "Cannot close because the balance is not zero.",
-    );
-    cursor.erase().check("read");
-}
-
-#[eosio::action]
 fn retire(quantity: Asset, memo: String) {
+    let symbol = quantity.symbol;
+    check(symbol.is_valid(), "invalid symbol name");
     check(memo.len() <= 256, "memo has more than 256 bytes");
 
-    let receiver = AccountName::receiver();
-    let symbol = quantity.symbol;
-    let stats_table = CurrencyStats::table(receiver, symbol.name());
+    let _self = AccountName::receiver();
+    let symbol_code = symbol.code();
+    let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
-        .find(symbol.name())
+        .find(symbol_code)
         .check("token with symbol does not exist");
 
     let mut st = cursor.get().check("error reading stats table");
     require_auth(st.issuer);
+    check(quantity.is_valid(), "invalid quantity");
     check(quantity.amount > 0, "must retire positive quantity");
-    check(
-        quantity.symbol == st.supply.symbol,
-        "symbol precision mismatch",
-    );
+    check(symbol == st.supply.symbol, "symbol precision mismatch");
 
     st.supply -= quantity;
     cursor.modify(None, &st).check("write");
+    sub_balance(st.issuer, quantity);
 }
 
 #[eosio::action]
 fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     check(from != to, "cannot transfer to self");
     require_auth(from);
-    to.is_account().check("to account does not exist");
+    check(is_account(to), "to account does not exist");
 
-    let receiver = AccountName::receiver();
-    let symbol_name = quantity.symbol.name();
-    let stats_table = CurrencyStats::table(receiver, symbol_name);
+    let _self = AccountName::receiver();
+    let symbol_code = quantity.symbol.code();
+    let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
-        .find(symbol_name)
+        .find(symbol_code)
         .check("token with symbol does not exist");
     let st = cursor.get().check("read");
 
     require_recipient(from);
     require_recipient(to);
 
+    check(quantity.is_valid(), "invalid quantity");
     check(quantity.amount > 0, "must transfer positive quantity");
     check(
         quantity.symbol == st.supply.symbol,
@@ -149,34 +152,31 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     );
     check(memo.len() <= 256, "memo has more than 256 bytes");
 
-    let payer = if to.has_auth() { to } else { from };
+    let payer = if has_auth(to) { to } else { from };
 
     sub_balance(from, quantity);
     add_balance(to, quantity, payer);
 }
 
-eosio::abi!(create, issue, transfer, open, close, retire);
-
 #[cfg(feature = "contract")]
 fn sub_balance(owner: AccountName, value: Asset) {
-    let receiver = AccountName::receiver();
-    let table = Account::table(receiver, owner);
+    let _self = AccountName::receiver();
+    let table = Account::table(_self, owner);
     let cursor = table
-        .find(value.symbol.name())
+        .find(value.symbol.code())
         .check("no balance object found");
+    let mut from = cursor.get().check("read");
+    check(from.balance.amount >= value.amount, "overdrawn balance");
 
-    let mut account = cursor.get().check("read");
-
-    account.balance -= value;
-
-    cursor.modify(Some(owner), &account).check("write");
+    from.balance -= value;
+    cursor.modify(None, &from).check("write");
 }
 
 #[cfg(feature = "contract")]
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
-    let receiver = AccountName::receiver();
-    let accounts_table = Account::table(receiver, owner);
-    let cursor = accounts_table.find(value.symbol.name());
+    let _self = AccountName::receiver();
+    let accounts_table = Account::table(_self, owner);
+    let cursor = accounts_table.find(value.symbol.code());
     match cursor {
         Some(cursor) => {
             let mut account = cursor.get().check("read");
@@ -190,32 +190,43 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
     }
 }
 
-#[derive(Read, Write, NumBytes, Copy, Clone)]
-pub struct Account {
-    balance: Asset,
-}
+#[eosio::action]
+fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
+    require_auth(ram_payer);
+    let _self = AccountName::receiver();
+    let symbol_code = symbol.code();
 
-#[cfg(feature = "contract")]
-impl TableRow for Account {
-    const TABLE_NAME: u64 = n!(accounts);
+    let stats_table = CurrencyStats::table(_self, symbol_code);
+    let st = stats_table
+        .find(symbol_code)
+        .check("symbol does not exist")
+        .get()
+        .check("read");
+    check(st.supply.symbol == symbol, "symbol precision mismatch");
 
-    fn primary_key(&self) -> u64 {
-        self.balance.symbol.name().into()
+    let accts_table = Account::table(_self, owner);
+    if accts_table.find(symbol_code).is_none() {
+        let account = Account {
+            balance: Asset { amount: 0, symbol },
+        };
+        accts_table.emplace(ram_payer, &account).check("write");
     }
 }
 
-#[derive(Read, Write, NumBytes, Copy, Clone)]
-pub struct CurrencyStats {
-    supply: Asset,
-    max_supply: Asset,
-    issuer: AccountName,
+#[eosio::action]
+fn close(owner: AccountName, symbol: Symbol) {
+    require_auth(owner);
+    let _self = AccountName::receiver();
+    let accts_table = Account::table(_self, owner);
+    let accts_cursor = accts_table
+        .find(symbol.code())
+        .check("Balance row already deleted or never existed. Action won't have any effect.");
+    let account = accts_cursor.get().check("read");
+    check(
+        account.balance.amount == 0,
+        "Cannot close because the balance is not zero.",
+    );
+    accts_cursor.erase().check("read");
 }
 
-#[cfg(feature = "contract")]
-impl TableRow for CurrencyStats {
-    const TABLE_NAME: u64 = n!(stat);
-
-    fn primary_key(&self) -> u64 {
-        self.supply.symbol.name().into()
-    }
-}
+eosio::abi!(create, issue, transfer, open, close, retire);

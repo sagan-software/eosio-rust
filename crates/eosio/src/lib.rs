@@ -43,47 +43,25 @@ mod lib {
 
 }
 
-/// Docs
 mod account;
-
-/// Docs
 mod action;
-
-/// Docs
 mod asset;
-
-/// Docs
 mod bytes;
-
-/// Docs
 mod check;
-
-/// Docs
 mod crypto;
+mod print;
+mod symbol;
+mod table;
+mod time;
 
-/// Docs
 #[cfg(feature = "serde")]
 pub mod json;
 
-/// Docs
-mod print;
-
-/// Docs
-mod symbol;
-
-/// Docs
-mod table;
-
-/// Docs
 #[cfg(feature = "contract")]
 mod table_primary;
 
-/// Docs
 #[cfg(feature = "contract")]
 mod table_secondary;
-
-/// Docs
-mod time;
 
 /// Docs
 pub mod sys {

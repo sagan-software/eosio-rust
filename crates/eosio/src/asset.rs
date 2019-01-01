@@ -23,7 +23,7 @@ impl ToString for Asset {
     fn to_string(&self) -> String {
         let precision = self.symbol.precision();
         let amount = (self.amount as f64) / 10_f64.powf(precision as f64);
-        let symbol_name = self.symbol.name().to_string();
+        let symbol_name = self.symbol.code().to_string();
         let mut s = amount.to_string();
         let mut decimals = if s.contains('.') {
             s.as_str()

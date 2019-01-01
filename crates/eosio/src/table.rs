@@ -3,21 +3,21 @@ use crate::account::AccountName;
 use crate::bytes::NumBytes;
 #[cfg(feature = "contract")]
 use crate::bytes::{Read, ReadError, Write, WriteError};
-use crate::symbol::SymbolName;
+use crate::symbol::SymbolCode;
 use eosio_macros::*;
 
 name!(TableName);
 name!(ScopeName);
 
-impl From<SymbolName> for ScopeName {
+impl From<SymbolCode> for ScopeName {
     #[inline]
-    fn from(symbol: SymbolName) -> Self {
+    fn from(symbol: SymbolCode) -> Self {
         let value: u64 = symbol.into();
         value.into()
     }
 }
 
-impl From<ScopeName> for SymbolName {
+impl From<ScopeName> for SymbolCode {
     #[inline]
     fn from(scope: ScopeName) -> Self {
         let value: u64 = scope.into();
