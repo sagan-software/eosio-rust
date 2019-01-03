@@ -167,141 +167,158 @@ macro_rules! secondary_keys_converted {
 }
 
 macro_rules! secondary_keys_impl {
-    ($($t:ty, $i:ident)*) => ($(
-        impl SecondaryTableKey for $t {
-            #[inline]
-            fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32 {
-                use ::eosio_sys::*;
-                unsafe { concat_idents!(db_, $i, _end)(code.into(), scope.into(), table.into()) }
-            }
-            #[inline]
-            fn next(&self, iterator: i32) -> (i32, u64) {
-                use ::eosio_sys::*;
-                let mut pk = 0_u64;
-                let ptr: *mut u64 = &mut pk;
-                let itr = unsafe { concat_idents!(db_, $i, _next)(iterator, ptr) };
-                (itr, pk)
-            }
-            #[inline]
-            fn previous(&self, iterator: i32) -> (i32, u64) {
-                use ::eosio_sys::*;
-                let mut pk = 0_u64;
-                let ptr: *mut u64 = &mut pk;
-                let itr = unsafe { concat_idents!(db_, $i, _previous)(iterator, ptr) };
-                (itr, pk)
-            }
-            #[inline]
-            fn erase(&self, iterator: i32) {
-                use ::eosio_sys::*;
-                unsafe { concat_idents!(db_, $i, _remove)(iterator) }
-            }
-            #[inline]
-            fn store(
-                &self,
-                scope: ScopeName,
-                table: SecondaryTableName,
-                payer: AccountName,
-                id: u64,
-            ) -> i32 {
-                use ::eosio_sys::*;
-                let secondary: *const Self = self;
-                unsafe {
-                    concat_idents!(db_, $i, _store)(scope.into(), table.into(), payer.into(), id, secondary)
-                }
-            }
-            #[inline]
-            fn modify(&self, iterator: i32, payer: AccountName) {
-                use ::eosio_sys::*;
-                let secondary: *const Self = self;
-                unsafe {
-                    concat_idents!(db_, $i, _update)(iterator, payer.into(), secondary)
-                }
-            }
-            #[inline]
-            fn lower_bound(
-                &self,
-                code: AccountName,
-                scope: ScopeName,
-                table: SecondaryTableName,
-            ) -> (i32, u64) {
-                use ::eosio_sys::*;
-                let mut pk = 0_u64;
-                let mut sk = self.clone();
-                let itr = unsafe {
-                    concat_idents!(db_, $i, _lowerbound)(
-                        code.into(),
-                        scope.into(),
-                        table.into(),
-                        &mut sk as *mut $t,
-                        &mut pk as *mut u64,
-                    )
-                };
-                (itr, pk)
-            }
-            #[inline]
-            fn upper_bound(
-                &self,
-                code: AccountName,
-                scope: ScopeName,
-                table: SecondaryTableName,
-            ) -> (i32, u64) {
-                use ::eosio_sys::*;
-                let mut pk = 0_u64;
-                let mut sk = self.clone();
-                let itr = unsafe {
-                    concat_idents!(db_, $i, _upperbound)(
-                        code.into(),
-                        scope.into(),
-                        table.into(),
-                        &mut sk as *mut $t,
-                        &mut pk as *mut u64,
-                    )
-                };
-                (itr, pk)
-            }
-            #[inline]
-            fn find_primary(
-                &self,
-                code: AccountName,
-                scope: ScopeName,
-                table: SecondaryTableName,
-                primary: u64,
-            ) -> i32 {
-                use ::eosio_sys::*;
-                let mut sk = self.clone();
-                unsafe {
-                    concat_idents!(db_, $i, _find_primary)(
-                        code.into(),
-                        scope.into(),
-                        table.into(),
-                        &mut sk as *mut $t,
-                        primary,
-                    )
-                }
-            }
-            #[inline]
-            fn find_secondary(
-                &self,
-                code: AccountName,
-                scope: ScopeName,
-                table: SecondaryTableName,
-            ) -> (i32, u64) {
-                use ::eosio_sys::*;
-                let mut pk = 0_u64;
-                let secondary: *const Self = self;
-                let itr = unsafe {
-                    concat_idents!(db_, $i, _find_secondary)(
-                        code.into(),
-                        scope.into(),
-                        table.into(),
-                        secondary,
-                        &mut pk as *mut u64,
-                    )
-                };
-                (itr, pk)
-            }
+    ($($t:ty, $i:ident)*) => {
+        mashup! {
+            $(
+                m["end" $i] = db_ $i _end;
+                m["next" $i] = db_ $i _next;
+                m["previous" $i] = db_ $i _previous;
+                m["remove" $i] = db_ $i _remove;
+                m["store" $i] = db_ $i _store;
+                m["update" $i] = db_ $i _update;
+                m["lowerbound" $i] = db_ $i _lowerbound;
+                m["upperbound" $i] = db_ $i _upperbound;
+                m["find_primary" $i] = db_ $i _find_primary;
+                m["find_secondary" $i] = db_ $i _find_secondary;
+            )*
         }
-    )*)
+
+        $(
+            impl SecondaryTableKey for $t {
+                #[inline]
+                fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32 {
+                    use ::eosio_sys::*;
+                    unsafe { m!["end" $i](code.into(), scope.into(), table.into()) }
+                }
+                #[inline]
+                fn next(&self, iterator: i32) -> (i32, u64) {
+                    use ::eosio_sys::*;
+                    let mut pk = 0_u64;
+                    let ptr: *mut u64 = &mut pk;
+                    let itr = unsafe { m!["next" $i](iterator, ptr) };
+                    (itr, pk)
+                }
+                #[inline]
+                fn previous(&self, iterator: i32) -> (i32, u64) {
+                    use ::eosio_sys::*;
+                    let mut pk = 0_u64;
+                    let ptr: *mut u64 = &mut pk;
+                    let itr = unsafe { m!["previous" $i](iterator, ptr) };
+                    (itr, pk)
+                }
+                #[inline]
+                fn erase(&self, iterator: i32) {
+                    use ::eosio_sys::*;
+                    unsafe { m!["remove" $i](iterator) }
+                }
+                #[inline]
+                fn store(
+                    &self,
+                    scope: ScopeName,
+                    table: SecondaryTableName,
+                    payer: AccountName,
+                    id: u64,
+                ) -> i32 {
+                    use ::eosio_sys::*;
+                    let secondary: *const Self = self;
+                    unsafe {
+                        m!["store" $i](scope.into(), table.into(), payer.into(), id, secondary)
+                    }
+                }
+                #[inline]
+                fn modify(&self, iterator: i32, payer: AccountName) {
+                    use ::eosio_sys::*;
+                    let secondary: *const Self = self;
+                    unsafe {
+                        m!["update" $i](iterator, payer.into(), secondary)
+                    }
+                }
+                #[inline]
+                fn lower_bound(
+                    &self,
+                    code: AccountName,
+                    scope: ScopeName,
+                    table: SecondaryTableName,
+                ) -> (i32, u64) {
+                    use ::eosio_sys::*;
+                    let mut pk = 0_u64;
+                    let mut sk = self.clone();
+                    let itr = unsafe {
+                        m!["lowerbound" $i](
+                            code.into(),
+                            scope.into(),
+                            table.into(),
+                            &mut sk as *mut $t,
+                            &mut pk as *mut u64,
+                        )
+                    };
+                    (itr, pk)
+                }
+                #[inline]
+                fn upper_bound(
+                    &self,
+                    code: AccountName,
+                    scope: ScopeName,
+                    table: SecondaryTableName,
+                ) -> (i32, u64) {
+                    use ::eosio_sys::*;
+                    let mut pk = 0_u64;
+                    let mut sk = self.clone();
+                    let itr = unsafe {
+                        m!["upperbound" $i](
+                            code.into(),
+                            scope.into(),
+                            table.into(),
+                            &mut sk as *mut $t,
+                            &mut pk as *mut u64,
+                        )
+                    };
+                    (itr, pk)
+                }
+                #[inline]
+                fn find_primary(
+                    &self,
+                    code: AccountName,
+                    scope: ScopeName,
+                    table: SecondaryTableName,
+                    primary: u64,
+                ) -> i32 {
+                    use ::eosio_sys::*;
+                    let mut sk = self.clone();
+                    unsafe {
+                        m!["find_primary" $i](
+                            code.into(),
+                            scope.into(),
+                            table.into(),
+                            &mut sk as *mut $t,
+                            primary,
+                        )
+                    }
+                }
+                #[inline]
+                fn find_secondary(
+                    &self,
+                    code: AccountName,
+                    scope: ScopeName,
+                    table: SecondaryTableName,
+                ) -> (i32, u64) {
+                    use ::eosio_sys::*;
+                    let mut pk = 0_u64;
+                    let secondary: *const Self = self;
+                    let itr = unsafe {
+                        m!["find_secondary" $i](
+                            code.into(),
+                            scope.into(),
+                            table.into(),
+                            secondary,
+                            &mut pk as *mut u64,
+                        )
+                    };
+                    (itr, pk)
+                }
+            }
+        )*
+    }
 }
 
 secondary_keys_impl!(

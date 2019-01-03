@@ -6,17 +6,19 @@ pub struct Code(TokenStream);
 
 impl ToString for Code {
     fn to_string(&self) -> String {
-        let mut out: Vec<u8> = Vec::new();
-        let mut config = rustfmt_nightly::Config::default();
-        config.set().emit_mode(rustfmt_nightly::EmitMode::Stdout);
+        // TODO: not working in stable rust
+        // let mut out: Vec<u8> = Vec::new();
+        // let mut config = rustfmt_nightly::Config::default();
+        // config.set().emit_mode(rustfmt_nightly::EmitMode::Stdout);
 
-        {
-            let mut session = rustfmt_nightly::Session::<Vec<u8>>::new(config, Some(&mut out));
-            let input = rustfmt_nightly::Input::Text(self.0.to_string());
-            session.format(input).unwrap();
-        }
+        // {
+        //     let mut session = rustfmt_nightly::Session::<Vec<u8>>::new(config, Some(&mut out));
+        //     let input = rustfmt_nightly::Input::Text(self.0.to_string());
+        //     session.format(input).unwrap();
+        // }
 
-        String::from_utf8(out).unwrap()
+        // String::from_utf8(out).unwrap()
+        self.0.to_string()
     }
 }
 

@@ -75,7 +75,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for Abi {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         match cmd.value_of("name") {
             Some(name_str) => match AccountName::from_str(name_str) {
                 Ok(name) => Box::new(
@@ -120,7 +120,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for Account {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         match cmd.value_of("name") {
             Some(name_str) => match AccountName::from_str(name_str) {
                 Ok(name) => Box::new(
@@ -191,7 +191,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for Block {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         match cmd.value_of("block-num-or-id") {
             Some(block_num_or_id) => Box::new(
                 eosio_rpc::chain::get_block(block_num_or_id)
@@ -297,7 +297,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for CurrencyBalance {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         match (cmd.value_of("contract"), cmd.value_of("account")) {
             (Some(contract), Some(account)) => match (
                 eosio::sys::string_to_name(contract),
@@ -345,7 +345,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for CurrencyStats {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         match cmd.value_of("contract") {
             Some(contract) => match eosio::sys::string_to_name(contract) {
                 Ok(contract) => Box::new(
@@ -373,7 +373,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for Info {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         Box::new(
             eosio_rpc::chain::get_info()
                 .fetch(&client)
@@ -505,7 +505,7 @@ impl<'a, 'b> crate::Cmd<'a, 'b> for Table {
     }
 
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send> {
-        let client = Self::client(cmd);
+        let client = crate::app::client(cmd);
         match (
             cmd.value_of("account"),
             cmd.value_of("scope"),

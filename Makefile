@@ -15,13 +15,13 @@ install:
 build:
 	cargo fmt --all
 	RUSTFLAGS="-C link-args=-zstack-size=48000" \
-	cargo +nightly-2018-11-26 build --release --target=wasm32-unknown-unknown -vv \
+	cargo +stable build --release --target=wasm32-unknown-unknown -vv \
 		-p addressbook \
 		-p hello \
 		-p hello_bare \
 		-p tictactoe \
 		-p eosio_token
-	cargo build --release -p eosio_cli -vv
+	cargo +stable build -p eosio_cli -vv
 
 .PHONY: test
 test:

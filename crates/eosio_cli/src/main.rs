@@ -1,7 +1,5 @@
 extern crate eosio_cli;
 
-use clap::{App, Arg, SubCommand};
-use eosio::AccountName;
 use eosio_cli::Cmd;
 use futures::future::{self, Future};
 

@@ -1,6 +1,11 @@
 use crate::Cmd;
 use clap::{App, Arg, SubCommand};
 
+pub fn client<'a>(cmd: &clap::ArgMatches<'a>) -> eosio_rpc::Client {
+    let url = cmd.value_of("url").unwrap();
+    eosio_rpc::Client::new(url)
+}
+
 pub fn url<'a, 'b>() -> Arg<'a, 'b> {
     Arg::with_name("url")
         .help("the http/https URL where nodeos is running")

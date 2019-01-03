@@ -1,4 +1,3 @@
-#![feature(async_await, await_macro, futures_api, pin)]
 #![warn(
     clippy::all,
     clippy::complexity,

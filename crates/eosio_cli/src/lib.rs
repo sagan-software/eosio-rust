@@ -11,8 +11,4 @@ pub trait Cmd<'a, 'b> {
     const NAME: &'a str;
     fn app() -> App<'a, 'b>;
     fn handle(cmd: &ArgMatches<'a>) -> Box<Future<Item = String, Error = String> + Send>;
-    fn client(cmd: &ArgMatches<'a>) -> eosio_rpc::Client {
-        let url = cmd.value_of("url").unwrap();
-        eosio_rpc::Client::new(url)
-    }
 }

@@ -1,5 +1,3 @@
-use crate::lib::TryInto;
-
 #[cfg(all(feature = "alloc", not(feature = "std")))]
 use lib::{String, ToString, Vec};
 
@@ -59,11 +57,13 @@ macro_rules! impl_num {
                         Some(byte) => {
                             let ff = <$t as From<u8>>::from(0xff);
                             let shift = <$t as From<u8>>::from(i as u8).saturating_mul(<$t as From<u8>>::from(8_u8));
-                            let result = ((*self >> shift) & ff).try_into();
-                            match result {
-                                Ok(b) => *byte = b,
-                                Err(_) => return Err(WriteError::TryFromIntError),
-                            }
+                            // TODO when try_into is stablized:
+                            // let result = ((*self >> shift) & ff).try_into();
+                            // match result {
+                            //     Ok(b) => *byte = b,
+                            //     Err(_) => return Err(WriteError::TryFromIntError),
+                            // }
+                            *byte = ((*self >> shift) & ff) as u8;
                         }
                         None => return Err(WriteError::NotEnoughSpace),
                     }

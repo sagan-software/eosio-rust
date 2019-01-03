@@ -1,4 +1,4 @@
-#![feature(try_from, custom_attribute, concat_idents)]
+#![recursion_limit = "128"]
 #![warn(
     clippy::all,
     clippy::complexity,
@@ -7,6 +7,9 @@
     clippy::nursery,
     clippy::cargo
 )]
+
+#[macro_use]
+extern crate mashup;
 
 /// Docs
 use static_assertions::assert_cfg;
@@ -26,7 +29,6 @@ mod lib {
         pub use std::*;
     }
 
-    pub use self::core::convert::{TryFrom, TryInto};
     pub use self::core::marker::PhantomData;
     pub use self::core::ops::*;
     pub use self::core::str::FromStr;

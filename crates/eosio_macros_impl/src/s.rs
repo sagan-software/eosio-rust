@@ -1,48 +1,54 @@
 use crate::proc_macro::{Span, TokenStream};
 use eosio_sys::{string_to_symbol, ParseSymbolError};
-use quote::quote;
+use proc_macro2::{Literal, TokenTree};
+use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::{Parse, ParseStream, Result};
-use syn::{parse_macro_input, Ident, LitInt, Token};
+use syn::{parse_macro_input, LitInt, Token};
 
-struct SymbolInput {
-    precision: LitInt,
-    name: Ident,
+struct EosioSymbol(u64);
+
+fn accept_char_in_symbol_code(ch: char) -> bool {
+    ch >= 'A' && ch <= 'Z'
 }
 
-impl Parse for SymbolInput {
+impl Parse for EosioSymbol {
     fn parse(input: ParseStream) -> Result<Self> {
-        let precision: LitInt = input.parse()?;
+        let precision = input.parse::<LitInt>()?.value();
         input.parse::<Token![,]>()?;
-        let name: Ident = input.parse()?;
-        Ok(SymbolInput { precision, name })
+
+        let mut code = String::new();
+        while !input.is_empty() {
+            let segment = input.fork().parse::<TokenTree>()?.to_string();
+            if !segment.chars().all(accept_char_in_symbol_code) {
+                break;
+            }
+            input.parse::<TokenTree>()?;
+            code += &segment;
+        }
+
+        string_to_symbol(precision as u8, code.as_str())
+            .map(EosioSymbol)
+            .map_err(|e| {
+                let message = match e {
+                    ParseSymbolError::IsEmpty =>
+                        "symbol is empty. EOSIO symbols must be 1-7 characters long".to_string(),
+                    ParseSymbolError::TooLong =>
+                        "symbol is too long. EOSIO symbols must be 7 characters or less".to_string(),
+                    ParseSymbolError::BadChar(c) =>
+                        format!("symbol has bad character '{}'. EOSIO symbols can only contain uppercase letters A-Z", c),
+                };
+                input.error(message)
+            })
+    }
+}
+
+impl ToTokens for EosioSymbol {
+    fn to_tokens(&self, tokens: &mut ::proc_macro2::TokenStream) {
+        tokens.append(Literal::u64_suffixed(self.0))
     }
 }
 
 pub fn expand(input: TokenStream) -> TokenStream {
-    let SymbolInput { precision, name } = parse_macro_input!(input as SymbolInput);
-    let symbol_result = string_to_symbol(precision.value() as u8, &name.to_string());
-
-    let expanded = match symbol_result {
-        Ok(symbol) => quote!(#symbol),
-        Err(error) => {
-            let span = Span::call_site();
-            let err = match error {
-                ParseSymbolError::IsEmpty => span
-                    .error("symbol is empty")
-                    .help("EOSIO symbols must be 1-12 characters long"),
-                ParseSymbolError::TooLong => span
-                    .error("name is too long")
-                    .help("EOSIO symbols must be 1-12 characters long"),
-                ParseSymbolError::BadChar(c) => {
-                    let error_message = format!("name has bad character '{}'", c);
-                    let help_message = "EOSIO symbols can only contain uppercase letters A-Z";
-                    span.error(error_message).help(help_message)
-                }
-            };
-            err.emit();
-            quote!(0)
-        }
-    };
-
-    TokenStream::from(quote!(#expanded))
+    let symbol = parse_macro_input!(input as EosioSymbol);
+    quote!(#symbol).into()
 }

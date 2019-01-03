@@ -1,6 +1,6 @@
 #![recursion_limit = "512"]
 // #![feature(proc_macro_hygiene, proc_macro_diagnostic, proc_macro_quote)]
-#![feature(proc_macro_diagnostic)]
+// #![feature(proc_macro_diagnostic)]
 
 extern crate proc_macro;
 

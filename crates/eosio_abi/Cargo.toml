@@ -8,8 +8,8 @@ edition = "2018"
 serde = "1.0"
 serde_derive = "1.0"
 eosio = { path = "../eosio", features = ["serde"] }
-proc-macro2 = { version = "0.4", features = ["nightly"] }
+proc-macro2 = { version = "0.4" }
 quote = "0.6"
 heck = "0.3"
 syn = { version = "0.15", features = ["full", "fold"] }
-rustfmt-nightly = { version = "1.0" }
+# rustfmt-nightly = { version = "1.0" }
