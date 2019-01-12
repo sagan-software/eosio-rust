@@ -6,17 +6,17 @@ panic = "abort"
 
 [workspace]
 members = [
-    "crates/eosio",
+    "contracts/eosio_system",
+    "contracts/eosio_token",
     "crates/eosio_abi",
     "crates/eosio_cli",
-    "crates/eosio_macros",
     "crates/eosio_macros_impl",
+    "crates/eosio_macros",
     "crates/eosio_rpc",
     "crates/eosio_sys",
-    "crates/eosio_system",
-    "crates/eosio_token",
+    "crates/eosio",
     "examples/addressbook",
-    "examples/hello",
     "examples/hello_bare",
+    "examples/hello",
     "examples/tictactoe"
 ]
