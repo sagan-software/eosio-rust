@@ -31,9 +31,7 @@ bindgen \
     --whitelist-function read_action_data \
     --whitelist-function require_auth \
     --whitelist-function require_auth2 \
-    --whitelist-function require_read_lock \
     --whitelist-function require_recipient \
-    --whitelist-function require_write_lock \
     --whitelist-function send_context_free_inline \
     --whitelist-function send_inline \
     --whitelist-function get_active_producers \
@@ -53,11 +51,9 @@ bindgen \
     --whitelist-function get_account_creation_time \
     --whitelist-function get_permission_last_used \
     --whitelist-function print.* \
-    --whitelist-function activate_feature \
     --whitelist-function get_blockchain_parameters_packed \
     --whitelist-function get_resource_limits \
     --whitelist-function is_privileged \
-    --whitelist-function set_active_producers \
     --whitelist-function set_blockchain_parameters_packed \
     --whitelist-function set_privileged \
     --whitelist-function set_proposed_producers \
@@ -78,6 +74,7 @@ bindgen \
     --whitelist-type capi_checksum256 \
     --whitelist-type capi_checksum160 \
     --whitelist-type capi_checksum512 \
+    --no-doc-comments \
     wrapper.hpp \
     -- \
     -I ./eosio.cdt/libraries \
