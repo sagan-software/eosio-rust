@@ -18,7 +18,7 @@ pub struct Authorization {
 }
 
 impl Authorization {
-    /// Creates the 'active' authorization for an account
+    /// Returns the 'active' authorization for an account.
     #[inline]
     pub const fn active(actor: AccountName) -> Self {
         Self {
@@ -27,7 +27,7 @@ impl Authorization {
         }
     }
 
-    /// Creates the 'owner' authorization for an account
+    /// Returns the 'owner' authorization for an account
     #[inline]
     pub const fn owner(actor: AccountName) -> Self {
         Self {

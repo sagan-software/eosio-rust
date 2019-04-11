@@ -9,7 +9,7 @@ crate-type = ["cdylib", "lib"]
 test = false
 
 [dependencies]
-eosio = { path = "../../crates/eosio", default-features = false }
+eosio = { path = "../eosio", default-features = false }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 
 [features]

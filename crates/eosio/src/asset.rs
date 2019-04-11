@@ -31,14 +31,14 @@ impl ToString for Asset {
                 .next()
                 .map_or_else(|| 0_u64, |x| x.len() as u64)
         } else {
-            s.push_str(".");
+            s.push('.');
             0_u64
         };
         while decimals < precision {
-            s.push_str("0");
+            s.push('0');
             decimals += 1;
         }
-        s.push_str(" ");
+        s.push(' ');
         s.push_str(&symbol_name);
         s
     }

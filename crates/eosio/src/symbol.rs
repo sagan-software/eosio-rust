@@ -120,7 +120,7 @@ impl ToString for Symbol {
     fn to_string(&self) -> String {
         let mut s = String::new();
         s.push_str(self.precision().to_string().as_str());
-        s.push_str(",");
+        s.push(',');
         s.push_str(self.code().to_string().as_str());
         s
     }

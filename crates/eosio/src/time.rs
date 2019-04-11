@@ -26,14 +26,14 @@ impl Time {
     pub const UNIX_EPOCH: Self = Time(0);
 
     /// Gets the current time
-    #[cfg(feature = "contract")]
+    #[cfg(all(feature = "contract", not(any(feature = "stdweb", feature = "js-sys"))))]
     #[inline]
     pub fn now() -> Self {
         Time(unsafe { ::eosio_sys::current_time() } as i64)
     }
 
     /// Gets the current time
-    #[cfg(feature = "stdweb")]
+    #[cfg(all(feature = "stdweb", not(any(feature = "contract", feature = "js-sys"))))]
     #[inline]
     pub fn now() -> Self {
         let microseconds = ::stdweb::web::Date::now() * 1_000.0;
@@ -41,7 +41,7 @@ impl Time {
     }
 
     /// Gets the current time
-    #[cfg(feature = "js-sys")]
+    #[cfg(all(feature = "js-sys", not(any(feature = "contract", feature = "stdweb"))))]
     #[inline]
     pub fn now() -> Self {
         let microseconds = ::js_sys::Date::now() * 1_000.0;

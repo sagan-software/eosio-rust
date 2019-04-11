@@ -12,14 +12,6 @@
 extern crate mashup;
 
 /// Docs
-use static_assertions::assert_cfg;
-
-assert_cfg!(
-    not(all(feature = "contract", feature = "stdweb")),
-    "feature = 'contract' and feature = 'stdweb' cannot both be enabled"
-);
-
-/// Docs
 mod lib {
     /// Docs
     mod core {

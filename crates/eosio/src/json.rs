@@ -1,5 +1,4 @@
-use serde::de;
-use serde::{Deserialize, Deserializer, Serializer};
+use serde::{de, Deserialize, Deserializer, Serializer};
 
 #[inline]
 pub fn bool_from_u8<'de, D>(deserializer: D) -> Result<bool, D::Error>

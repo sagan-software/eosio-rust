@@ -3,7 +3,7 @@ mod codegen;
 
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Abi {
     pub version: String,
     pub types: Vec<Type>,
@@ -16,28 +16,28 @@ pub struct Abi {
     // TODO variants: Vec<Variant>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Type {
     pub new_type_name: String,
     #[serde(rename = "type")]
     pub type_: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Struct {
     pub name: String,
     pub base: String,
     pub fields: Vec<Field>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Field {
     pub name: String,
     #[serde(rename = "type")]
     pub type_: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Action {
     pub name: String,
     #[serde(rename = "type")]
@@ -45,7 +45,7 @@ pub struct Action {
     pub ricardian_contract: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Table {
     pub name: String,
     pub index_type: String,
@@ -55,19 +55,19 @@ pub struct Table {
     pub type_: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct RicardianClause {
     pub id: String,
     pub body: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ErrorMessage {
     pub error_code: u64,
     pub error_msg: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct AbiExtension {
     #[serde(rename = "type")]
     pub type_: u16,

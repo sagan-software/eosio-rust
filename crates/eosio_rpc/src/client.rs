@@ -90,26 +90,12 @@ mod web_sys {
     use wasm_bindgen_futures::JsFuture;
     use web_sys::{Request, RequestInit, RequestMode, Response, Window};
 
-    pub struct WebSysClient<'a> {
-        node: &'a str,
-        window: Window,
-    }
-
-    impl<'a> WebSysClient<'a> {
-        pub fn new(node: &'a str) -> Result<Self, String> {
-            match ::web_sys::window() {
-                Some(window) => Ok(WebSysClient { node, window }),
-                None => Err("no window object available".to_string()),
-            }
-        }
-    }
-
-    impl<'a> super::Client for WebSysClient<'a> {
-        fn fetch<Output, Params>(
+    impl super::Client {
+        pub fn fetch<Output, Params>(
             &self,
             path: &str,
-            params: Option<Params>,
-        ) -> Box<Future<Item = Output, Error = Error>>
+            params: Params,
+        ) -> impl Future<Item = Output, Error = Error>
         where
             Output: 'static + for<'b> Deserialize<'b>,
             Params: Serialize,
@@ -121,21 +107,14 @@ mod web_sys {
             opts.method("POST");
             opts.mode(RequestMode::Cors);
 
-            if let Some(params) = params {
-                match ::serde_json::to_string(&params) {
-                    Ok(s) => opts.body(Some(&JsValue::from_str(s.as_str()))),
-                    Err(error) => return Box::new(future::err(Error::BadRequestJson(error))),
-                };
-            }
+            let body_string = serde_json::to_string(&params).unwrap();
+            opts.body(Some(&JsValue::from_str(body_string.as_str())));
 
-            let request = match Request::new_with_str_and_init(url.as_str(), &opts) {
-                Ok(r) => r,
-                Err(_) => return Box::new(future::err(Error::BadRequest)),
-            };
+            let request = Request::new_with_str_and_init(url.as_str(), &opts).unwrap();
+            let window = web_sys::window().expect("no window object available");
+            let request_promise = window.fetch_with_request(&request);
 
-            let request_promise = self.window.fetch_with_request(&request);
-
-            let future = JsFuture::from(request_promise)
+            JsFuture::from(request_promise)
                 .map_err(|_| Error::BadResponse)
                 .and_then(|resp_value| {
                     assert!(resp_value.is_instance_of::<Response>());
@@ -148,8 +127,7 @@ mod web_sys {
                 .and_then(|json| match json.into_serde::<Output>() {
                     Ok(output) => future::ok(output),
                     Err(err) => future::err(Error::BadResponseJson(err)),
-                });
-            Box::new(future)
+                })
         }
     }
 }

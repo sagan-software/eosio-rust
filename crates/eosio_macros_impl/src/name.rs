@@ -152,7 +152,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
             where
                 E: ::serde::de::Error,
             {
-                #ident::from_string(value.to_string()).map_err(::serde::de::Error::custom)
+                #ident::from_str(value).map_err(::serde::de::Error::custom)
             }
 
             #[inline]
@@ -160,7 +160,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
             where
                 E: ::serde::de::Error,
             {
-                #ident::from_string(value.to_string()).map_err(::serde::de::Error::custom)
+                #ident::from_str(value).map_err(::serde::de::Error::custom)
             }
 
             #[inline]
