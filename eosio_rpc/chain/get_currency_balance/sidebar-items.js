@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_currency_balance",""]],"struct":[["GetCurrencyBalanceBuilder",""]],"type":[["GetCurrencyBalance",""]]});
+initSidebarItems({"fn":[["get_currency_balance",""]],"struct":[["GetCurrencyBalanceParams",""]],"type":[["GetCurrencyBalance",""]]});

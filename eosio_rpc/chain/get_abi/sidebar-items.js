@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_abi",""]],"struct":[["GetAbi",""],["GetAbiBuilder",""]]});
+initSidebarItems({"fn":[["get_abi",""]],"struct":[["GetAbi",""],["GetAbiParams",""]]});

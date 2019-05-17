@@ -1,0 +1,8 @@
+[book]
+authors = ["Liam Curry"]
+multilingual = false
+src = "."
+title = "rust-eos"
+
+[build]
+build-dir = "../target/doc"
