@@ -1,3 +1,6 @@
 [submodule "external/eosio.cdt"]
 	path = crates/eosio_sys/eosio.cdt
 	url = git@github.com:EOSIO/eosio.cdt.git
+[submodule "eosio_sys/eosio.cdt"]
+	path = eosio_sys/eosio.cdt
+	url = https://github.com/EOSIO/eosio.cdt.git

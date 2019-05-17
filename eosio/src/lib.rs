@@ -11,6 +11,10 @@
 #[macro_use]
 extern crate mashup;
 
+#[cfg(feature = "stdweb")]
+#[macro_use]
+extern crate stdweb;
+
 /// Docs
 mod lib {
     /// Docs

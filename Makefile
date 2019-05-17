@@ -46,14 +46,14 @@ docs:
 
 .PHONY: lint
 lint:
-	touch crates/eosio/src/lib.rs
-	touch crates/eosio_abi/src/lib.rs
-	touch crates/eosio_macros/src/lib.rs
-	touch crates/eosio_macros_impl/src/lib.rs
-	touch crates/eosio_rpc/src/lib.rs
-	touch crates/eosio_sys/src/lib.rs
-	touch crates/eosio_system/src/lib.rs
-	touch crates/eosio_token/src/lib.rs
+	touch eosio/src/lib.rs
+	touch eosio_abi/src/lib.rs
+	touch eosio_macros/src/lib.rs
+	touch eosio_macros_impl/src/lib.rs
+	touch eosio_rpc/src/lib.rs
+	touch eosio_sys/src/lib.rs
+	touch eosio_system/src/lib.rs
+	touch eosio_token/src/lib.rs
 	cargo clippy
 
 .PHONY: clean
@@ -113,13 +113,13 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 	wat2wasm $*_gc_opt.wat -o $*_gc_opt_wat.wasm
 
 %_example: target/wasm32-unknown-unknown/release/%_gc_opt_wat.wasm
-	$(CLEOS) set abi $(subst _,,$*) /mnt/dev/examples/$*/$*.abi.json
-	$(CLEOS) set code $(subst _,,$*) /mnt/dev/release/$*_gc_opt.wasm
+	$(CLEOS) set abi $(subst _,,$*) mnt/dev/examples/$*/$*.abi.json
+	$(CLEOS) set code $(subst _,,$*) mnt/dev/release/$*_gc_opt.wasm
 
 .PHONY: eosio_token
 eosio_token: target/wasm32-unknown-unknown/release/eosio_token_gc_opt_wat.wasm
-	$(CLEOS) set abi eosio.token /mnt/dev/project/crates/eosio_token/eosio_token.abi.json
-	$(CLEOS) set code eosio.token /mnt/dev/release/eosio_token_gc_opt.wasm
+	$(CLEOS) set abi eosio.token mnt/dev/project/eosio_token/eosio_token.abi.json
+	$(CLEOS) set code eosio.token mnt/dev/release/eosio_token_gc_opt.wasm
 
 .PHONY: examples
 examples: addressbook_example eosio_token hello_example hello_bare_example tictactoe_example eosio_token_cpp
@@ -134,8 +134,8 @@ say_hi_bare:
 
 .PHONY: hello_cpp
 hello_cpp: examples/hello/cpp/hello_gc_opt_wat.wasm
-	$(CLEOS) set abi hellocpp /mnt/dev/examples/hello/hello.abi.json
-	$(CLEOS) set code hellocpp /mnt/dev/examples/hello/cpp/hello_gc_opt.wasm
+	$(CLEOS) set abi hellocpp mnt/dev/examples/hello/hello.abi.json
+	$(CLEOS) set code hellocpp mnt/dev/examples/hello/cpp/hello_gc_opt.wasm
 
 .PHONY: say_hi_cpp
 say_hi_cpp:
@@ -174,9 +174,9 @@ get_games_%:
 	$(CLEOS) get table tictactoe $* games
 
 .PHONY: eosio_token_cpp
-eosio_token_cpp: crates/eosio_token/cpp/eosio.token_gc_opt_wat.wasm
-	$(CLEOS) set abi eosiotkncpp /mnt/dev/project/crates/eosio_token/eosio_token.abi.json
-	$(CLEOS) set code eosiotkncpp /mnt/dev/project/crates/eosio_token/cpp/eosio.token_gc_opt.wasm
+eosio_token_cpp: eosio_token/cpp/eosio.token_gc_opt_wat.wasm
+	$(CLEOS) set abi eosiotkncpp mnt/dev/project/eosio_token/eosio_token.abi.json
+	$(CLEOS) set code eosiotkncpp mnt/dev/project/eosio_token/cpp/eosio.token_gc_opt.wasm
 
 .PHONY: create_token
 create_token:

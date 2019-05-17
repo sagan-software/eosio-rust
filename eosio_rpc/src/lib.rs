@@ -13,18 +13,20 @@ pub mod net;
 pub mod producer;
 
 mod client;
+mod clients;
 mod error;
 
 pub use self::client::*;
+pub use self::clients::*;
 pub use self::error::*;
 
 #[macro_export]
 macro_rules! builder {
     ($path:expr, $params:ty, $output:ty) => {
         impl $params {
-            pub fn fetch(
+            pub fn fetch<C: crate::Client>(
                 &self,
-                client: &crate::Client,
+                client: C,
             ) -> impl futures::future::Future<Item = $output, Error = crate::Error> {
                 client.fetch::<$output, $params>($path, self.clone())
             }

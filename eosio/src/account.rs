@@ -17,22 +17,27 @@ pub struct Authorization {
     pub permission: PermissionName,
 }
 
+// #[cfg(feature = "stdweb")]
+// stdweb::js_serializable!(Authorization);
+// #[cfg(feature = "stdweb")]
+// stdweb::js_deserializable!(Authorization);
+
 impl Authorization {
     /// Returns the 'active' authorization for an account.
     #[inline]
-    pub const fn active(actor: AccountName) -> Self {
+    pub fn active(actor: AccountName) -> Self {
         Self {
             actor,
-            permission: PermissionName::from_u64(n!(active)),
+            permission: PermissionName::from(n!(active)),
         }
     }
 
     /// Returns the 'owner' authorization for an account
     #[inline]
-    pub const fn owner(actor: AccountName) -> Self {
+    pub fn owner(actor: AccountName) -> Self {
         Self {
             actor,
-            permission: PermissionName::from_u64(n!(owner)),
+            permission: PermissionName::from(n!(owner)),
         }
     }
 }

@@ -3,16 +3,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Clone)]
 pub struct GetTableRowsParams {
-    scope: ScopeName,
-    code: AccountName,
-    table: TableName,
-    json: bool,
+    pub scope: ScopeName,
+    pub code: AccountName,
+    pub table: TableName,
+    pub json: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    lower_bound: Option<u64>,
+    pub lower_bound: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    upper_bound: Option<u64>,
+    pub upper_bound: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    limit: Option<u32>,
+    pub limit: Option<u32>,
 }
 
 impl GetTableRowsParams {
@@ -51,18 +51,16 @@ impl GetTableRowsParams {
         self
     }
 
-    pub fn fetch<Row>(
-        &self,
-        client: &crate::Client,
-    ) -> impl futures::future::Future<Item = GetTableRows<Row>, Error = crate::Error>
-    where
-        Row: for<'a> Deserialize<'a> + 'static,
-    {
-        client.fetch::<GetTableRows<Row>, GetTableRowsParams>(
-            "/v1/chain/get_table_rows",
-            self.clone(),
-        )
-    }
+    // TODO re-enable
+    // pub fn fetch<Row>(
+    //     self,
+    //     client: &crate::Client,
+    // ) -> impl futures::future::Future<Item = GetTableRows<Row>, Error = crate::Error>
+    // where
+    //     Row: for<'a> Deserialize<'a> + 'static,
+    // {
+    //     client.fetch::<GetTableRows<Row>, GetTableRowsParams>("/v1/chain/get_table_rows", self)
+    // }
 }
 
 pub fn get_table_rows<C: Into<AccountName>, S: Into<ScopeName>, T: Into<TableName>>(

@@ -8,7 +8,7 @@ edition = "2018"
 path = "src/lib.rs"
 
 [[bin]]
-name = "eosio-rs"
+name = "eosio"
 path = "src/main.rs"
 doc = false
 

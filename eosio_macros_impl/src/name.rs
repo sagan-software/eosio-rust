@@ -59,6 +59,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         #scope_name_converters
 
         // TODO: no_std
+        // TODO: TryFrom
         #[automatically_derived]
         impl std::str::FromStr for #ident {
             type Err = #eosio::ParseNameError;
@@ -70,6 +71,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         }
 
         // TODO: no_std
+        // TODO: TryFrom
         #[automatically_derived]
         impl std::fmt::Display for #ident {
             #[inline]
@@ -89,11 +91,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
         #[automatically_derived]
         impl #ident {
+            // TODO: TryFrom
             #[inline]
             pub fn from_string(value: String) -> Result<Self, #eosio::ParseNameError> {
                 Self::from_str(value.as_str())
             }
 
+            // TODO: TryFrom
             #[inline]
             pub fn from_str(value: &str) -> Result<Self, #eosio::ParseNameError> {
                 let name = #eosio::sys::string_to_name(value)?;
@@ -196,6 +200,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 serializer.serialize_str(self.to_string().as_str())
             }
         }
+
+        #[cfg(feature = "stdweb")]
+        js_serializable!(#ident);
+        #[cfg(feature = "stdweb")]
+        js_deserializable!(#ident);
+
     };
     expanded.into()
 }

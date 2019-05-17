@@ -17,6 +17,7 @@ js-sys = { version = "0.3.5", optional = true }
 wasm-bindgen-futures = { version = "0.3.5", optional = true }
 hyper = { version = "0.12", optional = true }
 hyper-tls = { version = "0.3", optional = true }
+stdweb = { version = "0.4.14", optional = true }
 
 [dependencies.web-sys]
 version = "0.3.4"
@@ -33,3 +34,4 @@ features = [
 [features]
 use-web-sys = ["wasm-bindgen", "wasm-bindgen-futures", "js-sys", "web-sys"]
 use-hyper = ["hyper", "hyper-tls"]
+use-stdweb = ["stdweb"]

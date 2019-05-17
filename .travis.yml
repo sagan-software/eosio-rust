@@ -1,7 +1,8 @@
 language: rust
 rust:
-  - nightly
+    - stable
+    - nightly
 matrix:
-  fast_finish: true
+    fast_finish: true
 git:
-  submodules: false
+    submodules: false

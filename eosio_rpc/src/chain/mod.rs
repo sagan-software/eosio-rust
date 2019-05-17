@@ -9,10 +9,10 @@ pub mod get_currency_stats;
 pub mod get_info;
 pub mod get_table_rows;
 
-pub use self::get_abi::{get_abi, GetAbi};
-pub use self::get_account::{get_account, GetAccount};
-pub use self::get_block::{get_block, GetBlock};
+pub use self::get_abi::{get_abi, GetAbi, GetAbiParams};
+pub use self::get_account::{get_account, GetAccount, GetAccountParams};
+pub use self::get_block::{get_block, GetBlock, GetBlockParams};
 pub use self::get_currency_balance::{get_currency_balance, GetCurrencyBalance};
 pub use self::get_currency_stats::{get_currency_stats, GetCurrencyStats};
 pub use self::get_info::{get_info, GetInfo};
-pub use self::get_table_rows::{get_table_rows, GetTableRows};
+pub use self::get_table_rows::{get_table_rows, GetTableRows, GetTableRowsParams};
