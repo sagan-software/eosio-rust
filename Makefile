@@ -29,7 +29,10 @@ test:
 
 .PHONY: docs
 docs:
-	rm -Rf target/doc
+	# git worktree remove --force ./gh-pages || exit 0
+	# git worktree add ./gh-pages gh-pages
+	rm -Rf target/doc gh-pages/*
+	mdbook build book
 	cargo doc \
 		--all \
 		--exclude addressbook \
@@ -39,10 +42,8 @@ docs:
 		--exclude hello_bare \
 		--exclude tictactoe \
 		--no-deps
-	git worktree remove --force ./gh-pages || exit 0
-	git worktree add ./gh-pages gh-pages
-	cp -rf target/doc/* gh-pages/
-	echo '<meta http-equiv="refresh" content="0;url=eosio/">' > gh-pages/index.html
+	mkdir -p gh-pages/api
+	cp -rf target/doc/* gh-pages/api/
 
 .PHONY: lint
 lint:
