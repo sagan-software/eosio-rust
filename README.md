@@ -21,7 +21,7 @@ The goal of this project is to streamline the development of full-stack EOSIO ap
 
 ## [Read the book](https://sagan-software.github.io/rust-eos/)
 
-## [Documentation](https://sagan-software.github.io/rust-eos/api/eosio/)
+## [Documentation](https://sagan-software.github.io/rust-eos/eosio/)
 
 ## License
 

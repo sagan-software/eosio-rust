@@ -5,4 +5,4 @@ src = "."
 title = "rust-eos"
 
 [build]
-build-dir = "../gh-pages"
+build-dir = "../target/doc"

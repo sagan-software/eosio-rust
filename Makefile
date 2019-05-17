@@ -29,9 +29,9 @@ test:
 
 .PHONY: docs
 docs:
-	# git worktree remove --force ./gh-pages || exit 0
-	# git worktree add ./gh-pages gh-pages
-	rm -Rf target/doc gh-pages/*
+	git worktree remove --force ./gh-pages || exit 0
+	git worktree add ./gh-pages gh-pages
+	rm -Rf gh-pages/*
 	mdbook build book
 	cargo doc \
 		--all \
@@ -42,8 +42,7 @@ docs:
 		--exclude hello_bare \
 		--exclude tictactoe \
 		--no-deps
-	mkdir -p gh-pages/api
-	cp -rf target/doc/* gh-pages/api/
+	cp -rf target/doc/* gh-pages/
 
 .PHONY: lint
 lint:
