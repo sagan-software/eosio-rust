@@ -75,7 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
+            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -178,7 +178,8 @@
 </li>
 </ul>
 <a class="header" href="#installation" id="installation"><h1>Installation</h1></a>
-<a class="header" href="#installing-rust" id="installing-rust"><h2>Installing Rust</h2></a>
+<p>To write EOS smart contracts in Rust we will need to install Rust and setup an EOS local node.</p>
+<a class="header" href="#install-rust" id="install-rust"><h1>Install Rust</h1></a>
 <p>Install Rust with <code>rustup</code> per the <a href="https://www.rust-lang.org/en-US/install.html">official instructions</a>:</p>
 <pre><code class="language-sh">curl https://sh.rustup.rs -sSf | sh
 </code></pre>
@@ -187,7 +188,7 @@
 rustup target add wasm32-unknown-unknown --toolchain nightly
 rustup default nightly
 </code></pre>
-<a class="header" href="#installing-eos" id="installing-eos"><h2>Installing EOS</h2></a>
+<a class="header" href="#install-eos" id="install-eos"><h1>Install EOS</h1></a>
 <p>An EOS node is required to deploy and test smart contracts. The easiest way to setup a node is to use Docker. See the <a href="https://developers.eos.io/eosio-nodeos/docs/docker-quickstart">official Docker quickstart guide</a> for instructions.</p>
 <p>We recommend using <code>docker-compose</code> to manage <code>nodeos</code> and <code>keosd</code> containers. You can download the official <a href="https://raw.githubusercontent.com/EOSIO/eos/master/Docker/docker-compose-latest.yml"><code>docker-compose-latest.yml</code></a> file and start the containers using these commands:</p>
 <pre><code class="language-sh">wget https://raw.githubusercontent.com/EOSIO/eos/master/Docker/docker-compose-latest.yml
@@ -206,14 +207,14 @@ docker-compose -f docker-compose-latest.yml up
   nodeosd:
     command: /opt/eosio/bin/nodeosd.sh ... --contracts-console
 </code></pre>
-<a class="header" href="#optional-dependencies" id="optional-dependencies"><h2>Optional Dependencies</h2></a>
-<a class="header" href="#wasm-gc" id="wasm-gc"><h3>wasm-gc</h3></a>
+<a class="header" href="#optional-dependencies" id="optional-dependencies"><h1>Optional Dependencies</h1></a>
+<a class="header" href="#wasm-gc" id="wasm-gc"><h2>wasm-gc</h2></a>
 <p><a href="https://github.com/alexcrichton/wasm-gc">wasm-gc</a> is a command-line tool that removes unused code in WASM files. It can be installed with Cargo:</p>
 <pre><code class="language-sh">cargo install wasm-gc
 </code></pre>
-<a class="header" href="#binaryen" id="binaryen"><h3>Binaryen</h3></a>
+<a class="header" href="#binaryen" id="binaryen"><h2>Binaryen</h2></a>
 <p><a href="https://github.com/WebAssembly/binaryen">Binaryen</a> comes with a command-line tool called <code>wasm-opt</code> that optimizes WASM file sizes. Binaryen can be installed with most system package managers.</p>
-<a class="header" href="#webassembly-binary-toolkit-wabt" id="webassembly-binary-toolkit-wabt"><h3>WebAssembly Binary Toolkit (WABT)</h3></a>
+<a class="header" href="#webassembly-binary-toolkit-wabt" id="webassembly-binary-toolkit-wabt"><h2>WebAssembly Binary Toolkit (WABT)</h2></a>
 <p><a href="https://github.com/WebAssembly/wabt">WABT</a> comes with a command-line tool <code>wasm2wat</code> that can be used to create textual representations of WASM files, which can be useful for debugging. WABT can be installed with most system package managers.</p>
 <a class="header" href="#quick-start" id="quick-start"><h1>Quick Start</h1></a>
 <p>Create the project:</p>
@@ -467,6 +468,7 @@ cleos set code hello /mnt/dev/project/hello_gc_opt.wasm
 <a class="header" href="#hello-world" id="hello-world"><h1>Hello, World!</h1></a>
 <a class="header" href="#tic-tac-toe" id="tic-tac-toe"><h1>Tic-Tac-Toe</h1></a>
 <a class="header" href="#address-book" id="address-book"><h1>Address Book</h1></a>
+<a class="header" href="#url-shortener" id="url-shortener"><h1>URL Shortener</h1></a>
 <a class="header" href="#roadmap" id="roadmap"><h1>Roadmap</h1></a>
 <p><em>See the <a href="https://github.com/sagan-software/rust-eos/milestone/1">1.0 milestone</a> for a full list of fixes and features planned for 1.0.</em></p>
 <p>Listed below are features that are planned for the 1.0 release. The goal is to have a 1.0 release candidate with all these features by Q1 2019, but this may change depending on community feedback and support.</p>

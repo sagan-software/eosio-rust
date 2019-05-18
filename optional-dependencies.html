@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Installation - rust-eos</title>
+        <title>Optional Dependencies - rust-eos</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,7 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html" class="active"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
+            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html" class="active"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -140,21 +140,28 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#installation" id="installation"><h1>Installation</h1></a>
-<p>To write EOS smart contracts in Rust we will need to install Rust and setup an EOS local node.</p>
+                        <a class="header" href="#optional-dependencies" id="optional-dependencies"><h1>Optional Dependencies</h1></a>
+<a class="header" href="#wasm-gc" id="wasm-gc"><h2>wasm-gc</h2></a>
+<p><a href="https://github.com/alexcrichton/wasm-gc">wasm-gc</a> is a command-line tool that removes unused code in WASM files. It can be installed with Cargo:</p>
+<pre><code class="language-sh">cargo install wasm-gc
+</code></pre>
+<a class="header" href="#binaryen" id="binaryen"><h2>Binaryen</h2></a>
+<p><a href="https://github.com/WebAssembly/binaryen">Binaryen</a> comes with a command-line tool called <code>wasm-opt</code> that optimizes WASM file sizes. Binaryen can be installed with most system package managers.</p>
+<a class="header" href="#webassembly-binary-toolkit-wabt" id="webassembly-binary-toolkit-wabt"><h2>WebAssembly Binary Toolkit (WABT)</h2></a>
+<p><a href="https://github.com/WebAssembly/wabt">WABT</a> comes with a command-line tool <code>wasm2wat</code> that can be used to create textual representations of WASM files, which can be useful for debugging. WABT can be installed with most system package managers.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="getting-help.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="install-eos.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="install-rust.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="quick-start.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -166,13 +173,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="getting-help.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="install-eos.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="install-rust.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="quick-start.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

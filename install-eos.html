@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Installation - rust-eos</title>
+        <title>Install EOS - rust-eos</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,7 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html" class="active"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
+            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html" class="active"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -140,21 +140,38 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#installation" id="installation"><h1>Installation</h1></a>
-<p>To write EOS smart contracts in Rust we will need to install Rust and setup an EOS local node.</p>
+                        <a class="header" href="#install-eos" id="install-eos"><h1>Install EOS</h1></a>
+<p>An EOS node is required to deploy and test smart contracts. The easiest way to setup a node is to use Docker. See the <a href="https://developers.eos.io/eosio-nodeos/docs/docker-quickstart">official Docker quickstart guide</a> for instructions.</p>
+<p>We recommend using <code>docker-compose</code> to manage <code>nodeos</code> and <code>keosd</code> containers. You can download the official <a href="https://raw.githubusercontent.com/EOSIO/eos/master/Docker/docker-compose-latest.yml"><code>docker-compose-latest.yml</code></a> file and start the containers using these commands:</p>
+<pre><code class="language-sh">wget https://raw.githubusercontent.com/EOSIO/eos/master/Docker/docker-compose-latest.yml
+docker volume create --name=nodeos-data-volume
+docker volume create --name=keosd-data-volume
+docker-compose -f docker-compose-latest.yml up
+</code></pre>
+<p><strong>Note #1!</strong> If you are using <code>cleos</code> within a Docker container, you need to mount your project directory as a volume so that <code>cleos</code> can deploy your files. If you're using Docker Compose, add your project directory to the <code>volumes</code> section of the <code>keosd</code> container like so (abbreviated):</p>
+<pre><code class="language-yaml">services:
+  keosd:
+    volumes:
+      - ./:mnt/dev/project:ro
+</code></pre>
+<p><strong>Note #2!</strong> If you are expecting to see console output from <code>nodeos</code> then be sure to add <code>--contracts-console</code> to the end of the <code>nodeosd</code> command like so (abbreviated):</p>
+<pre><code class="language-yaml">services:
+  nodeosd:
+    command: /opt/eosio/bin/nodeosd.sh ... --contracts-console
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="getting-help.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="install-rust.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="install-rust.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="optional-dependencies.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -166,13 +183,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="getting-help.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="install-rust.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="install-rust.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="optional-dependencies.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
