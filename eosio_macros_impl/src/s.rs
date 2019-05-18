@@ -1,4 +1,4 @@
-use crate::proc_macro::{Span, TokenStream};
+use crate::proc_macro::TokenStream;
 use eosio_sys::{string_to_symbol, ParseSymbolError};
 use proc_macro2::{Literal, TokenTree};
 use quote::{quote, ToTokens, TokenStreamExt};

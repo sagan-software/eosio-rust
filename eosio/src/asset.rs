@@ -44,6 +44,41 @@ impl ToString for Asset {
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub enum ParseAssetError {
+    BadChar(char),
+    BadPrecision,
+}
+
+impl std::str::FromStr for Asset {
+    type Err = ParseAssetError;
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.trim();
+        let chars = s.chars();
+        let mut index = 0;
+
+        for c in chars {}
+
+        // Parse numbers
+        // for c in chars {
+        //     if c < 'A' || c > 'Z' {
+        //         // return Err(ParseSymbolError::BadChar(c));
+        //     } else {
+        //         result |= (c as u64) << (8 * (i + 1));
+        //     }
+        // }
+        // Look for dot
+        // Look for decimal fractions
+        // Skip 1 space
+        // Look for symbol code
+        Ok(Self {
+            amount: 0,
+            symbol: 0.into(),
+        })
+    }
+}
+
 #[cfg(feature = "serde")]
 impl ::serde::Serialize for Asset {
     #[inline]
