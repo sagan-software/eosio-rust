@@ -66,7 +66,7 @@ where
 }
 
 #[derive(Clone, Debug)]
-pub struct Id(u128);
+pub struct DeferredId(u128);
 
 #[cfg(feature = "contract")]
 impl<Data> Action<Data>
@@ -91,7 +91,7 @@ where
     #[inline]
     pub fn send_deferred<P>(
         &self,
-        _id: Id,
+        _id: DeferredId,
         _payer: P,
         _replace_existing: bool,
     ) -> Result<(), WriteError>
@@ -103,7 +103,7 @@ where
     }
 
     #[inline]
-    pub fn cancel_deferred(_id: Id) -> Result<(), ()> {
+    pub fn cancel_deferred(_id: DeferredId) -> Result<(), ()> {
         // TODO
         Ok(())
     }
