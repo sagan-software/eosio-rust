@@ -216,7 +216,7 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Id</span>(<span class="ident">u128</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DeferredId</span>(<span class="ident">u128</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;contract&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span>
@@ -241,7 +241,7 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send_deferred</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">_id</span>: <span class="ident">Id</span>,
+        <span class="ident">_id</span>: <span class="ident">DeferredId</span>,
         <span class="ident">_payer</span>: <span class="ident">P</span>,
         <span class="ident">_replace_existing</span>: <span class="ident">bool</span>,
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">WriteError</span><span class="op">&gt;</span>
@@ -253,7 +253,7 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cancel_deferred</span>(<span class="ident">_id</span>: <span class="ident">Id</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cancel_deferred</span>(<span class="ident">_id</span>: <span class="ident">DeferredId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
         <span class="comment">// TODO</span>
         <span class="prelude-val">Ok</span>(())
     }

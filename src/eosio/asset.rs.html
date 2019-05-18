@@ -360,12 +360,33 @@
 <span id="360">360</span>
 <span id="361">361</span>
 <span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">account</span>::<span class="ident">AccountName</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">check</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lib</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbol</span>::<span class="ident">Symbol</span>;
 <span class="kw">use</span> <span class="ident">eosio_macros</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">NumBytes</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(::<span class="ident">serde</span>::<span class="ident">Deserialize</span>))]</span>
@@ -381,33 +402,17 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">ToString</span> <span class="kw">for</span> <span class="ident">Asset</span> {
+<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Asset</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
-        <span class="kw">let</span> <span class="ident">precision</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">precision</span>();
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">let</span> <span class="ident">precision</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">precision</span>() <span class="kw">as</span> <span class="ident">usize</span>;
         <span class="kw">let</span> <span class="ident">amount</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">amount</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">/</span> <span class="number">10_f64</span>.<span class="ident">powf</span>(<span class="ident">precision</span> <span class="kw">as</span> <span class="ident">f64</span>);
-        <span class="kw">let</span> <span class="ident">symbol_name</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">code</span>().<span class="ident">to_string</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">amount</span>.<span class="ident">to_string</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decimals</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">contains</span>(<span class="string">&#39;.&#39;</span>) {
-            <span class="ident">s</span>.<span class="ident">as_str</span>()
-                .<span class="ident">rsplit</span>(<span class="string">&#39;.&#39;</span>)
-                .<span class="ident">next</span>()
-                .<span class="ident">map_or_else</span>(<span class="op">||</span> <span class="number">0_u64</span>, <span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>)
-        } <span class="kw">else</span> {
-            <span class="ident">s</span>.<span class="ident">push</span>(<span class="string">&#39;.&#39;</span>);
-            <span class="number">0_u64</span>
-        };
-        <span class="kw">while</span> <span class="ident">decimals</span> <span class="op">&lt;</span> <span class="ident">precision</span> {
-            <span class="ident">s</span>.<span class="ident">push</span>(<span class="string">&#39;0&#39;</span>);
-            <span class="ident">decimals</span> <span class="op">+=</span> <span class="number">1</span>;
-        }
-        <span class="ident">s</span>.<span class="ident">push</span>(<span class="string">&#39; &#39;</span>);
-        <span class="ident">s</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">symbol_name</span>);
-        <span class="ident">s</span>
+        <span class="kw">let</span> <span class="ident">symbol_code</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">symbol</span>.<span class="ident">code</span>();
+        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{:.*} {}&quot;</span>, <span class="ident">precision</span>, <span class="ident">amount</span>, <span class="ident">symbol_code</span>)
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ParseAssetError</span> {
     <span class="ident">BadChar</span>(<span class="ident">char</span>),
     <span class="ident">BadPrecision</span>,
@@ -420,8 +425,21 @@
         <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">trim</span>();
         <span class="kw">let</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">chars</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="comment">// Find numbers</span>
+        <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">chars</span> {
+            <span class="kw">if</span> <span class="ident">index</span> <span class="op">==</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="string">&#39;1&#39;</span> <span class="op">&lt;=</span> <span class="ident">c</span> <span class="op">&amp;&amp;</span> <span class="ident">c</span> <span class="op">&lt;=</span> <span class="string">&#39;9&#39;</span> {
+                    <span class="ident">index</span> <span class="op">+=</span> <span class="number">1</span>;
+                    <span class="kw">continue</span>;
+                } <span class="kw">else</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ParseAssetError</span>::<span class="ident">BadChar</span>(<span class="ident">c</span>));
+                }
+            }
 
-        <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">chars</span> {}
+            <span class="kw">if</span> <span class="string">&#39;0&#39;</span> <span class="op">&lt;=</span> <span class="ident">c</span> <span class="op">&amp;&amp;</span> <span class="ident">c</span> <span class="op">&lt;=</span> <span class="string">&#39;9&#39;</span> {
+                <span class="ident">index</span> <span class="op">+=</span> <span class="number">1</span>;
+            }
+        }
 
         <span class="comment">// Parse numbers</span>
         <span class="comment">// for c in chars {</span>
@@ -723,5 +741,27 @@
 <span class="comment">//         self.quantity %= other.quantity</span>
 <span class="comment">//     }</span>
 <span class="comment">// }</span>
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">to_string</span>() {
+        <span class="kw">fn</span> <span class="ident">test</span>(<span class="ident">amount</span>: <span class="ident">i64</span>, <span class="ident">symbol</span>: <span class="ident">u64</span>, <span class="ident">expected</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) {
+            <span class="kw">let</span> <span class="ident">asset</span> <span class="op">=</span> <span class="ident">Asset</span> {
+                <span class="ident">amount</span>,
+                <span class="ident">symbol</span>: <span class="ident">symbol</span>.<span class="ident">into</span>(),
+            };
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">asset</span>.<span class="ident">to_string</span>(), <span class="ident">expected</span>);
+        }
+
+        <span class="ident">test</span>(<span class="number">1_0000</span>, <span class="macro">s</span><span class="macro">!</span>(<span class="number">4</span>, <span class="ident">EOS</span>), <span class="string">&quot;1.0000 EOS&quot;</span>);
+        <span class="ident">test</span>(<span class="op">-</span><span class="number">1_0000</span>, <span class="macro">s</span><span class="macro">!</span>(<span class="number">4</span>, <span class="ident">EOS</span>), <span class="string">&quot;-1.0000 EOS&quot;</span>);
+        <span class="ident">test</span>(<span class="number">1_0001</span>, <span class="macro">s</span><span class="macro">!</span>(<span class="number">4</span>, <span class="ident">EOS</span>), <span class="string">&quot;1.0001 EOS&quot;</span>);
+        <span class="ident">test</span>(<span class="number">10_001</span>, <span class="macro">s</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">EOS</span>), <span class="string">&quot;10001 EOS&quot;</span>);
+        <span class="ident">test</span>(<span class="op">-</span><span class="number">10_001</span>, <span class="macro">s</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">EOS</span>), <span class="string">&quot;-10001 EOS&quot;</span>);
+    }
+}
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "eosio";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

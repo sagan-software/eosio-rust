@@ -214,7 +214,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">active</span>(<span class="ident">actor</span>: <span class="ident">AccountName</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">actor</span>,
-            <span class="ident">permission</span>: <span class="ident">PermissionName</span>::<span class="ident">from</span>(<span class="macro">n</span><span class="macro">!</span>(<span class="ident">active</span>)),
+            <span class="ident">permission</span>: <span class="macro">n</span><span class="macro">!</span>(<span class="ident">active</span>).<span class="ident">into</span>(),
         }
     }
 
@@ -223,7 +223,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">owner</span>(<span class="ident">actor</span>: <span class="ident">AccountName</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">actor</span>,
-            <span class="ident">permission</span>: <span class="ident">PermissionName</span>::<span class="ident">from</span>(<span class="macro">n</span><span class="macro">!</span>(<span class="ident">owner</span>)),
+            <span class="ident">permission</span>: <span class="macro">n</span><span class="macro">!</span>(<span class="ident">owner</span>).<span class="ident">into</span>(),
         }
     }
 }
