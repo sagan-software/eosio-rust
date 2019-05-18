@@ -28,7 +28,7 @@ impl Authorization {
     pub fn active(actor: AccountName) -> Self {
         Self {
             actor,
-            permission: PermissionName::from(n!(active)),
+            permission: n!(active).into(),
         }
     }
 
@@ -37,7 +37,7 @@ impl Authorization {
     pub fn owner(actor: AccountName) -> Self {
         Self {
             actor,
-            permission: PermissionName::from(n!(owner)),
+            permission: n!(owner).into(),
         }
     }
 }

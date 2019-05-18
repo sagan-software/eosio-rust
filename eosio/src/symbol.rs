@@ -2,6 +2,8 @@ use crate::account::AccountName;
 use crate::print::Print;
 use eosio_macros::*;
 pub use eosio_sys::ParseSymbolError;
+use std::convert::TryFrom;
+use std::fmt;
 use std::str::FromStr;
 
 #[derive(
@@ -30,12 +32,12 @@ impl From<SymbolCode> for [char; 7] {
     }
 }
 
-impl ToString for SymbolCode {
+impl fmt::Display for SymbolCode {
     #[inline]
-    fn to_string(&self) -> String {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let chars: [char; 7] = (*self).into();
         let s: String = chars.iter().collect();
-        s.trim().to_string()
+        write!(f, "{}", s.trim())
     }
 }
 
@@ -60,11 +62,25 @@ impl SymbolCode {
     }
 }
 
+impl TryFrom<&str> for SymbolCode {
+    type Error = ParseSymbolError;
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        let symbol: Symbol = eosio_sys::string_to_symbol(0, value)?.into();
+        Ok(symbol.code())
+    }
+}
+
+impl TryFrom<String> for SymbolCode {
+    type Error = ParseSymbolError;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::try_from(value.as_str())
+    }
+}
+
 impl FromStr for SymbolCode {
     type Err = ParseSymbolError;
-    fn from_str(s: &str) -> Result<Self, ParseSymbolError> {
-        let symbol: Symbol = eosio_sys::string_to_symbol(0, s)?.into();
-        Ok(symbol.code())
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from(s)
     }
 }
 
@@ -126,21 +142,17 @@ impl Symbol {
     }
 }
 
-impl ToString for Symbol {
-    fn to_string(&self) -> String {
-        let mut s = String::new();
-        s.push_str(self.precision().to_string().as_str());
-        s.push(',');
-        s.push_str(self.code().to_string().as_str());
-        s
+impl fmt::Display for Symbol {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{},{}", self.precision(), self.code())
     }
 }
 
-impl std::str::FromStr for Symbol {
-    type Err = ParseSymbolError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let s = s.trim();
-        let mut chars = s.chars();
+impl TryFrom<&str> for Symbol {
+    type Error = ParseSymbolError;
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        let value = value.trim();
+        let mut chars = value.chars();
 
         let precision: u32 = match chars.next() {
             Some(c) => {
@@ -180,6 +192,20 @@ impl std::str::FromStr for Symbol {
         result |= u64::from(precision);
 
         Ok(Symbol(result))
+    }
+}
+
+impl TryFrom<String> for Symbol {
+    type Error = ParseSymbolError;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::try_from(value.as_str())
+    }
+}
+
+impl FromStr for Symbol {
+    type Err = ParseSymbolError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::try_from(s)
     }
 }
 
@@ -245,14 +271,22 @@ mod tests {
 
     #[test]
     fn to_string() {
-        let symbol = Symbol::from(361_956_332_546);
-        assert_eq!(symbol.to_string(), "2,TGFT".to_string());
+        fn test(value: u64, expected: &str) {
+            assert_eq!(Symbol::from(value).to_string(), expected);
+        }
+        test(s!(2, TGFT), "2,TGFT");
+        test(s!(0, TGFT), "0,TGFT");
+        test(s!(4, EOS), "4,EOS");
     }
 
     #[test]
     fn code_to_string() {
-        let symbol = Symbol::from(361_956_332_546);
-        assert_eq!(symbol.code().to_string(), "TGFT".to_string());
+        fn test(value: u64, expected: &str) {
+            assert_eq!(Symbol::from(value).code().to_string(), expected);
+        }
+        test(s!(4, EOS), "EOS");
+        test(s!(0, TGFT), "TGFT");
+        test(s!(9, SYS), "SYS");
     }
 
     #[test]
@@ -260,11 +294,17 @@ mod tests {
         use std::str::FromStr;
 
         fn test_ok(input: &str, expected: u64) {
-            assert_eq!(Symbol::from_str(input), Ok(expected.into()));
+            let ok = Ok(expected.into());
+            assert_eq!(Symbol::try_from(input), ok);
+            assert_eq!(Symbol::try_from(input.to_string()), ok);
+            assert_eq!(Symbol::from_str(input), ok);
         }
 
         fn test_err(input: &str, err: ParseSymbolError) {
-            assert_eq!(Symbol::from_str(input), Err(err));
+            let err = Err(err);
+            assert_eq!(Symbol::try_from(input), err);
+            assert_eq!(Symbol::try_from(input.to_string()), err);
+            assert_eq!(Symbol::from_str(input), err);
         }
 
         test_ok("4,EOS", s!(4, EOS));

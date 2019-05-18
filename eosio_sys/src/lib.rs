@@ -64,7 +64,7 @@ fn char_to_symbol(c: char) -> Option<char> {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParseNameError {
     // IsEmpty,
     TooLong,
@@ -134,7 +134,7 @@ pub fn name_to_string(name: u64) -> String {
         .to_string()
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParseSymbolError {
     IsEmpty,
     TooLong,
@@ -165,7 +165,6 @@ pub fn symbol_name_length(symbol: u64) -> usize {
     }
     len
 }
-
 
 #[cfg(test)]
 mod tests {

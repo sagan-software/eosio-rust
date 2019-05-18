@@ -3,6 +3,7 @@ use crate::check::*;
 use crate::lib::*;
 use crate::symbol::Symbol;
 use eosio_macros::*;
+use std::fmt;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
@@ -18,33 +19,17 @@ impl Asset {
     }
 }
 
-impl ToString for Asset {
+impl fmt::Display for Asset {
     #[inline]
-    fn to_string(&self) -> String {
-        let precision = self.symbol.precision();
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let precision = self.symbol.precision() as usize;
         let amount = (self.amount as f64) / 10_f64.powf(precision as f64);
-        let symbol_name = self.symbol.code().to_string();
-        let mut s = amount.to_string();
-        let mut decimals = if s.contains('.') {
-            s.as_str()
-                .rsplit('.')
-                .next()
-                .map_or_else(|| 0_u64, |x| x.len() as u64)
-        } else {
-            s.push('.');
-            0_u64
-        };
-        while decimals < precision {
-            s.push('0');
-            decimals += 1;
-        }
-        s.push(' ');
-        s.push_str(&symbol_name);
-        s
+        let symbol_code = self.symbol.code();
+        write!(f, "{:.*} {}", precision, amount, symbol_code)
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParseAssetError {
     BadChar(char),
     BadPrecision,
@@ -57,8 +42,21 @@ impl std::str::FromStr for Asset {
         let s = s.trim();
         let chars = s.chars();
         let mut index = 0;
+        // Find numbers
+        for c in chars {
+            if index == 0 {
+                if '1' <= c && c <= '9' {
+                    index += 1;
+                    continue;
+                } else {
+                    return Err(ParseAssetError::BadChar(c));
+                }
+            }
 
-        for c in chars {}
+            if '0' <= c && c <= '9' {
+                index += 1;
+            }
+        }
 
         // Parse numbers
         // for c in chars {
@@ -360,3 +358,25 @@ pub struct ExtendedAsset {
 //         self.quantity %= other.quantity
 //     }
 // }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn to_string() {
+        fn test(amount: i64, symbol: u64, expected: &str) {
+            let asset = Asset {
+                amount,
+                symbol: symbol.into(),
+            };
+            assert_eq!(asset.to_string(), expected);
+        }
+
+        test(1_0000, s!(4, EOS), "1.0000 EOS");
+        test(-1_0000, s!(4, EOS), "-1.0000 EOS");
+        test(1_0001, s!(4, EOS), "1.0001 EOS");
+        test(10_001, s!(0, EOS), "10001 EOS");
+        test(-10_001, s!(0, EOS), "-10001 EOS");
+    }
+}
