@@ -239,6 +239,12 @@ pub struct ExtendedSymbol {
     pub contract: AccountName,
 }
 
+impl fmt::Display for ExtendedSymbol {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}@{}", self.symbol, self.contract)
+    }
+}
+
 #[cfg(feature = "contract")]
 impl Print for ExtendedSymbol {
     #[inline]
@@ -290,6 +296,20 @@ mod tests {
     }
 
     #[test]
+    fn extended_to_string() {
+        fn test(symbol: u64, contract: u64, expected: &str) {
+            let extended = ExtendedSymbol {
+                symbol: symbol.into(),
+                contract: contract.into(),
+            };
+            assert_eq!(extended.to_string(), expected);
+        }
+        test(s!(4, EOS), n!(eosio.token), "4,EOS@eosio.token");
+        test(s!(0, TST), n!(test), "0,TST@test");
+        test(s!(1, TGFT), n!(greatfiltert), "1,TGFT@greatfiltert");
+    }
+
+    #[test]
     fn from_str() {
         use std::str::FromStr;
 
@@ -321,11 +341,23 @@ mod tests {
     #[test]
     fn code_from_str() {
         use std::str::FromStr;
-        assert_eq!(SymbolCode::from_str("TST"), Ok(5_526_356.into()));
-        assert_eq!(
-            SymbolCode::from_str("tst"),
-            Err(ParseSymbolError::BadChar('t'))
-        );
+
+        fn test_ok(input: &str, expected: u64) {
+            let ok = Ok(Symbol::from(expected).code());
+            assert_eq!(SymbolCode::from_str(input), ok);
+            assert_eq!(SymbolCode::try_from(input), ok);
+        }
+
+        fn test_err(input: &str, expected: ParseSymbolError) {
+            let err = Err(expected);
+            assert_eq!(SymbolCode::from_str(input), err);
+            assert_eq!(SymbolCode::try_from(input), err);
+        }
+
+        test_ok("TST", s!(0, TST));
+        test_ok("EOS", s!(4, EOS));
+        test_ok("TGFT", s!(0, TGFT));
+        test_err("tst", ParseSymbolError::BadChar('t'));
     }
 
 }

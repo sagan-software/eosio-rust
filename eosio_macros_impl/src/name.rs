@@ -59,7 +59,6 @@ pub fn expand(input: TokenStream) -> TokenStream {
         #scope_name_converters
 
         // TODO: no_std
-        // TODO: TryFrom
         #[automatically_derived]
         impl std::str::FromStr for #ident {
             type Err = #eosio::ParseNameError;
@@ -70,8 +69,25 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
         }
 
+        #[automatically_derived]
+        impl std::convert::TryFrom<&str> for #ident {
+            type Error = #eosio::ParseNameError;
+            #[inline]
+            fn try_from(value: &str) -> Result<Self, Self::Error> {
+                Self::from_str(value)
+            }
+        }
+
+        #[automatically_derived]
+        impl std::convert::TryFrom<String> for #ident {
+            type Error = #eosio::ParseNameError;
+            #[inline]
+            fn try_from(value: String) -> Result<Self, Self::Error> {
+                Self::from_str(value.as_str())
+            }
+        }
+
         // TODO: no_std
-        // TODO: TryFrom
         #[automatically_derived]
         impl std::fmt::Display for #ident {
             #[inline]
@@ -271,6 +287,24 @@ pub fn expand(input: TokenStream) -> TokenStream {
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let name = #eosio::sys::string_to_name(s)?;
                 Ok(name.into())
+            }
+        }
+
+        #[automatically_derived]
+        impl std::convert::TryFrom<&str> for #ident {
+            type Error = #eosio::ParseNameError;
+            #[inline]
+            fn try_from(value: &str) -> Result<Self, Self::Error> {
+                Self::from_str(value)
+            }
+        }
+
+        #[automatically_derived]
+        impl std::convert::TryFrom<String> for #ident {
+            type Error = #eosio::ParseNameError;
+            #[inline]
+            fn try_from(value: String) -> Result<Self, Self::Error> {
+                Self::from_str(value.as_str())
             }
         }
 
