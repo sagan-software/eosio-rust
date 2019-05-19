@@ -269,6 +269,12 @@ pub struct ExtendedAsset {
     pub contract: AccountName,
 }
 
+impl fmt::Display for ExtendedAsset {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} @ {}", self.quantity, self.contract)
+    }
+}
+
 // impl Add for ExtendedAsset {
 //     type Output = Self;
 //     fn add(self, other: Self) -> Self {
@@ -378,5 +384,49 @@ mod tests {
         test(1_0001, s!(4, EOS), "1.0001 EOS");
         test(10_001, s!(0, EOS), "10001 EOS");
         test(-10_001, s!(0, EOS), "-10001 EOS");
+    }
+
+    #[test]
+    fn extended_to_string() {
+        fn test(amount: i64, symbol: u64, contract: u64, expected: &str) {
+            let asset = ExtendedAsset {
+                quantity: Asset {
+                    amount,
+                    symbol: symbol.into(),
+                },
+                contract: contract.into(),
+            };
+            assert_eq!(asset.to_string(), expected);
+        }
+        test(
+            1_0000,
+            s!(4, EOS),
+            n!(eosio.token),
+            "1.0000 EOS @ eosio.token",
+        );
+        test(
+            -1_0000,
+            s!(4, EOS),
+            n!(eosio.token),
+            "-1.0000 EOS @ eosio.token",
+        );
+        test(
+            1_0001,
+            s!(4, EOS),
+            n!(eosio.token),
+            "1.0001 EOS @ eosio.token",
+        );
+        test(
+            10_001,
+            s!(0, EOS),
+            n!(eosio.token),
+            "10001 EOS @ eosio.token",
+        );
+        test(
+            -10_001,
+            s!(0, EOS),
+            n!(eosio.token),
+            "-10001 EOS @ eosio.token",
+        );
     }
 }
