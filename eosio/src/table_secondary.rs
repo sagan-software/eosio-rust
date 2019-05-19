@@ -4,7 +4,7 @@ use crate::lib::PhantomData;
 use crate::table::*;
 use crate::table_primary::*;
 use crate::time::Time;
-use eosio_sys::ctypes::*;
+use eosio_cdt_sys::ctypes::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
 pub struct SecondaryTableName(TableName, usize);
@@ -187,12 +187,12 @@ macro_rules! secondary_keys_impl {
             impl SecondaryTableKey for $t {
                 #[inline]
                 fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32 {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     unsafe { m!["end" $i](code.into(), scope.into(), table.into()) }
                 }
                 #[inline]
                 fn next(&self, iterator: i32) -> (i32, u64) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let mut pk = 0_u64;
                     let ptr: *mut u64 = &mut pk;
                     let itr = unsafe { m!["next" $i](iterator, ptr) };
@@ -200,7 +200,7 @@ macro_rules! secondary_keys_impl {
                 }
                 #[inline]
                 fn previous(&self, iterator: i32) -> (i32, u64) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let mut pk = 0_u64;
                     let ptr: *mut u64 = &mut pk;
                     let itr = unsafe { m!["previous" $i](iterator, ptr) };
@@ -208,7 +208,7 @@ macro_rules! secondary_keys_impl {
                 }
                 #[inline]
                 fn erase(&self, iterator: i32) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     unsafe { m!["remove" $i](iterator) }
                 }
                 #[inline]
@@ -219,7 +219,7 @@ macro_rules! secondary_keys_impl {
                     payer: AccountName,
                     id: u64,
                 ) -> i32 {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let secondary: *const Self = self;
                     unsafe {
                         m!["store" $i](scope.into(), table.into(), payer.into(), id, secondary)
@@ -227,7 +227,7 @@ macro_rules! secondary_keys_impl {
                 }
                 #[inline]
                 fn modify(&self, iterator: i32, payer: AccountName) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let secondary: *const Self = self;
                     unsafe {
                         m!["update" $i](iterator, payer.into(), secondary)
@@ -240,7 +240,7 @@ macro_rules! secondary_keys_impl {
                     scope: ScopeName,
                     table: SecondaryTableName,
                 ) -> (i32, u64) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let mut pk = 0_u64;
                     let mut sk = self.clone();
                     let itr = unsafe {
@@ -261,7 +261,7 @@ macro_rules! secondary_keys_impl {
                     scope: ScopeName,
                     table: SecondaryTableName,
                 ) -> (i32, u64) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let mut pk = 0_u64;
                     let mut sk = self.clone();
                     let itr = unsafe {
@@ -283,7 +283,7 @@ macro_rules! secondary_keys_impl {
                     table: SecondaryTableName,
                     primary: u64,
                 ) -> i32 {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let mut sk = self.clone();
                     unsafe {
                         m!["find_primary" $i](
@@ -302,7 +302,7 @@ macro_rules! secondary_keys_impl {
                     scope: ScopeName,
                     table: SecondaryTableName,
                 ) -> (i32, u64) {
-                    use ::eosio_sys::*;
+                    use ::eosio_cdt_sys::*;
                     let mut pk = 0_u64;
                     let secondary: *const Self = self;
                     let itr = unsafe {
@@ -356,7 +356,7 @@ where
     #[inline]
     fn get(&self) -> Result<T, ReadError> {
         let pk_itr = unsafe {
-            ::eosio_sys::db_find_i64(
+            ::eosio_cdt_sys::db_find_i64(
                 self.index.code.into(),
                 self.index.scope.into(),
                 self.index.table.0.into(),
@@ -364,11 +364,11 @@ where
             )
         };
         let nullptr: *mut c_void = ::std::ptr::null_mut() as *mut _ as *mut c_void;
-        let size = unsafe { ::eosio_sys::db_get_i64(self.value, nullptr, 0) };
+        let size = unsafe { ::eosio_cdt_sys::db_get_i64(self.value, nullptr, 0) };
         let mut bytes = vec![0_u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db_get_i64(pk_itr, ptr, size as u32);
+            ::eosio_cdt_sys::db_get_i64(pk_itr, ptr, size as u32);
         }
         let mut pos = 0;
         T::read(&bytes, &mut pos)
@@ -407,7 +407,7 @@ where
             .key
             .end(self.index.code, self.index.scope, self.index.table);
         let primary_end = unsafe {
-            ::eosio_sys::db_end_i64(
+            ::eosio_cdt_sys::db_end_i64(
                 self.index.code.into(),
                 self.index.scope.into(),
                 self.index.table.0.into(),

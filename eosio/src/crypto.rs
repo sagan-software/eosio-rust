@@ -1,8 +1,8 @@
 #[cfg(feature = "contract")]
 use crate::check::Check;
-use eosio_macros::*;
 #[cfg(feature = "contract")]
-use eosio_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
+use eosio_cdt_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
+use eosio_macros::*;
 
 #[cfg(feature = "contract")]
 pub trait Hasher: Check<()> {
@@ -22,7 +22,7 @@ impl Hasher for Ripemd160 {
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum160::default();
         let c_hash_ptr: *mut capi_checksum160 = &mut c_hash as *mut _ as *mut capi_checksum160;
-        unsafe { ::eosio_sys::ripemd160(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::ripemd160(data_ptr, data_len, c_hash_ptr) }
         Ripemd160(c_hash.hash)
     }
 }
@@ -38,7 +38,7 @@ impl Check<()> for Ripemd160 {
             __bindgen_padding_0: [0_u32; 3],
         };
         let c_hash_ptr: *const capi_checksum160 = &c_hash as *const capi_checksum160;
-        unsafe { ::eosio_sys::assert_ripemd160(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::assert_ripemd160(data_ptr, data_len, c_hash_ptr) }
     }
 }
 
@@ -55,7 +55,7 @@ impl Hasher for Sha1 {
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum160::default();
         let c_hash_ptr: *mut capi_checksum160 = &mut c_hash as *mut _ as *mut capi_checksum160;
-        unsafe { ::eosio_sys::sha1(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::sha1(data_ptr, data_len, c_hash_ptr) }
         Sha1(c_hash.hash)
     }
 }
@@ -71,7 +71,7 @@ impl Check<()> for Sha1 {
             __bindgen_padding_0: [0_u32; 3],
         };
         let c_hash_ptr: *const capi_checksum160 = &c_hash as *const capi_checksum160;
-        unsafe { ::eosio_sys::assert_sha1(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::assert_sha1(data_ptr, data_len, c_hash_ptr) }
     }
 }
 
@@ -86,7 +86,7 @@ impl Hasher for Sha256 {
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum256::default();
         let c_hash_ptr: *mut capi_checksum256 = &mut c_hash as *mut _ as *mut capi_checksum256;
-        unsafe { ::eosio_sys::sha256(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::sha256(data_ptr, data_len, c_hash_ptr) }
         Sha256(c_hash.hash)
     }
 }
@@ -99,7 +99,7 @@ impl Check<()> for Sha256 {
         let data_len = data.len() as u32;
         let c_hash = capi_checksum256 { hash: self.0 };
         let c_hash_ptr: *const capi_checksum256 = &c_hash as *const capi_checksum256;
-        unsafe { ::eosio_sys::assert_sha256(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::assert_sha256(data_ptr, data_len, c_hash_ptr) }
     }
 }
 
@@ -114,7 +114,7 @@ impl Hasher for Sha512 {
         let data_len = data.len() as u32;
         let mut c_hash = capi_checksum512::default();
         let c_hash_ptr: *mut capi_checksum512 = &mut c_hash as *mut _ as *mut capi_checksum512;
-        unsafe { ::eosio_sys::sha512(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::sha512(data_ptr, data_len, c_hash_ptr) }
         Sha512(c_hash.hash)
     }
 }
@@ -127,6 +127,6 @@ impl Check<()> for Sha512 {
         let data_len = data.len() as u32;
         let c_hash = capi_checksum512 { hash: self.0 };
         let c_hash_ptr: *const capi_checksum512 = &c_hash as *const capi_checksum512;
-        unsafe { ::eosio_sys::assert_sha512(data_ptr, data_len, c_hash_ptr) }
+        unsafe { ::eosio_cdt_sys::assert_sha512(data_ptr, data_len, c_hash_ptr) }
     }
 }

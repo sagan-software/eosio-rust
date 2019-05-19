@@ -3,7 +3,7 @@ use crate::bytes::{ReadError, WriteError};
 use crate::lib::PhantomData;
 use crate::print::Print;
 use crate::table::*;
-use eosio_sys::ctypes::*;
+use eosio_cdt_sys::ctypes::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableCursor<T>
@@ -50,11 +50,11 @@ where
     #[inline]
     fn get(&self) -> Result<T, ReadError> {
         let nullptr: *mut c_void = ::std::ptr::null_mut() as *mut _ as *mut c_void;
-        let size = unsafe { ::eosio_sys::db_get_i64(self.value, nullptr, 0) };
+        let size = unsafe { ::eosio_cdt_sys::db_get_i64(self.value, nullptr, 0) };
         let mut bytes = vec![0_u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            ::eosio_sys::db_get_i64(self.value, ptr, size as u32);
+            ::eosio_cdt_sys::db_get_i64(self.value, ptr, size as u32);
         }
         let mut pos = 0;
         T::read(&bytes, &mut pos)
@@ -65,7 +65,7 @@ where
         let item = self.get()?;
         let pk = item.primary_key();
         unsafe {
-            ::eosio_sys::db_remove_i64(self.value);
+            ::eosio_cdt_sys::db_remove_i64(self.value);
         }
 
         for (i, k) in item.secondary_keys().iter().enumerate() {
@@ -97,7 +97,7 @@ where
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         let end = unsafe {
-            ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.into())
+            ::eosio_cdt_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.into())
         };
         PrimaryTableIterator {
             value: self.value,
@@ -144,7 +144,7 @@ where
 
         let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
-        self.value = unsafe { ::eosio_sys::db_next_i64(self.value, ptr) };
+        self.value = unsafe { ::eosio_cdt_sys::db_next_i64(self.value, ptr) };
 
         Some(cursor)
     }
@@ -170,7 +170,7 @@ where
 
         let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
-        self.value = unsafe { ::eosio_sys::db_previous_i64(self.value, ptr) };
+        self.value = unsafe { ::eosio_cdt_sys::db_previous_i64(self.value, ptr) };
 
         Some(cursor)
     }
@@ -201,7 +201,7 @@ where
         N: Into<u64>,
     {
         let itr = unsafe {
-            ::eosio_sys::db_lowerbound_i64(
+            ::eosio_cdt_sys::db_lowerbound_i64(
                 self.code.into(),
                 self.scope.into(),
                 self.name.into(),
@@ -228,7 +228,7 @@ where
         N: Into<u64>,
     {
         let itr = unsafe {
-            ::eosio_sys::db_upperbound_i64(
+            ::eosio_cdt_sys::db_upperbound_i64(
                 self.code.into(),
                 self.scope.into(),
                 self.name.into(),
@@ -258,7 +258,7 @@ where
         item.write(&mut bytes, &mut pos)?;
         let ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         unsafe {
-            ::eosio_sys::db_store_i64(
+            ::eosio_cdt_sys::db_store_i64(
                 self.scope.into(),
                 self.name.into(),
                 payer.into(),
@@ -333,7 +333,9 @@ where
     }
 
     fn end(&self) -> i32 {
-        unsafe { ::eosio_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into()) }
+        unsafe {
+            ::eosio_cdt_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
+        }
     }
 
     #[inline]
@@ -342,7 +344,7 @@ where
         Id: Into<u64>,
     {
         let itr = unsafe {
-            ::eosio_sys::db_find_i64(
+            ::eosio_cdt_sys::db_find_i64(
                 self.code.into(),
                 self.scope.into(),
                 self.name.into(),
@@ -372,7 +374,7 @@ where
         let end = self.end();
         let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
-        unsafe { ::eosio_sys::db_previous_i64(end, ptr) };
+        unsafe { ::eosio_cdt_sys::db_previous_i64(end, ptr) };
         pk.checked_add(1)
     }
 
@@ -388,7 +390,7 @@ where
         item.write(&mut bytes, &mut pos)?;
         let bytes_ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let payer = payer.unwrap_or_else(|| 0_u64.into());
-        unsafe { ::eosio_sys::db_update_i64(itr.value, payer.into(), bytes_ptr, pos as u32) }
+        unsafe { ::eosio_cdt_sys::db_update_i64(itr.value, payer.into(), bytes_ptr, pos as u32) }
 
         let pk = item.primary_key();
 

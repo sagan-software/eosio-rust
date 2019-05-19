@@ -14,7 +14,7 @@ syn = { version = "0.15", features = ["full", "fold"] }
 proc-macro2 = { version = "0.4" }
 proc-macro-hack = "0.5"
 quote = "0.6"
-eosio_sys = { path = "../eosio_sys" }
+eosio_cdt_sys = { path = "../eosio_cdt_sys" }
 
 [features]
 internal = []

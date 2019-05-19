@@ -29,7 +29,7 @@ impl Time {
     #[cfg(all(feature = "contract", not(any(feature = "stdweb", feature = "js-sys"))))]
     #[inline]
     pub fn now() -> Self {
-        Time(unsafe { ::eosio_sys::current_time() } as i64)
+        Time(unsafe { ::eosio_cdt_sys::current_time() } as i64)
     }
 
     /// Gets the current time
@@ -52,14 +52,14 @@ impl Time {
     #[cfg(feature = "contract")]
     #[inline]
     pub fn publication() -> Self {
-        Time(unsafe { ::eosio_sys::publication_time() } as i64)
+        Time(unsafe { ::eosio_cdt_sys::publication_time() } as i64)
     }
 
     /// Gets the expiration time
     #[cfg(feature = "contract")]
     #[inline]
     pub fn expiration() -> Self {
-        let seconds = unsafe { ::eosio_sys::expiration() };
+        let seconds = unsafe { ::eosio_cdt_sys::expiration() };
         Self::from_secs(i64::from(seconds))
     }
 

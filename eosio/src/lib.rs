@@ -63,7 +63,7 @@ mod table_secondary;
 
 /// Docs
 pub mod sys {
-    pub use eosio_sys::*;
+    pub use eosio_cdt_sys::*;
 }
 
 pub use self::account::*;
@@ -80,8 +80,8 @@ pub use self::table_primary::*;
 #[cfg(feature = "contract")]
 pub use self::table_secondary::*;
 pub use self::time::*;
+pub use eosio_cdt_sys::{ParseNameError, ParseSymbolError};
 pub use eosio_macros::*;
-pub use eosio_sys::{ParseNameError, ParseSymbolError};
 
 /// Docs
 #[cfg(all(feature = "serde", feature = "stdweb"))]

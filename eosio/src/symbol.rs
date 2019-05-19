@@ -1,7 +1,7 @@
 use crate::account::AccountName;
 use crate::print::Print;
+pub use eosio_cdt_sys::ParseSymbolError;
 use eosio_macros::*;
-pub use eosio_sys::ParseSymbolError;
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
@@ -65,7 +65,7 @@ impl SymbolCode {
 impl TryFrom<&str> for SymbolCode {
     type Error = ParseSymbolError;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let symbol: Symbol = eosio_sys::string_to_symbol(0, value)?.into();
+        let symbol: Symbol = eosio_cdt_sys::string_to_symbol(0, value)?.into();
         Ok(symbol.code())
     }
 }
@@ -130,7 +130,7 @@ impl Symbol {
     }
     #[inline]
     pub fn name_length(self) -> usize {
-        ::eosio_sys::symbol_name_length(self.0)
+        ::eosio_cdt_sys::symbol_name_length(self.0)
     }
     #[inline]
     pub const fn raw(self) -> u64 {

@@ -56,7 +56,7 @@ impl AccountName {
     #[cfg(feature = "contract")]
     #[inline]
     pub fn receiver() -> Self {
-        let name = unsafe { ::eosio_sys::current_receiver() };
+        let name = unsafe { ::eosio_cdt_sys::current_receiver() };
         name.into()
     }
 }
@@ -66,7 +66,7 @@ impl AccountName {
 #[inline]
 pub fn creation_time<A: Into<AccountName>>(account: A) -> Time {
     let a = account.into();
-    let time = unsafe { ::eosio_sys::get_account_creation_time(a.into()) };
+    let time = unsafe { ::eosio_cdt_sys::get_account_creation_time(a.into()) };
     time.into()
 }
 
@@ -80,7 +80,7 @@ where
 {
     let a = account.into();
     let p = permission.into();
-    let time = unsafe { ::eosio_sys::get_permission_last_used(a.into(), p.into()) };
+    let time = unsafe { ::eosio_cdt_sys::get_permission_last_used(a.into(), p.into()) };
     time.into()
 }
 
@@ -92,7 +92,7 @@ pub fn active_producers() -> [Option<AccountName>; 21] {
     let mut producers = [0_u64; 21];
     let producers_ptr: *mut u64 = &mut producers as *mut _ as *mut u64;
     let producers_len: u32 = 168; // 8 * 21;
-    unsafe { ::eosio_sys::get_active_producers(producers_ptr, producers_len) };
+    unsafe { ::eosio_cdt_sys::get_active_producers(producers_ptr, producers_len) };
 
     let mut options = [None; 21];
     for (index, item) in options.iter_mut().enumerate() {
@@ -122,7 +122,12 @@ pub fn get_resource_limits<A: Into<AccountName>>(account: A) -> (RamBytes, NetWe
     let cpu_weight_ptr = &mut cpu_weight as *mut _ as *mut i64;
     let a = account.into();
     unsafe {
-        ::eosio_sys::get_resource_limits(a.into(), ram_bytes_ptr, net_weight_ptr, cpu_weight_ptr)
+        ::eosio_cdt_sys::get_resource_limits(
+            a.into(),
+            ram_bytes_ptr,
+            net_weight_ptr,
+            cpu_weight_ptr,
+        )
     };
     (
         RamBytes(ram_bytes),
@@ -136,7 +141,7 @@ pub fn get_resource_limits<A: Into<AccountName>>(account: A) -> (RamBytes, NetWe
 #[inline]
 pub fn has_auth<A: Into<AccountName>>(account: A) -> bool {
     let a = account.into();
-    unsafe { ::eosio_sys::has_auth(a.into()) }
+    unsafe { ::eosio_cdt_sys::has_auth(a.into()) }
 }
 
 /// Check if an account is privileged
@@ -144,7 +149,7 @@ pub fn has_auth<A: Into<AccountName>>(account: A) -> bool {
 #[inline]
 pub fn is_privileged<A: Into<AccountName>>(account: A) -> bool {
     let a = account.into();
-    unsafe { ::eosio_sys::is_privileged(a.into()) }
+    unsafe { ::eosio_cdt_sys::is_privileged(a.into()) }
 }
 
 /// Verifies that `name` is an account.
@@ -152,7 +157,7 @@ pub fn is_privileged<A: Into<AccountName>>(account: A) -> bool {
 #[inline]
 pub fn is_account<A: Into<AccountName>>(account: A) -> bool {
     let a = account.into();
-    unsafe { ::eosio_sys::is_account(a.into()) }
+    unsafe { ::eosio_cdt_sys::is_account(a.into()) }
 }
 
 /// Verifies that `name` exists in the set of provided auths on a action. Throws if not found.
@@ -160,7 +165,7 @@ pub fn is_account<A: Into<AccountName>>(account: A) -> bool {
 #[inline]
 pub fn require_auth<A: Into<AccountName>>(account: A) {
     let a = account.into();
-    unsafe { ::eosio_sys::require_auth(a.into()) }
+    unsafe { ::eosio_cdt_sys::require_auth(a.into()) }
 }
 
 /// Verifies that `name` exists in the set of provided auths on a action. Throws if not found.
@@ -173,7 +178,7 @@ where
 {
     let a = account.into();
     let p = permission.into();
-    unsafe { ::eosio_sys::require_auth2(a.into(), p.into()) }
+    unsafe { ::eosio_cdt_sys::require_auth2(a.into(), p.into()) }
 }
 
 /// Add the specified account to set of accounts to be notified
@@ -181,5 +186,5 @@ where
 #[inline]
 pub fn require_recipient<A: Into<AccountName>>(account: A) {
     let a = account.into();
-    unsafe { ::eosio_sys::require_recipient(a.into()) }
+    unsafe { ::eosio_cdt_sys::require_recipient(a.into()) }
 }

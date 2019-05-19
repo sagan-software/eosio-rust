@@ -10,7 +10,7 @@ pub fn eosio_exit<C>(code: C)
 where
     C: Into<i32>,
 {
-    unsafe { ::eosio_sys::eosio_exit(code.into()) }
+    unsafe { ::eosio_cdt_sys::eosio_exit(code.into()) }
 }
 
 name!(ActionName);
@@ -81,9 +81,9 @@ where
         self.write(&mut bytes, &mut pos)?;
         let ptr = bytes[..].as_mut_ptr();
         if self.authorization.is_empty() {
-            unsafe { ::eosio_sys::send_context_free_inline(ptr, pos) }
+            unsafe { ::eosio_cdt_sys::send_context_free_inline(ptr, pos) }
         } else {
-            unsafe { ::eosio_sys::send_inline(ptr, pos) }
+            unsafe { ::eosio_cdt_sys::send_inline(ptr, pos) }
         }
         Ok(())
     }
@@ -136,11 +136,12 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
 
     #[inline]
     fn read_data() -> Result<Self, ReadError> {
-        let num_bytes = unsafe { ::eosio_sys::action_data_size() };
+        let num_bytes = unsafe { ::eosio_cdt_sys::action_data_size() };
         let mut bytes = vec![0_u8; num_bytes as usize];
-        let ptr: *mut ::eosio_sys::c_void = &mut bytes[..] as *mut _ as *mut ::eosio_sys::c_void;
+        let ptr: *mut ::eosio_cdt_sys::c_void =
+            &mut bytes[..] as *mut _ as *mut ::eosio_cdt_sys::c_void;
         unsafe {
-            ::eosio_sys::read_action_data(ptr, num_bytes);
+            ::eosio_cdt_sys::read_action_data(ptr, num_bytes);
         }
 
         let mut pos = 0;

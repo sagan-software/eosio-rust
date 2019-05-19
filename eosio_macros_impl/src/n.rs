@@ -1,5 +1,5 @@
 use crate::proc_macro::TokenStream;
-use eosio_sys::{string_to_name, ParseNameError, NAME_CHARS};
+use eosio_cdt_sys::{string_to_name, ParseNameError, NAME_CHARS};
 use proc_macro2::{Literal, TokenTree};
 use quote::quote;
 use quote::{ToTokens, TokenStreamExt};
