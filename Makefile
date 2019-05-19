@@ -119,7 +119,7 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 
 .PHONY: eosio_token
 eosio_token: target/wasm32-unknown-unknown/release/eosio_token_gc_opt_wat.wasm
-	$(CLEOS) set abi eosio.token mnt/dev/project/eosio_token/eosio_token.abi.json
+	$(CLEOS) set abi eosio.token mnt/dev/project/eosio_contracts/eosio_token/eosio_token.abi.json
 	$(CLEOS) set code eosio.token mnt/dev/release/eosio_token_gc_opt.wasm
 
 .PHONY: examples

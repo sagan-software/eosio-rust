@@ -10,15 +10,15 @@ incremental = false
 
 [workspace]
 members = [
+    "eosio",
     "eosio_abi",
     "eosio_cdt_sys",
     # "eosio_cli", TODO re-enable
+    "eosio_contracts/eosio_system",
+    "eosio_contracts/eosio_token",
     "eosio_macros_impl",
     "eosio_macros",
     "eosio_rpc",
-    "eosio_system",
-    "eosio_token",
-    "eosio",
     "examples/addressbook",
     "examples/hello_bare",
     "examples/hello",
