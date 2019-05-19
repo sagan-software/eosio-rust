@@ -4,53 +4,50 @@ const BOARD_WIDTH: u16 = 3;
 const BOARD_HEIGHT: u16 = 3;
 const BOARD_AREA: usize = (BOARD_WIDTH * BOARD_HEIGHT) as usize;
 
+const EMPTY: u8 = 0;
+const HOST: u8 = 1;
+const CHALLENGER: u8 = 2;
+const DRAW: u8 = 3;
+
 #[eosio::action]
-fn create(challenger: AccountName, host: AccountName) {
+fn create(host: AccountName, challenger: AccountName) {
     require_auth(host);
     check(
         challenger != host,
         "challenger shouldn't be the same as host",
     );
+    check(is_account(challenger), "challenger account doesn't exist");
 
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
 
     check(!table.exists(challenger), "game already exists");
 
-    let game = Game {
-        challenger,
-        host,
-        turn: host,
-        winner: n!(none).into(),
-        board: [0; BOARD_AREA],
-    };
+    let game = Game::new(host, challenger);
 
     table.emplace(host, &game).check("write");
 }
 
 #[eosio::action]
-fn restart(challenger: AccountName, host: AccountName, by: AccountName) {
-    require_auth(by);
+fn restart(host: AccountName, challenger: AccountName, by: u8) {
+    check(
+        by == HOST || by == CHALLENGER,
+        "by must be either 1 (HOST) or 2 (CHALLENGER)",
+    );
+    require_auth(if by == HOST { host } else { challenger });
 
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
     let cursor = table.find(challenger).check("game doesn't exist");
     let mut game = cursor.get().check("read");
 
-    check(
-        by == game.host || by == game.challenger,
-        "this is not your game",
-    );
-
-    game.board = [0; BOARD_AREA];
-    game.turn = host;
-    game.winner = n!(none).into();
+    game.restart();
 
     cursor.modify(None, &game).check("write");
 }
 
 #[eosio::action]
-fn close(challenger: AccountName, host: AccountName) {
+fn close(host: AccountName, challenger: AccountName) {
     require_auth(host);
 
     let _self = AccountName::receiver();
@@ -61,49 +58,29 @@ fn close(challenger: AccountName, host: AccountName) {
 }
 
 #[eosio::action]
-fn makemove(challenger: AccountName, host: AccountName, by: AccountName, row: u16, col: u16) {
-    require_auth(by);
+fn makemove(host: AccountName, challenger: AccountName, by: u8, row: u16, col: u16) {
+    check(
+        by == HOST || by == CHALLENGER,
+        "by must be either 1 (HOST) or 2 (CHALLENGER)",
+    );
+    require_auth(if by == HOST { host } else { challenger });
 
     // Check if game exists
-
     let _self = AccountName::receiver();
     let table = Game::table(_self, host);
     let cursor = table.find(challenger).check("game doesn't exist");
 
-    let mut game = cursor.get().check("read");
+    let mut game = cursor.get().check("failed to read game");
 
-    // Check if this game hasn't ended yet
-    check(game.winner == n!(none).into(), "the game has ended!");
-    // Check if this game belongs to the action sender
+    check(game.winner == EMPTY, "the game has ended!");
     check(
-        by == game.host || by == game.challenger,
-        "this is not your game",
-    );
-    // Check if this is the  action sender's turn
-    check(by == game.turn, "it's not your turn yet!");
-
-    // Check if user makes a valid movement
-    check(
-        is_valid_move(row, col, &game.board),
-        "not a valid movement!",
+        (by == HOST && game.turn == HOST) || (by == CHALLENGER && game.turn == CHALLENGER),
+        "it's not your turn yet!",
     );
 
-    let loc = movement_location(row, col);
+    check(game.is_valid_move(row, col), "not a valid movement!");
 
-    // Fill the cell, 1 for host, 2 for challenger
-    for (i, cell) in game.board.iter_mut().enumerate() {
-        if i == loc {
-            if game.turn == host {
-                *cell = 1;
-                game.turn = challenger;
-            } else {
-                *cell = 2;
-                game.turn = host;
-            }
-            break;
-        }
-    }
-    game.winner = game.get_winner();
+    game.make_move(row, col);
     cursor.modify(None, &game).check("write");
 }
 
@@ -111,16 +88,50 @@ eosio::abi!(create, restart, close, makemove);
 
 #[eosio::table(games)]
 struct Game {
+    host: AccountName,
     #[primary]
     challenger: AccountName,
-    host: AccountName,
-    turn: AccountName,
-    winner: AccountName,
+    turn: u8,
+    winner: u8,
     board: [u8; BOARD_AREA],
 }
 
 impl Game {
-    fn get_winner(&self) -> AccountName {
+    fn new(host: AccountName, challenger: AccountName) -> Self {
+        Self {
+            host,
+            challenger,
+            turn: HOST,
+            winner: EMPTY,
+            board: [EMPTY; BOARD_AREA],
+        }
+    }
+
+    fn restart(&mut self) {
+        self.board = [EMPTY; BOARD_AREA];
+        self.turn = HOST;
+        self.winner = EMPTY;
+    }
+
+    fn make_move(&mut self, row: u16, col: u16) {
+        let loc = Self::movement_location(row, col);
+        // Fill the cell, 1 for host, 2 for challenger
+        for (i, cell) in self.board.iter_mut().enumerate() {
+            if i == loc {
+                if self.turn == HOST {
+                    *cell = HOST;
+                    self.turn = CHALLENGER;
+                } else {
+                    *cell = CHALLENGER;
+                    self.turn = HOST;
+                }
+                break;
+            }
+        }
+        self.winner = self.get_winner();
+    }
+
+    fn get_winner(&self) -> u8 {
         let wins = [
             // rows
             [0, 1, 2],
@@ -139,11 +150,11 @@ impl Game {
             let second = tiles.get(1).and_then(|&i| self.board.get(i as usize));
             let third = tiles.get(2).and_then(|&i| self.board.get(i as usize));
             match (first, second, third) {
-                (Some(1), Some(1), Some(1)) => {
-                    return self.host;
+                (Some(&HOST), Some(&HOST), Some(&HOST)) => {
+                    return HOST;
                 }
-                (Some(2), Some(2), Some(2)) => {
-                    return self.challenger;
+                (Some(&CHALLENGER), Some(&CHALLENGER), Some(&CHALLENGER)) => {
+                    return CHALLENGER;
                 }
                 _ => (),
             }
@@ -155,25 +166,85 @@ impl Game {
             }
         }
         if taken_tiles == BOARD_AREA {
-            n!(draw).into()
+            DRAW
         } else {
-            n!(none).into()
+            EMPTY
         }
+    }
+
+    fn is_valid_move(&self, row: u16, col: u16) -> bool {
+        let loc = Self::movement_location(row, col);
+        match self.board.get(loc) {
+            Some(&cell) => col < BOARD_WIDTH && row < BOARD_HEIGHT && cell == EMPTY,
+            None => false,
+        }
+    }
+
+    fn movement_location(row: u16, col: u16) -> usize {
+        (row * BOARD_WIDTH + col) as usize
     }
 }
 
-fn movement_location(row: u16, col: u16) -> usize {
-    (row * BOARD_WIDTH + col) as usize
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn is_empty_cell(cell: u8) -> bool {
-    cell == 0
-}
+    #[test]
+    fn test_is_valid_move() {
+        let mut game = Game::new(n!(player1).into(), n!(player2).into());
+        assert_eq!(game.is_valid_move(0, 0), true);
+        assert_eq!(game.is_valid_move(1, 1), true);
+        assert_eq!(game.is_valid_move(2, 2), true);
+        assert_eq!(game.is_valid_move(3, 3), false);
+        game.make_move(0, 0);
+        assert_eq!(game.is_valid_move(0, 0), false);
+    }
 
-fn is_valid_move(row: u16, col: u16, board: &[u8]) -> bool {
-    let loc = movement_location(row, col);
-    match board.get(loc) {
-        Some(&cell) => col < BOARD_WIDTH && row < BOARD_HEIGHT && is_empty_cell(cell),
-        None => false,
+    #[test]
+    fn test_make_move() {
+        let mut game = Game::new(n!(player1).into(), n!(player2).into());
+        assert_eq!(game.board[0], EMPTY);
+        game.make_move(0, 0);
+        assert_eq!(game.board[0], HOST);
+        assert_eq!(game.board[1], EMPTY);
+        game.make_move(0, 1);
+        assert_eq!(game.board[1], CHALLENGER);
+    }
+
+    #[test]
+    fn test_get_winner() {
+        let mut game = Game::new(n!(player1).into(), n!(player2).into());
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(0, 0);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(1, 0);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(0, 1);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(1, 1);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(0, 2);
+        assert_eq!(game.winner, HOST);
+    }
+
+    #[test]
+    fn test_restart() {
+        let mut game = Game::new(n!(player1).into(), n!(player2).into());
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(0, 0);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(1, 0);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(0, 1);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(1, 1);
+        assert_eq!(game.winner, EMPTY);
+        game.make_move(0, 2);
+        assert_eq!(game.winner, HOST);
+        assert_eq!(game.turn, CHALLENGER);
+        game.restart();
+        assert_eq!(game.winner, EMPTY);
+        assert_eq!(game.turn, HOST);
+        assert_eq!(game.board, [0u8; BOARD_AREA]);
     }
 }

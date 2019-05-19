@@ -16,16 +16,17 @@ build:
 	cargo fmt --all
 	RUSTFLAGS="-C link-args=-zstack-size=48000" \
 	cargo +stable build --release --target=wasm32-unknown-unknown -vv \
+		--features contract \
 		-p addressbook \
 		-p hello \
 		-p hello_bare \
 		-p tictactoe \
 		-p eosio_token
-	cargo +stable build -p eosio_cli -vv
+	# cargo +stable build -p eosio_cli -vv
 
 .PHONY: test
 test:
-	cargo test -p eosio -p eosio_macros -p eosio_sys
+	cargo test -p eosio -p eosio_macros -p eosio_sys -p tictactoe
 
 .PHONY: docs
 docs:
@@ -146,29 +147,29 @@ simulate_tictactoe: create_game make_moves restart_game make_moves close_game
 
 .PHONY: create_game
 create_game:
-	$(CLEOS) push action tictactoe create '["bob","alice"]' -p 'alice@active'
+	$(CLEOS) push action tictactoe create '["alice","bob"]' -p 'alice@active'
 
 .PHONY: restart_game
 restart_game:
-	$(CLEOS) push action tictactoe restart '["bob","alice","alice"]' -p 'alice@active'
+	$(CLEOS) push action tictactoe restart '["alice","bob",1]' -p 'alice@active'
 
 .PHONY: close_game
 close_game:
-	$(CLEOS) push action tictactoe close '["bob","alice"]' -p 'alice@active'
+	$(CLEOS) push action tictactoe close '["alice","bob"]' -p 'alice@active'
 
 .PHONY: make_moves
 make_moves: make_moves_alice make_moves_bob
-	$(CLEOS) push action tictactoe makemove '["bob","alice","alice",0,1]' -p 'alice@active'
-	$(CLEOS) push action tictactoe makemove '["bob","alice","bob",1,1]' -p 'bob@active'
-	$(CLEOS) push action tictactoe makemove '["bob","alice","alice",0,2]' -p 'alice@active'
+	$(CLEOS) push action tictactoe makemove '["alice","bob",1,0,1]' -p 'alice@active'
+	$(CLEOS) push action tictactoe makemove '["alice","bob",2,1,1]' -p 'bob@active'
+	$(CLEOS) push action tictactoe makemove '["alice","bob",1,0,2]' -p 'alice@active'
 
 .PHONY: make_moves_alice
 make_moves_alice:
-	$(CLEOS) push action tictactoe makemove '["bob","alice","alice",0,0]' -p 'alice@active'
+	$(CLEOS) push action tictactoe makemove '["alice","bob",1,0,0]' -p 'alice@active'
 
 .PHONY: make_moves_bob
 make_moves_bob:
-	$(CLEOS) push action tictactoe makemove '["bob","alice","bob",1,0]' -p 'bob@active'
+	$(CLEOS) push action tictactoe makemove '["alice","bob",2,1,0]' -p 'bob@active'
 
 get_games_%:
 	$(CLEOS) get table tictactoe $* games
