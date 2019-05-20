@@ -2,7 +2,7 @@ use crate::account::AccountName;
 use crate::check::*;
 use crate::lib::*;
 use crate::symbol::Symbol;
-use eosio_macros::*;
+use eosio_bytes::{NumBytes, Read, Write};
 use std::fmt;
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
@@ -368,6 +368,7 @@ impl fmt::Display for ExtendedAsset {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use eosio_macros::{n, s};
 
     #[test]
     fn to_string() {

@@ -1,0 +1,18 @@
+[package]
+name = "eosio_bytes_derive"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "0.15", features = ["full", "fold"] }
+proc-macro2 = { version = "0.4" }
+quote = "0.6"
+cfg-if = "0.1"
+
+[features]
+internal-use-only-root-path-is-crate = []
+internal-use-only-root-path-is-eosio = []

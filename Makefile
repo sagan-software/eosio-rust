@@ -26,7 +26,12 @@ build:
 
 .PHONY: test
 test:
-	cargo test -p eosio -p eosio_macros -p eosio_sys -p tictactoe
+	cargo test \
+		-p eosio \
+		-p eosio_bytes \
+		-p eosio_cdt_sys \
+		-p eosio_macros \
+		-p tictactoe
 
 .PHONY: docs
 docs:

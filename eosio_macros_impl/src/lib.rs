@@ -6,11 +6,8 @@ extern crate proc_macro;
 
 mod abi;
 mod action;
-mod derive_num_bytes;
 mod derive_print;
-mod derive_read;
 mod derive_table_row;
-mod derive_write;
 mod n;
 mod name;
 mod print;
@@ -67,22 +64,7 @@ pub fn s(input: TokenStream) -> TokenStream {
     crate::s::expand(input)
 }
 
-#[proc_macro_derive(Write)]
-pub fn derive_write(input: TokenStream) -> TokenStream {
-    crate::derive_write::expand(input)
-}
-
-#[proc_macro_derive(Read)]
-pub fn derive_read(input: TokenStream) -> TokenStream {
-    crate::derive_read::expand(input)
-}
-
 #[proc_macro_derive(TableRow, attributes(table_name, primary, secondary))]
 pub fn derive_table_row(input: TokenStream) -> TokenStream {
     crate::derive_table_row::expand(input)
-}
-
-#[proc_macro_derive(NumBytes)]
-pub fn derive_num_bytes(input: TokenStream) -> TokenStream {
-    crate::derive_num_bytes::expand(input)
 }

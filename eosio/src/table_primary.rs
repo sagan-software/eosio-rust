@@ -1,8 +1,8 @@
 use crate::account::AccountName;
-use crate::bytes::{ReadError, WriteError};
 use crate::lib::PhantomData;
 use crate::print::Print;
 use crate::table::*;
+use eosio_bytes::{ReadError, WriteError};
 use eosio_cdt_sys::ctypes::*;
 
 #[derive(Copy, Clone, Debug)]

@@ -1,5 +1,4 @@
-#[cfg(all(feature = "alloc", not(feature = "std")))]
-use lib::{String, ToString, Vec};
+pub use eosio_bytes_derive::*;
 
 #[derive(Debug, Clone, Copy)]
 pub enum ReadError {
@@ -255,7 +254,6 @@ where
     }
 }
 
-#[cfg(any(feature = "std", feature = "alloc"))]
 impl<T> Read for Vec<T>
 where
     T: Read + Default + Clone,
@@ -276,7 +274,6 @@ where
     }
 }
 
-#[cfg(any(feature = "std", feature = "alloc"))]
 impl<T> NumBytes for Vec<T>
 where
     T: NumBytes,
@@ -291,7 +288,6 @@ where
     }
 }
 
-#[cfg(any(feature = "std", feature = "alloc"))]
 impl<T> Write for Vec<T>
 where
     T: Write,
@@ -364,7 +360,6 @@ impl_array!(
     81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
 );
 
-#[cfg(any(feature = "std", feature = "alloc"))]
 impl Read for String {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
@@ -375,7 +370,6 @@ impl Read for String {
     }
 }
 
-#[cfg(any(feature = "std", feature = "alloc"))]
 impl Write for String {
     #[inline]
     fn write(
@@ -387,7 +381,6 @@ impl Write for String {
     }
 }
 
-#[cfg(any(feature = "std", feature = "alloc"))]
 impl NumBytes for String {
     #[inline]
     fn num_bytes(&self) -> usize {
@@ -624,8 +617,6 @@ mod tests {
         test_array18, [u8; 18], [1u8; 18]
         test_array19, [u8; 19], [1u8; 19]
         test_array20, [u8; 20], [1u8; 20]
-        test_account_name, AccountName, AccountName::from(n!(test))
-        test_time, Time, Time::UNIX_EPOCH
         test_f32, f32, -0.12345_f32
         test_f64, f64, -0.12345_f64
     );

@@ -44,7 +44,6 @@ mod lib {
 mod account;
 mod action;
 mod asset;
-mod bytes;
 mod check;
 mod crypto;
 mod print;
@@ -69,7 +68,6 @@ pub mod sys {
 pub use self::account::*;
 pub use self::action::*;
 pub use self::asset::*;
-pub use self::bytes::*;
 pub use self::check::*;
 pub use self::crypto::*;
 pub use self::print::*;
@@ -80,6 +78,7 @@ pub use self::table_primary::*;
 #[cfg(feature = "contract")]
 pub use self::table_secondary::*;
 pub use self::time::*;
+pub use eosio_bytes::*;
 pub use eosio_cdt_sys::{ParseNameError, ParseSymbolError};
 pub use eosio_macros::*;
 

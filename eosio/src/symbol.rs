@@ -1,10 +1,11 @@
 use crate::account::AccountName;
 use crate::print::Print;
-pub use eosio_cdt_sys::ParseSymbolError;
-use eosio_macros::*;
+use eosio_bytes::{NumBytes, Read, Write};
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
+
+pub use eosio_cdt_sys::ParseSymbolError;
 
 #[derive(
     Debug,
@@ -280,6 +281,7 @@ impl Print for ExtendedSymbol {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use eosio_macros::{n, s};
 
     #[test]
     fn from_int() {

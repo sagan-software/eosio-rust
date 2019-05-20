@@ -1,6 +1,5 @@
 use crate::account::{AccountName, Authorization};
-use crate::bytes::NumBytes;
-use crate::bytes::{Read, ReadError, Write, WriteError};
+use eosio_bytes::{NumBytes, Read, ReadError, Write, WriteError};
 use eosio_macros::*;
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.

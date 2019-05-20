@@ -1,9 +1,7 @@
 #[cfg(feature = "contract")]
 use crate::account::AccountName;
-use crate::bytes::NumBytes;
-#[cfg(feature = "contract")]
-use crate::bytes::{Read, ReadError, Write, WriteError};
 use crate::symbol::SymbolCode;
+use eosio_bytes::{NumBytes, Read, ReadError, Write, WriteError};
 use eosio_macros::*;
 
 name!(TableName);

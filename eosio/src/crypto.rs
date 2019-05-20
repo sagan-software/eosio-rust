@@ -1,8 +1,8 @@
 #[cfg(feature = "contract")]
 use crate::check::Check;
+use eosio_bytes::{NumBytes, Read, Write};
 #[cfg(feature = "contract")]
 use eosio_cdt_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
-use eosio_macros::*;
 
 #[cfg(feature = "contract")]
 pub trait Hasher: Check<()> {

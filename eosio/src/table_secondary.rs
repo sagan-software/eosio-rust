@@ -1,9 +1,9 @@
 use crate::account::AccountName;
-use crate::bytes::{ReadError, WriteError};
 use crate::lib::PhantomData;
 use crate::table::*;
 use crate::table_primary::*;
 use crate::time::Time;
+use eosio_bytes::{ReadError, WriteError};
 use eosio_cdt_sys::ctypes::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]

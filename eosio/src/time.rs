@@ -1,6 +1,6 @@
 // #[cfg(feature = "contract")]
 // use crate::assert::*;
-use eosio_macros::*;
+use eosio_bytes::*;
 
 /// Time relative to unix epoch
 #[derive(

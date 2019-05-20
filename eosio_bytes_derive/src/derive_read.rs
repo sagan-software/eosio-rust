@@ -11,12 +11,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let name = input.ident;
 
-    let eosio = crate::paths::eosio();
+    let root = crate::root_path();
 
     let mut generics = input.generics;
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#eosio));
+            type_param.bounds.push(parse_quote!(#root));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -29,7 +29,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ident = &f.ident;
                     let ty = &f.ty;
                     quote_spanned! {f.span() =>
-                        let #ident = <#ty as #eosio::Read>::read(bytes, pos)?;
+                        let #ident = <#ty as #root::Read>::read(bytes, pos)?;
                     }
                 });
                 let field_names = fields.named.iter().map(|f| {
@@ -51,7 +51,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let ty = &f.ty;
                     let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
                     quote_spanned! {f.span() =>
-                        let #ident = <#ty as #eosio::Read>::read(bytes, pos)?;
+                        let #ident = <#ty as #root::Read>::read(bytes, pos)?;
                     }
                 });
                 let fields_list =
@@ -81,9 +81,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         #[automatically_derived]
-        impl #impl_generics #eosio::Read for #name #ty_generics #where_clause {
+        impl #impl_generics #root::Read for #name #ty_generics #where_clause {
             #[inline]
-            fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, #eosio::ReadError> {
+            fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, #root::ReadError> {
                 #reads
             }
         }

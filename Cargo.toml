@@ -12,6 +12,8 @@ incremental = false
 members = [
     "eosio",
     "eosio_abi",
+    "eosio_bytes",
+    "eosio_bytes_derive",
     "eosio_cdt_sys",
     # "eosio_cli", TODO re-enable
     "eosio_contracts/eosio_system",

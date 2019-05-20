@@ -38,7 +38,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        #[derive(#eosio::Read, #eosio::Write, #eosio::NumBytes, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
+        #[derive(::eosio_bytes::Read, ::eosio_bytes::Write, ::eosio_bytes::NumBytes, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
         pub struct #ident(pub u64);
 
         #[automatically_derived]
@@ -258,7 +258,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        #[derive(#eosio::Read, #eosio::Write, #eosio::NumBytes, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
+        #[derive(::eosio_bytes::Read, ::eosio_bytes::Write, ::eosio_bytes::NumBytes, Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
         #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
         pub struct #ident(u64);
 
