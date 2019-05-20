@@ -36,7 +36,8 @@ impl Client for WebSysClient {
         let body_string = serde_json::to_string(&params).unwrap();
         opts.body(Some(&JsValue::from_str(body_string.as_str())));
 
-        let request = Request::new_with_str_and_init(url.as_str(), &opts).unwrap();
+        let request =
+            Request::new_with_str_and_init(url.as_str(), &opts).unwrap();
         let window = web_sys::window().expect("no window object available");
         let request_promise = window.fetch_with_request(&request);
 

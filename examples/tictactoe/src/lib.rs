@@ -58,7 +58,13 @@ fn close(host: AccountName, challenger: AccountName) {
 }
 
 #[eosio::action]
-fn makemove(host: AccountName, challenger: AccountName, by: u8, row: u16, col: u16) {
+fn makemove(
+    host: AccountName,
+    challenger: AccountName,
+    by: u8,
+    row: u16,
+    col: u16,
+) {
     check(
         by == HOST || by == CHALLENGER,
         "by must be either 1 (HOST) or 2 (CHALLENGER)",
@@ -74,7 +80,8 @@ fn makemove(host: AccountName, challenger: AccountName, by: u8, row: u16, col: u
 
     check(game.winner == EMPTY, "the game has ended!");
     check(
-        (by == HOST && game.turn == HOST) || (by == CHALLENGER && game.turn == CHALLENGER),
+        (by == HOST && game.turn == HOST)
+            || (by == CHALLENGER && game.turn == CHALLENGER),
         "it's not your turn yet!",
     );
 
@@ -175,7 +182,9 @@ impl Game {
     fn is_valid_move(&self, row: u16, col: u16) -> bool {
         let loc = Self::movement_location(row, col);
         match self.board.get(loc) {
-            Some(&cell) => col < BOARD_WIDTH && row < BOARD_HEIGHT && cell == EMPTY,
+            Some(&cell) => {
+                col < BOARD_WIDTH && row < BOARD_HEIGHT && cell == EMPTY
+            }
             None => false,
         }
     }

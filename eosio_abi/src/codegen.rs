@@ -68,7 +68,8 @@ fn to_type(s: &str) -> syn::Type {
 impl crate::Type {
     fn to_tokens(&self) -> TokenStream {
         let span = Span::call_site();
-        let type_ident = Ident::new(self.new_type_name.to_camel_case().as_str(), span);
+        let type_ident =
+            Ident::new(self.new_type_name.to_camel_case().as_str(), span);
         let from_type = to_type(self.type_.as_str());
         quote! {
             pub type #type_ident = #from_type;

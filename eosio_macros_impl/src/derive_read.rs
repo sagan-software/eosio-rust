@@ -1,7 +1,10 @@
 use crate::proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam, Ident};
+use syn::{
+    parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam,
+    Ident,
+};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -51,12 +54,16 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         let #ident = <#ty as #eosio::Read>::read(bytes, pos)?;
                     }
                 });
-                let fields_list = fields.unnamed.iter().enumerate().map(|(i, _f)| {
-                    let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
-                    quote! {
-                        #ident,
-                    }
-                });
+                let fields_list =
+                    fields.unnamed.iter().enumerate().map(|(i, _f)| {
+                        let ident = Ident::new(
+                            format!("field_{}", i).as_str(),
+                            call_site,
+                        );
+                        quote! {
+                            #ident,
+                        }
+                    });
                 quote! {
                     #(#field_reads)*
                     let item = #name(

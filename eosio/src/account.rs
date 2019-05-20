@@ -7,7 +7,18 @@ name!(PermissionName);
 
 /// A permission
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, NumBytes, Hash, PartialOrd, Ord,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Default,
+    Read,
+    Write,
+    NumBytes,
+    Hash,
+    PartialOrd,
+    Ord,
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 pub struct Authorization {
@@ -80,7 +91,9 @@ where
 {
     let a = account.into();
     let p = permission.into();
-    let time = unsafe { ::eosio_cdt_sys::get_permission_last_used(a.into(), p.into()) };
+    let time = unsafe {
+        ::eosio_cdt_sys::get_permission_last_used(a.into(), p.into())
+    };
     time.into()
 }
 
@@ -92,7 +105,9 @@ pub fn active_producers() -> [Option<AccountName>; 21] {
     let mut producers = [0_u64; 21];
     let producers_ptr: *mut u64 = &mut producers as *mut _ as *mut u64;
     let producers_len: u32 = 168; // 8 * 21;
-    unsafe { ::eosio_cdt_sys::get_active_producers(producers_ptr, producers_len) };
+    unsafe {
+        ::eosio_cdt_sys::get_active_producers(producers_ptr, producers_len)
+    };
 
     let mut options = [None; 21];
     for (index, item) in options.iter_mut().enumerate() {
@@ -113,7 +128,9 @@ pub fn active_producers() -> [Option<AccountName>; 21] {
 /// Priviledged
 #[cfg(feature = "contract")]
 #[inline]
-pub fn get_resource_limits<A: Into<AccountName>>(account: A) -> (RamBytes, NetWeight, CpuWeight) {
+pub fn get_resource_limits<A: Into<AccountName>>(
+    account: A,
+) -> (RamBytes, NetWeight, CpuWeight) {
     let mut ram_bytes = 0_i64;
     let ram_bytes_ptr = &mut ram_bytes as *mut _ as *mut i64;
     let mut net_weight = 0_i64;

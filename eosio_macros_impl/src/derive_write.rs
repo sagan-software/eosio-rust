@@ -1,7 +1,10 @@
 use crate::proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam, Index};
+use syn::{
+    parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam,
+    Index,
+};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -35,16 +38,17 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 }
             }
             Fields::Unnamed(ref fields) => {
-                let recurse = fields.unnamed.iter().enumerate().map(|(i, f)| {
-                    let index = Index {
-                        index: i as u32,
-                        span: call_site,
-                    };
-                    let access = quote_spanned!(call_site => #var.#index);
-                    quote_spanned! { f.span() =>
-                        #eosio::Write::write(&#access, bytes, pos)?;
-                    }
-                });
+                let recurse =
+                    fields.unnamed.iter().enumerate().map(|(i, f)| {
+                        let index = Index {
+                            index: i as u32,
+                            span: call_site,
+                        };
+                        let access = quote_spanned!(call_site => #var.#index);
+                        quote_spanned! { f.span() =>
+                            #eosio::Write::write(&#access, bytes, pos)?;
+                        }
+                    });
                 quote! {
                     #(#recurse)*
                     Ok(())

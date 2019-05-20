@@ -50,7 +50,11 @@ where
     Data: Write + NumBytes,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.account.write(bytes, pos)?;
         self.name.write(bytes, pos)?;
         self.authorization.write(bytes, pos)?;
@@ -113,7 +117,11 @@ pub trait ToAction: Sized + Write + NumBytes {
     const NAME: u64;
 
     #[inline]
-    fn to_action(self, account: AccountName, authorization: Vec<Authorization>) -> Action<Self> {
+    fn to_action(
+        self,
+        account: AccountName,
+        authorization: Vec<Authorization>,
+    ) -> Action<Self> {
         Action {
             account,
             name: Self::NAME.into(),
@@ -124,7 +132,10 @@ pub trait ToAction: Sized + Write + NumBytes {
 
     #[inline]
     #[cfg(feature = "contract")]
-    fn send_inline(self, authorization: Vec<Authorization>) -> Result<(), WriteError> {
+    fn send_inline(
+        self,
+        authorization: Vec<Authorization>,
+    ) -> Result<(), WriteError> {
         self.to_action(AccountName::receiver(), authorization)
             .send_inline()
     }

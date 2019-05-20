@@ -63,7 +63,11 @@ impl GetTableRowsParams {
     // }
 }
 
-pub fn get_table_rows<C: Into<AccountName>, S: Into<ScopeName>, T: Into<TableName>>(
+pub fn get_table_rows<
+    C: Into<AccountName>,
+    S: Into<ScopeName>,
+    T: Into<TableName>,
+>(
     code: C,
     scope: S,
     table: T,

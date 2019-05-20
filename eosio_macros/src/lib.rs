@@ -11,7 +11,9 @@ pub use eosio_macros_impl::n;
 #[proc_macro_hack]
 pub use eosio_macros_impl::s;
 
-pub use eosio_macros_impl::{action, name, table, NumBytes, Read, TableRow, Write};
+pub use eosio_macros_impl::{
+    action, name, table, NumBytes, Read, TableRow, Write,
+};
 
 #[cfg(test)]
 mod tests {

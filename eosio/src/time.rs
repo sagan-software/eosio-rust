@@ -4,7 +4,18 @@ use eosio_macros::*;
 
 /// Time relative to unix epoch
 #[derive(
-    Read, Write, NumBytes, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash, Default,
+    Read,
+    Write,
+    NumBytes,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Debug,
+    Clone,
+    Copy,
+    Hash,
+    Default,
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Serialize))]
 pub struct Time(i64);
@@ -26,14 +37,20 @@ impl Time {
     pub const UNIX_EPOCH: Self = Time(0);
 
     /// Gets the current time
-    #[cfg(all(feature = "contract", not(any(feature = "stdweb", feature = "js-sys"))))]
+    #[cfg(all(
+        feature = "contract",
+        not(any(feature = "stdweb", feature = "js-sys"))
+    ))]
     #[inline]
     pub fn now() -> Self {
         Time(unsafe { ::eosio_cdt_sys::current_time() } as i64)
     }
 
     /// Gets the current time
-    #[cfg(all(feature = "stdweb", not(any(feature = "contract", feature = "js-sys"))))]
+    #[cfg(all(
+        feature = "stdweb",
+        not(any(feature = "contract", feature = "js-sys"))
+    ))]
     #[inline]
     pub fn now() -> Self {
         let microseconds = ::stdweb::web::Date::now() * 1_000.0;
@@ -41,7 +58,10 @@ impl Time {
     }
 
     /// Gets the current time
-    #[cfg(all(feature = "js-sys", not(any(feature = "contract", feature = "stdweb"))))]
+    #[cfg(all(
+        feature = "js-sys",
+        not(any(feature = "contract", feature = "stdweb"))
+    ))]
     #[inline]
     pub fn now() -> Self {
         let microseconds = ::js_sys::Date::now() * 1_000.0;
@@ -174,7 +194,10 @@ impl<'de> ::serde::de::Visitor<'de> for TimeVisitor {
     type Value = Time;
 
     #[inline]
-    fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+    fn expecting(
+        &self,
+        formatter: &mut ::std::fmt::Formatter,
+    ) -> ::std::fmt::Result {
         formatter.write_str("a microsecond timestamp as a number or string")
     }
 
@@ -359,7 +382,9 @@ impl From<Time> for i64 {
 
 // TODO: Duration ops similar to std::time::Duration
 
-#[derive(Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash)]
+#[derive(
+    Read, Write, PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Copy, Hash,
+)]
 pub struct Duration(i64);
 
 #[cfg(test)]

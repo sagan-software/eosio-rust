@@ -36,7 +36,8 @@ struct AbiPairs(Vec<AbiPair>);
 
 impl Parse for AbiPairs {
     fn parse(input: ParseStream) -> Result<Self> {
-        let parsed = Punctuated::<AbiPair, Token![,]>::parse_separated_nonempty(input)?;
+        let parsed =
+            Punctuated::<AbiPair, Token![,]>::parse_separated_nonempty(input)?;
         let pairs: Vec<AbiPair> = parsed.into_iter().collect();
         Ok(AbiPairs(pairs))
     }

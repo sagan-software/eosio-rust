@@ -48,7 +48,8 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     let call_site = ::proc_macro2::Span::call_site();
     let struct_name = titlecase(ident.to_string().as_str());
-    let struct_ident = Ident::new(format!("{}Action", struct_name).as_str(), call_site);
+    let struct_ident =
+        Ident::new(format!("{}Action", struct_name).as_str(), call_site);
 
     let expanded = quote! {
         #[derive(Clone, #eosio::Read, #eosio::Write, #eosio::NumBytes)]
@@ -121,7 +122,8 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     let call_site = ::proc_macro2::Span::call_site();
     let struct_name = titlecase(ident.to_string().as_str());
-    let struct_ident = Ident::new(format!("{}Action", struct_name).as_str(), call_site);
+    let struct_ident =
+        Ident::new(format!("{}Action", struct_name).as_str(), call_site);
 
     let expanded = quote! {
         #[derive(Clone, #eosio::Read, #eosio::Write, #eosio::NumBytes, Default)]

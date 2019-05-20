@@ -15,7 +15,11 @@ pub struct GetCurrencyBalanceParams {
     symbol: Option<String>,
 }
 
-pub fn get_currency_balance<C: Into<AccountName>, A: Into<AccountName>, S: ToString>(
+pub fn get_currency_balance<
+    C: Into<AccountName>,
+    A: Into<AccountName>,
+    S: ToString,
+>(
     code: C,
     account: A,
     symbol: Option<S>,

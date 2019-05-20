@@ -49,8 +49,10 @@ where
 {
     #[inline]
     fn get(&self) -> Result<T, ReadError> {
-        let nullptr: *mut c_void = ::std::ptr::null_mut() as *mut _ as *mut c_void;
-        let size = unsafe { ::eosio_cdt_sys::db_get_i64(self.value, nullptr, 0) };
+        let nullptr: *mut c_void =
+            ::std::ptr::null_mut() as *mut _ as *mut c_void;
+        let size =
+            unsafe { ::eosio_cdt_sys::db_get_i64(self.value, nullptr, 0) };
         let mut bytes = vec![0_u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
@@ -70,7 +72,9 @@ where
 
         for (i, k) in item.secondary_keys().iter().enumerate() {
             if let Some(k) = k {
-                let table = crate::table_secondary::SecondaryTableName::new(self.table, i);
+                let table = crate::table_secondary::SecondaryTableName::new(
+                    self.table, i,
+                );
                 let end = k.end(self.code, self.scope, table);
                 let itr = k.find_primary(self.code, self.scope, table, pk);
                 if itr != end {
@@ -82,7 +86,11 @@ where
     }
 
     #[inline]
-    fn modify(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError> {
+    fn modify(
+        &self,
+        payer: Option<AccountName>,
+        item: &T,
+    ) -> Result<usize, WriteError> {
         let table = PrimaryTableIndex::new(self.code, self.scope, self.table);
         table.modify(self, payer, item)
     }
@@ -97,7 +105,11 @@ where
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         let end = unsafe {
-            ::eosio_cdt_sys::db_end_i64(self.code.into(), self.scope.into(), self.table.into())
+            ::eosio_cdt_sys::db_end_i64(
+                self.code.into(),
+                self.scope.into(),
+                self.table.into(),
+            )
         };
         PrimaryTableIterator {
             value: self.value,
@@ -170,7 +182,8 @@ where
 
         let mut pk = 0_u64;
         let ptr: *mut u64 = &mut pk;
-        self.value = unsafe { ::eosio_cdt_sys::db_previous_i64(self.value, ptr) };
+        self.value =
+            unsafe { ::eosio_cdt_sys::db_previous_i64(self.value, ptr) };
 
         Some(cursor)
     }
@@ -271,7 +284,9 @@ where
         // store secondary indexes
         for (i, k) in item.secondary_keys().iter().enumerate() {
             if let Some(k) = k {
-                let table = crate::table_secondary::SecondaryTableName::new(self.name, i);
+                let table = crate::table_secondary::SecondaryTableName::new(
+                    self.name, i,
+                );
                 k.store(self.scope, table, payer, id);
             }
         }
@@ -334,7 +349,11 @@ where
 
     fn end(&self) -> i32 {
         unsafe {
-            ::eosio_cdt_sys::db_end_i64(self.code.into(), self.scope.into(), self.name.into())
+            ::eosio_cdt_sys::db_end_i64(
+                self.code.into(),
+                self.scope.into(),
+                self.name.into(),
+            )
         }
     }
 
@@ -390,13 +409,22 @@ where
         item.write(&mut bytes, &mut pos)?;
         let bytes_ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
         let payer = payer.unwrap_or_else(|| 0_u64.into());
-        unsafe { ::eosio_cdt_sys::db_update_i64(itr.value, payer.into(), bytes_ptr, pos as u32) }
+        unsafe {
+            ::eosio_cdt_sys::db_update_i64(
+                itr.value,
+                payer.into(),
+                bytes_ptr,
+                pos as u32,
+            )
+        }
 
         let pk = item.primary_key();
 
         for (i, k) in item.secondary_keys().iter().enumerate() {
             if let Some(k) = k {
-                let table = crate::table_secondary::SecondaryTableName::new(self.name, i);
+                let table = crate::table_secondary::SecondaryTableName::new(
+                    self.name, i,
+                );
                 k.upsert(self.code, self.scope, table, payer, pk);
             }
         }

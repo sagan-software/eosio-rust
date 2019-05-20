@@ -7,7 +7,18 @@ use std::fmt;
 use std::str::FromStr;
 
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, NumBytes, Hash, PartialOrd, Ord,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Default,
+    Read,
+    Write,
+    NumBytes,
+    Hash,
+    PartialOrd,
+    Ord,
 )]
 pub struct SymbolCode(u64);
 
@@ -114,7 +125,18 @@ impl Print for SymbolCode {
 }
 
 #[derive(
-    Debug, PartialEq, Eq, Clone, Copy, Default, Read, Write, NumBytes, Hash, PartialOrd, Ord,
+    Debug,
+    PartialEq,
+    Eq,
+    Clone,
+    Copy,
+    Default,
+    Read,
+    Write,
+    NumBytes,
+    Hash,
+    PartialOrd,
+    Ord,
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 pub struct Symbol(u64);

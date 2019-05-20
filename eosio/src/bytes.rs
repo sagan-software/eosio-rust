@@ -17,7 +17,11 @@ pub enum WriteError {
 }
 
 pub trait Write: Sized {
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError>;
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError>;
 }
 
 pub trait NumBytes {
@@ -105,7 +109,11 @@ impl Read for f32 {
 
 impl Write for f32 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.to_bits().write(bytes, pos)
     }
 }
@@ -128,7 +136,11 @@ impl Read for f64 {
 
 impl Write for f64 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.to_bits().write(bytes, pos)
     }
 }
@@ -149,7 +161,11 @@ impl Read for bool {
 
 impl Write for bool {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         let value: u8 = if *self { 1 } else { 0 };
         value.write(bytes, pos)
     }
@@ -172,7 +188,11 @@ impl Read for usize {
 
 impl Write for usize {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         // TODO: fix this when usize is larger than 1 byte?
         (*self as u8).write(bytes, pos)
     }
@@ -203,7 +223,11 @@ where
     T: Write + Default,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.is_some().write(bytes, pos)?;
         match self {
             Some(item) => item.write(bytes, pos)?,
@@ -218,7 +242,11 @@ where
     T: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.len().write(bytes, pos)?;
         for item in self.iter() {
             item.write(bytes, pos)?;
@@ -269,7 +297,11 @@ where
     T: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.len().write(bytes, pos)?;
         for item in self.iter() {
             item.write(bytes, pos)?;
@@ -346,7 +378,11 @@ impl Read for String {
 #[cfg(any(feature = "std", feature = "alloc"))]
 impl Write for String {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.as_bytes().write(bytes, pos)
     }
 }
@@ -361,7 +397,11 @@ impl NumBytes for String {
 
 impl<'a> Write for &'a str {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.as_bytes().write(bytes, pos)
     }
 }
@@ -403,7 +443,11 @@ where
     B: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.0.write(bytes, pos)?;
         self.1.write(bytes, pos)?;
         Ok(())
@@ -447,7 +491,11 @@ where
     C: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.0.write(bytes, pos)?;
         self.1.write(bytes, pos)?;
         self.2.write(bytes, pos)?;
@@ -497,7 +545,11 @@ where
     D: Write,
 {
     #[inline]
-    fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
         self.0.write(bytes, pos)?;
         self.1.write(bytes, pos)?;
         self.2.write(bytes, pos)?;
@@ -630,7 +682,8 @@ mod tests {
     #[test]
     fn test_read_pos() {
         let bytes = &[
-            10, 9, 0, 1, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 20, 4, 3, 2, 1, 1, 1, 1, 1,
+            10, 9, 0, 1, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 20, 4, 3, 2, 1, 1,
+            1, 1, 1,
         ];
 
         let mut pos = 0;

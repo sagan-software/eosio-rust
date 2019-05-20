@@ -1,7 +1,10 @@
 use crate::proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::quote;
-use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam, Meta};
+use syn::{
+    parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam,
+    Meta,
+};
 
 #[cfg(not(feature = "contract"))]
 pub fn expand(input: TokenStream) -> TokenStream {
@@ -45,7 +48,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
     });
 
     if table_name.is_none() {
-        panic!("#[table_name] attribute must be used when deriving from TableRow");
+        panic!(
+            "#[table_name] attribute must be used when deriving from TableRow"
+        );
     }
 
     let expanded = match input.data {
@@ -55,7 +60,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 for field in fields.named.iter() {
                     for attr in field.attrs.iter() {
                         let name = attr.interpret_meta().map(|m| m.name());
-                        let is_primary = name.map(|n| n == "primary").unwrap_or_else(|| false);
+                        let is_primary = name
+                            .map(|n| n == "primary")
+                            .unwrap_or_else(|| false);
                         if is_primary {
                             if primary_key.is_none() {
                                 primary_key = field.ident.clone();
@@ -131,7 +138,9 @@ pub fn expand(input: TokenStream) -> TokenStream {
     });
 
     if table_name.is_none() {
-        panic!("#[table_name] attribute must be used when deriving from TableRow");
+        panic!(
+            "#[table_name] attribute must be used when deriving from TableRow"
+        );
     }
 
     let expanded = match input.data {
@@ -154,7 +163,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         }
 
                         if is_secondary {
-                            secondary_keys.push((field.ident.clone(), field.ty.clone()));
+                            secondary_keys
+                                .push((field.ident.clone(), field.ty.clone()));
                         }
                     }
                 }

@@ -21,12 +21,18 @@ impl From<SecondaryTableName> for u64 {
     fn from(t: SecondaryTableName) -> Self {
         let index = t.1 as Self;
         let table: Self = t.0.into();
-        (table & 0xFFFF_FFFF_FFFF_FFF0_u64) | (index & 0x0000_0000_0000_000F_u64)
+        (table & 0xFFFF_FFFF_FFFF_FFF0_u64)
+            | (index & 0x0000_0000_0000_000F_u64)
     }
 }
 
 pub trait SecondaryTableKey {
-    fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32;
+    fn end(
+        &self,
+        code: AccountName,
+        scope: ScopeName,
+        table: SecondaryTableName,
+    ) -> i32;
 
     fn next(&self, iterator: i32) -> (i32, u64);
 
@@ -363,8 +369,10 @@ where
                 self.pk,
             )
         };
-        let nullptr: *mut c_void = ::std::ptr::null_mut() as *mut _ as *mut c_void;
-        let size = unsafe { ::eosio_cdt_sys::db_get_i64(self.value, nullptr, 0) };
+        let nullptr: *mut c_void =
+            ::std::ptr::null_mut() as *mut _ as *mut c_void;
+        let size =
+            unsafe { ::eosio_cdt_sys::db_get_i64(self.value, nullptr, 0) };
         let mut bytes = vec![0_u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
@@ -384,7 +392,11 @@ where
     }
 
     #[inline]
-    fn modify(&self, payer: Option<AccountName>, item: &T) -> Result<usize, WriteError> {
+    fn modify(
+        &self,
+        payer: Option<AccountName>,
+        item: &T,
+    ) -> Result<usize, WriteError> {
         let table = self.index.to_primary_index();
         match table.find(self.pk) {
             Some(cursor) => cursor.modify(payer, item),
@@ -402,10 +414,11 @@ where
     type IntoIter = SecondaryTableIterator<'a, K, T>;
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        let secondary_end = self
-            .index
-            .key
-            .end(self.index.code, self.index.scope, self.index.table);
+        let secondary_end = self.index.key.end(
+            self.index.code,
+            self.index.scope,
+            self.index.table,
+        );
         let primary_end = unsafe {
             ::eosio_cdt_sys::db_end_i64(
                 self.index.code.into(),
@@ -511,7 +524,13 @@ where
     T: TableRow,
 {
     #[inline]
-    pub fn new<C, S, N>(code: C, scope: S, name: N, key: K, index: usize) -> Self
+    pub fn new<C, S, N>(
+        code: C,
+        scope: S,
+        name: N,
+        key: K,
+        index: usize,
+    ) -> Self
     where
         C: Into<AccountName>,
         S: Into<ScopeName>,
@@ -544,7 +563,8 @@ where
         N: Into<K>,
     {
         let secondary_key = key.into();
-        let (value, primary_key) = secondary_key.lower_bound(self.code, self.scope, self.table);
+        let (value, primary_key) =
+            secondary_key.lower_bound(self.code, self.scope, self.table);
         let end = secondary_key.end(self.code, self.scope, self.table);
         if value == end {
             None

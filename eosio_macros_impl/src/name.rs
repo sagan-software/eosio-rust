@@ -10,7 +10,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let call_site = ::proc_macro2::Span::call_site();
     let identstr = ident.to_string();
     let identlitstr = LitStr::new(identstr.as_str(), call_site);
-    let identvisitor = Ident::new(format!("{}Visitor", identstr).as_str(), call_site);
+    let identvisitor =
+        Ident::new(format!("{}Visitor", identstr).as_str(), call_site);
 
     let scope_name_converters = if identstr == "ScopeName" {
         quote!()

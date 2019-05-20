@@ -75,8 +75,12 @@ impl ::std::fmt::Display for ParseNameError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
             // ParseNameError::IsEmpty => write!(f, "empty string is not a valid EOSIO name"),
-            ParseNameError::TooLong => write!(f, "name is too long, must be 12 chars or less"),
-            ParseNameError::BadChar(c) => write!(f, "name contains invalid character '{}'", c),
+            ParseNameError::TooLong => {
+                write!(f, "name is too long, must be 12 chars or less")
+            }
+            ParseNameError::BadChar(c) => {
+                write!(f, "name contains invalid character '{}'", c)
+            }
         }
     }
 }
@@ -141,7 +145,10 @@ pub enum ParseSymbolError {
     BadChar(char),
 }
 
-pub fn string_to_symbol(precision: u8, s: &str) -> Result<u64, ParseSymbolError> {
+pub fn string_to_symbol(
+    precision: u8,
+    s: &str,
+) -> Result<u64, ParseSymbolError> {
     let mut result: u64 = 0;
     for (i, c) in s.chars().enumerate() {
         if c < 'A' || c > 'Z' {
