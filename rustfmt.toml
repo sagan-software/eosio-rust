@@ -1,1 +1,11 @@
 max_width = 80
+use_field_init_shorthand = true
+force_explicit_abi = true
+hard_tabs = false
+merge_derives = true
+newline_style = "Unix"
+remove_nested_parens = true
+reorder_imports = true
+reorder_modules = true
+tab_spaces = 4
+use_try_shorthand = true
