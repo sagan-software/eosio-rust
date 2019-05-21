@@ -9,10 +9,10 @@ crate-type = ["cdylib", "lib"]
 test = false
 
 [dependencies]
-eosio = { path = "../../eosio", default-features = false }
+eosio = { path = "../../eosio" }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 
 [features]
 default = ["contract"]
-contract = ["eosio/contract"]
-web = ["serde", "eosio/serde"]
+contract = []
+web = ["serde"]

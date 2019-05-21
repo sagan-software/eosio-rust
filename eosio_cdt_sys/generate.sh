@@ -14,7 +14,7 @@ bindgen \
     --distrust-clang-mangling \
     --no-layout-tests \
     --output src/bindings.rs \
-    --ctypes-prefix crate::ctypes \
+    --ctypes-prefix crate \
     --with-derive-default \
     --with-derive-eq \
     --with-derive-hash \

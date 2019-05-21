@@ -8,7 +8,7 @@ use syn::{
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let root = crate::root_path();
+    let root = crate::root_path(&input);
 
     let name = input.ident;
 
@@ -65,6 +65,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         #[automatically_derived]
+        #[allow(unused_qualifications)]
         impl #impl_generics #root::Write for #name #ty_generics #where_clause {
             #[inline]
             fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), #root::WriteError> {

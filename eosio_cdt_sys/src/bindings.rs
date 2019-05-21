@@ -6,7 +6,7 @@ pub type capi_name = u64;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct capi_public_key {
-    pub data: [crate::ctypes::c_char; 34usize],
+    pub data: [crate::c_char; 34usize],
 }
 impl Default for capi_public_key {
     fn default() -> Self {
@@ -114,7 +114,7 @@ impl ::std::cmp::PartialEq for capi_checksum512 {
     }
 }
 extern "C" {
-    pub fn read_action_data(msg: *mut crate::ctypes::c_void, len: u32) -> u32;
+    pub fn read_action_data(msg: *mut crate::c_void, len: u32) -> u32;
 }
 extern "C" {
     pub fn action_data_size() -> u32;
@@ -135,14 +135,11 @@ extern "C" {
     pub fn is_account(name: capi_name) -> bool;
 }
 extern "C" {
-    pub fn send_inline(
-        serialized_action: *mut crate::ctypes::c_char,
-        size: usize,
-    );
+    pub fn send_inline(serialized_action: *mut crate::c_char, size: usize);
 }
 extern "C" {
     pub fn send_context_free_inline(
-        serialized_action: *mut crate::ctypes::c_char,
+        serialized_action: *mut crate::c_char,
         size: usize,
     );
 }
@@ -158,56 +155,56 @@ extern "C" {
 }
 extern "C" {
     pub fn assert_sha256(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *const capi_checksum256,
     );
 }
 extern "C" {
     pub fn assert_sha1(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *const capi_checksum160,
     );
 }
 extern "C" {
     pub fn assert_sha512(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *const capi_checksum512,
     );
 }
 extern "C" {
     pub fn assert_ripemd160(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *const capi_checksum160,
     );
 }
 extern "C" {
     pub fn sha256(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *mut capi_checksum256,
     );
 }
 extern "C" {
     pub fn sha1(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *mut capi_checksum160,
     );
 }
 extern "C" {
     pub fn sha512(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *mut capi_checksum512,
     );
 }
 extern "C" {
     pub fn ripemd160(
-        data: *const crate::ctypes::c_char,
+        data: *const crate::c_char,
         length: u32,
         hash: *mut capi_checksum160,
     );
@@ -215,18 +212,18 @@ extern "C" {
 extern "C" {
     pub fn recover_key(
         digest: *const capi_checksum256,
-        sig: *const crate::ctypes::c_char,
+        sig: *const crate::c_char,
         siglen: usize,
-        pub_: *mut crate::ctypes::c_char,
+        pub_: *mut crate::c_char,
         publen: usize,
-    ) -> crate::ctypes::c_int;
+    ) -> crate::c_int;
 }
 extern "C" {
     pub fn assert_recover_key(
         digest: *const capi_checksum256,
-        sig: *const crate::ctypes::c_char,
+        sig: *const crate::c_char,
         siglen: usize,
-        pub_: *const crate::ctypes::c_char,
+        pub_: *const crate::c_char,
         publen: usize,
     );
 }
@@ -236,7 +233,7 @@ extern "C" {
         table: capi_name,
         payer: capi_name,
         id: u64,
-        data: *const crate::ctypes::c_void,
+        data: *const crate::c_void,
         len: u32,
     ) -> i32;
 }
@@ -244,7 +241,7 @@ extern "C" {
     pub fn db_update_i64(
         iterator: i32,
         payer: capi_name,
-        data: *const crate::ctypes::c_void,
+        data: *const crate::c_void,
         len: u32,
     );
 }
@@ -254,7 +251,7 @@ extern "C" {
 extern "C" {
     pub fn db_get_i64(
         iterator: i32,
-        data: *const crate::ctypes::c_void,
+        data: *const crate::c_void,
         len: u32,
     ) -> i32;
 }
@@ -628,11 +625,11 @@ extern "C" {
 }
 extern "C" {
     pub fn check_transaction_authorization(
-        trx_data: *const crate::ctypes::c_char,
+        trx_data: *const crate::c_char,
         trx_size: u32,
-        pubkeys_data: *const crate::ctypes::c_char,
+        pubkeys_data: *const crate::c_char,
         pubkeys_size: u32,
-        perms_data: *const crate::ctypes::c_char,
+        perms_data: *const crate::c_char,
         perms_size: u32,
     ) -> i32;
 }
@@ -640,9 +637,9 @@ extern "C" {
     pub fn check_permission_authorization(
         account: capi_name,
         permission: capi_name,
-        pubkeys_data: *const crate::ctypes::c_char,
+        pubkeys_data: *const crate::c_char,
         pubkeys_size: u32,
-        perms_data: *const crate::ctypes::c_char,
+        perms_data: *const crate::c_char,
         perms_size: u32,
         delay_us: u64,
     ) -> i32;
@@ -657,10 +654,10 @@ extern "C" {
     pub fn get_account_creation_time(account: capi_name) -> i64;
 }
 extern "C" {
-    pub fn prints(cstr: *const crate::ctypes::c_char);
+    pub fn prints(cstr: *const crate::c_char);
 }
 extern "C" {
-    pub fn prints_l(cstr: *const crate::ctypes::c_char, len: u32);
+    pub fn prints_l(cstr: *const crate::c_char, len: u32);
 }
 extern "C" {
     pub fn printi(value: i64);
@@ -687,7 +684,7 @@ extern "C" {
     pub fn printn(name: u64);
 }
 extern "C" {
-    pub fn printhex(data: *const crate::ctypes::c_void, datalen: u32);
+    pub fn printhex(data: *const crate::c_void, datalen: u32);
 }
 extern "C" {
     pub fn get_resource_limits(
@@ -707,7 +704,7 @@ extern "C" {
 }
 extern "C" {
     pub fn set_proposed_producers(
-        producer_data: *mut crate::ctypes::c_char,
+        producer_data: *mut crate::c_char,
         producer_data_size: u32,
     ) -> i64;
 }
@@ -719,23 +716,23 @@ extern "C" {
 }
 extern "C" {
     pub fn set_blockchain_parameters_packed(
-        data: *mut crate::ctypes::c_char,
+        data: *mut crate::c_char,
         datalen: u32,
     );
 }
 extern "C" {
     pub fn get_blockchain_parameters_packed(
-        data: *mut crate::ctypes::c_char,
+        data: *mut crate::c_char,
         datalen: u32,
     ) -> u32;
 }
 extern "C" {
-    pub fn eosio_assert(test: u32, msg: *const crate::ctypes::c_char);
+    pub fn eosio_assert(test: u32, msg: *const crate::c_char);
 }
 extern "C" {
     pub fn eosio_assert_message(
         test: u32,
-        msg: *const crate::ctypes::c_char,
+        msg: *const crate::c_char,
         msg_len: u32,
     );
 }
@@ -752,29 +749,25 @@ extern "C" {
     pub fn send_deferred(
         sender_id: *const uint128_t,
         payer: capi_name,
-        serialized_transaction: *const crate::ctypes::c_char,
+        serialized_transaction: *const crate::c_char,
         size: usize,
         replace_existing: u32,
     );
 }
 extern "C" {
-    pub fn cancel_deferred(sender_id: *const uint128_t)
-        -> crate::ctypes::c_int;
+    pub fn cancel_deferred(sender_id: *const uint128_t) -> crate::c_int;
 }
 extern "C" {
-    pub fn read_transaction(
-        buffer: *mut crate::ctypes::c_char,
-        size: usize,
-    ) -> usize;
+    pub fn read_transaction(buffer: *mut crate::c_char, size: usize) -> usize;
 }
 extern "C" {
     pub fn transaction_size() -> usize;
 }
 extern "C" {
-    pub fn tapos_block_num() -> crate::ctypes::c_int;
+    pub fn tapos_block_num() -> crate::c_int;
 }
 extern "C" {
-    pub fn tapos_block_prefix() -> crate::ctypes::c_int;
+    pub fn tapos_block_prefix() -> crate::c_int;
 }
 extern "C" {
     pub fn expiration() -> u32;
@@ -783,14 +776,14 @@ extern "C" {
     pub fn get_action(
         type_: u32,
         index: u32,
-        buff: *mut crate::ctypes::c_char,
+        buff: *mut crate::c_char,
         size: usize,
-    ) -> crate::ctypes::c_int;
+    ) -> crate::c_int;
 }
 extern "C" {
     pub fn get_context_free_data(
         index: u32,
-        buff: *mut crate::ctypes::c_char,
+        buff: *mut crate::c_char,
         size: usize,
-    ) -> crate::ctypes::c_int;
+    ) -> crate::c_int;
 }

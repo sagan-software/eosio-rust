@@ -1,0 +1,13 @@
+[package]
+name = "eosio_core"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eosio_bytes = { path = "../eosio_bytes" }
+eosio_numstr = { path = "../eosio_numstr" }
+eosio_numstr_macros = { path = "../eosio_numstr_macros" }
+serde = { version = "1.0", features = ["derive"] }

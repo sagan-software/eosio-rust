@@ -8,10 +8,9 @@ use syn::{
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
+    let root = crate::root_path(&input);
 
     let name = input.ident;
-
-    let root = crate::root_path();
 
     let mut generics = input.generics;
     for param in &mut generics.params {
@@ -81,6 +80,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         #[automatically_derived]
+        #[allow(unused_qualifications)]
         impl #impl_generics #root::Read for #name #ty_generics #where_clause {
             #[inline]
             fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, #root::ReadError> {

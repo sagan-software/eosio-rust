@@ -1,0 +1,12 @@
+[package]
+name = "eosio_numstr_macros"
+version = "0.2.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+license = "MIT/Apache-2.0"
+description = "Library for building EOSIO smart contracts"
+edition = "2018"
+
+[dependencies]
+eosio_numstr_macros_impl = { path = "./impl" }
+proc-macro-hack = "0.5"
+proc-macro-nested = "0.1"

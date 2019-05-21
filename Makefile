@@ -20,18 +20,17 @@ build:
 		-p addressbook \
 		-p hello \
 		-p hello_bare \
-		-p tictactoe \
-		-p eosio_token
+		-p tictactoe
 	# cargo +stable build -p eosio_cli -vv
 
 .PHONY: test
 test:
 	cargo test \
-		-p eosio \
 		-p eosio_bytes \
 		-p eosio_cdt_sys \
-		-p eosio_macros \
-		-p tictactoe
+		-p eosio_core \
+		-p eosio_numstr \
+		-p eosio_numstr_macros
 
 .PHONY: docs
 docs:
@@ -42,8 +41,6 @@ docs:
 	cargo doc \
 		--all \
 		--exclude addressbook \
-		--exclude eosio_macros \
-		--exclude eosio_macros_impl \
 		--exclude hello \
 		--exclude hello_bare \
 		--exclude tictactoe \
@@ -128,7 +125,7 @@ eosio_token: target/wasm32-unknown-unknown/release/eosio_token_gc_opt_wat.wasm
 	$(CLEOS) set code eosio.token mnt/dev/release/eosio_token_gc_opt.wasm
 
 .PHONY: examples
-examples: addressbook_example eosio_token hello_example hello_bare_example tictactoe_example eosio_token_cpp
+examples: addressbook_example hello_example hello_bare_example tictactoe_example
 
 .PHONY: say_hi
 say_hi:

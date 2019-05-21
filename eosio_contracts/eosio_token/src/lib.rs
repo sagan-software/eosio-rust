@@ -32,7 +32,7 @@ impl TableRow for CurrencyStats {
 
 #[eosio::action]
 fn create(issuer: AccountName, max_supply: Asset) {
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     require_auth(_self);
 
     let symbol = max_supply.symbol;
@@ -62,7 +62,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     check(symbol.is_valid(), "invalid symbol name");
     check(memo.len() <= 256, "memo has more than 256 bytes");
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let symbol_code = symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
@@ -109,7 +109,7 @@ fn retire(quantity: Asset, memo: String) {
     check(symbol.is_valid(), "invalid symbol name");
     check(memo.len() <= 256, "memo has more than 256 bytes");
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let symbol_code = symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
@@ -133,7 +133,7 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
     require_auth(from);
     check(is_account(to), "to account does not exist");
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let symbol_code = quantity.symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
@@ -160,7 +160,7 @@ fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
 
 #[cfg(feature = "contract")]
 fn sub_balance(owner: AccountName, value: Asset) {
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Account::table(_self, owner);
     let cursor = table
         .find(value.symbol.code())
@@ -174,7 +174,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
 
 #[cfg(feature = "contract")]
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let accounts_table = Account::table(_self, owner);
     let cursor = accounts_table.find(value.symbol.code());
     match cursor {
@@ -193,7 +193,7 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
 #[eosio::action]
 fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     require_auth(ram_payer);
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let symbol_code = symbol.code();
 
     let stats_table = CurrencyStats::table(_self, symbol_code);
@@ -216,7 +216,7 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
 #[eosio::action]
 fn close(owner: AccountName, symbol: Symbol) {
     require_auth(owner);
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let accts_table = Account::table(_self, owner);
     let accts_cursor = accts_table
         .find(symbol.code())

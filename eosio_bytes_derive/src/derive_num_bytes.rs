@@ -8,16 +8,14 @@ use syn::{
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
+    let root = crate::root_path(&input);
 
     let name = input.ident;
-
-    // let root = crate::root_path();
-    let root = quote!(::eosio_bytes);
 
     let mut generics = input.generics;
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(NumBytes));
+            type_param.bounds.push(parse_quote!(#root::NumBytes));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -31,7 +29,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let name = &f.ident;
                     let access = quote_spanned!(call_site => #var.#name);
                     quote_spanned! { f.span() =>
-                        count += NumBytes::num_bytes(&#access);
+                        count += #root::NumBytes::num_bytes(&#access);
                     }
                 });
                 quote! {
@@ -47,7 +45,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         };
                         let access = quote_spanned!(call_site => #var.#index);
                         quote_spanned! { f.span() =>
-                            count += NumBytes::num_bytes(&#access);
+                            count += #root::NumBytes::num_bytes(&#access);
                         }
                     });
                 quote! {
@@ -63,7 +61,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         #[automatically_derived]
-        impl #impl_generics NumBytes for #name #ty_generics #where_clause {
+        #[allow(unused_qualifications)]
+        impl #impl_generics #root::NumBytes for #name #ty_generics #where_clause {
             #[inline]
             fn num_bytes(&self) -> usize {
                 let mut count = 0;

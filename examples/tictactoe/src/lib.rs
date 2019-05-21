@@ -18,7 +18,7 @@ fn create(host: AccountName, challenger: AccountName) {
     );
     check(is_account(challenger), "challenger account doesn't exist");
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Game::table(_self, host);
 
     check(!table.exists(challenger), "game already exists");
@@ -36,7 +36,7 @@ fn restart(host: AccountName, challenger: AccountName, by: u8) {
     );
     require_auth(if by == HOST { host } else { challenger });
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Game::table(_self, host);
     let cursor = table.find(challenger).check("game doesn't exist");
     let mut game = cursor.get().check("read");
@@ -50,7 +50,7 @@ fn restart(host: AccountName, challenger: AccountName, by: u8) {
 fn close(host: AccountName, challenger: AccountName) {
     require_auth(host);
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Game::table(_self, host);
     let cursor = table.find(challenger).check("game doesn't exist");
 
@@ -72,7 +72,7 @@ fn makemove(
     require_auth(if by == HOST { host } else { challenger });
 
     // Check if game exists
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Game::table(_self, host);
     let cursor = table.find(challenger).check("game doesn't exist");
 

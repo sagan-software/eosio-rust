@@ -12,7 +12,7 @@ fn add(
 ) {
     require_auth(account);
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Address::table(_self, _self);
 
     table
@@ -45,7 +45,7 @@ fn update(
 ) {
     require_auth(account);
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Address::table(_self, _self);
     let cursor = table.find(account).check("Address for account not found");
 
@@ -64,7 +64,7 @@ fn update(
 fn erase(account: AccountName) {
     require_auth(account);
 
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let addresses = Address::table(_self, _self);
     let cursor = addresses
         .find(account)
@@ -75,7 +75,7 @@ fn erase(account: AccountName) {
 
 #[eosio::action]
 fn like(account: AccountName) {
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let addresses = Address::table(_self, _self);
     let cursor = addresses
         .find(account)
@@ -90,7 +90,7 @@ fn like(account: AccountName) {
 
 #[eosio::action]
 fn likezip(zip: u32) {
-    let _self = AccountName::receiver();
+    let _self = current_receiver();
     let table = Address::zip(_self, _self);
     for cursor in table.lower_bound(zip).into_iter() {
         let mut addr = cursor.get().check("read");

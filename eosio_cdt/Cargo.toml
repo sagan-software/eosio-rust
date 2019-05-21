@@ -1,0 +1,13 @@
+[package]
+name = "eosio_cdt"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eosio_bytes = { path = "../eosio_bytes" }
+eosio_core = { path = "../eosio_core" }
+eosio_cdt_sys = { path = "../eosio_cdt_sys" }
+mashup = "0.1"

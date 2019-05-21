@@ -10,16 +10,12 @@ edition = "2018"
 default = ["std"]
 std = []
 alloc = []
-contract = ["eosio_macros/contract"]
+contract = []
 
 [dependencies]
-eosio_bytes = { path = "../eosio_bytes" }
-eosio_macros = { path = "../eosio_macros", features = ["internal"] }
+eosio_bytes = { path = "../eosio_bytes", features = ["derive", "internal-use-only-root-path-is-eosio"] }
+eosio_core = { path = "../eosio_core" }
+eosio_cdt = { path = "../eosio_cdt" }
+eosio_cdt_macros = { path = "../eosio_cdt_macros", features = ["internal"] }
 eosio_cdt_sys = { path = "../eosio_cdt_sys" }
-serde = { version = "1.0", optional = true, features = ["derive"] }
-wasm-bindgen = { version = "0.2", optional = true }
-stdweb = { version = "0.4.14", optional = true }
-js-sys = { version = "0.3", optional = true }
-web-sys = { version = "0.3", optional = true }
-static_assertions = "0.3.1"
-mashup = "0.1"
+eosio_numstr_macros = { path = "../eosio_numstr_macros" }
