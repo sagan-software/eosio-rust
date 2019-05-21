@@ -1,7 +1,11 @@
 var ALIASES = {};
 ALIASES["eosio"] = {};
-ALIASES["eosio_abi"] = {};
-ALIASES["eosio_rpc"] = {};
-ALIASES["eosio_sys"] = {};
-ALIASES["eosio_system"] = {};
-ALIASES["eosio_token"] = {};
+ALIASES["eosio_bytes"] = {};
+ALIASES["eosio_bytes_derive"] = {};
+ALIASES["eosio_cdt"] = {};
+ALIASES["eosio_cdt_macros"] = {};
+ALIASES["eosio_cdt_sys"] = {};
+ALIASES["eosio_core"] = {};
+ALIASES["eosio_numstr"] = {};
+ALIASES["eosio_numstr_macros"] = {};
+ALIASES["rust_eos"] = {};

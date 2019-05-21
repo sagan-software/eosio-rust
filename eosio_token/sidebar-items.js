@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["apply",""]],"struct":[["Account",""],["CloseAction",""],["CreateAction",""],["CurrencyStats",""],["IssueAction",""],["OpenAction",""],["RetireAction",""],["TransferAction",""]]});

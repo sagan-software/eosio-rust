@@ -1,8 +1,12 @@
 var N = null;var sourcesIndex = {};
-sourcesIndex["eosio"] = {"name":"","files":["account.rs","action.rs","asset.rs","bytes.rs","check.rs","crypto.rs","json.rs","lib.rs","print.rs","symbol.rs","table.rs","table_primary.rs","table_secondary.rs","time.rs"]};
-sourcesIndex["eosio_abi"] = {"name":"","files":["abigen.rs","codegen.rs","lib.rs"]};
-sourcesIndex["eosio_rpc"] = {"name":"","dirs":[{"name":"chain","files":["get_abi.rs","get_account.rs","get_block.rs","get_currency_balance.rs","get_currency_stats.rs","get_info.rs","get_table_rows.rs","mod.rs"]},{"name":"clients","files":["mod.rs"]},{"name":"history","files":["mod.rs"]},{"name":"net","files":["mod.rs"]},{"name":"producer","files":["mod.rs"]}],"files":["client.rs","error.rs","lib.rs"]};
-sourcesIndex["eosio_sys"] = {"name":"","files":["bindings.rs","lib.rs"]};
-sourcesIndex["eosio_system"] = {"name":"","files":["lib.rs"]};
-sourcesIndex["eosio_token"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["eosio"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["eosio_bytes"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["eosio_bytes_derive"] = {"name":"","files":["derive_num_bytes.rs","derive_read.rs","derive_write.rs","lib.rs"]};
+sourcesIndex["eosio_cdt"] = {"name":"","files":["account.rs","action.rs","check.rs","lib.rs","print.rs","table.rs","table_primary.rs","table_secondary.rs","time.rs"]};
+sourcesIndex["eosio_cdt_macros"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["eosio_cdt_sys"] = {"name":"","files":["bindings.rs","lib.rs"]};
+sourcesIndex["eosio_core"] = {"name":"","files":["account.rs","action.rs","asset.rs","crypto.rs","json.rs","lib.rs","names.rs","symbol.rs","time.rs"]};
+sourcesIndex["eosio_numstr"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["eosio_numstr_macros"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["rust_eos"] = {"name":"","files":["lib.rs"]};
 createSourceSidebar();

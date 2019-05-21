@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_account",""]],"struct":[["GetAccount",""],["GetAccountParams",""],["KeyWeight",""],["Limit",""],["Permission",""],["PermissionLevelWeight",""],["RefundRequest",""],["RequiredAuth",""],["SelfDelegatedBandwidth",""],["TotalResources",""],["VoterInfo",""],["WaitWeight",""]]});

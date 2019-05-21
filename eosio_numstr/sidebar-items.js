@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["NAME_CHARS",""]],"enum":[["ParseNameError",""],["ParseSymbolError",""]],"fn":[["char_to_symbol",""],["chars_from_symbol_value",""],["name_to_string",""],["string_to_name",""],["string_to_symbol",""],["symbol_name_length",""]]});

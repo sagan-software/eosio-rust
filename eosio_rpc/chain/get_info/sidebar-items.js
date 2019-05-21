@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_info",""]],"struct":[["GetInfo",""],["GetInfoParams",""]],"type":[["BlockId",""],["BlockNum",""],["BlockTimestamp",""],["ChainId",""],["ServerVersion",""]]});
