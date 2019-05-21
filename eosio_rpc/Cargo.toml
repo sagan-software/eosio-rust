@@ -9,7 +9,7 @@ cfg-if = "0.1.2"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-eosio = { path = "../eosio", features = ["serde"] }
+eosio = { path = "../eosio" }
 eosio_abi = { path = "../eosio_abi" }
 futures = "0.1.20"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"], optional = true }

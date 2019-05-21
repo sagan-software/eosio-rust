@@ -31,3 +31,17 @@ members = [
     "examples/hello",
     "examples/tictactoe",
 ]
+
+[package]
+name = "rust-eos"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+[dev-dependencies]
+criterion = "0.2"
+eosio_numstr = { path = "./eosio_numstr" }
+
+[[bench]]
+name = "bench_main"
+harness = false

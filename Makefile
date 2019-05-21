@@ -44,8 +44,11 @@ docs:
 		--exclude hello \
 		--exclude hello_bare \
 		--exclude tictactoe \
+		--exclude eosio_numstr_macros_impl \
+		--exclude eosio_cdt_macros_impl \
 		--no-deps
 	cp -rf target/doc/* gh-pages/
+	cp -rf target/criterion gh-pages/benchmarks
 
 .PHONY: lint
 lint:
