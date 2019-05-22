@@ -5,8 +5,7 @@ sourcesIndex["eosio_bytes_derive"] = {"name":"","files":["derive_num_bytes.rs","
 sourcesIndex["eosio_cdt"] = {"name":"","files":["account.rs","action.rs","check.rs","lib.rs","print.rs","table.rs","table_primary.rs","table_secondary.rs","time.rs"]};
 sourcesIndex["eosio_cdt_macros"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["eosio_cdt_sys"] = {"name":"","files":["bindings.rs","lib.rs"]};
-sourcesIndex["eosio_core"] = {"name":"","files":["account.rs","action.rs","asset.rs","crypto.rs","json.rs","lib.rs","names.rs","symbol.rs","time.rs"]};
+sourcesIndex["eosio_core"] = {"name":"","files":["action.rs","asset.rs","authorization.rs","crypto.rs","extended_asset.rs","extended_symbol.rs","json.rs","lib.rs","names.rs","resources.rs","symbol.rs","symbol_code.rs","time.rs"]};
 sourcesIndex["eosio_numstr"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["eosio_numstr_macros"] = {"name":"","files":["lib.rs"]};
-sourcesIndex["rust_eos"] = {"name":"","files":["lib.rs"]};
 createSourceSidebar();
