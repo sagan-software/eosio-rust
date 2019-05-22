@@ -46,6 +46,7 @@ docs:
 		--exclude tictactoe \
 		--exclude eosio_numstr_macros_impl \
 		--exclude eosio_cdt_macros_impl \
+		--exclude rust-eos \
 		--no-deps
 	cp -rf target/doc/* gh-pages/
 	cp -rf target/criterion gh-pages/benchmarks

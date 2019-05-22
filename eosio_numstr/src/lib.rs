@@ -31,6 +31,21 @@ pub fn char_to_symbol(c: char) -> Option<char> {
     }
 }
 
+/// Attempts to convert a string to an EOSIO name.
+///
+/// # Examples
+///
+/// ```
+/// use eosio_numstr::{string_to_name, ParseNameError};
+///
+/// // Valid names
+/// assert_eq!(string_to_name("eosio.token"), Ok(6138663591592764928));
+/// assert_eq!(string_to_name("eosio.bpay"), Ok(6138663581940940800));
+///
+/// // Invalid names
+/// assert_eq!(string_to_name("A"), Err(ParseNameError::BadChar('A')));
+/// assert_eq!(string_to_name("0123450123451"), Err(ParseNameError::TooLong));
+/// ```
 pub fn string_to_name(s: &str) -> Result<u64, ParseNameError> {
     // if s.is_empty() {
     //     return Err(ParseNameError::IsEmpty);
@@ -90,6 +105,7 @@ pub enum ParseSymbolError {
     BadChar(char),
 }
 
+/// Attemps to convert a string to an EOSIO symbol.
 pub fn string_to_symbol(
     precision: u8,
     s: &str,

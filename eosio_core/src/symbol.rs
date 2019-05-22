@@ -1,4 +1,4 @@
-use crate::{AccountName, ScopeName};
+use crate::{AccountName, ScopeName, SymbolCode};
 use eosio_bytes::{NumBytes, Read, Write};
 use eosio_numstr::{
     chars_from_symbol_value, string_to_symbol, symbol_name_length,
@@ -24,112 +24,6 @@ pub use eosio_numstr::ParseSymbolError;
     Ord,
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct SymbolCode(u64);
-
-impl From<u64> for SymbolCode {
-    #[inline]
-    fn from(n: u64) -> Self {
-        SymbolCode(n)
-    }
-}
-
-impl From<SymbolCode> for u64 {
-    #[inline]
-    fn from(s: SymbolCode) -> Self {
-        s.0
-    }
-}
-
-impl From<SymbolCode> for [char; 7] {
-    #[inline]
-    fn from(s: SymbolCode) -> Self {
-        chars_from_symbol_value(s.0)
-    }
-}
-
-impl From<SymbolCode> for ScopeName {
-    #[inline]
-    fn from(symbol: SymbolCode) -> Self {
-        let value: u64 = symbol.into();
-        value.into()
-    }
-}
-
-impl From<ScopeName> for SymbolCode {
-    #[inline]
-    fn from(scope: ScopeName) -> Self {
-        let value: u64 = scope.into();
-        value.into()
-    }
-}
-
-impl fmt::Display for SymbolCode {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let chars: [char; 7] = (*self).into();
-        let s: String = chars.iter().collect();
-        write!(f, "{}", s.trim())
-    }
-}
-
-impl SymbolCode {
-    #[inline]
-    pub fn is_valid(self) -> bool {
-        let chars = chars_from_symbol_value(self.0);
-        for &c in &chars {
-            if c == ' ' {
-                continue;
-            }
-            if !('A' <= c && c <= 'Z') {
-                return false;
-            }
-        }
-        true
-    }
-
-    #[inline]
-    pub const fn as_u64(self) -> u64 {
-        self.0
-    }
-}
-
-impl TryFrom<&str> for SymbolCode {
-    type Error = ParseSymbolError;
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let symbol: Symbol = string_to_symbol(0, value)?.into();
-        Ok(symbol.code())
-    }
-}
-
-impl TryFrom<String> for SymbolCode {
-    type Error = ParseSymbolError;
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        Self::try_from(value.as_str())
-    }
-}
-
-impl FromStr for SymbolCode {
-    type Err = ParseSymbolError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from(s)
-    }
-}
-
-#[derive(
-    Debug,
-    PartialEq,
-    Eq,
-    Clone,
-    Copy,
-    Default,
-    Read,
-    Write,
-    NumBytes,
-    Hash,
-    PartialOrd,
-    Ord,
-)]
-#[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct Symbol(u64);
 
 impl Symbol {
@@ -138,15 +32,15 @@ impl Symbol {
         self.0 & 255
     }
     #[inline]
-    pub const fn code(self) -> SymbolCode {
-        SymbolCode(self.0 >> 8)
+    pub fn code(self) -> SymbolCode {
+        SymbolCode::from(self.0 >> 8)
     }
     #[inline]
     pub fn name_length(self) -> usize {
         symbol_name_length(self.0)
     }
     #[inline]
-    pub const fn raw(self) -> u64 {
+    pub const fn as_u64(self) -> u64 {
         self.0
     }
     #[inline]
@@ -232,20 +126,7 @@ impl From<u64> for Symbol {
 impl PartialEq<u64> for Symbol {
     #[inline]
     fn eq(&self, other: &u64) -> bool {
-        self.raw() == *other
-    }
-}
-
-#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
-#[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct ExtendedSymbol {
-    pub symbol: Symbol,
-    pub contract: AccountName,
-}
-
-impl fmt::Display for ExtendedSymbol {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}@{}", self.symbol, self.contract)
+        self.as_u64() == *other
     }
 }
 
@@ -288,20 +169,6 @@ mod tests {
         test(s!(4, EOS), "EOS");
         test(s!(0, TGFT), "TGFT");
         test(s!(9, SYS), "SYS");
-    }
-
-    #[test]
-    fn extended_to_string() {
-        fn test(symbol: u64, contract: u64, expected: &str) {
-            let extended = ExtendedSymbol {
-                symbol: symbol.into(),
-                contract: contract.into(),
-            };
-            assert_eq!(extended.to_string(), expected);
-        }
-        test(s!(4, EOS), n!(eosio.token), "4,EOS@eosio.token");
-        test(s!(0, TST), n!(test), "0,TST@test");
-        test(s!(1, TGFT), n!(greatfiltert), "1,TGFT@greatfiltert");
     }
 
     #[test]

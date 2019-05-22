@@ -45,3 +45,6 @@ eosio_numstr = { path = "./eosio_numstr" }
 [[bench]]
 name = "bench_main"
 harness = false
+
+[features]
+contract = []

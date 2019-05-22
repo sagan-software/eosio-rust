@@ -13,7 +13,6 @@ macro_rules! declare_name_types {
         #[eosio_bytes_root_path = "::eosio_bytes"]
         pub struct $ident(u64);
 
-        #[automatically_derived]
         impl $ident {
             #[inline]
             pub const fn as_u64(&self) -> u64 {
@@ -21,7 +20,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl From<u64> for $ident {
             #[inline]
             fn from(n: u64) -> Self {
@@ -29,7 +27,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl From<$ident> for u64 {
             #[inline]
             fn from(i: $ident) -> Self {
@@ -37,7 +34,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl FromStr for $ident {
             type Err = ParseNameError;
             #[inline]
@@ -47,7 +43,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl TryFrom<&str> for $ident {
             type Error = ParseNameError;
             #[inline]
@@ -56,7 +51,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl TryFrom<String> for $ident {
             type Error = ParseNameError;
             #[inline]
@@ -65,7 +59,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl fmt::Display for $ident {
             #[inline]
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -74,7 +67,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl From<$ident> for String {
             #[inline]
             fn from(i: $ident) -> Self {
@@ -82,7 +74,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl PartialEq<$ident> for String {
             #[inline]
             fn eq(&self, other: &$ident) -> bool {
@@ -90,7 +81,6 @@ macro_rules! declare_name_types {
             }
         }
 
-        #[automatically_derived]
         impl PartialEq<String> for $ident {
             #[inline]
             fn eq(&self, other: &String) -> bool {

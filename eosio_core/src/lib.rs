@@ -7,16 +7,21 @@
     clippy::cargo
 )]
 
-mod account;
 mod action;
 mod asset;
+mod authorization;
 mod crypto;
+mod extended_asset;
+mod extended_symbol;
 mod json;
 mod names;
+mod resources;
 mod symbol;
+mod symbol_code;
 mod time;
 
 pub use self::{
-    account::*, action::*, asset::*, crypto::*, json::*, names::*, symbol::*,
-    time::*,
+    action::*, asset::*, authorization::*, crypto::*, extended_asset::*,
+    extended_symbol::*, json::*, names::*, resources::*, symbol::*,
+    symbol_code::*, time::*,
 };
