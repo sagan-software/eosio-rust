@@ -15,3 +15,5 @@
   - [URL Shortener](examples/url-shortener.md)
 - [Roadmap](roadmap.md)
 - [API Documentation](api-documentation.md)
+- [Contributing](contributing.md)
+  - [Git Commit Messages](contributing/git-commit-messages.md)
