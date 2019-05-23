@@ -1,5 +1,6 @@
 use crate::{AccountName, PermissionName};
 use eosio_bytes::*;
+use serde::{Deserialize, Serialize};
 
 /// A permission
 #[derive(
@@ -15,8 +16,9 @@ use eosio_bytes::*;
     Hash,
     PartialOrd,
     Ord,
+    Serialize,
+    Deserialize,
 )]
-#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct Authorization {
     /// Docs

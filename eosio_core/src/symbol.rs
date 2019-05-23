@@ -3,6 +3,7 @@ use eosio_bytes::{NumBytes, Read, Write};
 use eosio_numstr::{
     chars_from_symbol_value, string_to_symbol, symbol_name_length,
 };
+use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
@@ -22,6 +23,8 @@ pub use eosio_numstr::ParseSymbolError;
     Hash,
     PartialOrd,
     Ord,
+    Serialize,
+    Deserialize,
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct Symbol(u64);

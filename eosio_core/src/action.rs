@@ -1,9 +1,9 @@
 use crate::{AccountName, ActionName, Authorization};
 use eosio_bytes::{NumBytes, Write, WriteError};
+use serde::{Deserialize, Serialize};
 
 /// Docs
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Action<Data> {
     /// Docs
     pub account: AccountName,

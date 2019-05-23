@@ -1,6 +1,5 @@
-// #[cfg(feature = "contract")]
-// use crate::assert::*;
 use eosio_bytes::*;
+use serde::Serialize;
 
 /// Time relative to unix epoch
 #[derive(
@@ -16,9 +15,9 @@ use eosio_bytes::*;
     Copy,
     Hash,
     Default,
+    Serialize,
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-#[cfg_attr(feature = "serde", derive(::serde::Serialize))]
 pub struct Time(i64);
 
 impl Time {
