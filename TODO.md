@@ -4,6 +4,9 @@
 - [ ] Create contract benchmarks
   - [ ] Create Rust benchmarking contract
   - [ ] Create C++ benchmarking contract
+- [ ] Re-implement sending inline actions
+- [ ] Implement deferred transactions
+- [ ] Panic handler
 
 # `eosio_core`
 
@@ -15,6 +18,18 @@
   - [ ] `checked_sub`
   - [ ] `checked_pow`
   - [ ] `checked_neg`
+- [ ] `std::ops` traits for `Asset`
+  - [ ] `Add`
+  - [ ] `AddAssign`
+  - [ ] `Div`
+  - [ ] `DivAssign`
+  - [ ] `Mul`
+  - [ ] `MulAssign`
+  - [ ] `Neg`
+  - [ ] `Rem`
+  - [ ] `RemAssign`
+  - [ ] `Sub`
+  - [ ] `SubAssign`
 - [ ] `.checked_` functions for `ExtendedAsset`
   - [ ] `checked_abs`
   - [ ] `checked_add`
@@ -23,8 +38,22 @@
   - [ ] `checked_sub`
   - [ ] `checked_pow`
   - [ ] `checked_neg`
+- [ ] `std::ops` traits for `ExtendedAsset`
+  - [ ] `Add`
+  - [ ] `AddAssign`
+  - [ ] `Div`
+  - [ ] `DivAssign`
+  - [ ] `Mul`
+  - [ ] `MulAssign`
+  - [ ] `Neg`
+  - [ ] `Rem`
+  - [ ] `RemAssign`
+  - [ ] `Sub`
+  - [ ] `SubAssign`
 - [ ] `FromStr` for `Asset`
 - [ ] `FromStr` for `ExtendedAsset`
+- [ ] `FromStr` for `Authorization`
+- [ ] `Display` for `Authorization`
 - [ ] Create `TimePoint` type
 - [ ] Create `TimePointSec` type
 - [ ] Create `BlockTimestamp` type

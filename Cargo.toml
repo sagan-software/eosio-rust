@@ -20,7 +20,7 @@ members = [
     "eosio_cdt_sys",
     # "eosio_cli", TODO re-enable
     # "eosio_contracts/eosio_system",
-    # "eosio_contracts/eosio_token",
+    "eosio_contracts/eosio_token",
     "eosio_core",
     "eosio_numstr",
     "eosio_numstr_macros",

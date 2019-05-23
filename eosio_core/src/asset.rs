@@ -1,6 +1,10 @@
 use crate::{AccountName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
 use std::fmt;
+use std::ops::{
+    Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub,
+    SubAssign,
+};
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
@@ -84,6 +88,86 @@ impl ::serde::Serialize for Asset {
     {
         let s = self.to_string();
         serializer.serialize_str(s.as_str())
+    }
+}
+
+impl Add for Asset {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self {
+            amount: self.amount + other.amount,
+            symbol: self.symbol,
+        }
+    }
+}
+
+impl AddAssign for Asset {
+    fn add_assign(&mut self, other: Self) {
+        self.amount += other.amount;
+    }
+}
+
+impl Sub for Asset {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self {
+            amount: self.amount - other.amount,
+            symbol: self.symbol,
+        }
+    }
+}
+
+impl SubAssign for Asset {
+    fn sub_assign(&mut self, other: Self) {
+        self.amount -= other.amount
+    }
+}
+
+impl Mul for Asset {
+    type Output = Self;
+    fn mul(self, other: Self) -> Self {
+        Self {
+            amount: self.amount * other.amount,
+            symbol: self.symbol,
+        }
+    }
+}
+
+impl MulAssign for Asset {
+    fn mul_assign(&mut self, other: Self) {
+        self.amount *= other.amount
+    }
+}
+
+impl Div for Asset {
+    type Output = Self;
+    fn div(self, other: Self) -> Self {
+        Self {
+            amount: self.amount / other.amount,
+            symbol: self.symbol,
+        }
+    }
+}
+
+impl DivAssign for Asset {
+    fn div_assign(&mut self, other: Self) {
+        self.amount /= other.amount
+    }
+}
+
+impl Rem for Asset {
+    type Output = Self;
+    fn rem(self, other: Self) -> Self {
+        Self {
+            amount: self.amount % other.amount,
+            symbol: self.symbol,
+        }
+    }
+}
+
+impl RemAssign for Asset {
+    fn rem_assign(&mut self, other: Self) {
+        self.amount %= other.amount
     }
 }
 

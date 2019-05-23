@@ -20,7 +20,8 @@ build:
 		-p addressbook \
 		-p hello \
 		-p hello_bare \
-		-p tictactoe
+		-p tictactoe \
+		-p eosio_token
 	# cargo +stable build -p eosio_cli -vv
 
 .PHONY: test

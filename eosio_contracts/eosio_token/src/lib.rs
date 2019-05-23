@@ -94,12 +94,14 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             quantity,
             memo,
         };
-        action
-            .send_inline(vec![Authorization {
+        send_inline_action(action.to_action(
+            current_receiver(),
+            vec![Authorization {
                 actor: st.issuer,
                 permission: n!(active).into(),
-            }])
-            .check("failed to send inline action");
+            }],
+        ))
+        .check("failed to send inline action");
     }
 }
 

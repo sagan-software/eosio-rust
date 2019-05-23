@@ -24,6 +24,8 @@ where
     action.write(&mut bytes, &mut pos)?;
     let ptr = bytes[..].as_mut_ptr();
     if action.authorization.is_empty() {
+        // TODO: Is it safe to assume that an action that doesn't require any
+        // authorizations is context free?
         unsafe { ::eosio_cdt_sys::send_context_free_inline(ptr, pos) }
     } else {
         unsafe { ::eosio_cdt_sys::send_inline(ptr, pos) }
