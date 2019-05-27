@@ -7,6 +7,8 @@ matrix:
     fast_finish: true
 git:
     submodules: false
+install:
+    - rustup target add wasm32-unknown-unknown
 script:
     - RUSTFLAGS="-C link-args=-zstack-size=48000"
       cargo build --release --target=wasm32-unknown-unknown -vv
