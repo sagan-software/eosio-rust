@@ -1,8 +1,25 @@
 language: rust
 rust:
     - stable
+    - beta
     - nightly
 matrix:
     fast_finish: true
 git:
     submodules: false
+script:
+    - RUSTFLAGS="-C link-args=-zstack-size=48000"
+      cargo build --release --target=wasm32-unknown-unknown -vv
+      --features contract \
+      -p addressbook \
+      -p hello \
+      -p hello_bare \
+      -p tictactoe \
+      -p eosio_token
+    - cargo test
+      --verbose
+      -p eosio_bytes
+      -p eosio_cdt_sys
+      -p eosio_core
+      -p eosio_numstr
+      -p eosio_numstr_macros
