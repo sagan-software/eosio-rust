@@ -1,5 +1,6 @@
 use crate::{
     CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub, Symbol,
+    SymbolCode,
 };
 use eosio_bytes::{NumBytes, Read, Write};
 use serde::{Deserialize, Serialize, Serializer};
@@ -10,6 +11,7 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub,
     SubAssign,
 };
+use std::str::FromStr;
 
 #[derive(
     Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes, Deserialize,
@@ -41,19 +43,25 @@ impl fmt::Display for Asset {
 pub enum ParseAssetError {
     BadChar(char),
     BadPrecision,
+    NoSymbol,
 }
 
-impl std::str::FromStr for Asset {
+impl FromStr for Asset {
     type Err = ParseAssetError;
-    #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // TODO: refactor ugly code below
         let s = s.trim();
-        let chars = s.chars();
+        let mut chars = s.chars();
         let mut index = 0;
+        let mut precision: Option<u64> = None;
         // Find numbers
-        for c in chars {
+        loop {
+            let c = match chars.next() {
+                Some(c) => c,
+                None => return Err(ParseAssetError::NoSymbol),
+            };
             if index == 0 {
-                if '1' <= c && c <= '9' {
+                if '0' <= c && c <= '9' || c == '-' || c == '+' {
                     index += 1;
                     continue;
                 } else {
@@ -61,27 +69,72 @@ impl std::str::FromStr for Asset {
                 }
             }
 
+            index += 1;
             if '0' <= c && c <= '9' {
-                index += 1;
+                if let Some(p) = precision {
+                    precision = Some(p + 1);
+                }
+            } else if c == ' ' {
+                match precision {
+                    Some(0) => return Err(ParseAssetError::BadPrecision),
+                    _ => break,
+                }
+            } else if c == '.' {
+                precision = Some(0);
+            } else {
+                return Err(ParseAssetError::BadChar(c));
             }
         }
 
-        // Parse numbers
-        // for c in chars {
-        //     if c < 'A' || c > 'Z' {
-        //         // return Err(ParseSymbolError::BadChar(c));
-        //     } else {
-        //         result |= (c as u64) << (8 * (i + 1));
-        //     }
-        // }
-        // Look for dot
-        // Look for decimal fractions
-        // Skip 1 space
-        // Look for symbol code
+        let end_index = match precision {
+            Some(p) => index - p - 1,
+            None => index,
+        } as usize;
+        let mut amount = s.get(0..end_index - 1).unwrap();
+        let mut amount = amount.parse::<i64>().unwrap();
+        if let Some(precision) = precision {
+            amount *= 10_i64.pow(precision as u32);
+            let fraction = s.get(end_index..(index - 1) as usize).unwrap();
+            let fraction = fraction.parse::<i64>().unwrap();
+            if amount >= 0 {
+                amount += fraction;
+            } else {
+                amount -= fraction;
+            }
+        }
+
+        let mut symbol: u64 = 0;
+        index = 0;
+        for c in chars {
+            if c < 'A' || c > 'Z' {
+                return Err(ParseAssetError::BadChar(c));
+            } else {
+                symbol |= (c as u64) << (8 * (index + 1));
+            }
+            index += 1;
+        }
+
+        symbol |= precision.unwrap_or_default();
+
         Ok(Self {
-            amount: 0,
-            symbol: 0.into(),
+            amount,
+            symbol: symbol.into(),
         })
+    }
+}
+
+impl TryFrom<&str> for Asset {
+    type Error = ParseAssetError;
+    #[inline]
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::from_str(value)
+    }
+}
+
+impl TryFrom<String> for Asset {
+    type Error = ParseAssetError;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::try_from(value.as_str())
     }
 }
 
@@ -272,6 +325,56 @@ mod tests {
         to_string_fraction, 1_0001, s!(4, EOS), "1.0001 EOS"
         to_string_zero_precision, 10_001, s!(0, EOS), "10001 EOS"
         to_string_zero_precision_unsigned, -10_001, s!(0, EOS), "-10001 EOS"
+    }
+
+    macro_rules! test_from_str_ok {
+        ($($name:ident, $input:expr, $expected_amount:expr, $expected_symbol:expr)*) => ($(
+            #[test]
+            fn $name() {
+                let ok = Ok(Asset {
+                    amount: $expected_amount,
+                    symbol: $expected_symbol.into(),
+                });
+                assert_eq!(Asset::from_str($input), ok);
+                assert_eq!(Asset::try_from($input), ok);
+            }
+        )*)
+    }
+
+    test_from_str_ok! {
+        from_str_ok_basic, "1.0000 EOS", 1_0000, s!(4, EOS)
+        from_str_ok_zero_precision, "1 TST", 1, s!(0, TST)
+        from_str_ok_long, "1234567890.12345 TMP", 1234567890_12345, s!(5, TMP)
+        from_str_ok_signed_neg, "-1.0000 TLOS", -1_0000, s!(4, TLOS)
+        from_str_ok_signed_zero_precision, "-1 SYS", -1, s!(0, SYS)
+        from_str_ok_signed_long, "-1234567890.12345 TGFT", -1234567890_12345, s!(5, TGFT)
+        from_str_ok_pos_sign, "+1 TST", 1, s!(0, TST)
+        from_str_ok_fraction, "0.0001 EOS", 1, s!(4, EOS)
+        from_str_ok_zero, "0.0000 EOS", 0, s!(4, EOS)
+        from_str_whitespace_around, "            1.0000 EOS   ", 1_0000, s!(4, EOS)
+        from_str_zero_padded, "0001.0000 EOS", 1_0000, s!(4, EOS)
+    }
+
+    macro_rules! test_from_str_err {
+        ($($name:ident, $input:expr, $expected:expr)*) => ($(
+            #[test]
+            fn $name() {
+                let err = Err($expected);
+                assert_eq!(Asset::from_str($input), err);
+                assert_eq!(Asset::try_from($input), err);
+            }
+        )*)
+    }
+
+    test_from_str_err! {
+        from_str_bad_char1, "tst", ParseAssetError::BadChar('t')
+        from_str_multi_spaces, "1.0000  EOS", ParseAssetError::BadChar(' ')
+        from_str_lowercase_symbol, "1.0000 eos", ParseAssetError::BadChar('e')
+        from_str_no_space, "1EOS", ParseAssetError::BadChar('E')
+        from_str_no_symbol1, "1.2345 ", ParseAssetError::NoSymbol
+        from_str_no_symbol2, "1", ParseAssetError::NoSymbol
+        from_str_bad_char2, "1.a", ParseAssetError::BadChar('a')
+        from_str_bad_precision, "1. EOS", ParseAssetError::BadPrecision
     }
 
     #[test]
