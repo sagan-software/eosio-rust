@@ -77,10 +77,10 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">AccountName</span>, <span class="ident">ActionName</span>, <span class="ident">Authorization</span>};
 <span class="kw">use</span> <span class="ident">eosio_bytes</span>::{<span class="ident">NumBytes</span>, <span class="ident">Write</span>, <span class="ident">WriteError</span>};
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
 <span class="doccomment">/// Docs</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(::<span class="ident">serde</span>::<span class="ident">Serialize</span>, ::<span class="ident">serde</span>::<span class="ident">Deserialize</span>))]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Action</span><span class="op">&lt;</span><span class="ident">Data</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Docs</span>
     <span class="kw">pub</span> <span class="ident">account</span>: <span class="ident">AccountName</span>,

@@ -367,11 +367,9 @@
 <span id="367">367</span>
 <span id="368">368</span>
 <span id="369">369</span>
-<span id="370">370</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">// #[cfg(feature = &quot;contract&quot;)]</span>
-<span class="comment">// use crate::assert::*;</span>
 <span class="kw">use</span> <span class="ident">eosio_bytes</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Serialize</span>;
 
 <span class="doccomment">/// Time relative to unix epoch</span>
 <span class="attribute">#[<span class="ident">derive</span>(
@@ -387,9 +385,9 @@
     <span class="ident">Copy</span>,
     <span class="ident">Hash</span>,
     <span class="ident">Default</span>,
+    <span class="ident">Serialize</span>,
 )]</span>
 <span class="attribute">#[<span class="ident">eosio_bytes_root_path</span> <span class="op">=</span> <span class="string">&quot;::eosio_bytes&quot;</span>]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(::<span class="ident">serde</span>::<span class="ident">Serialize</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Time</span>(<span class="ident">i64</span>);
 
 <span class="kw">impl</span> <span class="ident">Time</span> {

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Getting Started - rust-eos</title>
+        <title>Getting Started - eosio-rust</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,7 +75,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html" class="active"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li></ol>
+            <ol class="chapter"><li><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="getting-started.html" class="active"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="examples/tic-tac-toe.html"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li><li><a href="contributing.html"><strong aria-hidden="true">9.</strong> Contributing</a></li><li><ol class="section"><li><a href="contributing/git-commit-messages.html"><strong aria-hidden="true">9.1.</strong> Git Commit Messages</a></li></ol></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -105,7 +105,7 @@
                             
                         </div>
 
-                        <h1 class="menu-title">rust-eos</h1> 
+                        <h1 class="menu-title">eosio-rust</h1> 
 
                         <div class="right-buttons">
                             <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -215,7 +215,7 @@ fn hi(name: AccountName) {
 
 eosio_abi!(hi);                     // Create the 'apply' function
 #}</code></pre></pre>
-<p>See the <a href="https://sagan-software.github.io/rust-eos/">API documentation</a> for more details on what this code is doing.</p>
+<p>See the <a href="https://sagan-software.github.io/eosio-rust/">API documentation</a> for more details on what this code is doing.</p>
 <p>Let's recompile our project and minify the the WASM file again:</p>
 <pre><code class="language-sh">cargo build --release --target=wasm32-unknown-unknown
 wasm-gc target/wasm32-unknown-unknown/release/hello.wasm hello_gc.wasm

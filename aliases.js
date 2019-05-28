@@ -8,3 +8,4 @@ ALIASES["eosio_cdt_sys"] = {};
 ALIASES["eosio_core"] = {};
 ALIASES["eosio_numstr"] = {};
 ALIASES["eosio_numstr_macros"] = {};
+ALIASES["eosio_token"] = {};
