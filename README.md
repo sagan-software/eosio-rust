@@ -1,27 +1,18 @@
-<p align="center">
-	<h1 align="center">
-		<img src="logo.svg" width="300"/>
-		<br />
-		eosio-rust
-	</h1>
-	<p align="center">
-		<em>Rust crates for building full-stack EOSIO applications.</em>
-	</p>
-	<p align="center">
-		<a href="https://travis-ci.org/sagan-software/eosio-rust">
-			<img src="https://img.shields.io/travis/sagan-software/eosio-rust.svg" alt="Travis (.org)" />
-		</a>
-		<a href="https://crates.io/crates/eosio">
-			<img src="https://img.shields.io/crates/l/eosio.svg" alt="Crates.io" />
-		</a>
-	</p>
-</p>
+<img src="logo.svg" width="300"/>
 
-The goal of this project is to streamline the development of full-stack EOSIO applications, where smart contracts, backend services, and user interfaces are all written in Rust.
+# EOSIO SDK for Rust
 
-## [Read the book](https://sagan-software.github.io/eosio-rust/)
+![Travis (.org)](https://img.shields.io/travis/sagan-software/eosio-rust.svg) ![Crates.io](https://img.shields.io/crates/l/eosio.svg) ![Crates.io](https://img.shields.io/crates/v/eosio.svg)
+
+*EOSIO SDK for Rust* is a suite of APIs for building smart contracts and full-stack applications on EOSIO-based blockchains using the Rust programming language.
+
+## [Read the Book](https://sagan-software.github.io/eosio-rust/)
 
 ## [Documentation](https://sagan-software.github.io/eosio-rust/eosio/)
+
+## [Benchmarks](https://sagan-software.github.io/eosio-rust/benchmarks/report/)
+
+## [Roadmap](https://sagan-software.github.io/eosio-rust/roadmap.html)
 
 ## License
 
@@ -31,6 +22,7 @@ Licensed under either of these:
   https://www.apache.org/licenses/LICENSE-2.0)
 - MIT license ([LICENSE-MIT](LICENSE-MIT) or
   https://opensource.org/licenses/MIT)
+
 
 ## Contributing
 
@@ -42,3 +34,4 @@ dual-licensed as above, without any additional terms or conditions.
 [telegram]: https://t.me/rust_eos
 [website]: https://sagan-software.github.io/eosio-rust/
 [docs]: https://sagan-software.github.io/eosio-rust/docs/
+
