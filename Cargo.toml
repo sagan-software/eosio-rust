@@ -33,7 +33,7 @@ members = [
 ]
 
 [package]
-name = "rust-eos"
+name = "eosio-rust"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"

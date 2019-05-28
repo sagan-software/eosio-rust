@@ -2,7 +2,7 @@
 authors = ["Liam Curry"]
 multilingual = false
 src = "."
-title = "rust-eos"
+title = "eosio-rust"
 
 [build]
 build-dir = "../target/doc"

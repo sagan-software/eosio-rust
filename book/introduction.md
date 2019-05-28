@@ -13,6 +13,6 @@ The primary goals of this project are to provide Rust crates that:
 
 [wasm_bindgen]: https://github.com/rustwasm/wasm-bindgen/
 [stdweb]: https://github.com/koute/stdweb/
-[eosio]: https://sagan-software.github.io/rust-eos/eosio/
-[eosio_macros]: https://sagan-software.github.io/rust-eos/eosio_macros/
-[eosio_sys]: https://sagan-software.github.io/rust-eos/eosio_sys/
+[eosio]: https://sagan-software.github.io/eosio-rust/eosio/
+[eosio_macros]: https://sagan-software.github.io/eosio-rust/eosio_macros/
+[eosio_sys]: https://sagan-software.github.io/eosio-rust/eosio_sys/

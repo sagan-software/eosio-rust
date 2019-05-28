@@ -2,14 +2,14 @@
 	<h1 align="center">
 		<img src="logo.svg" width="300"/>
 		<br />
-		rust-eos
+		eosio-rust
 	</h1>
 	<p align="center">
 		<em>Rust crates for building full-stack EOSIO applications.</em>
 	</p>
 	<p align="center">
-		<a href="https://travis-ci.org/sagan-software/rust-eos">
-			<img src="https://img.shields.io/travis/sagan-software/rust-eos.svg" alt="Travis (.org)" />
+		<a href="https://travis-ci.org/sagan-software/eosio-rust">
+			<img src="https://img.shields.io/travis/sagan-software/eosio-rust.svg" alt="Travis (.org)" />
 		</a>
 		<a href="https://crates.io/crates/eosio">
 			<img src="https://img.shields.io/crates/l/eosio.svg" alt="Crates.io" />
@@ -19,9 +19,9 @@
 
 The goal of this project is to streamline the development of full-stack EOSIO applications, where smart contracts, backend services, and user interfaces are all written in Rust.
 
-## [Read the book](https://sagan-software.github.io/rust-eos/)
+## [Read the book](https://sagan-software.github.io/eosio-rust/)
 
-## [Documentation](https://sagan-software.github.io/rust-eos/eosio/)
+## [Documentation](https://sagan-software.github.io/eosio-rust/eosio/)
 
 ## License
 
@@ -38,7 +38,7 @@ Unless you explicitly state otherwise, any contribution you intentionally submit
 for inclusion in the work, as defined in the Apache-2.0 license, shall be
 dual-licensed as above, without any additional terms or conditions.
 
-[guide]: https://sagan-software.github.io/rust-eos/
+[guide]: https://sagan-software.github.io/eosio-rust/
 [telegram]: https://t.me/rust_eos
-[website]: https://sagan-software.github.io/rust-eos/
-[docs]: https://sagan-software.github.io/rust-eos/docs/
+[website]: https://sagan-software.github.io/eosio-rust/
+[docs]: https://sagan-software.github.io/eosio-rust/docs/

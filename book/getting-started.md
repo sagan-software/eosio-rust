@@ -109,7 +109,7 @@ fn hi(name: AccountName) {
 eosio_abi!(hi);                     // Create the 'apply' function
 ```
 
-See the [API documentation](https://sagan-software.github.io/rust-eos/) for more details on what this code is doing.
+See the [API documentation](https://sagan-software.github.io/eosio-rust/) for more details on what this code is doing.
 
 Let's recompile our project and minify the the WASM file again:
 

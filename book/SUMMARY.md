@@ -1,4 +1,4 @@
-# Rust-EOS
+# eosio-rust
 
 - [Introduction](introduction.md)
 - [Getting Help](getting-help.md)
