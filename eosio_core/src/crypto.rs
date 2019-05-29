@@ -15,10 +15,10 @@ use eosio_bytes::{NumBytes, Read, Write};
     Ord,
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct Ripemd160([u8; 20_usize]);
+pub struct Ripemd160([u8; 20]);
 
-impl Ripemd160 {
-    pub const fn new(value: [u8; 20]) -> Self {
+impl From<[u8; 20]> for Ripemd160 {
+    fn from(value: [u8; 20]) -> Self {
         Self(value)
     }
 }
@@ -44,10 +44,10 @@ impl From<Ripemd160> for [u8; 20] {
     Ord,
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct Sha1([u8; 20_usize]);
+pub struct Sha1([u8; 20]);
 
-impl Sha1 {
-    pub const fn new(value: [u8; 20]) -> Self {
+impl From<[u8; 20]> for Sha1 {
+    fn from(value: [u8; 20]) -> Self {
         Self(value)
     }
 }
@@ -58,12 +58,25 @@ impl From<Sha1> for [u8; 20] {
     }
 }
 
-#[derive(Read, Write, NumBytes, Default, Clone, Copy)]
+#[derive(
+    Read,
+    Write,
+    NumBytes,
+    Default,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct Sha256([u8; 32_usize]);
+pub struct Sha256([u8; 32]);
 
-impl Sha256 {
-    pub const fn new(value: [u8; 32]) -> Self {
+impl From<[u8; 32]> for Sha256 {
+    fn from(value: [u8; 32]) -> Self {
         Self(value)
     }
 }
@@ -76,10 +89,10 @@ impl From<Sha256> for [u8; 32] {
 
 #[derive(Read, Write, NumBytes, Clone, Copy)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct Sha512([u8; 64_usize]);
+pub struct Sha512([u8; 64]);
 
-impl Sha512 {
-    pub const fn new(value: [u8; 64]) -> Self {
+impl From<[u8; 64]> for Sha512 {
+    fn from(value: [u8; 64]) -> Self {
         Self(value)
     }
 }

@@ -15,7 +15,7 @@ impl Hasher for Ripemd160 {
         let c_hash_ptr: *mut capi_checksum160 =
             &mut c_hash as *mut _ as *mut capi_checksum160;
         unsafe { ::eosio_cdt_sys::ripemd160(data_ptr, data_len, c_hash_ptr) }
-        Ripemd160::new(c_hash.hash)
+        c_hash.hash.into()
     }
 }
 
@@ -45,7 +45,7 @@ impl Hasher for Sha1 {
         let c_hash_ptr: *mut capi_checksum160 =
             &mut c_hash as *mut _ as *mut capi_checksum160;
         unsafe { ::eosio_cdt_sys::sha1(data_ptr, data_len, c_hash_ptr) }
-        Sha1::new(c_hash.hash)
+        c_hash.hash.into()
     }
 }
 
@@ -73,7 +73,7 @@ impl Hasher for Sha256 {
         let c_hash_ptr: *mut capi_checksum256 =
             &mut c_hash as *mut _ as *mut capi_checksum256;
         unsafe { ::eosio_cdt_sys::sha256(data_ptr, data_len, c_hash_ptr) }
-        Sha256::new(c_hash.hash)
+        c_hash.hash.into()
     }
 }
 
@@ -100,7 +100,7 @@ impl Hasher for Sha512 {
         let c_hash_ptr: *mut capi_checksum512 =
             &mut c_hash as *mut _ as *mut capi_checksum512;
         unsafe { ::eosio_cdt_sys::sha512(data_ptr, data_len, c_hash_ptr) }
-        Sha512::new(c_hash.hash)
+        c_hash.hash.into()
     }
 }
 
