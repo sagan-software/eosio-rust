@@ -37,7 +37,7 @@ script:
       --interactive
       --tty
       --rm
-      --volume ./eosio_token_gc.wasm:/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm:ro
+      --volume $PWD/eosio_token_gc.wasm:/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm:ro
       --entrypoint /eosio.contracts/build/tests/unit_test
       sagansoftware/eos:latest
       --show_progress=yes --run_test=eosio_token_tests
