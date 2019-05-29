@@ -14,7 +14,7 @@ extern crate mashup;
 mod account;
 mod action;
 mod check;
-// mod crypto;
+mod crypto;
 mod print;
 mod table;
 mod table_primary;

@@ -1,5 +1,4 @@
 use crate::Check;
-use eosio_bytes::{NumBytes, Read, Write};
 use eosio_cdt_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 use eosio_core::{Ripemd160, Sha1, Sha256, Sha512};
 
@@ -16,7 +15,7 @@ impl Hasher for Ripemd160 {
         let c_hash_ptr: *mut capi_checksum160 =
             &mut c_hash as *mut _ as *mut capi_checksum160;
         unsafe { ::eosio_cdt_sys::ripemd160(data_ptr, data_len, c_hash_ptr) }
-        Ripemd160(c_hash.hash)
+        Ripemd160::new(c_hash.hash)
     }
 }
 
@@ -26,7 +25,7 @@ impl Check<()> for Ripemd160 {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
-            hash: self.0,
+            hash: self.into(),
             __bindgen_padding_0: [0_u32; 3],
         };
         let c_hash_ptr: *const capi_checksum160 =
@@ -46,7 +45,7 @@ impl Hasher for Sha1 {
         let c_hash_ptr: *mut capi_checksum160 =
             &mut c_hash as *mut _ as *mut capi_checksum160;
         unsafe { ::eosio_cdt_sys::sha1(data_ptr, data_len, c_hash_ptr) }
-        Sha1(c_hash.hash)
+        Sha1::new(c_hash.hash)
     }
 }
 
@@ -56,7 +55,7 @@ impl Check<()> for Sha1 {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
         let c_hash = capi_checksum160 {
-            hash: self.0,
+            hash: self.into(),
             __bindgen_padding_0: [0_u32; 3],
         };
         let c_hash_ptr: *const capi_checksum160 =
@@ -74,7 +73,7 @@ impl Hasher for Sha256 {
         let c_hash_ptr: *mut capi_checksum256 =
             &mut c_hash as *mut _ as *mut capi_checksum256;
         unsafe { ::eosio_cdt_sys::sha256(data_ptr, data_len, c_hash_ptr) }
-        Sha256(c_hash.hash)
+        Sha256::new(c_hash.hash)
     }
 }
 
@@ -83,7 +82,7 @@ impl Check<()> for Sha256 {
     fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
-        let c_hash = capi_checksum256 { hash: self.0 };
+        let c_hash = capi_checksum256 { hash: self.into() };
         let c_hash_ptr: *const capi_checksum256 =
             &c_hash as *const capi_checksum256;
         unsafe {
@@ -101,7 +100,7 @@ impl Hasher for Sha512 {
         let c_hash_ptr: *mut capi_checksum512 =
             &mut c_hash as *mut _ as *mut capi_checksum512;
         unsafe { ::eosio_cdt_sys::sha512(data_ptr, data_len, c_hash_ptr) }
-        Sha512(c_hash.hash)
+        Sha512::new(c_hash.hash)
     }
 }
 
@@ -110,7 +109,7 @@ impl Check<()> for Sha512 {
     fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
         let data_len = data.len() as u32;
-        let c_hash = capi_checksum512 { hash: self.0 };
+        let c_hash = capi_checksum512 { hash: self.into() };
         let c_hash_ptr: *const capi_checksum512 =
             &c_hash as *const capi_checksum512;
         unsafe {
