@@ -15,4 +15,4 @@ install:
 services:
     - docker
 script:
-    - ./scripts/test.sh
+    - bash scripts/test.sh
