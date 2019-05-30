@@ -1,8 +1,5 @@
 use crate::{AccountName, ScopeName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{
-    chars_from_symbol_value, string_to_symbol, symbol_name_length,
-};
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;

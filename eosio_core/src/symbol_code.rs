@@ -1,8 +1,6 @@
 use crate::{AccountName, ScopeName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{
-    chars_from_symbol_value, string_to_symbol, symbol_name_length,
-};
+use eosio_numstr::{symbol_from_str, symbol_name_length, symbol_to_chars};
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
@@ -43,7 +41,7 @@ impl From<SymbolCode> for u64 {
 impl From<SymbolCode> for [char; 7] {
     #[inline]
     fn from(s: SymbolCode) -> Self {
-        chars_from_symbol_value(s.0)
+        symbol_to_chars(s.0)
     }
 }
 
@@ -75,7 +73,7 @@ impl fmt::Display for SymbolCode {
 impl SymbolCode {
     #[inline]
     pub fn is_valid(self) -> bool {
-        let chars = chars_from_symbol_value(self.0);
+        let chars = symbol_to_chars(self.0);
         for &c in &chars {
             if c == ' ' {
                 continue;
@@ -96,7 +94,7 @@ impl SymbolCode {
 impl TryFrom<&str> for SymbolCode {
     type Error = ParseSymbolError;
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let symbol: Symbol = string_to_symbol(0, value)?.into();
+        let symbol: Symbol = symbol_from_str(0, value)?.into();
         Ok(symbol.code())
     }
 }

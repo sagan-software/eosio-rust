@@ -1,8 +1,9 @@
 use crate::{
-    CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub, Symbol,
-    SymbolCode,
+    CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub,
+    ParseSymbolError, Symbol, SymbolCode,
 };
 use eosio_bytes::{NumBytes, Read, Write};
+use eosio_numstr::symbol_from_iter;
 use serde::{Deserialize, Serialize, Serializer};
 use std::convert::TryFrom;
 use std::error::Error;
@@ -43,7 +44,19 @@ impl fmt::Display for Asset {
 pub enum ParseAssetError {
     BadChar(char),
     BadPrecision,
-    NoSymbol,
+    SymbolIsEmpty,
+    SymbolTooLong,
+}
+
+impl From<ParseSymbolError> for ParseAssetError {
+    fn from(value: ParseSymbolError) -> Self {
+        match value {
+            ParseSymbolError::IsEmpty => ParseAssetError::SymbolIsEmpty,
+            ParseSymbolError::TooLong => ParseAssetError::SymbolTooLong,
+            ParseSymbolError::BadChar(c) => ParseAssetError::BadChar(c),
+            ParseSymbolError::BadPrecision => ParseAssetError::BadPrecision,
+        }
+    }
 }
 
 impl FromStr for Asset {
@@ -58,7 +71,7 @@ impl FromStr for Asset {
         loop {
             let c = match chars.next() {
                 Some(c) => c,
-                None => return Err(ParseAssetError::NoSymbol),
+                None => return Err(ParseAssetError::SymbolIsEmpty),
             };
             if index == 0 {
                 if '0' <= c && c <= '9' || c == '-' || c == '+' {
@@ -90,7 +103,8 @@ impl FromStr for Asset {
             Some(p) => index - p - 1,
             None => index,
         } as usize;
-        let mut amount = s.get(0..end_index - 1).unwrap();
+        // TODO: clean up code/unwraps below
+        let amount = s.get(0..end_index - 1).unwrap();
         let mut amount = amount.parse::<i64>().unwrap();
         if let Some(precision) = precision {
             amount *= 10_i64.pow(precision as u32);
@@ -103,18 +117,9 @@ impl FromStr for Asset {
             }
         }
 
-        let mut symbol: u64 = 0;
-        index = 0;
-        for c in chars {
-            if c < 'A' || c > 'Z' {
-                return Err(ParseAssetError::BadChar(c));
-            } else {
-                symbol |= (c as u64) << (8 * (index + 1));
-            }
-            index += 1;
-        }
-
-        symbol |= precision.unwrap_or_default();
+        let symbol =
+            symbol_from_iter(precision.unwrap_or_default() as u8, chars)
+                .map_err(ParseAssetError::from)?;
 
         Ok(Self {
             amount,
@@ -371,8 +376,8 @@ mod tests {
         from_str_multi_spaces, "1.0000  EOS", ParseAssetError::BadChar(' ')
         from_str_lowercase_symbol, "1.0000 eos", ParseAssetError::BadChar('e')
         from_str_no_space, "1EOS", ParseAssetError::BadChar('E')
-        from_str_no_symbol1, "1.2345 ", ParseAssetError::NoSymbol
-        from_str_no_symbol2, "1", ParseAssetError::NoSymbol
+        from_str_no_symbol1, "1.2345 ", ParseAssetError::SymbolIsEmpty
+        from_str_no_symbol2, "1", ParseAssetError::SymbolIsEmpty
         from_str_bad_char2, "1.a", ParseAssetError::BadChar('a')
         from_str_bad_precision, "1. EOS", ParseAssetError::BadPrecision
     }

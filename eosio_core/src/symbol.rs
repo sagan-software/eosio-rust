@@ -1,8 +1,6 @@
 use crate::{AccountName, ScopeName, SymbolCode};
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{
-    chars_from_symbol_value, string_to_symbol, symbol_name_length,
-};
+use eosio_numstr::{symbol_from_iter, symbol_from_str, symbol_name_length};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::fmt;
@@ -31,21 +29,32 @@ pub struct Symbol(u64);
 
 impl Symbol {
     #[inline]
+    pub const fn new(precision: u64, code: SymbolCode) -> Self {
+        let mut value = code.as_u64();
+        value |= precision;
+        Symbol(value)
+    }
+
+    #[inline]
     pub const fn precision(self) -> u64 {
         self.0 & 255
     }
+
     #[inline]
     pub fn code(self) -> SymbolCode {
         SymbolCode::from(self.0 >> 8)
     }
+
     #[inline]
     pub fn name_length(self) -> usize {
         symbol_name_length(self.0)
     }
+
     #[inline]
     pub const fn as_u64(self) -> u64 {
         self.0
     }
+
     #[inline]
     pub fn is_valid(self) -> bool {
         self.code().is_valid()
@@ -58,10 +67,10 @@ impl fmt::Display for Symbol {
     }
 }
 
-impl TryFrom<&str> for Symbol {
-    type Error = ParseSymbolError;
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let value = value.trim();
+impl FromStr for Symbol {
+    type Err = ParseSymbolError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let value = s.trim();
         let mut chars = value.chars();
 
         let precision: u32 = match chars.next() {
@@ -84,24 +93,15 @@ impl TryFrom<&str> for Symbol {
             None => return Err(ParseSymbolError::IsEmpty), // TODO better error message
         }
 
-        let mut result: u64 = 0;
-        let mut index = 0;
-        for c in chars {
-            if index == 0 && c == ' ' {
-                // Allow spaces between precision and symbol
-                continue;
-            }
-            if c < 'A' || c > 'Z' {
-                return Err(ParseSymbolError::BadChar(c));
-            } else {
-                result |= (c as u64) << (8 * (index + 1));
-            }
-            index += 1;
-        }
+        let symbol = symbol_from_iter(precision as u8, chars)?;
+        Ok(symbol.into())
+    }
+}
 
-        result |= u64::from(precision);
-
-        Ok(Symbol(result))
+impl TryFrom<&str> for Symbol {
+    type Error = ParseSymbolError;
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::from_str(value)
     }
 }
 
@@ -109,13 +109,6 @@ impl TryFrom<String> for Symbol {
     type Error = ParseSymbolError;
     fn try_from(value: String) -> Result<Self, Self::Error> {
         Self::try_from(value.as_str())
-    }
-}
-
-impl FromStr for Symbol {
-    type Err = ParseSymbolError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from(s)
     }
 }
 
@@ -196,8 +189,8 @@ mod tests {
         test_ok("0,TST", s!(0, TST));
         test_ok("9,TGFT", s!(9, TGFT));
         test_ok("   4,EOS    ", s!(4, EOS));
-        test_ok("   4, EOS    ", s!(4, EOS));
-        test_ok("4,  EOS", s!(4, EOS));
+        test_err("4,  EOS", ParseSymbolError::BadChar(' '));
+        test_err("   4, EOS    ", ParseSymbolError::BadChar(' '));
         test_err("10,EOS", ParseSymbolError::BadChar('0'));
         test_err("A", ParseSymbolError::BadChar('A'));
         test_err("a", ParseSymbolError::BadChar('a'));

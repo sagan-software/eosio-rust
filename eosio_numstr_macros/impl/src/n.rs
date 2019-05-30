@@ -1,5 +1,5 @@
 use crate::proc_macro::TokenStream;
-use eosio_numstr::{string_to_name, ParseNameError, NAME_CHARS};
+use eosio_numstr::{name_from_str, ParseNameError, NAME_CHARS};
 use proc_macro2::{Literal, TokenTree};
 use quote::quote;
 use quote::{ToTokens, TokenStreamExt};
@@ -25,7 +25,7 @@ impl Parse for EosioName {
             username += &segment;
         }
 
-        string_to_name(username.as_str())
+        name_from_str(username.as_str())
             .map(EosioName)
             .map_err(|e| {
                 let message = match e {

@@ -1,5 +1,5 @@
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{name_to_string, string_to_name};
+use eosio_numstr::{name_from_str, name_to_string};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::fmt;
@@ -38,7 +38,7 @@ macro_rules! declare_name_types {
             type Err = ParseNameError;
             #[inline]
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                let name = string_to_name(s)?;
+                let name = name_from_str(s)?;
                 Ok(name.into())
             }
         }

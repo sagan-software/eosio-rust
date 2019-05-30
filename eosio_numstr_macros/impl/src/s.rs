@@ -1,5 +1,5 @@
 use crate::proc_macro::TokenStream;
-use eosio_numstr::{string_to_symbol, ParseSymbolError};
+use eosio_numstr::{symbol_from_str, ParseSymbolError};
 use proc_macro2::{Literal, TokenTree};
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::{Parse, ParseStream, Result};
@@ -26,7 +26,7 @@ impl Parse for EosioSymbol {
             code += &segment;
         }
 
-        string_to_symbol(precision as u8, code.as_str())
+        symbol_from_str(precision as u8, code.as_str())
             .map(EosioSymbol)
             .map_err(|e| {
                 let message = match e {
@@ -36,6 +36,8 @@ impl Parse for EosioSymbol {
                         "symbol is too long. EOSIO symbols must be 7 characters or less".to_string(),
                     ParseSymbolError::BadChar(c) =>
                         format!("symbol has bad character '{}'. EOSIO symbols can only contain uppercase letters A-Z", c),
+                    ParseSymbolError::BadPrecision =>
+                        "symbol has bad precision".to_string()
                 };
                 input.error(message)
             })
