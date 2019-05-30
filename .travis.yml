@@ -15,29 +15,4 @@ install:
 services:
     - docker
 script:
-    - RUSTFLAGS="-C link-args=-zstack-size=48000"
-      cargo build --release --target=wasm32-unknown-unknown -vv
-      --features contract
-      -p addressbook
-      -p hello
-      -p hello_bare
-      -p tictactoe
-      -p eosio_token
-    - cargo test
-      --verbose
-      -p eosio_bytes
-      -p eosio_cdt_sys
-      -p eosio_core
-      -p eosio_numstr
-      -p eosio_numstr_macros
-    - wasm-gc
-      target/wasm32-unknown-unknown/release/eosio_token.wasm
-      eosio_token_gc.wasm
-    - docker run
-      --interactive
-      --tty
-      --rm
-      --volume $PWD/eosio_token_gc.wasm:/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm:ro
-      --entrypoint /eosio.contracts/build/tests/unit_test
-      sagansoftware/eos:latest
-      --show_progress=yes --run_test=eosio_token_tests
+    - ./scripts/test.sh
