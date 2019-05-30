@@ -15,7 +15,7 @@ function build_wasm {
         $TARGET_DIR/$1_gc_opt.wasm \
         $TARGET_DIR/$1_gc_opt.wat
     RUSTFLAGS="-C link-args=-zstack-size=48000" \
-    cargo +stable build \
+    cargo build \
         --release \
         --target=wasm32-unknown-unknown \
         --verbose \
