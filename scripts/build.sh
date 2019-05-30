@@ -24,14 +24,14 @@ function build_wasm {
     wasm-gc \
         $TARGET_DIR/$1.wasm \
         $TARGET_DIR/$1_gc.wasm
-	wasm-opt \
-        -Oz \
-        --output $TARGET_DIR/$1_gc_opt.wasm \
-        $TARGET_DIR/$1_gc.wasm
-	wasm2wat \
-        $TARGET_DIR/$1_gc_opt.wasm \
-        -o $TARGET_DIR/$1_gc_opt.wat \
-        --generate-names
+	# wasm-opt \
+    #     -Oz \
+    #     --output $TARGET_DIR/$1_gc_opt.wasm \
+    #     $TARGET_DIR/$1_gc.wasm
+	# wasm2wat \
+    #     $TARGET_DIR/$1_gc_opt.wasm \
+    #     -o $TARGET_DIR/$1_gc_opt.wat \
+    #     --generate-names
     ls -lah $TARGET_DIR | grep -e $1.wasm -e $1_gc.wasm -e $1_gc_opt.wasm
 }
 

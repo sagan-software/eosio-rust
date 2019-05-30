@@ -16,7 +16,7 @@ cargo test \
 
 docker run \
     --rm \
-    --volume /$(pwd)/target/wasm32-unknown-unknown/release/eosio_token_gc_opt.wasm:/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm:ro \
+    --volume /$(pwd)/target/wasm32-unknown-unknown/release/eosio_token_gc.wasm:/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm:ro \
     --entrypoint //eosio.contracts/build/tests/unit_test \
     sagansoftware/eos:latest \
     --show_progress=yes --run_test=eosio_token_tests
