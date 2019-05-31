@@ -3,7 +3,7 @@ use crate::{
 };
 use eosio_bytes::{ReadError, WriteError};
 use eosio_cdt_sys::c_void;
-use eosio_core::{AccountName, ScopeName, TableName, Time};
+use eosio_core::{AccountName, ScopeName, TableName, TimePoint};
 use std::marker::PhantomData;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
@@ -340,7 +340,7 @@ secondary_keys_converted!(
     u64, u16
     u64, u32
     f64, f32
-    u64, Time
+    u64, TimePoint
 );
 
 #[derive(Debug, Copy, Clone)]

@@ -1,5 +1,5 @@
 use eosio_core::{
-    AccountName, CpuWeight, NetWeight, PermissionName, RamBytes, Time,
+    AccountName, CpuWeight, NetWeight, PermissionName, RamBytes, TimePoint,
 };
 
 /// Get the current receiver of the action.
@@ -11,7 +11,7 @@ pub fn current_receiver() -> AccountName {
 
 /// Returns the creation time of an account
 #[inline]
-pub fn creation_time<A: Into<AccountName>>(account: A) -> Time {
+pub fn creation_time<A: Into<AccountName>>(account: A) -> TimePoint {
     let a = account.into();
     let time = unsafe { ::eosio_cdt_sys::get_account_creation_time(a.into()) };
     time.into()
@@ -19,7 +19,7 @@ pub fn creation_time<A: Into<AccountName>>(account: A) -> Time {
 
 /// Returns the last used time of a permission
 #[inline]
-pub fn permission_last_used<A, P>(account: A, permission: P) -> Time
+pub fn permission_last_used<A, P>(account: A, permission: P) -> TimePoint
 where
     A: Into<AccountName>,
     P: Into<PermissionName>,
