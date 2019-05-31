@@ -1,9 +1,9 @@
 use crate::{
     CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub,
-    ParseSymbolError, Symbol, SymbolCode,
+    ParseSymbolError, Symbol,
 };
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::symbol_from_iter;
+use eosio_numstr::symbol_from_chars;
 use serde::{Deserialize, Serialize, Serializer};
 use std::convert::TryFrom;
 use std::error::Error;
@@ -54,7 +54,6 @@ impl From<ParseSymbolError> for ParseAssetError {
             ParseSymbolError::IsEmpty => ParseAssetError::SymbolIsEmpty,
             ParseSymbolError::TooLong => ParseAssetError::SymbolTooLong,
             ParseSymbolError::BadChar(c) => ParseAssetError::BadChar(c),
-            ParseSymbolError::BadPrecision => ParseAssetError::BadPrecision,
         }
     }
 }
@@ -118,7 +117,7 @@ impl FromStr for Asset {
         }
 
         let symbol =
-            symbol_from_iter(precision.unwrap_or_default() as u8, chars)
+            symbol_from_chars(precision.unwrap_or_default() as u8, chars)
                 .map_err(ParseAssetError::from)?;
 
         Ok(Self {

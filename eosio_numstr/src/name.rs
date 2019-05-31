@@ -1,6 +1,13 @@
 use std::error::Error;
 use std::fmt;
 
+/// All possible characters that can be used in EOSIO names.
+pub const NAME_UTF8_CHARS: [u8; 32] = *b".12345abcdefghijklmnopqrstuvwxyz";
+
+/// The maximum character length of an EOSIO name.
+pub const NAME_LEN_MAX: usize = 12;
+
+/// An error which can be returned when parsing an EOSIO name.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParseNameError {
     TooLong,
@@ -9,12 +16,6 @@ pub enum ParseNameError {
 
 impl Error for ParseNameError {}
 
-/// All possible characters that can be used in EOSIO names.
-pub const NAME_CHARS: [u8; 32] = *b".12345abcdefghijklmnopqrstuvwxyz";
-
-/// The maximum character length of an EOSIO name.
-pub const MAX_NAME_LEN: usize = 12;
-
 impl fmt::Display for ParseNameError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
@@ -22,7 +23,7 @@ impl fmt::Display for ParseNameError {
             ParseNameError::TooLong => write!(
                 f,
                 "name is too long, must be {} chars or less",
-                MAX_NAME_LEN
+                NAME_LEN_MAX
             ),
             ParseNameError::BadChar(c) => {
                 write!(f, "name contains invalid character '{}'", c)
@@ -37,13 +38,18 @@ impl fmt::Display for ParseNameError {
 ///
 /// ```
 /// use eosio_numstr::{name_from_str, ParseNameError};
+/// assert_eq!(name_from_str(""), Ok(0));
+/// assert_eq!(name_from_str("a"), Ok(3458764513820540928));
+/// assert_eq!(name_from_str("123456789012"), Err(ParseNameError::BadChar('6')));
+/// assert_eq!(name_from_str("123451234512"), Ok(614251535012020768));
+/// assert_eq!(name_from_str("1234512345123"), Err(ParseNameError::TooLong));
 /// assert_eq!(name_from_str("eosio.token"), Ok(6138663591592764928));
 /// assert_eq!(name_from_str("eosio.bpay"), Ok(6138663581940940800));
 /// assert_eq!(name_from_str("A"), Err(ParseNameError::BadChar('A')));
-/// assert_eq!(name_from_str("1234512345123"), Err(ParseNameError::TooLong));
+/// assert_eq!(name_from_str("TEST"), Err(ParseNameError::BadChar('T')));
 /// ```
-pub fn name_from_str(s: &str) -> Result<u64, ParseNameError> {
-    name_from_iter(s.chars())
+pub fn name_from_str(value: &str) -> Result<u64, ParseNameError> {
+    name_from_chars(value.chars())
 }
 
 /// Attempts to create an EOSIO name from an `Iterator`.
@@ -51,19 +57,24 @@ pub fn name_from_str(s: &str) -> Result<u64, ParseNameError> {
 /// # Examples
 ///
 /// ```
-/// use eosio_numstr::{name_from_iter, ParseNameError};
-/// assert_eq!(name_from_iter("eosio.token".chars()), Ok(6138663591592764928));
-/// assert_eq!(name_from_iter("eosio.bpay".chars()), Ok(6138663581940940800));
-/// assert_eq!(name_from_iter("A".chars()), Err(ParseNameError::BadChar('A')));
-/// assert_eq!(name_from_iter("1234512345123".chars()), Err(ParseNameError::TooLong));
+/// use eosio_numstr::{name_from_chars, ParseNameError};
+/// assert_eq!(name_from_chars("".chars()), Ok(0));
+/// assert_eq!(name_from_chars("a".chars()), Ok(3458764513820540928));
+/// assert_eq!(name_from_chars("123456789012".chars()), Err(ParseNameError::BadChar('6')));
+/// assert_eq!(name_from_chars("123451234512".chars()), Ok(614251535012020768));
+/// assert_eq!(name_from_chars("1234512345123".chars()), Err(ParseNameError::TooLong));
+/// assert_eq!(name_from_chars("eosio.token".chars()), Ok(6138663591592764928));
+/// assert_eq!(name_from_chars("eosio.bpay".chars()), Ok(6138663581940940800));
+/// assert_eq!(name_from_chars("A".chars()), Err(ParseNameError::BadChar('A')));
+/// assert_eq!(name_from_chars("TEST".chars()), Err(ParseNameError::BadChar('T')));
 /// ```
-pub fn name_from_iter<I>(iter: I) -> Result<u64, ParseNameError>
+pub fn name_from_chars<I>(chars: I) -> Result<u64, ParseNameError>
 where
     I: Iterator<Item = char>,
 {
     let mut value = 0;
-    for (i, c) in iter.enumerate() {
-        if i == MAX_NAME_LEN {
+    for (i, c) in chars.enumerate() {
+        if i == NAME_LEN_MAX {
             return Err(ParseNameError::TooLong);
         } else if c == '.' {
             continue;
@@ -71,7 +82,7 @@ where
         match char_to_symbol(c) {
             Some(symbol) => {
                 let mut n = symbol as u64;
-                if i < MAX_NAME_LEN {
+                if i < NAME_LEN_MAX {
                     n &= 31u64;
                     n <<= 64 - 5 * (i + 1);
                 } else {
@@ -98,7 +109,7 @@ fn char_to_symbol(c: char) -> Option<char> {
     }
 }
 
-/// Converts an EOSIO name value into a String.
+/// Converts an EOSIO name value into a string.
 ///
 /// # Examples
 ///
@@ -106,57 +117,34 @@ fn char_to_symbol(c: char) -> Option<char> {
 /// use eosio_numstr::name_to_string;
 /// assert_eq!(name_to_string(6138663591592764928), "eosio.token");
 /// assert_eq!(name_to_string(6138663581940940800), "eosio.bpay");
+/// assert_eq!(name_to_string(0), "");
+/// assert_eq!(name_to_string(614251535012020768), "123451234512");
 /// ```
 pub fn name_to_string(name: u64) -> String {
+    String::from_utf8_lossy(&name_to_utf8(name))
+        .trim_matches('.')
+        .into()
+}
+
+/// Converts an EOSIO name into an array of UTF-8 characters.
+///
+/// # Examples
+///
+/// ```
+/// use eosio_numstr::name_to_utf8;
+/// assert_eq!(name_to_utf8(6138663591592764928), *b"eosio.token..");
+/// assert_eq!(name_to_utf8(6138663581940940800), *b"eosio.bpay...");
+/// assert_eq!(name_to_utf8(0), *b".............");
+/// assert_eq!(name_to_utf8(614251535012020768), *b"123451234512.");
+/// ```
+pub fn name_to_utf8(name: u64) -> [u8; 13] {
     let mut chars = [b'.'; 13]; // TODO: make this 12 instead of 13
     let mut t = name;
     for (i, c) in chars.iter_mut().rev().enumerate() {
         let charmap_index = t & if i == 0 { 15 } else { 31 };
-        *c = NAME_CHARS[charmap_index as usize];
+        // TODO don't panic
+        *c = NAME_UTF8_CHARS[charmap_index as usize];
         t >>= if i == 0 { 4 } else { 5 };
     }
-    String::from_utf8_lossy(&chars)
-        .trim_matches('.')
-        .to_string()
+    chars
 }
-
-macro_rules! test_name_from_str {
-    ($($n:ident, $i:expr, $o:expr)*) => ($(
-        #[cfg(test)]
-        #[test]
-        fn $n() {
-            assert_eq!(name_from_str($i), $o);
-        }
-    )*)
-}
-
-test_name_from_str!(
-    from_str_empty, "", Ok(0)
-    from_str_single_char, "a", Ok(3_458_764_513_820_540_928)
-    from_str_bad_number, "123456789012", Err(ParseNameError::BadChar('6'))
-    from_str_only_numbers, "123451234512", Ok(614_251_535_012_020_768)
-    from_str_too_long, "1234512345123", Err(ParseNameError::TooLong)
-    from_str_uppercase, "TEST", Err(ParseNameError::BadChar('T'))
-    from_str_only_letters, "test", Ok(14_605_613_396_213_628_928)
-    from_str_special_char, "test!", Err(ParseNameError::BadChar('!'))
-    from_str_with_periods, "a.b.c", Ok(3_462_709_561_541_001_216)
-    from_str_with_only_periods, "...", Ok(0) // TODO is this valid?
-);
-
-macro_rules! test_name_to_string {
-    ($($n:ident, $i:expr, $o:expr)*) => ($(
-        #[cfg(test)]
-        #[test]
-        fn $n() {
-            assert_eq!(name_to_string($i), $o);
-        }
-    )*)
-}
-
-test_name_to_string!(
-    to_string_single_char, 3_458_764_513_820_540_928, "a"
-    to_string_only_numbers, 614_251_535_012_020_768, "123451234512"
-    to_string_only_letters, 14_605_613_396_213_628_928, "test"
-    to_string_zero, 0, ""
-    to_string_with_periods, 3_462_709_561_541_001_216, "a.b.c"
-);

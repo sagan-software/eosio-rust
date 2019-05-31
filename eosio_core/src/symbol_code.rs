@@ -1,6 +1,8 @@
-use crate::{AccountName, ScopeName, Symbol};
+use crate::{ScopeName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{symbol_from_str, symbol_name_length, symbol_to_chars};
+use eosio_numstr::{
+    symbol_code, symbol_from_str, symbol_to_string, symbol_to_utf8,
+};
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
@@ -38,10 +40,10 @@ impl From<SymbolCode> for u64 {
     }
 }
 
-impl From<SymbolCode> for [char; 7] {
+impl From<SymbolCode> for [u8; 7] {
     #[inline]
     fn from(s: SymbolCode) -> Self {
-        symbol_to_chars(s.0)
+        symbol_to_utf8(s.0)
     }
 }
 
@@ -64,21 +66,19 @@ impl From<ScopeName> for SymbolCode {
 impl fmt::Display for SymbolCode {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let chars: [char; 7] = (*self).into();
-        let s: String = chars.iter().collect();
-        write!(f, "{}", s.trim())
+        write!(f, "{}", symbol_to_string(self.0 << 8))
     }
 }
 
 impl SymbolCode {
     #[inline]
     pub fn is_valid(self) -> bool {
-        let chars = symbol_to_chars(self.0);
+        let chars = symbol_to_utf8(self.0);
         for &c in &chars {
-            if c == ' ' {
+            if c == b' ' {
                 continue;
             }
-            if !('A' <= c && c <= 'Z') {
+            if !(b'A' <= c && c <= b'Z') {
                 return false;
             }
         }
@@ -122,7 +122,10 @@ mod tests {
         ($($name:ident, $value:expr, $expected:expr)*) => ($(
             #[test]
             fn $name() {
-                assert_eq!(Symbol::from($value).code().to_string(), $expected);
+                assert_eq!(
+                    SymbolCode::from(symbol_code($value)).to_string(),
+                    $expected
+                );
             }
         )*)
     }

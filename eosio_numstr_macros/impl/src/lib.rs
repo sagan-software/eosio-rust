@@ -1,5 +1,3 @@
-#![recursion_limit = "512"]
-
 extern crate proc_macro;
 
 mod n;

@@ -1,5 +1,5 @@
 use crate::proc_macro::TokenStream;
-use eosio_numstr::{name_from_str, ParseNameError, NAME_CHARS};
+use eosio_numstr::{name_from_str, ParseNameError, NAME_UTF8_CHARS};
 use proc_macro2::{Literal, TokenTree};
 use quote::quote;
 use quote::{ToTokens, TokenStreamExt};
@@ -34,7 +34,7 @@ impl Parse for EosioName {
                         format!("unexpected input; EOSIO name is {} characters long but must be 12 characters or less", username.len())
                     },
                     ParseNameError::BadChar(c) => {
-                        format!("unexpected character '{}'; EOSIO names can only contain these characters: {}", c, str::from_utf8(&NAME_CHARS).unwrap())
+                        format!("unexpected character '{}'; EOSIO names can only contain these characters: {}", c, str::from_utf8(&NAME_UTF8_CHARS).unwrap())
                     }
                 };
                 input.error(message)

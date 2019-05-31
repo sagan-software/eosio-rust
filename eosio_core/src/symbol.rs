@@ -1,6 +1,6 @@
 use crate::{AccountName, ScopeName, SymbolCode};
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{symbol_from_iter, symbol_from_str, symbol_name_length};
+use eosio_numstr::{symbol_from_chars, symbol_from_str};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::fmt;
@@ -46,11 +46,6 @@ impl Symbol {
     }
 
     #[inline]
-    pub fn name_length(self) -> usize {
-        symbol_name_length(self.0)
-    }
-
-    #[inline]
     pub const fn as_u64(self) -> u64 {
         self.0
     }
@@ -93,7 +88,7 @@ impl FromStr for Symbol {
             None => return Err(ParseSymbolError::IsEmpty), // TODO better error message
         }
 
-        let symbol = symbol_from_iter(precision as u8, chars)?;
+        let symbol = symbol_from_chars(precision as u8, chars)?;
         Ok(symbol.into())
     }
 }

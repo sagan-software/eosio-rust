@@ -36,8 +36,6 @@ impl Parse for EosioSymbol {
                         "symbol is too long. EOSIO symbols must be 7 characters or less".to_string(),
                     ParseSymbolError::BadChar(c) =>
                         format!("symbol has bad character '{}'. EOSIO symbols can only contain uppercase letters A-Z", c),
-                    ParseSymbolError::BadPrecision =>
-                        "symbol has bad precision".to_string()
                 };
                 input.error(message)
             })
