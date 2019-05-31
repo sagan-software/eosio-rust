@@ -6,7 +6,6 @@ lto = true
 debug-assertions = false
 codegen-units = 1
 panic = 'abort'
-incremental = false
 
 [workspace]
 members = [
@@ -31,20 +30,3 @@ members = [
     "examples/hello",
     "examples/tictactoe",
 ]
-
-[package]
-name = "eosio-rust"
-version = "0.1.0"
-authors = ["Liam Curry <liam@sagan.software>"]
-edition = "2018"
-
-[dev-dependencies]
-criterion = "0.2"
-eosio_numstr = { path = "./eosio_numstr" }
-
-[[bench]]
-name = "bench_main"
-harness = false
-
-[features]
-contract = []

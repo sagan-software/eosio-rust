@@ -3,3 +3,12 @@ name = "eosio_numstr"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/sagan-software/eosio-rust"
+
+[dev-dependencies]
+criterion = "0.2"
+
+[[bench]]
+name = "bench_main"
+harness = false

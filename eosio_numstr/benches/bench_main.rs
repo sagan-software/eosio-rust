@@ -1,9 +1,13 @@
-use criterion::{black_box, Criterion, ParameterizedBenchmark};
+#[macro_use]
+extern crate criterion;
+extern crate eosio_numstr;
 
-fn string_to_name(c: &mut Criterion) {
+use criterion::{black_box, Criterion};
+
+fn name_from_str(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "eosio_numstr::string_to_name",
-        |b, input| b.iter(|| eosio_numstr::string_to_name(black_box(input))),
+        "name_from_str",
+        |b, input| b.iter(|| eosio_numstr::name_from_str(black_box(input))),
         vec![
             "",
             "aaaaaa",
@@ -21,18 +25,19 @@ fn string_to_name(c: &mut Criterion) {
 
 fn name_to_string(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "eosio_numstr::name_to_string",
+        "name_to_string",
         |b, input| b.iter(|| eosio_numstr::name_to_string(black_box(*input))),
         vec![0, 3_458_764_513_820_540_928, 614_251_535_012_020_768],
     );
 }
 
-fn string_to_symbol(c: &mut Criterion) {
+fn symbol_from_str(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "eosio_numstr::string_to_symbol",
-        |b, input| b.iter(|| eosio_numstr::string_to_name(black_box(input))),
+        "symbol_from_str",
+        |b, input| b.iter(|| eosio_numstr::name_from_str(black_box(input))),
         vec!["", "A", "AB", "ABC", "a", "ab", "abc"],
     );
 }
 
-criterion_group!(benches, string_to_name, name_to_string, string_to_symbol);
+criterion_group!(benches, name_from_str, name_to_string, symbol_from_str);
+criterion_main!(benches);
