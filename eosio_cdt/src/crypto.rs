@@ -1,9 +1,9 @@
-use crate::Check;
 use eosio_cdt_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 use eosio_core::{Ripemd160, Sha1, Sha256, Sha512};
 
-pub trait Hasher: Check<()> {
+pub trait Hasher {
     fn new(data: &str) -> Self;
+    fn check(self, data: &str);
 }
 
 impl Hasher for Ripemd160 {
@@ -17,9 +17,7 @@ impl Hasher for Ripemd160 {
         unsafe { ::eosio_cdt_sys::ripemd160(data_ptr, data_len, c_hash_ptr) }
         c_hash.hash.into()
     }
-}
 
-impl Check<()> for Ripemd160 {
     #[inline]
     fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
@@ -47,9 +45,7 @@ impl Hasher for Sha1 {
         unsafe { ::eosio_cdt_sys::sha1(data_ptr, data_len, c_hash_ptr) }
         c_hash.hash.into()
     }
-}
 
-impl Check<()> for Sha1 {
     #[inline]
     fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
@@ -75,9 +71,7 @@ impl Hasher for Sha256 {
         unsafe { ::eosio_cdt_sys::sha256(data_ptr, data_len, c_hash_ptr) }
         c_hash.hash.into()
     }
-}
 
-impl Check<()> for Sha256 {
     #[inline]
     fn check(self, data: &str) {
         let data_ptr = data.as_ptr();
@@ -102,9 +96,7 @@ impl Hasher for Sha512 {
         unsafe { ::eosio_cdt_sys::sha512(data_ptr, data_len, c_hash_ptr) }
         c_hash.hash.into()
     }
-}
 
-impl Check<()> for Sha512 {
     #[inline]
     fn check(self, data: &str) {
         let data_ptr = data.as_ptr();

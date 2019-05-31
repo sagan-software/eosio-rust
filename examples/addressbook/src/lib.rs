@@ -15,10 +15,8 @@ fn add(
     let _self = current_receiver();
     let table = Address::table(_self, _self);
 
-    table
-        .find(account)
-        .is_none()
-        .check("Address for account already exists");
+    let address = table.find(account);
+    assert!(address.is_none(), "Address for account already exists");
 
     let address = Address {
         account,
@@ -30,7 +28,7 @@ fn add(
         zip,
         liked: 0,
     };
-    table.emplace(account, &address).check("write");
+    table.emplace(account, &address).expect("write");
 }
 
 #[eosio::action]
@@ -47,9 +45,9 @@ fn update(
 
     let _self = current_receiver();
     let table = Address::table(_self, _self);
-    let cursor = table.find(account).check("Address for account not found");
+    let cursor = table.find(account).expect("Address for account not found");
 
-    let mut address = cursor.get().check("read");
+    let mut address = cursor.get().expect("read");
     address.first_name = first_name;
     address.last_name = last_name;
     address.street = street;
@@ -57,7 +55,7 @@ fn update(
     address.state = state;
     address.zip = zip;
 
-    cursor.modify(None, &address).check("write");
+    cursor.modify(None, &address).expect("write");
 }
 
 #[eosio::action]
@@ -68,9 +66,9 @@ fn erase(account: AccountName) {
     let addresses = Address::table(_self, _self);
     let cursor = addresses
         .find(account)
-        .check("Address for account not found");
+        .expect("Address for account not found");
 
-    cursor.erase().check("read");
+    cursor.erase().expect("read");
 }
 
 #[eosio::action]
@@ -79,13 +77,13 @@ fn like(account: AccountName) {
     let addresses = Address::table(_self, _self);
     let cursor = addresses
         .find(account)
-        .check("Address for account not found");
+        .expect("Address for account not found");
 
-    let mut address = cursor.get().check("read");
+    let mut address = cursor.get().expect("read");
     address.liked += 1;
     cursor
         .modify(Some(address.account), &address)
-        .check("write");
+        .expect("write");
 }
 
 #[eosio::action]
@@ -93,12 +91,12 @@ fn likezip(zip: u32) {
     let _self = current_receiver();
     let table = Address::zip(_self, _self);
     for cursor in table.lower_bound(zip).into_iter() {
-        let mut addr = cursor.get().check("read");
+        let mut addr = cursor.get().expect("read");
         if addr.zip != zip {
             break;
         }
         addr.liked += 1;
-        cursor.modify(None, &addr).check("write");
+        cursor.modify(None, &addr).expect("write");
     }
 }
 

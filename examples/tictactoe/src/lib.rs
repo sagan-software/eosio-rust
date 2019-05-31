@@ -12,25 +12,25 @@ const DRAW: u8 = 3;
 #[eosio::action]
 fn create(host: AccountName, challenger: AccountName) {
     require_auth(host);
-    check(
+    assert!(
         challenger != host,
         "challenger shouldn't be the same as host",
     );
-    check(is_account(challenger), "challenger account doesn't exist");
+    assert!(is_account(challenger), "challenger account doesn't exist");
 
     let _self = current_receiver();
     let table = Game::table(_self, host);
 
-    check(!table.exists(challenger), "game already exists");
+    assert!(!table.exists(challenger), "game already exists");
 
     let game = Game::new(host, challenger);
 
-    table.emplace(host, &game).check("write");
+    table.emplace(host, &game).expect("write");
 }
 
 #[eosio::action]
 fn restart(host: AccountName, challenger: AccountName, by: u8) {
-    check(
+    assert!(
         by == HOST || by == CHALLENGER,
         "by must be either 1 (HOST) or 2 (CHALLENGER)",
     );
@@ -38,12 +38,12 @@ fn restart(host: AccountName, challenger: AccountName, by: u8) {
 
     let _self = current_receiver();
     let table = Game::table(_self, host);
-    let cursor = table.find(challenger).check("game doesn't exist");
-    let mut game = cursor.get().check("read");
+    let cursor = table.find(challenger).expect("game doesn't exist");
+    let mut game = cursor.get().expect("read");
 
     game.restart();
 
-    cursor.modify(None, &game).check("write");
+    cursor.modify(None, &game).expect("write");
 }
 
 #[eosio::action]
@@ -52,9 +52,9 @@ fn close(host: AccountName, challenger: AccountName) {
 
     let _self = current_receiver();
     let table = Game::table(_self, host);
-    let cursor = table.find(challenger).check("game doesn't exist");
+    let cursor = table.find(challenger).expect("game doesn't exist");
 
-    cursor.erase().check("read");
+    cursor.erase().expect("read");
 }
 
 #[eosio::action]
@@ -65,7 +65,7 @@ fn makemove(
     row: u16,
     col: u16,
 ) {
-    check(
+    assert!(
         by == HOST || by == CHALLENGER,
         "by must be either 1 (HOST) or 2 (CHALLENGER)",
     );
@@ -74,21 +74,21 @@ fn makemove(
     // Check if game exists
     let _self = current_receiver();
     let table = Game::table(_self, host);
-    let cursor = table.find(challenger).check("game doesn't exist");
+    let cursor = table.find(challenger).expect("game doesn't exist");
 
-    let mut game = cursor.get().check("failed to read game");
+    let mut game = cursor.get().expect("failed to read game");
 
-    check(game.winner == EMPTY, "the game has ended!");
-    check(
+    assert!(game.winner == EMPTY, "the game has ended!");
+    assert!(
         (by == HOST && game.turn == HOST)
             || (by == CHALLENGER && game.turn == CHALLENGER),
         "it's not your turn yet!",
     );
 
-    check(game.is_valid_move(row, col), "not a valid movement!");
+    assert!(game.is_valid_move(row, col), "not a valid movement!");
 
     game.make_move(row, col);
-    cursor.modify(None, &game).check("write");
+    cursor.modify(None, &game).expect("write");
 }
 
 eosio::abi!(create, restart, close, makemove);

@@ -36,13 +36,13 @@ fn create(issuer: AccountName, max_supply: Asset) {
     require_auth(_self);
 
     let symbol = max_supply.symbol;
-    check(symbol.is_valid(), "invalid symbol name");
-    check(max_supply.is_valid(), "invalid supply");
-    check(max_supply.amount > 0, "max-supply must be positive");
+    assert!(symbol.is_valid(), "invalid symbol name");
+    assert!(max_supply.is_valid(), "invalid supply");
+    assert!(max_supply.amount > 0, "max-supply must be positive");
 
     let symbol_code = symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
-    check(
+    assert!(
         stats_table.find(symbol_code).is_none(),
         "token with symbol already exists",
     );
@@ -53,37 +53,37 @@ fn create(issuer: AccountName, max_supply: Asset) {
         issuer,
     };
 
-    stats_table.emplace(_self, &stats).check("write");
+    stats_table.emplace(_self, &stats).expect("write");
 }
 
 #[eosio::action]
 fn issue(to: AccountName, quantity: Asset, memo: String) {
     let symbol = quantity.symbol;
-    check(symbol.is_valid(), "invalid symbol name");
-    check(memo.len() <= 256, "memo has more than 256 bytes");
+    assert!(symbol.is_valid(), "invalid symbol name");
+    assert!(memo.len() <= 256, "memo has more than 256 bytes");
 
     let _self = current_receiver();
     let symbol_code = symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
         .find(symbol_code)
-        .check("token with symbol does not exist, create token before issue");
+        .expect("token with symbol does not exist, create token before issue");
 
-    let mut st = cursor.get().check("read");
+    let mut st = cursor.get().expect("read");
     require_auth(st.issuer);
-    check(quantity.is_valid(), "invalid quantity");
-    check(quantity.amount > 0, "must issue positive quantity");
-    check(
+    assert!(quantity.is_valid(), "invalid quantity");
+    assert!(quantity.amount > 0, "must issue positive quantity");
+    assert!(
         quantity.symbol == st.supply.symbol,
         "symbol precision mismatch",
     );
-    check(
+    assert!(
         quantity.amount <= st.max_supply.amount - st.supply.amount,
         "quantity exceeds available supply",
     );
 
     st.supply += quantity;
-    cursor.modify(None, &st).check("write");
+    cursor.modify(None, &st).expect("write");
 
     add_balance(st.issuer, quantity, st.issuer);
 
@@ -101,58 +101,58 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
                 permission: n!(active).into(),
             }],
         ))
-        .check("failed to send inline action");
+        .expect("failed to send inline action");
     }
 }
 
 #[eosio::action]
 fn retire(quantity: Asset, memo: String) {
     let symbol = quantity.symbol;
-    check(symbol.is_valid(), "invalid symbol name");
-    check(memo.len() <= 256, "memo has more than 256 bytes");
+    assert!(symbol.is_valid(), "invalid symbol name");
+    assert!(memo.len() <= 256, "memo has more than 256 bytes");
 
     let _self = current_receiver();
     let symbol_code = symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
         .find(symbol_code)
-        .check("token with symbol does not exist");
+        .expect("token with symbol does not exist");
 
-    let mut st = cursor.get().check("error reading stats table");
+    let mut st = cursor.get().expect("error reading stats table");
     require_auth(st.issuer);
-    check(quantity.is_valid(), "invalid quantity");
-    check(quantity.amount > 0, "must retire positive quantity");
-    check(symbol == st.supply.symbol, "symbol precision mismatch");
+    assert!(quantity.is_valid(), "invalid quantity");
+    assert!(quantity.amount > 0, "must retire positive quantity");
+    assert!(symbol == st.supply.symbol, "symbol precision mismatch");
 
     st.supply -= quantity;
-    cursor.modify(None, &st).check("write");
+    cursor.modify(None, &st).expect("write");
     sub_balance(st.issuer, quantity);
 }
 
 #[eosio::action]
 fn transfer(from: AccountName, to: AccountName, quantity: Asset, memo: String) {
-    check(from != to, "cannot transfer to self");
+    assert!(from != to, "cannot transfer to self");
     require_auth(from);
-    check(is_account(to), "to account does not exist");
+    assert!(is_account(to), "to account does not exist");
 
     let _self = current_receiver();
     let symbol_code = quantity.symbol.code();
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let cursor = stats_table
         .find(symbol_code)
-        .check("token with symbol does not exist");
-    let st = cursor.get().check("read");
+        .expect("token with symbol does not exist");
+    let st = cursor.get().expect("read");
 
     require_recipient(from);
     require_recipient(to);
 
-    check(quantity.is_valid(), "invalid quantity");
-    check(quantity.amount > 0, "must transfer positive quantity");
-    check(
+    assert!(quantity.is_valid(), "invalid quantity");
+    assert!(quantity.amount > 0, "must transfer positive quantity");
+    assert!(
         quantity.symbol == st.supply.symbol,
         "symbol precision mismatch",
     );
-    check(memo.len() <= 256, "memo has more than 256 bytes");
+    assert!(memo.len() <= 256, "memo has more than 256 bytes");
 
     let payer = if has_auth(to) { to } else { from };
 
@@ -166,12 +166,12 @@ fn sub_balance(owner: AccountName, value: Asset) {
     let table = Account::table(_self, owner);
     let cursor = table
         .find(value.symbol.code())
-        .check("no balance object found");
-    let mut from = cursor.get().check("read");
-    check(from.balance.amount >= value.amount, "overdrawn balance");
+        .expect("no balance object found");
+    let mut from = cursor.get().expect("read");
+    assert!(from.balance.amount >= value.amount, "overdrawn balance");
 
     from.balance -= value;
-    cursor.modify(None, &from).check("write");
+    cursor.modify(None, &from).expect("write");
 }
 
 #[cfg(feature = "contract")]
@@ -181,13 +181,13 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
     let cursor = accounts_table.find(value.symbol.code());
     match cursor {
         Some(cursor) => {
-            let mut account = cursor.get().check("read");
+            let mut account = cursor.get().expect("read");
             account.balance += value;
-            cursor.modify(Some(ram_payer), &account).check("write");
+            cursor.modify(Some(ram_payer), &account).expect("write");
         }
         None => {
             let account = Account { balance: value };
-            accounts_table.emplace(ram_payer, &account).check("write");
+            accounts_table.emplace(ram_payer, &account).expect("write");
         }
     }
 }
@@ -201,17 +201,17 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     let stats_table = CurrencyStats::table(_self, symbol_code);
     let st = stats_table
         .find(symbol_code)
-        .check("symbol does not exist")
+        .expect("symbol does not exist")
         .get()
-        .check("read");
-    check(st.supply.symbol == symbol, "symbol precision mismatch");
+        .expect("read");
+    assert!(st.supply.symbol == symbol, "symbol precision mismatch");
 
     let accts_table = Account::table(_self, owner);
     if accts_table.find(symbol_code).is_none() {
         let account = Account {
             balance: Asset { amount: 0, symbol },
         };
-        accts_table.emplace(ram_payer, &account).check("write");
+        accts_table.emplace(ram_payer, &account).expect("write");
     }
 }
 
@@ -222,13 +222,13 @@ fn close(owner: AccountName, symbol: Symbol) {
     let accts_table = Account::table(_self, owner);
     let accts_cursor = accts_table
         .find(symbol.code())
-        .check("Balance row already deleted or never existed. Action won't have any effect.");
-    let account = accts_cursor.get().check("read");
-    check(
+        .expect("Balance row already deleted or never existed. Action won't have any effect.");
+    let account = accts_cursor.get().expect("read");
+    assert!(
         account.balance.amount == 0,
         "Cannot close because the balance is not zero.",
     );
-    accts_cursor.erase().check("read");
+    accts_cursor.erase().expect("read");
 }
 
 eosio::abi!(create, issue, transfer, open, close, retire);

@@ -72,7 +72,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         // TODO: keep original function intact so it can be called like normal
         #vis fn #ident() {
-            let s = #struct_ident::read_data().check("read");
+            let s = #struct_ident::read_data().expect("read");
             s.execute();
         }
     };

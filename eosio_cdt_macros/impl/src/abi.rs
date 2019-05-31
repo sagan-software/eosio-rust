@@ -56,8 +56,17 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
+            std::panic::set_hook(Box::new(|panic_info| {
+                let payload = panic_info.payload();
+                let message = payload
+                    .downcast_ref::<&str>()
+                    .map(|s| s.to_string())
+                    .or_else(|| payload.downcast_ref::<String>().map(|s| s.to_string()))
+                    .unwrap_or_else(|| panic_info.to_string());
+                #eosio::check(false, &message);
+            }));
             if action == #eosio::n!(onerror) {
-                #eosio::check(
+                assert!(
                     code == #eosio::n!(eosio),
                     "onerror action's are only valid from the \"eosio\" system account"
                 );
