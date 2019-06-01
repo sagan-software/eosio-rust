@@ -4,7 +4,21 @@
 
 mod bindings;
 
+#[cfg(target_arch = "wasm32")]
 pub use self::bindings::*;
+
+#[cfg(not(target_arch = "wasm32"))]
+pub use self::bindings::{
+    capi_checksum160, capi_checksum256, capi_checksum512, capi_name,
+    capi_public_key, capi_signature, int128_t, uint128_t,
+};
+
+#[cfg(not(target_arch = "wasm32"))]
+mod mock_bindings;
+
+#[cfg(not(target_arch = "wasm32"))]
+pub use self::mock_bindings::*;
+
 pub use std::ffi::*;
 pub type c_char = c_uchar;
 pub type c_int = i32;
