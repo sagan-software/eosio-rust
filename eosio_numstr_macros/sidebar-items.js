@@ -1,1 +1,1 @@
-initSidebarItems({"macro":[["n",""],["s",""]]});
+initSidebarItems({"macro":[["n","Macro for converting EOSIO names into `u64` representations at compile time."],["s","Macro for converting EOSIO symbols into `u64` representations at compile time."]]});

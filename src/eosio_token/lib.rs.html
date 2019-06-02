@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `eosio_contracts\eosio_token\src\lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../eosio_token/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `eosio_contracts\eosio_token\src\lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../eosio_token/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -271,13 +271,13 @@
     <span class="ident">require_auth</span>(<span class="ident">_self</span>);
 
     <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="ident">max_supply</span>.<span class="ident">symbol</span>;
-    <span class="ident">check</span>(<span class="ident">symbol</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid symbol name&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">max_supply</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid supply&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">max_supply</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;max-supply must be positive&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">symbol</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid symbol name&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">max_supply</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid supply&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">max_supply</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;max-supply must be positive&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">symbol_code</span> <span class="op">=</span> <span class="ident">symbol</span>.<span class="ident">code</span>();
     <span class="kw">let</span> <span class="ident">stats_table</span> <span class="op">=</span> <span class="ident">CurrencyStats</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">symbol_code</span>);
-    <span class="ident">check</span>(
+    <span class="macro">assert</span><span class="macro">!</span>(
         <span class="ident">stats_table</span>.<span class="ident">find</span>(<span class="ident">symbol_code</span>).<span class="ident">is_none</span>(),
         <span class="string">&quot;token with symbol already exists&quot;</span>,
     );
@@ -288,37 +288,37 @@
         <span class="ident">issuer</span>,
     };
 
-    <span class="ident">stats_table</span>.<span class="ident">emplace</span>(<span class="ident">_self</span>, <span class="kw-2">&amp;</span><span class="ident">stats</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+    <span class="ident">stats_table</span>.<span class="ident">emplace</span>(<span class="ident">_self</span>, <span class="kw-2">&amp;</span><span class="ident">stats</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
 }
 
 <span class="attribute">#[<span class="ident">eosio</span>::<span class="ident">action</span>]</span>
 <span class="kw">fn</span> <span class="ident">issue</span>(<span class="ident">to</span>: <span class="ident">AccountName</span>, <span class="ident">quantity</span>: <span class="ident">Asset</span>, <span class="ident">memo</span>: <span class="ident">String</span>) {
     <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="ident">quantity</span>.<span class="ident">symbol</span>;
-    <span class="ident">check</span>(<span class="ident">symbol</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid symbol name&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">memo</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>, <span class="string">&quot;memo has more than 256 bytes&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">symbol</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid symbol name&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">memo</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>, <span class="string">&quot;memo has more than 256 bytes&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">_self</span> <span class="op">=</span> <span class="ident">current_receiver</span>();
     <span class="kw">let</span> <span class="ident">symbol_code</span> <span class="op">=</span> <span class="ident">symbol</span>.<span class="ident">code</span>();
     <span class="kw">let</span> <span class="ident">stats_table</span> <span class="op">=</span> <span class="ident">CurrencyStats</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">symbol_code</span>);
     <span class="kw">let</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="ident">stats_table</span>
         .<span class="ident">find</span>(<span class="ident">symbol_code</span>)
-        .<span class="ident">check</span>(<span class="string">&quot;token with symbol does not exist, create token before issue&quot;</span>);
+        .<span class="ident">expect</span>(<span class="string">&quot;token with symbol does not exist, create token before issue&quot;</span>);
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
     <span class="ident">require_auth</span>(<span class="ident">st</span>.<span class="ident">issuer</span>);
-    <span class="ident">check</span>(<span class="ident">quantity</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid quantity&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;must issue positive quantity&quot;</span>);
-    <span class="ident">check</span>(
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">quantity</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid quantity&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;must issue positive quantity&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(
         <span class="ident">quantity</span>.<span class="ident">symbol</span> <span class="op">==</span> <span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">symbol</span>,
         <span class="string">&quot;symbol precision mismatch&quot;</span>,
     );
-    <span class="ident">check</span>(
+    <span class="macro">assert</span><span class="macro">!</span>(
         <span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&lt;=</span> <span class="ident">st</span>.<span class="ident">max_supply</span>.<span class="ident">amount</span> <span class="op">-</span> <span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">amount</span>,
         <span class="string">&quot;quantity exceeds available supply&quot;</span>,
     );
 
     <span class="ident">st</span>.<span class="ident">supply</span> <span class="op">+=</span> <span class="ident">quantity</span>;
-    <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="ident">st</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+    <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="ident">st</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
 
     <span class="ident">add_balance</span>(<span class="ident">st</span>.<span class="ident">issuer</span>, <span class="ident">quantity</span>, <span class="ident">st</span>.<span class="ident">issuer</span>);
 
@@ -336,58 +336,58 @@
                 <span class="ident">permission</span>: <span class="macro">n</span><span class="macro">!</span>(<span class="ident">active</span>).<span class="ident">into</span>(),
             }],
         ))
-        .<span class="ident">check</span>(<span class="string">&quot;failed to send inline action&quot;</span>);
+        .<span class="ident">expect</span>(<span class="string">&quot;failed to send inline action&quot;</span>);
     }
 }
 
 <span class="attribute">#[<span class="ident">eosio</span>::<span class="ident">action</span>]</span>
 <span class="kw">fn</span> <span class="ident">retire</span>(<span class="ident">quantity</span>: <span class="ident">Asset</span>, <span class="ident">memo</span>: <span class="ident">String</span>) {
     <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="ident">quantity</span>.<span class="ident">symbol</span>;
-    <span class="ident">check</span>(<span class="ident">symbol</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid symbol name&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">memo</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>, <span class="string">&quot;memo has more than 256 bytes&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">symbol</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid symbol name&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">memo</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>, <span class="string">&quot;memo has more than 256 bytes&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">_self</span> <span class="op">=</span> <span class="ident">current_receiver</span>();
     <span class="kw">let</span> <span class="ident">symbol_code</span> <span class="op">=</span> <span class="ident">symbol</span>.<span class="ident">code</span>();
     <span class="kw">let</span> <span class="ident">stats_table</span> <span class="op">=</span> <span class="ident">CurrencyStats</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">symbol_code</span>);
     <span class="kw">let</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="ident">stats_table</span>
         .<span class="ident">find</span>(<span class="ident">symbol_code</span>)
-        .<span class="ident">check</span>(<span class="string">&quot;token with symbol does not exist&quot;</span>);
+        .<span class="ident">expect</span>(<span class="string">&quot;token with symbol does not exist&quot;</span>);
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">check</span>(<span class="string">&quot;error reading stats table&quot;</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">expect</span>(<span class="string">&quot;error reading stats table&quot;</span>);
     <span class="ident">require_auth</span>(<span class="ident">st</span>.<span class="ident">issuer</span>);
-    <span class="ident">check</span>(<span class="ident">quantity</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid quantity&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;must retire positive quantity&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">symbol</span> <span class="op">==</span> <span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">symbol</span>, <span class="string">&quot;symbol precision mismatch&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">quantity</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid quantity&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;must retire positive quantity&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">symbol</span> <span class="op">==</span> <span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">symbol</span>, <span class="string">&quot;symbol precision mismatch&quot;</span>);
 
     <span class="ident">st</span>.<span class="ident">supply</span> <span class="op">-=</span> <span class="ident">quantity</span>;
-    <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="ident">st</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+    <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="ident">st</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
     <span class="ident">sub_balance</span>(<span class="ident">st</span>.<span class="ident">issuer</span>, <span class="ident">quantity</span>);
 }
 
 <span class="attribute">#[<span class="ident">eosio</span>::<span class="ident">action</span>]</span>
 <span class="kw">fn</span> <span class="ident">transfer</span>(<span class="ident">from</span>: <span class="ident">AccountName</span>, <span class="ident">to</span>: <span class="ident">AccountName</span>, <span class="ident">quantity</span>: <span class="ident">Asset</span>, <span class="ident">memo</span>: <span class="ident">String</span>) {
-    <span class="ident">check</span>(<span class="ident">from</span> <span class="op">!=</span> <span class="ident">to</span>, <span class="string">&quot;cannot transfer to self&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">from</span> <span class="op">!=</span> <span class="ident">to</span>, <span class="string">&quot;cannot transfer to self&quot;</span>);
     <span class="ident">require_auth</span>(<span class="ident">from</span>);
-    <span class="ident">check</span>(<span class="ident">is_account</span>(<span class="ident">to</span>), <span class="string">&quot;to account does not exist&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">is_account</span>(<span class="ident">to</span>), <span class="string">&quot;to account does not exist&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">_self</span> <span class="op">=</span> <span class="ident">current_receiver</span>();
     <span class="kw">let</span> <span class="ident">symbol_code</span> <span class="op">=</span> <span class="ident">quantity</span>.<span class="ident">symbol</span>.<span class="ident">code</span>();
     <span class="kw">let</span> <span class="ident">stats_table</span> <span class="op">=</span> <span class="ident">CurrencyStats</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">symbol_code</span>);
     <span class="kw">let</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="ident">stats_table</span>
         .<span class="ident">find</span>(<span class="ident">symbol_code</span>)
-        .<span class="ident">check</span>(<span class="string">&quot;token with symbol does not exist&quot;</span>);
-    <span class="kw">let</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
+        .<span class="ident">expect</span>(<span class="string">&quot;token with symbol does not exist&quot;</span>);
+    <span class="kw">let</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
 
     <span class="ident">require_recipient</span>(<span class="ident">from</span>);
     <span class="ident">require_recipient</span>(<span class="ident">to</span>);
 
-    <span class="ident">check</span>(<span class="ident">quantity</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid quantity&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;must transfer positive quantity&quot;</span>);
-    <span class="ident">check</span>(
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">quantity</span>.<span class="ident">is_valid</span>(), <span class="string">&quot;invalid quantity&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">quantity</span>.<span class="ident">amount</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;must transfer positive quantity&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(
         <span class="ident">quantity</span>.<span class="ident">symbol</span> <span class="op">==</span> <span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">symbol</span>,
         <span class="string">&quot;symbol precision mismatch&quot;</span>,
     );
-    <span class="ident">check</span>(<span class="ident">memo</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>, <span class="string">&quot;memo has more than 256 bytes&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">memo</span>.<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>, <span class="string">&quot;memo has more than 256 bytes&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">payer</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">has_auth</span>(<span class="ident">to</span>) { <span class="ident">to</span> } <span class="kw">else</span> { <span class="ident">from</span> };
 
@@ -401,12 +401,12 @@
     <span class="kw">let</span> <span class="ident">table</span> <span class="op">=</span> <span class="ident">Account</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">owner</span>);
     <span class="kw">let</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="ident">table</span>
         .<span class="ident">find</span>(<span class="ident">value</span>.<span class="ident">symbol</span>.<span class="ident">code</span>())
-        .<span class="ident">check</span>(<span class="string">&quot;no balance object found&quot;</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">from</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">from</span>.<span class="ident">balance</span>.<span class="ident">amount</span> <span class="op">&gt;=</span> <span class="ident">value</span>.<span class="ident">amount</span>, <span class="string">&quot;overdrawn balance&quot;</span>);
+        .<span class="ident">expect</span>(<span class="string">&quot;no balance object found&quot;</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">from</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">from</span>.<span class="ident">balance</span>.<span class="ident">amount</span> <span class="op">&gt;=</span> <span class="ident">value</span>.<span class="ident">amount</span>, <span class="string">&quot;overdrawn balance&quot;</span>);
 
     <span class="ident">from</span>.<span class="ident">balance</span> <span class="op">-=</span> <span class="ident">value</span>;
-    <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="ident">from</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+    <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">None</span>, <span class="kw-2">&amp;</span><span class="ident">from</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;contract&quot;</span>)]</span>
@@ -416,13 +416,13 @@
     <span class="kw">let</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="ident">accounts_table</span>.<span class="ident">find</span>(<span class="ident">value</span>.<span class="ident">symbol</span>.<span class="ident">code</span>());
     <span class="kw">match</span> <span class="ident">cursor</span> {
         <span class="prelude-val">Some</span>(<span class="ident">cursor</span>) <span class="op">=&gt;</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">get</span>().<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
             <span class="ident">account</span>.<span class="ident">balance</span> <span class="op">+=</span> <span class="ident">value</span>;
-            <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">Some</span>(<span class="ident">ram_payer</span>), <span class="kw-2">&amp;</span><span class="ident">account</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+            <span class="ident">cursor</span>.<span class="ident">modify</span>(<span class="prelude-val">Some</span>(<span class="ident">ram_payer</span>), <span class="kw-2">&amp;</span><span class="ident">account</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
         }
         <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
             <span class="kw">let</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">Account</span> { <span class="ident">balance</span>: <span class="ident">value</span> };
-            <span class="ident">accounts_table</span>.<span class="ident">emplace</span>(<span class="ident">ram_payer</span>, <span class="kw-2">&amp;</span><span class="ident">account</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+            <span class="ident">accounts_table</span>.<span class="ident">emplace</span>(<span class="ident">ram_payer</span>, <span class="kw-2">&amp;</span><span class="ident">account</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
         }
     }
 }
@@ -436,17 +436,17 @@
     <span class="kw">let</span> <span class="ident">stats_table</span> <span class="op">=</span> <span class="ident">CurrencyStats</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">symbol_code</span>);
     <span class="kw">let</span> <span class="ident">st</span> <span class="op">=</span> <span class="ident">stats_table</span>
         .<span class="ident">find</span>(<span class="ident">symbol_code</span>)
-        .<span class="ident">check</span>(<span class="string">&quot;symbol does not exist&quot;</span>)
+        .<span class="ident">expect</span>(<span class="string">&quot;symbol does not exist&quot;</span>)
         .<span class="ident">get</span>()
-        .<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
-    <span class="ident">check</span>(<span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">symbol</span> <span class="op">==</span> <span class="ident">symbol</span>, <span class="string">&quot;symbol precision mismatch&quot;</span>);
+        .<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">st</span>.<span class="ident">supply</span>.<span class="ident">symbol</span> <span class="op">==</span> <span class="ident">symbol</span>, <span class="string">&quot;symbol precision mismatch&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">accts_table</span> <span class="op">=</span> <span class="ident">Account</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">owner</span>);
     <span class="kw">if</span> <span class="ident">accts_table</span>.<span class="ident">find</span>(<span class="ident">symbol_code</span>).<span class="ident">is_none</span>() {
         <span class="kw">let</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">Account</span> {
             <span class="ident">balance</span>: <span class="ident">Asset</span> { <span class="ident">amount</span>: <span class="number">0</span>, <span class="ident">symbol</span> },
         };
-        <span class="ident">accts_table</span>.<span class="ident">emplace</span>(<span class="ident">ram_payer</span>, <span class="kw-2">&amp;</span><span class="ident">account</span>).<span class="ident">check</span>(<span class="string">&quot;write&quot;</span>);
+        <span class="ident">accts_table</span>.<span class="ident">emplace</span>(<span class="ident">ram_payer</span>, <span class="kw-2">&amp;</span><span class="ident">account</span>).<span class="ident">expect</span>(<span class="string">&quot;write&quot;</span>);
     }
 }
 
@@ -457,13 +457,13 @@
     <span class="kw">let</span> <span class="ident">accts_table</span> <span class="op">=</span> <span class="ident">Account</span>::<span class="ident">table</span>(<span class="ident">_self</span>, <span class="ident">owner</span>);
     <span class="kw">let</span> <span class="ident">accts_cursor</span> <span class="op">=</span> <span class="ident">accts_table</span>
         .<span class="ident">find</span>(<span class="ident">symbol</span>.<span class="ident">code</span>())
-        .<span class="ident">check</span>(<span class="string">&quot;Balance row already deleted or never existed. Action won&#39;t have any effect.&quot;</span>);
-    <span class="kw">let</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">accts_cursor</span>.<span class="ident">get</span>().<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
-    <span class="ident">check</span>(
+        .<span class="ident">expect</span>(<span class="string">&quot;Balance row already deleted or never existed. Action won&#39;t have any effect.&quot;</span>);
+    <span class="kw">let</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">accts_cursor</span>.<span class="ident">get</span>().<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(
         <span class="ident">account</span>.<span class="ident">balance</span>.<span class="ident">amount</span> <span class="op">==</span> <span class="number">0</span>,
         <span class="string">&quot;Cannot close because the balance is not zero.&quot;</span>,
     );
-    <span class="ident">accts_cursor</span>.<span class="ident">erase</span>().<span class="ident">check</span>(<span class="string">&quot;read&quot;</span>);
+    <span class="ident">accts_cursor</span>.<span class="ident">erase</span>().<span class="ident">expect</span>(<span class="string">&quot;read&quot;</span>);
 }
 
 <span class="ident">eosio</span>::<span class="macro">abi</span><span class="macro">!</span>(<span class="ident">create</span>, <span class="ident">issue</span>, <span class="ident">transfer</span>, <span class="ident">open</span>, <span class="ident">close</span>, <span class="ident">retire</span>);
