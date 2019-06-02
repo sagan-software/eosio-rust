@@ -20,6 +20,7 @@
 //! assert_eq!(symbol, 1397703940);
 //! assert_eq!(symbol_to_string(symbol), "EOS");
 //! ```
+#![allow(clippy::module_name_repetitions)]
 
 mod name;
 mod symbol;

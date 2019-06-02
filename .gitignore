@@ -1,4 +1,4 @@
-/target
+target
 .DS_Store
 *_gc.wasm
 *_gc_opt.wasm

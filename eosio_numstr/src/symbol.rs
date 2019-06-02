@@ -1,23 +1,29 @@
+//! Types and functions related to parsing/formating EOSIO symbols.
+use std::convert::TryFrom;
 use std::error::Error;
 use std::fmt;
 
-/// All possible characters that can be used in EOSIO symbol names.
+/// All possible characters that can be used in EOSIO symbol codes.
 pub const SYMBOL_UTF8_CHARS: [u8; 26] = *b"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-/// The maximum allowed length of EOSIO symbol names.
+/// The maximum allowed length of EOSIO symbol codes.
 pub const SYMBOL_LEN_MAX: usize = 7;
 
-/// An error which can be returned when parsing an EOSIO name.
+/// An error which can be returned when parsing an EOSIO symbol.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParseSymbolError {
+    /// Empty strings are not valid symbols.
     IsEmpty,
+    /// Symbols must be 7 characters or less.
     TooLong,
+    /// Symbols can only contain uppercase letters A-Z.
     BadChar(char),
 }
 
 impl Error for ParseSymbolError {}
 
 impl fmt::Display for ParseSymbolError {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             ParseSymbolError::IsEmpty => write!(f, "symbol is empty"),
@@ -46,6 +52,7 @@ impl fmt::Display for ParseSymbolError {
 /// assert_eq!(symbol_from_str(0, "TESTING"), Ok(5138124851399447552));
 /// assert_eq!(symbol_from_str(0, "TESTINGG"), Err(ParseSymbolError::TooLong));
 /// ```
+#[inline]
 pub fn symbol_from_str(
     precision: u8,
     value: &str,
@@ -66,6 +73,7 @@ pub fn symbol_from_str(
 /// assert_eq!(symbol_from_chars(0, "TESTING".chars()), Ok(5138124851399447552));
 /// assert_eq!(symbol_from_chars(0, "TESTINGG".chars()), Err(ParseSymbolError::TooLong));
 /// ```
+#[inline]
 pub fn symbol_from_chars<I>(
     precision: u8,
     chars: I,
@@ -103,6 +111,7 @@ where
 /// assert_eq!(symbol_to_string(1398362882), "SYS");
 /// assert_eq!(symbol_to_string(0), "");
 /// ```
+#[inline]
 pub fn symbol_to_string(name: u64) -> String {
     String::from_utf8_lossy(&symbol_to_utf8(name)).trim().into()
 }
@@ -119,6 +128,7 @@ pub fn symbol_to_string(name: u64) -> String {
 /// assert_eq!(symbol_to_utf8(1398362882), *b"SYS    ");
 /// assert_eq!(symbol_to_utf8(0), *b"       ");
 /// ```
+#[inline]
 pub fn symbol_to_utf8(value: u64) -> [u8; SYMBOL_LEN_MAX] {
     let mask: u64 = 0xff;
     let mut chars = [b' '; SYMBOL_LEN_MAX];
@@ -128,7 +138,7 @@ pub fn symbol_to_utf8(value: u64) -> [u8; SYMBOL_LEN_MAX] {
         if v == 0 {
             break;
         }
-        *c = (v & mask) as u8;
+        *c = u8::try_from(v & mask).unwrap_or_default();
     }
     chars
 }
@@ -143,8 +153,9 @@ pub fn symbol_to_utf8(value: u64) -> [u8; SYMBOL_LEN_MAX] {
 /// assert_eq!(symbol_precision(1398362882), 2); // 2,SYS
 /// assert_eq!(symbol_precision(5138124851399447552), 0); // 0,TESTING
 /// ```
+#[inline]
 pub fn symbol_precision(value: u64) -> u8 {
-    (value & 255) as u8 // TODO overflow protection
+    u8::try_from(value & 255).unwrap_or_default()
 }
 
 /// Gets an EOSIO symbol's code.
@@ -157,7 +168,8 @@ pub fn symbol_precision(value: u64) -> u8 {
 /// assert_eq!(symbol_code(1398362882), 5462355); // 2,SYS
 /// assert_eq!(symbol_code(5138124851399447552), 20070800200779092); // 0,TESTING
 /// ```
-pub fn symbol_code(value: u64) -> u64 {
+#[inline]
+pub const fn symbol_code(value: u64) -> u64 {
     value >> 8
 }
 
@@ -171,6 +183,7 @@ pub fn symbol_code(value: u64) -> u64 {
 /// assert_eq!(symbol_code_length(1398362882), 3); // 2,SYS
 /// assert_eq!(symbol_code_length(5138124851399447552), 7); // 0,TESTING
 /// ```
+#[inline]
 pub fn symbol_code_length(symbol: u64) -> usize {
     let mut sym = symbol;
     sym >>= 8; // skip precision

@@ -39,5 +39,19 @@ fn symbol_from_str(c: &mut Criterion) {
     );
 }
 
-criterion_group!(benches, name_from_str, name_to_string, symbol_from_str);
+fn symbol_to_string(c: &mut Criterion) {
+    c.bench_function_over_inputs(
+        "symbol_to_string",
+        |b, input| b.iter(|| eosio_numstr::symbol_to_string(black_box(*input))),
+        vec![0, 1397703940, 5138124851399447552],
+    );
+}
+
+criterion_group!(
+    benches,
+    name_from_str,
+    name_to_string,
+    symbol_from_str,
+    symbol_to_string
+);
 criterion_main!(benches);
