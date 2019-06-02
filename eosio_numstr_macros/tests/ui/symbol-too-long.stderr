@@ -1,0 +1,7 @@
+error: unexpected end of input, symbol is too long, must be 7 chars or less
+ --> $DIR/symbol-too-long.rs:6:13
+  |
+6 |     let _ = s!(4, ABCDEFGH);
+  |             ^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in a macro outside of the current crate (in Nightly builds, run with -Z external-macro-backtrace for more info)
