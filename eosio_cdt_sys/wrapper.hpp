@@ -1,5 +1,5 @@
-typedef unsigned __int128    uint128_t;
-typedef __int128             int128_t;
+typedef unsigned __int128 uint128_t;
+typedef __int128 int128_t;
 
 #include <eosiolib/capi/eosio/types.h>
 #include <eosiolib/capi/eosio/action.h>

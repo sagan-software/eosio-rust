@@ -1,6 +1,26 @@
+//! This crate provides low-level FFI bindings for EOSIO smart contract
+//! development. Bindings are automatically generated with [`bindgen`]
+//! from header files in the [`EOSIO/eosio.cdt`] repository.
+//!
+//! For more idiomatic Rust wrappers please see the [`eosio`] and
+//! [`eosio_cdt`] crates.
+//!
+//! [`bindgen`]: https://github.com/rust-lang/rust-bindgen
+//! [`EOSIO/eosio.cdt`]: https://github.com/EOSIO/eosio.cdt
+//! [`eosio`]: https://crates.io/crates/eosio
+//! [`eosio_cdt`]: https://crates.io/crates/eosio_cdt
+
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![allow(improper_ctypes)]
+#![allow(dead_code)]
+#![allow(clippy::missing_docs_in_private_items)]
+#![allow(clippy::missing_inline_in_public_items)]
+#![allow(clippy::missing_const_for_fn)]
+#![allow(clippy::op_ref)]
+#![allow(clippy::use_self)]
+#![allow(clippy::unseparated_literal_suffix)]
 
 mod bindings;
 
@@ -19,41 +39,6 @@ mod mock_bindings;
 #[cfg(not(target_arch = "wasm32"))]
 pub use self::mock_bindings::*;
 
-pub use std::ffi::*;
-pub type c_char = c_uchar;
+pub use std::ffi::c_void;
+pub type c_char = u8;
 pub type c_int = i32;
-pub type c_uint = u32;
-pub type c_long = i32;
-pub type c_ulong = u32;
-pub type int8_t = i8;
-pub type int16_t = i16;
-pub type int32_t = i32;
-pub type int64_t = i64;
-pub type uint8_t = u8;
-pub type uint16_t = u16;
-pub type uint32_t = u32;
-pub type uint64_t = u64;
-pub type c_schar = i8;
-pub type c_short = i16;
-pub type c_longlong = i64;
-pub type c_uchar = u8;
-pub type c_ushort = u16;
-pub type c_ulonglong = u64;
-pub type c_float = f32;
-pub type c_double = f64;
-pub type intmax_t = i64;
-pub type uintmax_t = u64;
-pub type size_t = usize;
-pub type ptrdiff_t = isize;
-pub type intptr_t = isize;
-pub type uintptr_t = usize;
-pub type ssize_t = isize;
-
-#[repr(u8)]
-pub enum c_void {
-    // Two dummy variants so the #[repr] attribute can be used.
-    #[doc(hidden)]
-    __variant1,
-    #[doc(hidden)]
-    __variant2,
-}
