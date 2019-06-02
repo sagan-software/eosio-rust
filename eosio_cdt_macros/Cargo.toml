@@ -9,6 +9,6 @@ internal = ["eosio_cdt_macros_impl/internal"]
 contract = ["eosio_cdt_macros_impl/contract"]
 
 [dependencies]
-eosio_cdt_macros_impl = { path = "./impl" }
+eosio_cdt_macros_impl = { path = "../eosio_cdt_macros_impl" }
 proc-macro-hack = "0.5"
 proc-macro-nested = "0.1"

@@ -1,12 +1,35 @@
 [package]
 name = "eosio_numstr_macros"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT/Apache-2.0"
-description = "Library for building EOSIO smart contracts"
+description = "Macros for creating compile-time EOSIO names and symbols."
 edition = "2018"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = [
+    "algorithms",
+    "cryptography::cryptocurrencies",
+    "encoding",
+    "parsing",
+    "value-formatting"
+]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio_numstr_macros/"
+readme = "README.md"
+include = [
+    "Cargo.toml",
+    "src/**/*.rs",
+    "README.md",
+    "LICENSE-APACHE",
+    "LICENSE-MIT"
+]
+
+[badges]
+maintenance = { status = "actively-developed" }
+travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
 [dependencies]
-eosio_numstr_macros_impl = { path = "./impl" }
+eosio_numstr_macros_impl = { path = "../eosio_numstr_macros_impl" }
 proc-macro-hack = "0.5"
 proc-macro-nested = "0.1"

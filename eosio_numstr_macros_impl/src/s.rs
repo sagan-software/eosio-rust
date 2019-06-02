@@ -2,6 +2,7 @@ use crate::proc_macro::TokenStream;
 use eosio_numstr::{symbol_from_str, ParseSymbolError};
 use proc_macro2::{Literal, TokenTree};
 use quote::{quote, ToTokens, TokenStreamExt};
+use std::convert::TryFrom;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{parse_macro_input, LitInt, Token};
 
@@ -26,8 +27,19 @@ impl Parse for EosioSymbol {
             code += &segment;
         }
 
-        symbol_from_str(precision as u8, code.as_str())
-            .map(EosioSymbol)
+        let precision = match u8::try_from(precision) {
+            Ok(p) => p,
+            Err(_) => {
+                return Err(input.error(format!(
+                    "precision of {} is too large; must be <= {}",
+                    precision,
+                    u8::max_value()
+                )))
+            }
+        };
+
+        symbol_from_str(precision, code.as_str())
+            .map(Self)
             .map_err(|e| {
                 let message = match e {
                     ParseSymbolError::IsEmpty =>

@@ -14,7 +14,7 @@ members = [
     "eosio_bytes_derive",
     "eosio_cdt",
     "eosio_cdt_macros",
-    "eosio_cdt_macros/impl",
+    "eosio_cdt_macros_impl",
     "eosio_cdt_sys",
     # "eosio_cli", TODO re-enable
     # "eosio_contracts/eosio_system",
@@ -22,7 +22,7 @@ members = [
     "eosio_core",
     "eosio_numstr",
     "eosio_numstr_macros",
-    "eosio_numstr_macros/impl",
+    "eosio_numstr_macros_impl",
     # "eosio_rpc",
     "examples/addressbook",
     "examples/hello_bare",
