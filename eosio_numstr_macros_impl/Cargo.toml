@@ -1,13 +1,27 @@
 [package]
 name = "eosio_numstr_macros_impl"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Liam Curry <liam@sagan.software>"]
-license = "MIT/Apache-2.0"
-description = "Procedural macros for EOSIO smart contract development"
+license = "MIT OR Apache-2.0"
+description = "Internal use only."
 edition = "2018"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = ["development-tools::procedural-macro-helpers"]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio_numstr_macros_impl/"
+readme = "README.md"
+include = [
+    "/Cargo.toml",
+    "/src/**/*.rs",
+    "/README.md",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT"
+]
 
 [lib]
 proc-macro = true
+path = "src/lib.rs"
 
 [dependencies]
 syn = "0.15"

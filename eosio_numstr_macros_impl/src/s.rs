@@ -1,5 +1,5 @@
 use crate::proc_macro::TokenStream;
-use eosio_numstr::{symbol_from_str, ParseSymbolError};
+use eosio_numstr::symbol_from_str;
 use proc_macro2::{Literal, TokenTree};
 use quote::{quote, ToTokens, TokenStreamExt};
 use std::convert::TryFrom;
@@ -7,10 +7,6 @@ use syn::parse::{Parse, ParseStream, Result};
 use syn::{parse_macro_input, LitInt, Token};
 
 struct EosioSymbol(u64);
-
-fn accept_char_in_symbol_code(ch: char) -> bool {
-    ch >= 'A' && ch <= 'Z'
-}
 
 impl Parse for EosioSymbol {
     fn parse(input: ParseStream) -> Result<Self> {
@@ -20,9 +16,6 @@ impl Parse for EosioSymbol {
         let mut code = String::new();
         while !input.is_empty() {
             let segment = input.fork().parse::<TokenTree>()?.to_string();
-            if !segment.chars().all(accept_char_in_symbol_code) {
-                break;
-            }
             input.parse::<TokenTree>()?;
             code += &segment;
         }
@@ -40,17 +33,7 @@ impl Parse for EosioSymbol {
 
         symbol_from_str(precision, code.as_str())
             .map(Self)
-            .map_err(|e| {
-                let message = match e {
-                    ParseSymbolError::IsEmpty =>
-                        "symbol is empty. EOSIO symbols must be 1-7 characters long".to_string(),
-                    ParseSymbolError::TooLong =>
-                        "symbol is too long. EOSIO symbols must be 7 characters or less".to_string(),
-                    ParseSymbolError::BadChar(c) =>
-                        format!("symbol has bad character '{}'. EOSIO symbols can only contain uppercase letters A-Z", c),
-                };
-                input.error(message)
-            })
+            .map_err(|e| input.error(e))
     }
 }
 
