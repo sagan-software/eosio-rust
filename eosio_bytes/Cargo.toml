@@ -1,13 +1,27 @@
 [package]
 name = "eosio_bytes"
-version = "0.1.0"
+version = "0.2.1"
 authors = ["Liam Curry <liam@sagan.software>"]
+license = "MIT OR Apache-2.0"
 edition = "2018"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+description = "Types and traits for handling bytes in EOSIO smart contracts."
+categories = [
+    "cryptography::cryptocurrencies",
+    "encoding",
+    "parsing"
+]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio_bytes/"
+readme = "README.md"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[badges]
+maintenance = { status = "actively-developed" }
+travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
 [dependencies]
-eosio_bytes_derive = { path = "../eosio_bytes_derive", optional = true }
+eosio_bytes_derive = { version = "0.2", path = "../eosio_bytes_derive", optional = true }
 
 [features]
 default = ["derive"]
@@ -15,3 +29,10 @@ derive = ["eosio_bytes_derive"]
 internal-use-only-root-path-is-eosio = [
     "eosio_bytes_derive/internal-use-only-root-path-is-eosio"
 ]
+
+[dev-dependencies]
+criterion = "0.2"
+
+[[bench]]
+name = "bench_main"
+harness = false
