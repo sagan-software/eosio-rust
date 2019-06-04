@@ -74,7 +74,10 @@
 <span id="74">74</span>
 <span id="75">75</span>
 <span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! Derive `NumBytes`.</span>
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
 <span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">quote</span>, <span class="ident">quote_spanned</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">spanned</span>::<span class="ident">Spanned</span>;
@@ -83,6 +86,7 @@
     <span class="ident">Index</span>,
 };
 
+<span class="doccomment">/// Expand input</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">parse_macro_input</span><span class="macro">!</span>(<span class="ident">input</span> <span class="kw">as</span> <span class="ident">DeriveInput</span>);
     <span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">root_path</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>);

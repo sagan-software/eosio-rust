@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ReadError",""],["WriteError",""]],"trait":[["NumBytes",""],["Read",""],["Write",""]]});
+initSidebarItems({"enum":[["ReadError","Error that can be returned when reading bytes."],["WriteError","Error that can be returned when writing bytes."]],"trait":[["NumBytes","Count the number of bytes a type is expected to use."],["Read","Read bytes."],["Write","Write bytes."]]});

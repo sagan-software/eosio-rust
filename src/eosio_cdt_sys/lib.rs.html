@@ -42,25 +42,30 @@
 <span id="42">42</span>
 <span id="43">43</span>
 <span id="44">44</span>
-<span id="45">45</span>
-<span id="46">46</span>
-<span id="47">47</span>
-<span id="48">48</span>
-<span id="49">49</span>
-<span id="50">50</span>
-<span id="51">51</span>
-<span id="52">52</span>
-<span id="53">53</span>
-<span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! This crate provides low-level FFI bindings for EOSIO smart contract</span>
+<span class="doccomment">//! development. Bindings are automatically generated with [`bindgen`]</span>
+<span class="doccomment">//! from header files in the [`EOSIO/eosio.cdt`] repository.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! For more idiomatic Rust wrappers please see the [`eosio`] and</span>
+<span class="doccomment">//! [`eosio_cdt`] crates.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [`bindgen`]: https://github.com/rust-lang/rust-bindgen</span>
+<span class="doccomment">//! [`EOSIO/eosio.cdt`]: https://github.com/EOSIO/eosio.cdt</span>
+<span class="doccomment">//! [`eosio`]: https://crates.io/crates/eosio</span>
+<span class="doccomment">//! [`eosio_cdt`]: https://crates.io/crates/eosio_cdt</span>
+
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">non_upper_case_globals</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">non_snake_case</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">improper_ctypes</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">missing_docs_in_private_items</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">missing_inline_in_public_items</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">missing_const_for_fn</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">op_ref</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">use_self</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">unseparated_literal_suffix</span>)]</span>
 
 <span class="kw">mod</span> <span class="ident">bindings</span>;
 
@@ -79,43 +84,8 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">mock_bindings</span>::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_char</span> <span class="op">=</span> <span class="ident">c_uchar</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">c_void</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_char</span> <span class="op">=</span> <span class="ident">u8</span>;
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_int</span> <span class="op">=</span> <span class="ident">i32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_uint</span> <span class="op">=</span> <span class="ident">u32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_long</span> <span class="op">=</span> <span class="ident">i32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_ulong</span> <span class="op">=</span> <span class="ident">u32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">int8_t</span> <span class="op">=</span> <span class="ident">i8</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">int16_t</span> <span class="op">=</span> <span class="ident">i16</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">int32_t</span> <span class="op">=</span> <span class="ident">i32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">int64_t</span> <span class="op">=</span> <span class="ident">i64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">uint8_t</span> <span class="op">=</span> <span class="ident">u8</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">uint16_t</span> <span class="op">=</span> <span class="ident">u16</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">uint32_t</span> <span class="op">=</span> <span class="ident">u32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">uint64_t</span> <span class="op">=</span> <span class="ident">u64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_schar</span> <span class="op">=</span> <span class="ident">i8</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_short</span> <span class="op">=</span> <span class="ident">i16</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_longlong</span> <span class="op">=</span> <span class="ident">i64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_uchar</span> <span class="op">=</span> <span class="ident">u8</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_ushort</span> <span class="op">=</span> <span class="ident">u16</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_ulonglong</span> <span class="op">=</span> <span class="ident">u64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_float</span> <span class="op">=</span> <span class="ident">f32</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">c_double</span> <span class="op">=</span> <span class="ident">f64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">intmax_t</span> <span class="op">=</span> <span class="ident">i64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">uintmax_t</span> <span class="op">=</span> <span class="ident">u64</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">size_t</span> <span class="op">=</span> <span class="ident">usize</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ptrdiff_t</span> <span class="op">=</span> <span class="ident">isize</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">intptr_t</span> <span class="op">=</span> <span class="ident">isize</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">uintptr_t</span> <span class="op">=</span> <span class="ident">usize</span>;
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ssize_t</span> <span class="op">=</span> <span class="ident">isize</span>;
-
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u8</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">c_void</span> {
-    <span class="comment">// Two dummy variants so the #[repr] attribute can be used.</span>
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="ident">__variant1</span>,
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="ident">__variant2</span>,
-}
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "eosio_cdt_sys";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
