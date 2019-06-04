@@ -1,3 +1,4 @@
+//! Derive `Write`.
 use crate::proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
@@ -6,6 +7,7 @@ use syn::{
     Index,
 };
 
+/// Expand input
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let root = crate::root_path(&input);

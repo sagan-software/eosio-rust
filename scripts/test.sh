@@ -9,6 +9,7 @@ DIR="$(dirname "$SOURCE")"
 
 cargo test \
     -p eosio_bytes \
+    -p eosio_bytes_derive \
     -p eosio_cdt_sys \
     -p eosio_core \
     -p eosio_numstr \
