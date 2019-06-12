@@ -1,4 +1,4 @@
-use eosio_core::TimePoint;
+use eosio_core::{TimePoint, TimePointSec};
 
 /// Gets the current time
 #[inline]
@@ -14,16 +14,16 @@ pub fn publication() -> TimePoint {
 
 /// Gets the expiration time
 #[inline]
-pub fn expiration() -> TimePoint {
+pub fn expiration() -> TimePointSec {
     let seconds = unsafe { ::eosio_cdt_sys::expiration() };
-    TimePoint::from_secs(i64::from(seconds))
+    seconds.into()
 }
 
 impl crate::print::Print for TimePoint {
     #[inline]
     fn print(&self) {
         "TimePoint(".print();
-        self.as_micros().print();
+        self.as_i64().print();
         ")".print();
     }
 }

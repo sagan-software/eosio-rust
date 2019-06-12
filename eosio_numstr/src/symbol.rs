@@ -18,6 +18,8 @@ pub enum ParseSymbolError {
     TooLong,
     /// Symbols can only contain uppercase letters A-Z.
     BadChar(char),
+    /// TODO docs
+    BadPrecision,
 }
 
 impl Error for ParseSymbolError {}
@@ -34,6 +36,9 @@ impl fmt::Display for ParseSymbolError {
             ),
             ParseSymbolError::BadChar(c) => {
                 write!(f, "symbol contains invalid character '{}'", c)
+            }
+            ParseSymbolError::BadPrecision => {
+                write!(f, "symbol precision is > 255")
             }
         }
     }

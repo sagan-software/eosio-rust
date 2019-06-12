@@ -1,17 +1,20 @@
-use crate::{AccountName, ScopeName, Symbol};
+//! TODO docs
+use crate::{AccountName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
-use std::convert::TryFrom;
 use std::fmt;
-use std::str::FromStr;
 
+/// TODO docs
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct ExtendedSymbol {
+    /// TODO docs
     pub symbol: Symbol,
+    /// TODO docs
     pub contract: AccountName,
 }
 
 impl fmt::Display for ExtendedSymbol {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}@{}", self.symbol, self.contract)
     }

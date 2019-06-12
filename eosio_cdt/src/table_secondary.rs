@@ -340,7 +340,7 @@ secondary_keys_converted!(
     u64, u16
     u64, u32
     f64, f32
-    u64, TimePoint
+    // u64, TimePoint
 );
 
 #[derive(Debug, Copy, Clone)]

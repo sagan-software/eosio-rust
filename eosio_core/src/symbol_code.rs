@@ -1,14 +1,15 @@
+//! TODO docs
+
 use crate::{ScopeName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{
-    symbol_code, symbol_from_str, symbol_to_string, symbol_to_utf8,
-};
+use eosio_numstr::{symbol_from_str, symbol_to_string, symbol_to_utf8};
 use std::convert::TryFrom;
 use std::fmt;
 use std::str::FromStr;
 
 pub use eosio_numstr::ParseSymbolError;
 
+/// TODO docs
 #[derive(
     Debug,
     PartialEq,
@@ -29,7 +30,7 @@ pub struct SymbolCode(u64);
 impl From<u64> for SymbolCode {
     #[inline]
     fn from(n: u64) -> Self {
-        SymbolCode(n)
+        Self(n)
     }
 }
 
@@ -71,8 +72,9 @@ impl fmt::Display for SymbolCode {
 }
 
 impl SymbolCode {
+    /// TODO docs
     #[inline]
-    pub fn is_valid(self) -> bool {
+    pub fn is_valid(&self) -> bool {
         let chars = symbol_to_utf8(self.0);
         for &c in &chars {
             if c == b' ' {
@@ -85,14 +87,16 @@ impl SymbolCode {
         true
     }
 
+    /// TODO docs
     #[inline]
-    pub const fn as_u64(self) -> u64 {
+    pub const fn as_u64(&self) -> u64 {
         self.0
     }
 }
 
 impl TryFrom<&str> for SymbolCode {
     type Error = ParseSymbolError;
+    #[inline]
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         let symbol: Symbol = symbol_from_str(0, value)?.into();
         Ok(symbol.code())
@@ -101,6 +105,7 @@ impl TryFrom<&str> for SymbolCode {
 
 impl TryFrom<String> for SymbolCode {
     type Error = ParseSymbolError;
+    #[inline]
     fn try_from(value: String) -> Result<Self, Self::Error> {
         Self::try_from(value.as_str())
     }
@@ -108,6 +113,7 @@ impl TryFrom<String> for SymbolCode {
 
 impl FromStr for SymbolCode {
     type Err = ParseSymbolError;
+    #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::try_from(s)
     }
@@ -116,7 +122,8 @@ impl FromStr for SymbolCode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use eosio_numstr_macros::{n, s};
+    use eosio_numstr::symbol_code;
+    use eosio_numstr_macros::s;
 
     macro_rules! test_to_string {
         ($($name:ident, $value:expr, $expected:expr)*) => ($(

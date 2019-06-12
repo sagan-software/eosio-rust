@@ -1,13 +1,32 @@
 [package]
 name = "eosio_core"
-version = "0.1.0"
+version = "0.2.1"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT OR Apache-2.0"
+description = "Core types and traits related to EOSIO blockchains"
+repository = "https://github.com/sagan-software/eosio-rust"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = [
+    "api-bindings",
+    "cryptography::cryptocurrencies",
+    "data-structures",
+    "parsing",
+    "value-formatting"
+]
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio_core/"
+readme = "README.md"
+include = [
+    "Cargo.toml",
+    "src/**/*.rs",
+    "README.md",
+    "LICENSE-APACHE",
+    "LICENSE-MIT"
+]
 
 [dependencies]
-eosio_bytes = { path = "../eosio_bytes" }
-eosio_numstr = { path = "../eosio_numstr" }
-eosio_numstr_macros = { path = "../eosio_numstr_macros" }
+eosio_bytes = { version = "0.2", path = "../eosio_bytes" }
+eosio_numstr = { version = "0.2", path = "../eosio_numstr" }
+eosio_numstr_macros = { version = "0.2", path = "../eosio_numstr_macros" }
 serde = { version = "1.0", features = ["derive"] }

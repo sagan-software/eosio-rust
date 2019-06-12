@@ -1,3 +1,4 @@
+//! TODO docs
 use crate::{AccountName, PermissionName};
 use eosio_bytes::*;
 use serde::{Deserialize, Serialize};
@@ -21,8 +22,8 @@ use serde::{Deserialize, Serialize};
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct Authorization {
-    /// Docs
+    /// TODO docs
     pub actor: AccountName,
-    /// Docs
+    /// TODO docs
     pub permission: PermissionName,
 }

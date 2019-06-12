@@ -1,15 +1,20 @@
+//! TODO docs
 use crate::{AccountName, Asset};
 use eosio_bytes::{NumBytes, Read, Write};
 use std::fmt;
 
+/// TODO docs
 #[derive(Debug, PartialEq, Clone, Copy, Default, NumBytes, Read, Write)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct ExtendedAsset {
+    /// TODO docs
     pub quantity: Asset,
+    /// TODO docs
     pub contract: AccountName,
 }
 
 impl fmt::Display for ExtendedAsset {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{} @ {}", self.quantity, self.contract)
     }

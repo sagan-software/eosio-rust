@@ -1,6 +1,7 @@
-use crate::{AccountName, ScopeName, SymbolCode};
+//! TODO docs
+use crate::SymbolCode;
 use eosio_bytes::{NumBytes, Read, Write};
-use eosio_numstr::{symbol_from_chars, symbol_from_str};
+use eosio_numstr::{symbol_code, symbol_from_chars, symbol_precision};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::fmt;
@@ -8,6 +9,7 @@ use std::str::FromStr;
 
 pub use eosio_numstr::ParseSymbolError;
 
+/// TODO docs
 #[derive(
     Debug,
     PartialEq,
@@ -28,35 +30,41 @@ pub use eosio_numstr::ParseSymbolError;
 pub struct Symbol(u64);
 
 impl Symbol {
+    /// TODO docs
     #[inline]
-    pub const fn new(precision: u64, code: SymbolCode) -> Self {
+    pub fn new(precision: u8, code: SymbolCode) -> Self {
         let mut value = code.as_u64();
-        value |= precision;
-        Symbol(value)
+        value |= u64::from(precision);
+        Self(value)
     }
 
+    /// TODO docs
     #[inline]
-    pub const fn precision(self) -> u64 {
-        self.0 & 255
+    pub fn precision(&self) -> u8 {
+        symbol_precision(self.as_u64())
     }
 
+    /// TODO docs
     #[inline]
-    pub fn code(self) -> SymbolCode {
-        SymbolCode::from(self.0 >> 8)
+    pub fn code(&self) -> SymbolCode {
+        symbol_code(self.as_u64()).into()
     }
 
+    /// TODO docs
     #[inline]
-    pub const fn as_u64(self) -> u64 {
+    pub const fn as_u64(&self) -> u64 {
         self.0
     }
 
+    /// TODO docs
     #[inline]
-    pub fn is_valid(self) -> bool {
+    pub fn is_valid(&self) -> bool {
         self.code().is_valid()
     }
 }
 
 impl fmt::Display for Symbol {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{},{}", self.precision(), self.code())
     }
@@ -64,15 +72,17 @@ impl fmt::Display for Symbol {
 
 impl FromStr for Symbol {
     type Err = ParseSymbolError;
+    #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let value = s.trim();
         let mut chars = value.chars();
 
-        let precision: u32 = match chars.next() {
+        let precision: u8 = match chars.next() {
             Some(c) => {
                 if '0' <= c && c <= '9' {
                     match c.to_digit(10) {
-                        Some(p) => p,
+                        Some(p) => u8::try_from(p)
+                            .map_err(|_| ParseSymbolError::BadPrecision)?,
                         None => return Err(ParseSymbolError::BadChar(c)),
                     }
                 } else {
@@ -88,13 +98,14 @@ impl FromStr for Symbol {
             None => return Err(ParseSymbolError::IsEmpty), // TODO better error message
         }
 
-        let symbol = symbol_from_chars(precision as u8, chars)?;
+        let symbol = symbol_from_chars(precision, chars)?;
         Ok(symbol.into())
     }
 }
 
 impl TryFrom<&str> for Symbol {
     type Error = ParseSymbolError;
+    #[inline]
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::from_str(value)
     }
@@ -102,6 +113,7 @@ impl TryFrom<&str> for Symbol {
 
 impl TryFrom<String> for Symbol {
     type Error = ParseSymbolError;
+    #[inline]
     fn try_from(value: String) -> Result<Self, Self::Error> {
         Self::try_from(value.as_str())
     }
@@ -110,7 +122,7 @@ impl TryFrom<String> for Symbol {
 impl From<u64> for Symbol {
     #[inline]
     fn from(n: u64) -> Self {
-        Symbol(n)
+        Self(n)
     }
 }
 

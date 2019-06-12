@@ -1,3 +1,4 @@
+//! TODO docs
 use eosio_bytes::{NumBytes, Read, Write};
 use eosio_numstr::{name_from_str, name_to_string};
 use serde::{Deserialize, Serialize};
@@ -9,11 +10,13 @@ pub use eosio_numstr::ParseNameError;
 
 macro_rules! declare_name_types {
     ($($ident:ident)*) => ($(
+        /// TODO docs
         #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord, Read, Write, NumBytes, Serialize, Deserialize)]
         #[eosio_bytes_root_path = "::eosio_bytes"]
         pub struct $ident(u64);
 
         impl $ident {
+            /// TODO docs
             #[inline]
             pub const fn as_u64(&self) -> u64 {
                 self.0
@@ -23,7 +26,7 @@ macro_rules! declare_name_types {
         impl From<u64> for $ident {
             #[inline]
             fn from(n: u64) -> Self {
-                $ident(n)
+                Self(n)
             }
         }
 

@@ -1,5 +1,7 @@
+//! TODO docs
 use eosio_bytes::*;
 use serde::Serialize;
+use std::convert::{TryFrom, TryInto};
 
 /// Time relative to unix epoch
 #[derive(
@@ -21,114 +23,14 @@ use serde::Serialize;
 pub struct TimePoint(i64);
 
 impl TimePoint {
-    /// One microsecond
-    const MICROSECOND: i64 = 1;
-    /// One millisecond
-    const MILLISECOND: i64 = Self::MICROSECOND * 1_000;
-    /// One second
-    const SECOND: i64 = Self::MILLISECOND * 1_000;
-    /// One minute
-    const MINUTE: i64 = Self::SECOND * 60;
-    /// One hour
-    const HOUR: i64 = Self::MINUTE * 60;
-    /// One day
-    const DAY: i64 = Self::HOUR * 24;
-
-    pub const UNIX_EPOCH: Self = TimePoint(0);
-
-    /// Creates a `TimePoint` from microseconds
-    #[inline]
-    pub const fn from_micros(micros: i64) -> Self {
-        Self(micros)
-    }
-
-    /// Creates a `TimePoint` from milliseconds
-    #[inline]
-    pub fn from_millis(millis: i64) -> Self {
-        Self(millis.saturating_mul(Self::MILLISECOND))
-    }
-
-    /// Creates a `TimePoint` from seconds
-    #[inline]
-    pub fn from_secs(secs: i64) -> Self {
-        Self(secs.saturating_mul(Self::SECOND))
-    }
-
-    /// Creates a `TimePoint` from minutes
-    #[inline]
-    pub fn from_mins(mins: i64) -> Self {
-        Self(mins.saturating_mul(Self::MINUTE))
-    }
-
-    /// Creates a `TimePoint` from hours
-    #[inline]
-    pub fn from_hours(hours: i64) -> Self {
-        Self(hours.saturating_mul(Self::HOUR))
-    }
-
-    /// Creates a `TimePoint` from days
-    #[inline]
-    pub fn from_days(days: i64) -> Self {
-        Self(days.saturating_mul(Self::DAY))
-    }
-
     /// Gets the nanoseconds
     #[inline]
-    pub const fn as_micros(self) -> i64 {
+    pub const fn as_i64(self) -> i64 {
         self.0
-    }
-
-    /// Gets the milliseconds
-    #[inline]
-    pub const fn as_millis(self) -> i64 {
-        self.0 / Self::MILLISECOND
-    }
-
-    /// Gets the seconds
-    #[inline]
-    pub const fn as_secs(self) -> i64 {
-        self.0 / Self::SECOND
-    }
-
-    /// Gets the minutes
-    #[inline]
-    pub const fn as_mins(self) -> i64 {
-        self.0 / Self::MINUTE
-    }
-
-    /// Gets the hours
-    #[inline]
-    pub const fn as_hours(self) -> i64 {
-        self.0 / Self::HOUR
-    }
-
-    /// Gets the days
-    #[inline]
-    pub const fn as_days(self) -> i64 {
-        self.0 / Self::DAY
-    }
-
-    /// Gets the max `TimePoint` of two values
-    #[inline]
-    pub fn max(self, other: Self) -> Self {
-        if self >= other {
-            self
-        } else {
-            other
-        }
-    }
-
-    /// Gets the min `TimePoint` of two values
-    #[inline]
-    pub fn min(self, other: Self) -> Self {
-        if self <= other {
-            self
-        } else {
-            other
-        }
     }
 }
 
+/// TODO docs
 struct TimePointVisitor;
 
 impl<'de> ::serde::de::Visitor<'de> for TimePointVisitor {
@@ -172,20 +74,6 @@ impl<'de> ::serde::de::Deserialize<'de> for TimePoint {
     }
 }
 
-impl From<u64> for TimePoint {
-    #[inline]
-    fn from(i: u64) -> Self {
-        Self(i as i64)
-    }
-}
-
-impl From<TimePoint> for u64 {
-    #[inline]
-    fn from(t: TimePoint) -> Self {
-        t.0 as Self
-    }
-}
-
 impl From<i64> for TimePoint {
     #[inline]
     fn from(i: i64) -> Self {
@@ -197,6 +85,22 @@ impl From<TimePoint> for i64 {
     #[inline]
     fn from(t: TimePoint) -> Self {
         t.0
+    }
+}
+
+impl TryFrom<u64> for TimePoint {
+    type Error = std::num::TryFromIntError;
+    #[inline]
+    fn try_from(i: u64) -> Result<Self, Self::Error> {
+        Ok(i64::try_from(i)?.into())
+    }
+}
+
+impl TryFrom<TimePoint> for u64 {
+    type Error = std::num::TryFromIntError;
+    #[inline]
+    fn try_from(t: TimePoint) -> Result<Self, Self::Error> {
+        t.as_i64().try_into()
     }
 }
 

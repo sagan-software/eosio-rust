@@ -1,17 +1,18 @@
+//! TODO docs
 use crate::{AccountName, ActionName, Authorization};
 use eosio_bytes::{NumBytes, Write, WriteError};
 use serde::{Deserialize, Serialize};
 
-/// Docs
+/// TODO docs
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Action<Data> {
-    /// Docs
+    /// TODO docs
     pub account: AccountName,
-    /// Docs
+    /// TODO docs
     pub name: ActionName,
-    /// Docs
+    /// TODO docs
     pub authorization: Vec<Authorization>,
-    /// Docs
+    /// TODO docs
     pub data: Data,
 }
 
@@ -19,7 +20,7 @@ impl<Data> NumBytes for Action<Data>
 where
     Data: NumBytes,
 {
-    /// Docs
+    /// TODO docs
     #[inline]
     fn num_bytes(&self) -> usize {
         self.account
@@ -54,12 +55,16 @@ where
     }
 }
 
+/// TODO docs
 #[derive(Clone, Debug)]
-pub struct DeferredId(u128);
+pub struct DeferredTransactionId(u128);
 
+/// TODO docs
 pub trait ToAction: Sized + Write + NumBytes {
+    /// TODO docs
     const NAME: u64;
 
+    /// TODO docs
     #[inline]
     fn to_action(
         self,
