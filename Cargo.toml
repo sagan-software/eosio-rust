@@ -1,5 +1,5 @@
 [profile.release]
-opt-level = "s"
+opt-level = 3
 debug = false
 rpath = false
 lto = true
@@ -8,6 +8,7 @@ codegen-units = 1
 
 [workspace]
 members = [
+    "benchmarks",
     "eosio",
     # "eosio_abi",
     "eosio_bytes",
