@@ -53,21 +53,27 @@
 <span id="53">53</span>
 <span id="54">54</span>
 <span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">AccountName</span>, <span class="ident">ScopeName</span>, <span class="ident">Symbol</span>};
+<span class="doccomment">//! TODO docs</span>
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">AccountName</span>, <span class="ident">Symbol</span>};
 <span class="kw">use</span> <span class="ident">eosio_bytes</span>::{<span class="ident">NumBytes</span>, <span class="ident">Read</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryFrom</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
 
+<span class="doccomment">/// TODO docs</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">NumBytes</span>)]</span>
 <span class="attribute">#[<span class="ident">eosio_bytes_root_path</span> <span class="op">=</span> <span class="string">&quot;::eosio_bytes&quot;</span>]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExtendedSymbol</span> {
+    <span class="doccomment">/// TODO docs</span>
     <span class="kw">pub</span> <span class="ident">symbol</span>: <span class="ident">Symbol</span>,
+    <span class="doccomment">/// TODO docs</span>
     <span class="kw">pub</span> <span class="ident">contract</span>: <span class="ident">AccountName</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">ExtendedSymbol</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}@{}&quot;</span>, <span class="self">self</span>.<span class="ident">symbol</span>, <span class="self">self</span>.<span class="ident">contract</span>)
     }

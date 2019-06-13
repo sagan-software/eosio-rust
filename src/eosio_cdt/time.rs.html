@@ -28,7 +28,7 @@
 <span id="28">28</span>
 <span id="29">29</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">eosio_core</span>::<span class="ident">TimePoint</span>;
+<span class="kw">use</span> <span class="ident">eosio_core</span>::{<span class="ident">TimePoint</span>, <span class="ident">TimePointSec</span>};
 
 <span class="doccomment">/// Gets the current time</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -44,16 +44,16 @@
 
 <span class="doccomment">/// Gets the expiration time</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expiration</span>() <span class="op">-&gt;</span> <span class="ident">TimePoint</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expiration</span>() <span class="op">-&gt;</span> <span class="ident">TimePointSec</span> {
     <span class="kw">let</span> <span class="ident">seconds</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">eosio_cdt_sys</span>::<span class="ident">expiration</span>() };
-    <span class="ident">TimePoint</span>::<span class="ident">from_secs</span>(<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">seconds</span>))
+    <span class="ident">seconds</span>.<span class="ident">into</span>()
 }
 
 <span class="kw">impl</span> <span class="kw">crate</span>::<span class="ident">print</span>::<span class="ident">Print</span> <span class="kw">for</span> <span class="ident">TimePoint</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">print</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="string">&quot;TimePoint(&quot;</span>.<span class="ident">print</span>();
-        <span class="self">self</span>.<span class="ident">as_micros</span>().<span class="ident">print</span>();
+        <span class="self">self</span>.<span class="ident">as_i64</span>().<span class="ident">print</span>();
         <span class="string">&quot;)&quot;</span>.<span class="ident">print</span>();
     }
 }

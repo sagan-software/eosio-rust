@@ -194,6 +194,11 @@
 <span id="194">194</span>
 <span id="195">195</span>
 <span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Types and functions related to parsing/formating EOSIO symbols.</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryFrom</span>;
@@ -215,6 +220,8 @@
     <span class="ident">TooLong</span>,
     <span class="doccomment">/// Symbols can only contain uppercase letters A-Z.</span>
     <span class="ident">BadChar</span>(<span class="ident">char</span>),
+    <span class="doccomment">/// TODO docs</span>
+    <span class="ident">BadPrecision</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Error</span> <span class="kw">for</span> <span class="ident">ParseSymbolError</span> {}
@@ -231,6 +238,9 @@
             ),
             <span class="ident">ParseSymbolError</span>::<span class="ident">BadChar</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> {
                 <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;symbol contains invalid character &#39;{}&#39;&quot;</span>, <span class="ident">c</span>)
+            }
+            <span class="ident">ParseSymbolError</span>::<span class="ident">BadPrecision</span> <span class="op">=&gt;</span> {
+                <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;symbol precision is &gt; 255&quot;</span>)
             }
         }
     }

@@ -114,7 +114,11 @@
 <span id="114">114</span>
 <span id="115">115</span>
 <span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! TODO docs</span>
 <span class="kw">use</span> <span class="ident">eosio_bytes</span>::{<span class="ident">NumBytes</span>, <span class="ident">Read</span>, <span class="ident">Write</span>};
 <span class="kw">use</span> <span class="ident">eosio_numstr</span>::{<span class="ident">name_from_str</span>, <span class="ident">name_to_string</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -126,11 +130,13 @@
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">declare_name_types</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(
+        <span class="doccomment">/// TODO docs</span>
         <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">Hash</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">NumBytes</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
         <span class="attribute">#[<span class="ident">eosio_bytes_root_path</span> <span class="op">=</span> <span class="string">&quot;::eosio_bytes&quot;</span>]</span>
         <span class="kw">pub</span> <span class="kw">struct</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>(<span class="ident">u64</span>);
 
         <span class="kw">impl</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span> {
+            <span class="doccomment">/// TODO docs</span>
             <span class="attribute">#[<span class="ident">inline</span>]</span>
             <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">as_u64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
                 <span class="self">self</span>.<span class="number">0</span>
@@ -140,7 +146,7 @@
         <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span> {
             <span class="attribute">#[<span class="ident">inline</span>]</span>
             <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">n</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>(<span class="ident">n</span>)
+                <span class="self">Self</span>(<span class="ident">n</span>)
             }
         }
 
