@@ -11,66 +11,9 @@ install:
 	cargo install --force wasm-gc
 	cargo install --force bindgen
 
-.PHONY: build
-build:
-	cargo fmt --all
-	RUSTFLAGS="-C link-args=-zstack-size=48000" \
-	cargo +stable build --release --target=wasm32-unknown-unknown -vv \
-		--features contract \
-		-p addressbook \
-		-p hello \
-		-p hello_bare \
-		-p tictactoe \
-		-p eosio_token
-	# cargo +stable build -p eosio_cli -vv
-
-.PHONY: test
-test:
-	cargo test \
-		-p eosio_bytes \
-		-p eosio_cdt_sys \
-		-p eosio_core \
-		-p eosio_numstr \
-		-p eosio_numstr_macros
-
-.PHONY: docs
-docs:
-	git worktree remove --force ./gh-pages || exit 0
-	git worktree add ./gh-pages gh-pages
-	rm -Rf gh-pages/*
-	mdbook build book
-	cargo doc \
-		--all \
-		--exclude addressbook \
-		--exclude hello \
-		--exclude hello_bare \
-		--exclude tictactoe \
-		--exclude eosio_numstr_macros_impl \
-		--exclude eosio_cdt_macros_impl \
-		--exclude eosio-rust \
-		--no-deps
-	cp -rf target/doc/* gh-pages/
-	cp -rf target/criterion gh-pages/benchmarks
-
-.PHONY: lint
-lint:
-	touch eosio/src/lib.rs
-	touch eosio_abi/src/lib.rs
-	touch eosio_macros/src/lib.rs
-	touch eosio_macros_impl/src/lib.rs
-	touch eosio_rpc/src/lib.rs
-	touch eosio_sys/src/lib.rs
-	touch eosio_system/src/lib.rs
-	touch eosio_token/src/lib.rs
-	cargo clippy
-
-.PHONY: clean
-clean:
-	rm -Rf target
-
 .PHONY: docker-down
 docker-down:
-	docker-compose down
+	docker-compose -f docker/docker-compose.yml down
 	docker volume rm -f nodeos-data-volume
 	docker volume rm -f keosd-data-volume
 
@@ -78,7 +21,7 @@ docker-down:
 docker-up: docker-down
 	docker volume create --name=nodeos-data-volume
 	docker volume create --name=keosd-data-volume
-	docker-compose up
+	docker-compose -f docker/docker-compose.yml up
 
 .PHONY: docker-init
 docker-init: wallet accounts examples
@@ -89,7 +32,7 @@ publish:
 	cd eosio_macros && cargo publish
 	cd eosio && cargo publish
 
-CLEOS := docker-compose exec keosd cleos --url http://nodeosd:8888 --wallet-url http://127.0.0.1:8900
+CLEOS := docker-compose -f docker/docker-compose.yml exec keosd cleos --url http://nodeosd:8888 --wallet-url http://127.0.0.1:8900
 PUBKEY := EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 PRIVKEY := 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 
@@ -99,10 +42,13 @@ wallet:
 	$(CLEOS) wallet import --private-key $(PRIVKEY)
 
 %_account:
-	$(CLEOS) create account eosio $* $(PUBKEY) $(PUBKEY)
+	$(CLEOS) system newaccount eosio --transfer $* $(PUBKEY) \
+		--stake-net "100000.0000 SYS" \
+		--stake-cpu "100000.0000 SYS" \
+		--buy-ram-kbytes 8192
 
 .PHONY: accounts
-accounts: hello_account tictactoe_account alice_account bob_account carol_account dan_account addressbook_account eosiotkncpp_account hellobare_account hellocpp_account eosio.token_account
+accounts: hello_account tictactoe_account alice_account bob_account carol_account dan_account addressbook_account eosiotkncpp_account hellobare_account hellocpp_account
 
 %_permissions:
 	$(CLEOS) set account permission $* active \
@@ -125,9 +71,9 @@ accounts: hello_account tictactoe_account alice_account bob_account carol_accoun
 	$(CLEOS) set code $(subst _,,$*) mnt/dev/release/$*_gc_opt.wasm
 
 .PHONY: eosio_token
-eosio_token: target/wasm32-unknown-unknown/release/eosio_token_gc_opt_wat.wasm
+eosio_token:
 	$(CLEOS) set abi eosio.token mnt/dev/project/eosio_contracts/eosio_token/eosio_token.abi.json
-	$(CLEOS) set code eosio.token mnt/dev/release/eosio_token_gc_opt.wasm
+	$(CLEOS) set code eosio.token mnt/dev/release/eosio_token_gc.wasm
 
 .PHONY: examples
 examples: addressbook_example hello_example hello_bare_example tictactoe_example
@@ -182,9 +128,9 @@ get_games_%:
 	$(CLEOS) get table tictactoe $* games
 
 .PHONY: eosio_token_cpp
-eosio_token_cpp: eosio_token/cpp/eosio.token_gc_opt_wat.wasm
-	$(CLEOS) set abi eosiotkncpp mnt/dev/project/eosio_token/eosio_token.abi.json
-	$(CLEOS) set code eosiotkncpp mnt/dev/project/eosio_token/cpp/eosio.token_gc_opt.wasm
+eosio_token_cpp:
+	$(CLEOS) set abi eosiotkncpp eosio.contracts/build/contracts/eosio.token/eosio.token.abi
+	$(CLEOS) set code eosiotkncpp eosio.contracts/build/contracts/eosio.token/eosio.token.wasm
 
 .PHONY: create_token
 create_token:
@@ -241,41 +187,6 @@ open_token:
 open_token_cpp:
 	$(CLEOS) push action eosiotkncpp open '["alice","2,TGFT","alice"]' -p 'alice@active'
 	$(CLEOS) push action eosiotkncpp open '["alice","2,TGFT","bob"]' -p 'bob@active'
-
-
-bench_%:
-	@echo $*
-	@make $* | grep -Po '([\d]+ us)'
-
-.PHONY: bench_rs
-bench_rs:
-	make -i --quiet bench_create_token
-	set -e; i=1; while [ "$$i" -le 100 ]; do \
-		printf "\nITERATION $$i:\n"; \
-		make --quiet bench_open_token || exit 1; \
-		make --quiet bench_issue_tokens || exit 1; \
-		make --quiet bench_transfer_tokens || exit 1; \
-		make --quiet bench_retire_tokens || exit 1; \
-		make --quiet bench_close_token || exit 1; \
-		i=$$((i + 1));\
-	done
-
-.PHONY: bench_cpp
-bench_cpp:
-	make -i --quiet bench_create_token_cpp
-	set -e; i=1; while [ "$$i" -le 100 ]; do \
-		printf "\nITERATION $$i:\n"; \
-		make --quiet bench_open_token_cpp || exit 1; \
-		make --quiet bench_issue_tokens_cpp || exit 1; \
-		make --quiet bench_transfer_tokens_cpp || exit 1; \
-		make --quiet bench_retire_tokens_cpp || exit 1; \
-		make --quiet bench_close_token_cpp || exit 1; \
-		i=$$((i + 1));\
-	done
-
-bench:
-	make --quiet bench_cpp > bench_cpp.txt
-	make --quiet bench_rs > bench_rs.txt
 
 .PHONY: get_currency_stats
 get_currency_stats:

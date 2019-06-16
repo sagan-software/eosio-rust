@@ -9,7 +9,7 @@ fn cleos() -> Command {
     let mut cmd = Command::new("docker");
     cmd.args(&[
         "exec",
-        "eosio-rust_keosd_1",
+        "docker_keosd_1",
         "cleos",
         "--url",
         "http://nodeosd:8888",
