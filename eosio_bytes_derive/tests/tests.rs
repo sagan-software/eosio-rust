@@ -5,6 +5,7 @@ use eosio_bytes::*;
 #[test]
 fn struct_named_fields() {
     #[derive(Read, Write, PartialEq, Debug)]
+    #[eosio_bytes_root_path = "::eosio_bytes"]
     struct Thing {
         a: u64,
         b: u64,
@@ -31,6 +32,7 @@ fn struct_named_fields() {
 #[test]
 fn struct_unnamed_fields() {
     #[derive(Read, Write, PartialEq, Debug)]
+    #[eosio_bytes_root_path = "::eosio_bytes"]
     struct Thing(u64, u64, u32);
 
     let thing1 = Thing(1, 2, 3);

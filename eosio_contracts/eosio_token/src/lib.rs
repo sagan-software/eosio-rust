@@ -94,7 +94,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             quantity,
             memo,
         };
-        send_inline_action(action.to_action(
+        send_inline_action(&action.to_action(
             current_receiver(),
             vec![Authorization {
                 actor: st.issuer,

@@ -6,6 +6,7 @@
 //! use eosio_bytes::{Read, Write, NumBytes};
 //!
 //! #[derive(Read, Write, NumBytes, PartialEq, Debug)]
+//! #[eosio_bytes_root_path = "::eosio_bytes"]
 //! struct Thing(u8);
 //!
 //! let thing = Thing(30);

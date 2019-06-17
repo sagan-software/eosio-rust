@@ -3,16 +3,18 @@ use crate::{
 };
 use eosio_bytes::{ReadError, WriteError};
 use eosio_cdt_sys::c_void;
-use eosio_core::{AccountName, ScopeName, TableName, TimePoint};
+use eosio_core::{AccountName, ScopeName, TableName};
 use std::marker::PhantomData;
 
+/// TODO docs
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord)]
 pub struct SecondaryTableName(TableName, usize);
 
 impl SecondaryTableName {
+    /// TODO docs
     #[inline]
-    pub fn new(primary: TableName, index: usize) -> Self {
-        SecondaryTableName(primary, index)
+    pub const fn new(primary: TableName, index: usize) -> Self {
+        Self(primary, index)
     }
 }
 
@@ -26,7 +28,9 @@ impl From<SecondaryTableName> for u64 {
     }
 }
 
+/// TODO docs
 pub trait SecondaryTableKey {
+    /// TODO docs
     fn end(
         &self,
         code: AccountName,
@@ -34,12 +38,16 @@ pub trait SecondaryTableKey {
         table: SecondaryTableName,
     ) -> i32;
 
+    /// TODO docs
     fn next(&self, iterator: i32) -> (i32, u64);
 
+    /// TODO docs
     fn erase(&self, iterator: i32);
 
+    /// TODO docs
     fn previous(&self, iterator: i32) -> (i32, u64);
 
+    /// TODO docs
     fn store(
         &self,
         scope: ScopeName,
@@ -48,8 +56,10 @@ pub trait SecondaryTableKey {
         id: u64,
     ) -> i32;
 
+    /// TODO docs
     fn modify(&self, iterator: i32, payer: AccountName);
 
+    /// TODO docs
     fn lower_bound(
         &self,
         code: AccountName,
@@ -57,6 +67,7 @@ pub trait SecondaryTableKey {
         table: SecondaryTableName,
     ) -> (i32, u64);
 
+    /// TODO docs
     fn upper_bound(
         &self,
         code: AccountName,
@@ -64,6 +75,7 @@ pub trait SecondaryTableKey {
         table: SecondaryTableName,
     ) -> (i32, u64);
 
+    /// TODO docs
     fn find_primary(
         &self,
         code: AccountName,
@@ -72,6 +84,7 @@ pub trait SecondaryTableKey {
         primary: u64,
     ) -> i32;
 
+    /// TODO docs
     fn find_secondary(
         &self,
         code: AccountName,
@@ -79,6 +92,7 @@ pub trait SecondaryTableKey {
         table: SecondaryTableName,
     ) -> (i32, u64);
 
+    /// TODO docs
     #[inline]
     fn upsert(
         &self,
@@ -103,19 +117,19 @@ macro_rules! secondary_keys_converted {
         impl SecondaryTableKey for $from {
             #[inline]
             fn end(&self, code: AccountName, scope: ScopeName, table: SecondaryTableName) -> i32 {
-                <$to as From<$from>>::from(*self).end(code, scope, table)
+                <$to as From<Self>>::from(*self).end(code, scope, table)
             }
             #[inline]
             fn next(&self, iterator: i32) -> (i32, u64) {
-                <$to as From<$from>>::from(*self).next(iterator)
+                <$to as From<Self>>::from(*self).next(iterator)
             }
             #[inline]
             fn previous(&self, iterator: i32) -> (i32, u64) {
-                <$to as From<$from>>::from(*self).previous(iterator)
+                <$to as From<Self>>::from(*self).previous(iterator)
             }
             #[inline]
             fn erase(&self, iterator: i32) {
-                <$to as From<$from>>::from(*self).erase(iterator)
+                <$to as From<Self>>::from(*self).erase(iterator)
             }
             #[inline]
             fn store(
@@ -125,11 +139,11 @@ macro_rules! secondary_keys_converted {
                 payer: AccountName,
                 id: u64,
             ) -> i32 {
-                <$to as From<$from>>::from(*self).store(scope, table, payer, id)
+                <$to as From<Self>>::from(*self).store(scope, table, payer, id)
             }
             #[inline]
             fn modify(&self, iterator: i32, payer: AccountName) {
-                <$to as From<$from>>::from(*self).modify(iterator, payer)
+                <$to as From<Self>>::from(*self).modify(iterator, payer)
             }
             #[inline]
             fn lower_bound(
@@ -138,7 +152,7 @@ macro_rules! secondary_keys_converted {
                 scope: ScopeName,
                 table: SecondaryTableName,
             ) -> (i32, u64) {
-                <$to as From<$from>>::from(*self).lower_bound(code, scope, table)
+                <$to as From<Self>>::from(*self).lower_bound(code, scope, table)
             }
             #[inline]
             fn upper_bound(
@@ -147,7 +161,7 @@ macro_rules! secondary_keys_converted {
                 scope: ScopeName,
                 table: SecondaryTableName,
             ) -> (i32, u64) {
-                <$to as From<$from>>::from(*self).upper_bound(code, scope, table)
+                <$to as From<Self>>::from(*self).upper_bound(code, scope, table)
             }
             #[inline]
             fn find_primary(
@@ -157,7 +171,7 @@ macro_rules! secondary_keys_converted {
                 table: SecondaryTableName,
                 primary: u64,
             ) -> i32 {
-                 <$to as From<$from>>::from(*self).find_primary(code, scope, table, primary)
+                 <$to as From<Self>>::from(*self).find_primary(code, scope, table, primary)
             }
             #[inline]
             fn find_secondary(
@@ -166,7 +180,7 @@ macro_rules! secondary_keys_converted {
                 scope: ScopeName,
                 table: SecondaryTableName,
             ) -> (i32, u64) {
-                <$to as From<$from>>::from(*self).find_secondary(code, scope, table)
+                <$to as From<Self>>::from(*self).find_secondary(code, scope, table)
             }
         }
     )*)
@@ -254,7 +268,7 @@ macro_rules! secondary_keys_impl {
                             code.into(),
                             scope.into(),
                             table.into(),
-                            &mut sk as *mut $t,
+                            &mut sk as *mut Self,
                             &mut pk as *mut u64,
                         )
                     };
@@ -275,7 +289,7 @@ macro_rules! secondary_keys_impl {
                             code.into(),
                             scope.into(),
                             table.into(),
-                            &mut sk as *mut $t,
+                            &mut sk as *mut Self,
                             &mut pk as *mut u64,
                         )
                     };
@@ -296,7 +310,7 @@ macro_rules! secondary_keys_impl {
                             code.into(),
                             scope.into(),
                             table.into(),
-                            &mut sk as *mut $t,
+                            &mut sk as *mut Self,
                             primary,
                         )
                     }
@@ -343,14 +357,18 @@ secondary_keys_converted!(
     // u64, TimePoint
 );
 
+/// TODO docs
 #[derive(Debug, Copy, Clone)]
 pub struct SecondaryTableCursor<'a, K, T>
 where
     K: SecondaryTableKey,
     T: TableRow,
 {
+    /// TODO docs
     value: i32,
+    /// TODO docs
     pk: u64,
+    /// TODO docs
     index: &'a SecondaryTableIndex<K, T>,
 }
 
@@ -436,16 +454,22 @@ where
     }
 }
 
+/// TODO docs
 #[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIterator<'a, K, T>
 where
     K: SecondaryTableKey,
     T: TableRow,
 {
+    /// TODO docs
     value: i32,
+    /// TODO docs
     pk: u64,
+    /// TODO docs
     pk_end: i32,
+    /// TODO docs
     sk_end: i32,
+    /// TODO docs
     index: &'a SecondaryTableIndex<K, T>,
 }
 
@@ -505,16 +529,22 @@ where
 {
 }
 
+/// TODO docs
 #[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIndex<K, T>
 where
     K: SecondaryTableKey,
     T: TableRow,
 {
+    /// TODO docs
     code: AccountName,
+    /// TODO docs
     scope: ScopeName,
+    /// TODO docs
     table: SecondaryTableName,
+    /// TODO docs
     key: K,
+    /// TODO docs
     _data: PhantomData<T>,
 }
 
@@ -523,6 +553,7 @@ where
     K: SecondaryTableKey,
     T: TableRow,
 {
+    /// TODO docs
     #[inline]
     pub fn new<C, S, N>(
         code: C,
@@ -545,6 +576,7 @@ where
         }
     }
 
+    /// TODO docs
     fn to_primary_index(&self) -> PrimaryTableIndex<T> {
         PrimaryTableIndex::new(self.code, self.scope, self.table.0)
     }

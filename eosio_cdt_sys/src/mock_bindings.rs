@@ -1,8 +1,118 @@
-use crate::{
-    capi_checksum160, capi_checksum256, capi_checksum512, capi_name, int128_t,
-    uint128_t,
-};
 use std::default::Default;
+
+pub type uint128_t = u128;
+pub type int128_t = i128;
+pub type capi_name = u64;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct capi_public_key {
+    pub data: [crate::c_char; 34usize],
+}
+impl Default for capi_public_key {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::fmt::Debug for capi_public_key {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "capi_public_key {{ data: [{}] }}",
+            self.data
+                .iter()
+                .enumerate()
+                .map(|(i, v)| format!(
+                    "{}{:?}",
+                    if i > 0 { ", " } else { "" },
+                    v
+                ))
+                .collect::<String>()
+        )
+    }
+}
+impl ::std::cmp::PartialEq for capi_public_key {
+    fn eq(&self, other: &capi_public_key) -> bool {
+        &self.data[..] == &other.data[..]
+    }
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct capi_signature {
+    pub data: [u8; 66usize],
+}
+impl Default for capi_signature {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::fmt::Debug for capi_signature {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "capi_signature {{ data: [{}] }}",
+            self.data
+                .iter()
+                .enumerate()
+                .map(|(i, v)| format!(
+                    "{}{:?}",
+                    if i > 0 { ", " } else { "" },
+                    v
+                ))
+                .collect::<String>()
+        )
+    }
+}
+impl ::std::cmp::PartialEq for capi_signature {
+    fn eq(&self, other: &capi_signature) -> bool {
+        &self.data[..] == &other.data[..]
+    }
+}
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct capi_checksum256 {
+    pub hash: [u8; 32usize],
+}
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct capi_checksum160 {
+    pub hash: [u8; 20usize],
+    pub __bindgen_padding_0: [u32; 3usize],
+}
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Copy, Clone)]
+pub struct capi_checksum512 {
+    pub hash: [u8; 64usize],
+}
+impl Default for capi_checksum512 {
+    fn default() -> Self {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+impl ::std::fmt::Debug for capi_checksum512 {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "capi_checksum512 {{ hash: [{}] }}",
+            self.hash
+                .iter()
+                .enumerate()
+                .map(|(i, v)| format!(
+                    "{}{:?}",
+                    if i > 0 { ", " } else { "" },
+                    v
+                ))
+                .collect::<String>()
+        )
+    }
+}
+impl ::std::cmp::PartialEq for capi_checksum512 {
+    fn eq(&self, other: &capi_checksum512) -> bool {
+        &self.hash[..] == &other.hash[..]
+    }
+}
 
 pub unsafe fn read_action_data(_msg: *mut crate::c_void, _len: u32) -> u32 {
     Default::default()

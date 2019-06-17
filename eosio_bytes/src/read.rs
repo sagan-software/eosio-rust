@@ -38,6 +38,13 @@ impl Read for bool {
     }
 }
 
+impl Read for char {
+    #[inline]
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        u8::read(bytes, pos).map(|v| v as Self)
+    }
+}
+
 impl Read for usize {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {

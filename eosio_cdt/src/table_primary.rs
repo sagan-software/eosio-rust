@@ -4,15 +4,21 @@ use eosio_cdt_sys::c_void;
 use eosio_core::{AccountName, ScopeName, TableName};
 use std::marker::PhantomData;
 
+/// TODO docs
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableCursor<T>
 where
     T: TableRow,
 {
+    /// TODO docs
     value: i32,
+    /// TODO docs
     code: AccountName,
+    /// TODO docs
     scope: ScopeName,
+    /// TODO docs
     table: TableName,
+    /// TODO docs
     data: PhantomData<T>,
 }
 
@@ -120,16 +126,23 @@ where
     }
 }
 
+/// TODO docs
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableIterator<T>
 where
     T: TableRow,
 {
+    /// TODO docs
     value: i32,
+    /// TODO docs
     end: i32,
+    /// TODO docs
     code: AccountName,
+    /// TODO docs
     scope: ScopeName,
+    /// TODO docs
     table: TableName,
+    /// TODO docs
     data: PhantomData<T>,
 }
 
@@ -189,14 +202,19 @@ where
 
 impl<T> TableIterator for PrimaryTableIterator<T> where T: TableRow {}
 
+/// TODO docs
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableIndex<T>
 where
     T: TableRow,
 {
+    /// TODO docs
     code: AccountName,
+    /// TODO docs
     scope: ScopeName,
+    /// TODO docs
     name: TableName,
+    /// TODO docs
     data: PhantomData<T>,
 }
 
@@ -297,6 +315,7 @@ impl<T> PrimaryTableIndex<T>
 where
     T: TableRow,
 {
+    /// TODO docs
     #[inline]
     pub fn new<C, S, N>(code: C, scope: S, name: N) -> Self
     where
@@ -312,11 +331,13 @@ where
         }
     }
 
+    /// TODO docs
     #[inline]
     pub fn begin(&self) -> Option<PrimaryTableCursor<T>> {
         self.lower_bound(u64::min_value())
     }
 
+    /// TODO docs
     #[inline]
     pub fn iter(&self) -> PrimaryTableIterator<T> {
         self.begin().map_or_else(
@@ -328,15 +349,17 @@ where
                 table: self.name,
                 data: PhantomData,
             },
-            |c| c.into_iter(),
+            std::iter::IntoIterator::into_iter,
         )
     }
 
+    /// TODO docs
     #[inline]
     pub fn count(&self) -> usize {
         self.iter().count()
     }
 
+    /// TODO docs
     #[inline]
     pub fn exists<Id>(&self, id: Id) -> bool
     where
@@ -345,6 +368,7 @@ where
         self.find(id).is_some()
     }
 
+    /// TODO docs
     fn end(&self) -> i32 {
         unsafe {
             ::eosio_cdt_sys::db_end_i64(
@@ -355,6 +379,7 @@ where
         }
     }
 
+    /// TODO docs
     #[inline]
     pub fn find<Id>(&self, id: Id) -> Option<PrimaryTableCursor<T>>
     where
@@ -382,6 +407,7 @@ where
         }
     }
 
+    /// TODO docs
     #[inline]
     pub fn available_primary_key(&self) -> Option<u64> {
         if self.begin().is_none() {
@@ -395,6 +421,7 @@ where
         pk.checked_add(1)
     }
 
+    /// TODO docs
     fn modify(
         &self,
         itr: &PrimaryTableCursor<T>,

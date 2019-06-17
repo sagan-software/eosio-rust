@@ -53,6 +53,17 @@ impl Write for bool {
     }
 }
 
+impl Write for char {
+    #[inline]
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
+        (*self as u8).write(bytes, pos)
+    }
+}
+
 impl Write for usize {
     #[inline]
     fn write(

@@ -7,7 +7,7 @@ DIR="$(dirname "$SOURCE")"
 ROOT=$DIR/..
 TARGET_DIR=$ROOT/target/wasm32-unknown-unknown/release
 
-function build_wasm {
+function build_contract {
     printf "========= Building package: %s =========\n" $1
     rm -f \
         $TARGET_DIR/$1.wasm \
@@ -36,8 +36,9 @@ function build_wasm {
 }
 
 cargo fmt --all
-build_wasm addressbook
-build_wasm hello
-build_wasm hello_bare
-build_wasm tictactoe
-build_wasm eosio_token
+build_contract addressbook
+build_contract hello
+build_contract hello_bare
+build_contract tictactoe
+build_contract eosio_token
+build_contract eosio_wrap

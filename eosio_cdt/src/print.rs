@@ -2,7 +2,9 @@ use eosio_core::{
     AccountName, ActionName, Name, PermissionName, ScopeName, TableName,
 };
 
+/// TODO docs.
 pub trait Print {
+    /// TODO docs.
     fn print(&self);
 }
 

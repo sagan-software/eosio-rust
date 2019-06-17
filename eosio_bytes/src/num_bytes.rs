@@ -28,6 +28,13 @@ impl NumBytes for bool {
     }
 }
 
+impl NumBytes for char {
+    #[inline]
+    fn num_bytes(&self) -> usize {
+        1
+    }
+}
+
 impl NumBytes for usize {
     #[inline]
     fn num_bytes(&self) -> usize {

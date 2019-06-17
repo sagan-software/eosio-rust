@@ -4,15 +4,14 @@ version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
 
-[lib]
-crate-type = ["cdylib", "lib"]
-test = false
-
-[dependencies]
-eosio = { path = "../../eosio" }
-serde = { version = "1.0", optional = true, features = ["derive"] }
-
 [features]
 default = ["contract"]
 contract = []
 web = ["serde"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+eosio = { path = "../../eosio" }
+serde = { version = "1.0", optional = true, features = ["derive"] }
