@@ -36,6 +36,7 @@ mod block_timestamp;
 mod checksum160;
 mod checksum256;
 mod checksum512;
+mod data_stream;
 mod extended_asset;
 mod extended_symbol;
 mod ignore;
@@ -54,8 +55,8 @@ mod varint;
 #[doc(inline)]
 pub use self::{
     action::*, asset::*, authorization::*, block_timestamp::*, checksum160::*,
-    checksum256::*, checksum512::*, extended_asset::*, extended_symbol::*,
-    ignore::*, json::*, names::*, ops::*, public_key::*, resources::*,
-    symbol::*, symbol_code::*, time_point::*, time_point_sec::*,
+    checksum256::*, checksum512::*, data_stream::*, extended_asset::*,
+    extended_symbol::*, ignore::*, json::*, names::*, ops::*, public_key::*,
+    resources::*, symbol::*, symbol_code::*, time_point::*, time_point_sec::*,
     transaction::*, varint::*,
 };

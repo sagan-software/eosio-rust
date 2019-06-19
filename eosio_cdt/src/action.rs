@@ -1,6 +1,7 @@
 use eosio_bytes::{NumBytes, Read, ReadError, Write, WriteError};
 use eosio_core::{
-    AccountName, Action, DeferredTransactionId, ToAction, Transaction,
+    AccountName, Action, DataStream, DeferredTransactionId, ToAction,
+    Transaction,
 };
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
@@ -49,22 +50,30 @@ pub fn send_deferred<P>(
 where
     P: Into<AccountName>,
 {
+    let mut bytes = vec![0_u8; trx.num_bytes()];
+    trx.write(&mut bytes, &mut 0)?;
+    send_deferred_bytes(id, payer, &bytes, replace_existing)
+}
+
+/// TODO docs
+#[inline]
+pub fn send_deferred_bytes<P>(
+    id: &DeferredTransactionId,
+    payer: P,
+    bytes: &[u8],
+    replace_existing: bool,
+) -> Result<(), WriteError>
+where
+    P: Into<AccountName>,
+{
     let sender_id = id.as_u128();
     let sender_id_ptr = &sender_id as *const _ as *const u128;
-    let size = trx.num_bytes();
-    let serialized_transaction = {
-        let mut bytes = vec![0_u8; size];
-        let mut pos = 0;
-        trx.write(&mut bytes, &mut pos)?;
-        bytes
-    };
-    let serialized_transaction_ptr = serialized_transaction[..].as_ptr();
     unsafe {
         ::eosio_cdt_sys::send_deferred(
             sender_id_ptr,
             payer.into().into(),
-            serialized_transaction_ptr,
-            size,
+            bytes.as_ptr(),
+            bytes.len(),
             replace_existing.into(),
         )
     }
@@ -98,4 +107,17 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
         let mut pos = 0;
         Self::read(&bytes, &mut pos)
     }
+}
+
+/// TODO docs
+#[inline]
+pub fn current_data_stream() -> DataStream {
+    let num_bytes = unsafe { ::eosio_cdt_sys::action_data_size() };
+    let mut bytes = vec![0_u8; num_bytes as usize];
+    let ptr: *mut ::eosio_cdt_sys::c_void =
+        &mut bytes[..] as *mut _ as *mut ::eosio_cdt_sys::c_void;
+    unsafe {
+        ::eosio_cdt_sys::read_action_data(ptr, num_bytes);
+    }
+    bytes.into()
 }
