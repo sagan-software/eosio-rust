@@ -90,6 +90,7 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
+<span id="93">93</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This crate provides three derive macros for [`eosio_bytes`] traits.</span>
 <span class="doccomment">//!</span>
@@ -99,6 +100,7 @@
 <span class="doccomment">//! use eosio_bytes::{Read, Write, NumBytes};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! #[derive(Read, Write, NumBytes, PartialEq, Debug)]</span>
+<span class="doccomment">//! #[eosio_bytes_root_path = &quot;::eosio_bytes&quot;]</span>
 <span class="doccomment">//! struct Thing(u8);</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! let thing = Thing(30);</span>

@@ -329,7 +329,7 @@
             <span class="ident">quantity</span>,
             <span class="ident">memo</span>,
         };
-        <span class="ident">send_inline_action</span>(<span class="ident">action</span>.<span class="ident">to_action</span>(
+        <span class="ident">send_inline_action</span>(<span class="kw-2">&amp;</span><span class="ident">action</span>.<span class="ident">to_action</span>(
             <span class="ident">current_receiver</span>(),
             <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">Authorization</span> {
                 <span class="ident">actor</span>: <span class="ident">st</span>.<span class="ident">issuer</span>,
