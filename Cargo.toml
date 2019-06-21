@@ -18,7 +18,11 @@ members = [
     "eosio_cdt_macros_impl",
     "eosio_cdt_sys",
     # "eosio_cli", TODO re-enable
-    # "eosio_contracts/eosio_system",
+    "eosio_contracts/eosio_assert",
+    "eosio_contracts/eosio_bios",
+    "eosio_contracts/eosio_forum",
+    "eosio_contracts/eosio_msig",
+    "eosio_contracts/eosio_system",
     "eosio_contracts/eosio_token",
     "eosio_contracts/eosio_wrap",
     "eosio_core",

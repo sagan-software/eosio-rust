@@ -1,9 +1,9 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L49-L77>
 use eosio_bytes::*;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
-/// Time relative to unix epoch
+/// High resolution time point in microseconds
 #[derive(
     Read,
     Write,

@@ -31,32 +31,40 @@
 
 mod action;
 mod asset;
-mod authorization;
 mod block_timestamp;
+mod blockchain_parameters;
 mod checksum160;
 mod checksum256;
 mod checksum512;
 mod data_stream;
 mod extended_asset;
 mod extended_symbol;
+mod fixed_bytes;
 mod ignore;
 mod json;
 mod names;
 mod ops;
+mod permission_level;
+mod producer_key;
+mod producer_schedule;
 mod public_key;
 mod resources;
+mod signature;
+mod signed_int;
 mod symbol;
 mod symbol_code;
 mod time_point;
 mod time_point_sec;
 mod transaction;
-mod varint;
+mod unsigned_int;
 
 #[doc(inline)]
 pub use self::{
-    action::*, asset::*, authorization::*, block_timestamp::*, checksum160::*,
-    checksum256::*, checksum512::*, data_stream::*, extended_asset::*,
-    extended_symbol::*, ignore::*, json::*, names::*, ops::*, public_key::*,
-    resources::*, symbol::*, symbol_code::*, time_point::*, time_point_sec::*,
-    transaction::*, varint::*,
+    action::*, asset::*, block_timestamp::*, blockchain_parameters::*,
+    checksum160::*, checksum256::*, checksum512::*, data_stream::*,
+    extended_asset::*, extended_symbol::*, fixed_bytes::*, ignore::*, json::*,
+    names::*, ops::*, permission_level::*, producer_key::*,
+    producer_schedule::*, public_key::*, resources::*, signature::*,
+    signed_int::*, symbol::*, symbol_code::*, time_point::*, time_point_sec::*,
+    transaction::*, unsigned_int::*,
 };

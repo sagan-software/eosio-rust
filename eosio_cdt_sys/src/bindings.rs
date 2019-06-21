@@ -3,6 +3,7 @@
 pub type uint128_t = u128;
 pub type int128_t = i128;
 pub type capi_name = u64;
+#[doc = " EOSIO Public Key. It is 34 bytes."]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct capi_public_key {
@@ -35,6 +36,7 @@ impl ::std::cmp::PartialEq for capi_public_key {
         &self.data[..] == &other.data[..]
     }
 }
+#[doc = " EOSIO Signature. It is 66 bytes."]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct capi_signature {
@@ -67,12 +69,14 @@ impl ::std::cmp::PartialEq for capi_signature {
         &self.data[..] == &other.data[..]
     }
 }
+#[doc = " 256-bit hash"]
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct capi_checksum256 {
     pub hash: [u8; 32usize],
 }
+#[doc = " 160-bit hash"]
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Debug, Default, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -80,6 +84,7 @@ pub struct capi_checksum160 {
     pub hash: [u8; 20usize],
     pub __bindgen_padding_0: [u32; 3usize],
 }
+#[doc = " 512-bit hash"]
 #[repr(C)]
 #[repr(align(16))]
 #[derive(Copy, Clone)]
@@ -114,46 +119,132 @@ impl ::std::cmp::PartialEq for capi_checksum512 {
     }
 }
 extern "C" {
+    #[doc = "  Copy up to length bytes of current action data to the specified location"]
+    #[doc = ""]
+    #[doc = "  @brief Copy current action data to the specified location"]
+    #[doc = "  @param msg - a pointer where up to length bytes of the current action data will be copied"]
+    #[doc = "  @param len - len of the current action data to be copied, 0 to report required size"]
+    #[doc = "  @return the number of bytes copied to msg, or number of bytes that can be copied if len==0 passed"]
+    #[doc = "  @pre `msg` is a valid pointer to a range of memory at least `len` bytes long"]
+    #[doc = "  @post `msg` is filled with packed action data"]
     pub fn read_action_data(msg: *mut crate::c_void, len: u32) -> u32;
 }
 extern "C" {
+    #[doc = " Get the length of the current action\'s data field. This method is useful for dynamically sized actions"]
+    #[doc = ""]
+    #[doc = " @brief Get the length of current action\'s data field"]
+    #[doc = " @return the length of the current action\'s data field"]
     pub fn action_data_size() -> u32;
 }
 extern "C" {
+    #[doc = "  Add the specified account to set of accounts to be notified"]
+    #[doc = ""]
+    #[doc = "  @brief Add the specified account to set of accounts to be notified"]
+    #[doc = "  @param name - name of the account to be verified"]
     pub fn require_recipient(name: capi_name);
 }
 extern "C" {
+    #[doc = "  Verifies that name exists in the set of provided auths on a action. Throws if not found."]
+    #[doc = ""]
+    #[doc = "  @brief Verify specified account exists in the set of provided auths"]
+    #[doc = "  @param name - name of the account to be verified"]
     pub fn require_auth(name: capi_name);
 }
 extern "C" {
+    #[doc = "  Verifies that name has auth."]
+    #[doc = ""]
+    #[doc = "  @brief Verifies that name has auth."]
+    #[doc = "  @param name - name of the account to be verified"]
     pub fn has_auth(name: capi_name) -> bool;
 }
 extern "C" {
+    #[doc = "  Verifies that name exists in the set of provided auths on a action. Throws if not found."]
+    #[doc = ""]
+    #[doc = "  @brief Verify specified account exists in the set of provided auths"]
+    #[doc = "  @param name - name of the account to be verified"]
+    #[doc = "  @param permission - permission level to be verified"]
     pub fn require_auth2(name: capi_name, permission: capi_name);
 }
 extern "C" {
+    #[doc = "  Verifies that @ref name is an existing account."]
+    #[doc = ""]
+    #[doc = "  @brief Verifies that @ref name is an existing account."]
+    #[doc = "  @param name - name of the account to check"]
     pub fn is_account(name: capi_name) -> bool;
 }
 extern "C" {
+    #[doc = "  Send an inline action in the context of this action\'s parent transaction"]
+    #[doc = ""]
+    #[doc = "  @param serialized_action - serialized action"]
+    #[doc = "  @param size - size of serialized action in bytes"]
+    #[doc = "  @pre `serialized_action` is a valid pointer to an array at least `size` bytes long"]
     pub fn send_inline(serialized_action: *mut crate::c_char, size: usize);
 }
 extern "C" {
+    #[doc = " /function"]
+    #[doc = "  Send an inline context free action in the context of this action\'s parent transaction"]
+    #[doc = ""]
+    #[doc = "  @param serialized_action - serialized action"]
+    #[doc = "  @param size - size of serialized action in bytes"]
+    #[doc = "  @pre `serialized_action` is a valid pointer to an array at least `size` bytes long"]
     pub fn send_context_free_inline(
         serialized_action: *mut crate::c_char,
         size: usize,
     );
 }
 extern "C" {
+    #[doc = "  Returns the time in microseconds from 1970 of the publication_time"]
+    #[doc = "  @brief Get the publication time"]
+    #[doc = "  @return the time in microseconds from 1970 of the publication_time"]
     pub fn publication_time() -> u64;
 }
 extern "C" {
+    #[doc = "  Get the current receiver of the action"]
+    #[doc = "  @brief Get the current receiver of the action"]
+    #[doc = "  @return the account which specifies the current receiver of the action"]
     pub fn current_receiver() -> capi_name;
 }
 extern "C" {
+    #[doc = "  Gets the set of active producers."]
+    #[doc = ""]
+    #[doc = "  @param producers - Pointer to a buffer of account names"]
+    #[doc = "  @param datalen - Byte length of buffer, when passed 0 will return the size required to store full output."]
+    #[doc = ""]
+    #[doc = "  @return uint32_t - Number of bytes actually populated"]
+    #[doc = "  @pre `producers` is a pointer to a range of memory at least `datalen` bytes long"]
+    #[doc = "  @post the passed in `producers` pointer gets the array of active producers."]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  capi_name producers[21];"]
+    #[doc = "  uint32_t bytes_populated = get_active_producers(producers, sizeof(capi_name)*21);"]
+    #[doc = "  @endcode"]
     pub fn get_active_producers(producers: *mut capi_name, datalen: u32)
         -> u32;
 }
 extern "C" {
+    #[doc = "  Tests if the sha256 hash generated from data matches the provided checksum."]
+    #[doc = ""]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - `capi_checksum256*` hash to compare to"]
+    #[doc = ""]
+    #[doc = "  @pre **assert256 hash** of `data` equals provided `hash` parameter."]
+    #[doc = "  @post Executes next statement. If was not `true`, hard return."]
+    #[doc = ""]
+    #[doc = "  @note This method is optimized to a NO-OP when in fast evaluation mode."]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum hash;"]
+    #[doc = "  char data;"]
+    #[doc = "  uint32_t length;"]
+    #[doc = "  assert_sha256( data, length, hash )"]
+    #[doc = "  //If the sha256 hash generated from data does not equal provided hash, anything below will never fire."]
+    #[doc = "  eosio::print(\"sha256 hash generated from data equals provided hash\");"]
+    #[doc = "  @endcode"]
     pub fn assert_sha256(
         data: *const crate::c_char,
         length: u32,
@@ -161,6 +252,26 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Tests if the sha1 hash generated from data matches the provided checksum."]
+    #[doc = ""]
+    #[doc = "  @note This method is optimized to a NO-OP when in fast evaluation mode."]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - `capi_checksum160*` hash to compare to"]
+    #[doc = ""]
+    #[doc = "  @pre **sha1 hash** of `data` equals provided `hash` parameter."]
+    #[doc = "  @post Executes next statement. If was not `true`, hard return."]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum hash;"]
+    #[doc = "  char data;"]
+    #[doc = "  uint32_t length;"]
+    #[doc = "  assert_sha1( data, length, hash )"]
+    #[doc = "  //If the sha1 hash generated from data does not equal provided hash, anything below will never fire."]
+    #[doc = "  eosio::print(\"sha1 hash generated from data equals provided hash\");"]
+    #[doc = "  @endcode"]
     pub fn assert_sha1(
         data: *const crate::c_char,
         length: u32,
@@ -168,6 +279,26 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Tests if the sha512 hash generated from data matches the provided checksum."]
+    #[doc = ""]
+    #[doc = "  @note This method is optimized to a NO-OP when in fast evaluation mode."]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - `capi_checksum512*` hash to compare to"]
+    #[doc = ""]
+    #[doc = "  @pre **assert512 hash** of `data` equals provided `hash` parameter."]
+    #[doc = "  @post Executes next statement. If was not `true`, hard return."]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum hash;"]
+    #[doc = "  char data;"]
+    #[doc = "  uint32_t length;"]
+    #[doc = "  assert_sha512( data, length, hash )"]
+    #[doc = "  //If the sha512 hash generated from data does not equal provided hash, anything below will never fire."]
+    #[doc = "  eosio::print(\"sha512 hash generated from data equals provided hash\");"]
+    #[doc = "  @endcode"]
     pub fn assert_sha512(
         data: *const crate::c_char,
         length: u32,
@@ -175,6 +306,25 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Tests if the ripemod160 hash generated from data matches the provided checksum."]
+    #[doc = ""]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - `capi_checksum160*` hash to compare to"]
+    #[doc = ""]
+    #[doc = "  @pre **assert160 hash** of `data` equals provided `hash` parameter."]
+    #[doc = "  @post Executes next statement. If was not `true`, hard return."]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum hash;"]
+    #[doc = "  char data;"]
+    #[doc = "  uint32_t length;"]
+    #[doc = "  assert_ripemod160( data, length, hash )"]
+    #[doc = "  //If the ripemod160 hash generated from data does not equal provided hash, anything below will never fire."]
+    #[doc = "  eosio::print(\"ripemod160 hash generated from data equals provided hash\");"]
+    #[doc = "  @endcode"]
     pub fn assert_ripemd160(
         data: *const crate::c_char,
         length: u32,
@@ -182,6 +332,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Hashes `data` using `sha256` and stores result in memory pointed to by hash."]
+    #[doc = ""]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - Hash pointer"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum calc_hash;"]
+    #[doc = "  sha256( data, length, &calc_hash );"]
+    #[doc = "  eos_assert( calc_hash == hash, \"invalid hash\" );"]
+    #[doc = "  @endcode"]
     pub fn sha256(
         data: *const crate::c_char,
         length: u32,
@@ -189,6 +352,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Hashes `data` using `sha1` and stores result in memory pointed to by hash."]
+    #[doc = ""]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - Hash pointer"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum calc_hash;"]
+    #[doc = "  sha1( data, length, &calc_hash );"]
+    #[doc = "  eos_assert( calc_hash == hash, \"invalid hash\" );"]
+    #[doc = "  @endcode"]
     pub fn sha1(
         data: *const crate::c_char,
         length: u32,
@@ -196,6 +372,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Hashes `data` using `sha512` and stores result in memory pointed to by hash."]
+    #[doc = ""]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - Hash pointer"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum calc_hash;"]
+    #[doc = "  sha512( data, length, &calc_hash );"]
+    #[doc = "  eos_assert( calc_hash == hash, \"invalid hash\" );"]
+    #[doc = "  @endcode"]
     pub fn sha512(
         data: *const crate::c_char,
         length: u32,
@@ -203,6 +392,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Hashes `data` using `ripemod160` and stores result in memory pointed to by hash."]
+    #[doc = ""]
+    #[doc = "  @param data - Data you want to hash"]
+    #[doc = "  @param length - Data length"]
+    #[doc = "  @param hash - Hash pointer"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum calc_hash;"]
+    #[doc = "  ripemod160( data, length, &calc_hash );"]
+    #[doc = "  eos_assert( calc_hash == hash, \"invalid hash\" );"]
+    #[doc = "  @endcode"]
     pub fn ripemd160(
         data: *const crate::c_char,
         length: u32,
@@ -210,6 +412,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Calculates the public key used for a given signature and hash used to create a message."]
+    #[doc = ""]
+    #[doc = "  @param digest - Hash used to create a message"]
+    #[doc = "  @param sig - Signature"]
+    #[doc = "  @param siglen - Signature length"]
+    #[doc = "  @param pub - Public key"]
+    #[doc = "  @param publen - Public key length"]
+    #[doc = "   @return int - number of bytes written to pub"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  @endcode"]
     pub fn recover_key(
         digest: *const capi_checksum256,
         sig: *const crate::c_char,
@@ -219,6 +434,29 @@ extern "C" {
     ) -> crate::c_int;
 }
 extern "C" {
+    #[doc = "  Tests a given public key with the generated key from digest and the signature."]
+    #[doc = ""]
+    #[doc = "  @param digest - What the key will be generated from"]
+    #[doc = "  @param sig - Signature"]
+    #[doc = "  @param siglen - Signature length"]
+    #[doc = "  @param pub - Public key"]
+    #[doc = "  @param publen - Public key length"]
+    #[doc = ""]
+    #[doc = "  @pre **assert recovery key** of `pub` equals the key generated from the `digest` parameter"]
+    #[doc = "  @post Executes next statement. If was not `true`, hard return."]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  checksum digest;"]
+    #[doc = "  char sig;"]
+    #[doc = "  size_t siglen;"]
+    #[doc = "  char pub;"]
+    #[doc = "  size_t publen;"]
+    #[doc = "  assert_recover_key( digest, sig, siglen, pub, publen )"]
+    #[doc = "  // If the given public key does not match with the generated key from digest and the signature, anything below will never fire."]
+    #[doc = "  eosio::print(\"pub key matches the pub key generated from digest\");"]
+    #[doc = "  @endcode"]
     pub fn assert_recover_key(
         digest: *const capi_checksum256,
         sig: *const crate::c_char,
@@ -228,6 +466,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Store a record in a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Store a record in a primary 64-bit integer index table"]
+    #[doc = "  @param scope - The scope where the table resides (implied to be within the code of the current receiver)"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param payer - The account that pays for the storage costs"]
+    #[doc = "  @param id - ID of the entry"]
+    #[doc = "  @param data - Record to store"]
+    #[doc = "  @param len - Size of data"]
+    #[doc = "  @pre `data` is a valid pointer to a range of memory at least `len` bytes long"]
+    #[doc = "  @pre `*((uint64_t*)data)` stores the primary key"]
+    #[doc = "  @return iterator to the newly created table row"]
+    #[doc = "  @post a new entry is created in the table"]
     pub fn db_store_i64(
         scope: u64,
         table: capi_name,
@@ -238,6 +489,17 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Update a record in a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Update a record in a primary 64-bit integer index table"]
+    #[doc = "  @param iterator - Iterator to the table row containing the record to update"]
+    #[doc = "  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)"]
+    #[doc = "  @param data - New updated record"]
+    #[doc = "  @param len - Size of data"]
+    #[doc = "  @pre `data` is a valid pointer to a range of memory at least `len` bytes long"]
+    #[doc = "  @pre `*((uint64_t*)data)` stores the primary key"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the record contained in the table row pointed to by `iterator` is replaced with the new updated record"]
     pub fn db_update_i64(
         iterator: i32,
         payer: capi_name,
@@ -246,9 +508,42 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Remove a record from a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Remove a record from a primary 64-bit integer index table"]
+    #[doc = "  @param iterator - Iterator to the table row to remove"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  int32_t itr = db_find_i64(receiver, receiver, table1, \"alice\"_n);"]
+    #[doc = "  eosio_assert(itr >= 0, \"Alice cannot be removed since she was already not found in the table\");"]
+    #[doc = "  db_remove_i64(itr);"]
+    #[doc = "  @endcode"]
     pub fn db_remove_i64(iterator: i32);
 }
 extern "C" {
+    #[doc = "  Get a record in a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get a record in a primary 64-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the table row containing the record to retrieve"]
+    #[doc = "  @param data - Pointer to the buffer which will be filled with the retrieved record"]
+    #[doc = "  @param len - Size of the buffer"]
+    #[doc = "  @return size of the data copied into the buffer if `len > 0`, or size of the retrieved record if `len == 0`."]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @pre `data` is a valid pointer to a range of memory at least `len` bytes long"]
+    #[doc = "  @post `data` will be filled with the retrieved record (truncated to the first `len` bytes if necessary)"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  char value[50];"]
+    #[doc = "  auto len = db_get_i64(itr, value, 0);"]
+    #[doc = "  eosio_assert(len <= 50, \"buffer to small to store retrieved record\");"]
+    #[doc = "  db_get_i64(itr, value, len);"]
+    #[doc = "  @endcode"]
     pub fn db_get_i64(
         iterator: i32,
         data: *const crate::c_void,
@@ -256,12 +551,59 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row following the referenced table row in a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row following the referenced table row in a primary 64-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row"]
+    #[doc = "  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  int32_t charlie_itr = db_find_i64(receiver, receiver, table1, \"charlie\"_n);"]
+    #[doc = "  // expect nothing after charlie"]
+    #[doc = "  uint64_t prim = 0"]
+    #[doc = "  int32_t  end_itr = db_next_i64(charlie_itr, &prim);"]
+    #[doc = "  eosio_assert(end_itr < -1, \"Charlie was not the last entry in the table\");"]
+    #[doc = "  @endcode"]
     pub fn db_next_i64(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row preceding the referenced table row in a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row preceding the referenced table row in a primary 64-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row"]
+    #[doc = "  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  uint64_t prim = 0;"]
+    #[doc = "  int32_t  itr_prev = db_previous_i64(itr, &prim);"]
+    #[doc = "  @endcode"]
     pub fn db_previous_i64(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a primary 64-bit integer index table by primary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a primary 64-bit integer index table by primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param id - The primary key of the table row to look up"]
+    #[doc = "  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  int itr = db_find_i64(receiver, receiver, table1, \"charlie\"_n);"]
+    #[doc = "  @endcode"]
     pub fn db_find_i64(
         code: capi_name,
         scope: u64,
@@ -270,6 +612,15 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key"]
+    #[doc = "  The table row that matches the lowerbound condition is the first table row in the table with the lowest primary key that is >= the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a primary 64-bit integer index table that matches the lowerbound condition for a given primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param id - The primary key used to determine the lowerbound"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_lowerbound_i64(
         code: capi_name,
         scope: u64,
@@ -278,6 +629,15 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key"]
+    #[doc = "  The table row that matches the upperbound condition is the first table row in the table with the lowest primary key that is > the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a primary 64-bit integer index table that matches the upperbound condition for a given primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param id - The primary key used to determine the upperbound"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_upperbound_i64(
         code: capi_name,
         scope: u64,
@@ -286,9 +646,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get an iterator representing just-past-the-end of the last table row of a primary 64-bit integer index table"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @return end iterator of the table"]
     pub fn db_end_i64(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
+    #[doc = "  Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Store an association of a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table"]
+    #[doc = "  @param scope - The scope where the table resides (implied to be within the code of the current receiver)"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param payer - The account that pays for the storage costs"]
+    #[doc = "  @param id - The primary key to which to associate the secondary key"]
+    #[doc = "  @param secondary - Pointer to the secondary key"]
+    #[doc = "  @return iterator to the newly created table row"]
+    #[doc = "  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 64-bit integer index table"]
     pub fn db_idx64_store(
         scope: u64,
         table: capi_name,
@@ -298,6 +675,14 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Update an association for a 64-bit integer secondary key to a primary key in a secondary 64-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the table row containing the secondary key association to update"]
+    #[doc = "  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)"]
+    #[doc = "  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`"]
     pub fn db_idx64_update(
         iterator: i32,
         payer: capi_name,
@@ -305,15 +690,47 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Remove a table row from a secondary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Remove a table row from a secondary 64-bit integer index table"]
+    #[doc = "  @param iterator - Iterator to the table row to remove"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer"]
     pub fn db_idx64_remove(iterator: i32);
 }
 extern "C" {
+    #[doc = "  Find the table row following the referenced table row in a secondary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row following the referenced table row in a secondary 64-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row"]
+    #[doc = "  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx64_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row preceding the referenced table row in a secondary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row preceding the referenced table row in a secondary 64-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row"]
+    #[doc = "  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx64_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary 64-bit integer index table by primary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary 64-bit integer index table by primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to a `uint64_t` variable which will have its value set to the secondary key of the found table row"]
+    #[doc = "  @param primary - The primary key of the table row to look up"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx64_find_primary(
         code: capi_name,
         scope: u64,
@@ -323,6 +740,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary 64-bit integer index table by secondary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary 64-bit integer index table by secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key used to lookup the table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx64_find_secondary(
         code: capi_name,
         scope: u64,
@@ -332,6 +759,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary 64-bit integer index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx64_lowerbound(
         code: capi_name,
         scope: u64,
@@ -341,6 +780,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary 64-bit integer index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx64_upperbound(
         code: capi_name,
         scope: u64,
@@ -350,9 +801,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 64-bit integer index table"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @return end iterator of the table"]
     pub fn db_idx64_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
+    #[doc = "  Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Store an association of a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table"]
+    #[doc = "  @param scope - The scope where the table resides (implied to be within the code of the current receiver)"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param payer - The account that pays for the storage costs"]
+    #[doc = "  @param id - The primary key to which to associate the secondary key"]
+    #[doc = "  @param secondary - Pointer to the secondary key"]
+    #[doc = "  @return iterator to the newly created table row"]
+    #[doc = "  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary 128-bit integer index table"]
     pub fn db_idx128_store(
         scope: u64,
         table: capi_name,
@@ -362,6 +830,14 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Update an association for a 128-bit integer secondary key to a primary key in a secondary 128-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the table row containing the secondary key association to update"]
+    #[doc = "  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)"]
+    #[doc = "  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`"]
     pub fn db_idx128_update(
         iterator: i32,
         payer: capi_name,
@@ -369,15 +845,47 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Remove a table row from a secondary 128-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Remove a table row from a secondary 128-bit integer index table"]
+    #[doc = "  @param iterator - Iterator to the table row to remove"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer"]
     pub fn db_idx128_remove(iterator: i32);
 }
 extern "C" {
+    #[doc = "  Find the table row following the referenced table row in a secondary 128-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row following the referenced table row in a secondary 128-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row"]
+    #[doc = "  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx128_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row preceding the referenced table row in a secondary 128-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row preceding the referenced table row in a secondary 128-bit integer index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row"]
+    #[doc = "  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx128_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary 128-bit integer index table by primary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary 128-bit integer index table by primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to a `uint128_t` variable which will have its value set to the secondary key of the found table row"]
+    #[doc = "  @param primary - The primary key of the table row to look up"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx128_find_primary(
         code: capi_name,
         scope: u64,
@@ -387,6 +895,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary 128-bit integer index table by secondary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary 128-bit integer index table by secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key used to lookup the table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx128_find_secondary(
         code: capi_name,
         scope: u64,
@@ -396,6 +914,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary 128-bit integer index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx128_lowerbound(
         code: capi_name,
         scope: u64,
@@ -405,6 +935,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary 128-bit integer index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx128_upperbound(
         code: capi_name,
         scope: u64,
@@ -414,9 +956,27 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 128-bit integer index table"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @return end iterator of the table"]
     pub fn db_idx128_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
+    #[doc = "  Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table"]
+    #[doc = ""]
+    #[doc = "  @brief Store an association of a 256-bit secondary key to a primary key in a secondary 256-bit index table"]
+    #[doc = "  @param scope - The scope where the table resides (implied to be within the code of the current receiver)"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param payer - The account that pays for the storage costs"]
+    #[doc = "  @param id - The primary key to which to associate the secondary key"]
+    #[doc = "  @param data - Pointer to the secondary key data stored as an array of 2 `uint128_t` integers"]
+    #[doc = "  @param data_len - Must be set to 2"]
+    #[doc = "  @return iterator to the newly created table row"]
+    #[doc = "  @post new secondary key association between primary key `id` and the specified secondary key is created in the secondary 256-bit index table"]
     pub fn db_idx256_store(
         scope: u64,
         table: capi_name,
@@ -427,6 +987,15 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table"]
+    #[doc = ""]
+    #[doc = "  @brief Update an association for a 256-bit secondary key to a primary key in a secondary 256-bit index table"]
+    #[doc = "  @param iterator - The iterator to the table row containing the secondary key association to update"]
+    #[doc = "  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)"]
+    #[doc = "  @param data - Pointer to the **new** secondary key data (which is stored as an array of 2 `uint128_t` integers) that will replace the existing one of the association"]
+    #[doc = "  @param data_len - Must be set to 2"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the secondary key of the table row pointed to by `iterator` is replaced by the specified secondary key"]
     pub fn db_idx256_update(
         iterator: i32,
         payer: capi_name,
@@ -435,15 +1004,48 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Remove a table row from a secondary 256-bit index table"]
+    #[doc = ""]
+    #[doc = "  @brief Remove a table row from a secondary 256-bit index table"]
+    #[doc = "  @param iterator - Iterator to the table row to remove"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer"]
     pub fn db_idx256_remove(iterator: i32);
 }
 extern "C" {
+    #[doc = "  Find the table row following the referenced table row in a secondary 256-bit index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row following the referenced table row in a secondary 256-bit index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row"]
+    #[doc = "  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx256_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row preceding the referenced table row in a secondary 256-bit index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row preceding the referenced table row in a secondary 256-bit index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row"]
+    #[doc = "  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx256_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary 256-bit index table by primary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary 128-bit integer index table by primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param data - Pointer to the an array of 2 `uint128_t` integers which will act as the buffer to hold the retrieved secondary key of the found table row"]
+    #[doc = "  @param data_len - Must be set to 2"]
+    #[doc = "  @param primary - The primary key of the table row to look up"]
+    #[doc = "  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row"]
+    #[doc = "  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx256_find_primary(
         code: capi_name,
         scope: u64,
@@ -454,6 +1056,17 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary 256-bit index table by secondary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary 256-bit index table by secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) used to lookup the table row"]
+    #[doc = "  @param data_len - Must be set to 2"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the first table row with a secondary key equal to the specified secondary key or the end iterator of the table if the table row could not be found"]
     pub fn db_idx256_find_secondary(
         code: capi_name,
         scope: u64,
@@ -464,6 +1077,19 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key (uses lexicographical ordering on the 256-bit keys)"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary 256-bit index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) first used to determine the lowerbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param data_len - Must be set to 2"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx256_lowerbound(
         code: capi_name,
         scope: u64,
@@ -474,6 +1100,19 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key (uses lexicographical ordering on the 256-bit keys)"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary 256-bit index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param data - Pointer to the secondary key data (which is stored as an array of 2 `uint128_t` integers) first used to determine the upperbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param data_len - Must be set to 2"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, the buffer pointed to by `data` will be filled with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx256_upperbound(
         code: capi_name,
         scope: u64,
@@ -484,9 +1123,26 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary 256-bit index table"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @return end iterator of the table"]
     pub fn db_idx256_end(code: capi_name, scope: u64, table: capi_name) -> i32;
 }
 extern "C" {
+    #[doc = "  Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Store an association of a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table"]
+    #[doc = "  @param scope - The scope where the table resides (implied to be within the code of the current receiver)"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param payer - The account that pays for the storage costs"]
+    #[doc = "  @param id - The primary key to which to associate the secondary key"]
+    #[doc = "  @param secondary - Pointer to the secondary key"]
+    #[doc = "  @return iterator to the newly created table row"]
+    #[doc = "  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary double-precision floating-point index table"]
     pub fn db_idx_double_store(
         scope: u64,
         table: capi_name,
@@ -496,6 +1152,14 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Update an association for a double-precision floating-point secondary key to a primary key in a secondary double-precision floating-point index table"]
+    #[doc = "  @param iterator - The iterator to the table row containing the secondary key association to update"]
+    #[doc = "  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)"]
+    #[doc = "  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`"]
     pub fn db_idx_double_update(
         iterator: i32,
         payer: capi_name,
@@ -503,15 +1167,47 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Remove a table row from a secondary double-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Remove a table row from a secondary double-precision floating-point index table"]
+    #[doc = "  @param iterator - Iterator to the table row to remove"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer"]
     pub fn db_idx_double_remove(iterator: i32);
 }
 extern "C" {
+    #[doc = "  Find the table row following the referenced table row in a secondary double-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row following the referenced table row in a secondary double-precision floating-point index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row"]
+    #[doc = "  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx_double_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row preceding the referenced table row in a secondary double-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row preceding the referenced table row in a secondary double-precision floating-point index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row"]
+    #[doc = "  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx_double_previous(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary double-precision floating-point index table by primary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary double-precision floating-point index table by primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to a `double` variable which will have its value set to the secondary key of the found table row"]
+    #[doc = "  @param primary - The primary key of the table row to look up"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_double_find_primary(
         code: capi_name,
         scope: u64,
@@ -521,6 +1217,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary double-precision floating-point index table by secondary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary double-precision floating-point index table by secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key used to lookup the table row"]
+    #[doc = "  @param primary - Pointer to a `double` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_double_find_secondary(
         code: capi_name,
         scope: u64,
@@ -530,6 +1236,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary double-precision floating-point index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_double_lowerbound(
         code: capi_name,
         scope: u64,
@@ -539,6 +1257,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary double-precision floating-point index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_double_upperbound(
         code: capi_name,
         scope: u64,
@@ -548,6 +1278,13 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary double-precision floating-point index table"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @return end iterator of the table"]
     pub fn db_idx_double_end(
         code: capi_name,
         scope: u64,
@@ -555,6 +1292,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Store an association of a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table"]
+    #[doc = "  @param scope - The scope where the table resides (implied to be within the code of the current receiver)"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param payer - The account that pays for the storage costs"]
+    #[doc = "  @param id - The primary key to which to associate the secondary key"]
+    #[doc = "  @param secondary - Pointer to the secondary key"]
+    #[doc = "  @return iterator to the newly created table row"]
+    #[doc = "  @post new secondary key association between primary key `id` and secondary key `*secondary` is created in the secondary quadruple-precision floating-point index table"]
     pub fn db_idx_long_double_store(
         scope: u64,
         table: capi_name,
@@ -564,6 +1311,14 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Update an association for a quadruple-precision floating-point secondary key to a primary key in a secondary quadruple-precision floating-point index table"]
+    #[doc = "  @param iterator - The iterator to the table row containing the secondary key association to update"]
+    #[doc = "  @param payer - The account that pays for the storage costs (use 0 to continue using current payer)"]
+    #[doc = "  @param secondary - Pointer to the **new** secondary key that will replace the existing one of the association"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the secondary key of the table row pointed to by `iterator` is replaced by `*secondary`"]
     pub fn db_idx_long_double_update(
         iterator: i32,
         payer: capi_name,
@@ -571,16 +1326,48 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Remove a table row from a secondary quadruple-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Remove a table row from a secondary quadruple-precision floating-point index table"]
+    #[doc = "  @param iterator - Iterator to the table row to remove"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post the table row pointed to by `iterator` is removed and the associated storage costs are refunded to the payer"]
     pub fn db_idx_long_double_remove(iterator: i32);
 }
 extern "C" {
+    #[doc = "  Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row following the referenced table row in a secondary quadruple-precision floating-point index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the next table row"]
+    #[doc = "  @return iterator to the table row following the referenced table row (or the end iterator of the table if the referenced table row is the last one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row following the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx_long_double_next(iterator: i32, primary: *mut u64) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row preceding the referenced table row in a secondary quadruple-precision floating-point index table"]
+    #[doc = "  @param iterator - The iterator to the referenced table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the previous table row"]
+    #[doc = "  @return iterator to the table row preceding the referenced table row assuming one exists (it will return -1 if the referenced table row is the first one in the table)"]
+    #[doc = "  @pre `iterator` points to an existing table row in the table or it is the end iterator of the table"]
+    #[doc = "  @post `*primary` will be replaced with the primary key of the table row preceding the referenced table row if it exists, otherwise `*primary` will be left untouched"]
     pub fn db_idx_long_double_previous(iterator: i32, primary: *mut u64)
         -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary quadruple-precision floating-point index table by primary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary quadruple-precision floating-point index table by primary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to a `long double` variable which will have its value set to the secondary key of the found table row"]
+    #[doc = "  @param primary - The primary key of the table row to look up"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @return iterator to the table row with a primary key equal to `id` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_long_double_find_primary(
         code: capi_name,
         scope: u64,
@@ -590,6 +1377,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find a table row in a secondary quadruple-precision floating-point index table by secondary key"]
+    #[doc = ""]
+    #[doc = "  @brief Find a table row in a secondary quadruple-precision floating-point index table by secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key used to lookup the table row"]
+    #[doc = "  @param primary - Pointer to a `long double` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the first table row with a secondary key equal to `*secondary` or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_long_double_find_secondary(
         code: capi_name,
         scope: u64,
@@ -599,6 +1396,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the lowerbound condition is the first table row in the table with the lowest secondary key that is >= the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary quadruple-precision floating-point index table that matches the lowerbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the lowerbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_long_double_lowerbound(
         code: capi_name,
         scope: u64,
@@ -608,6 +1417,18 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  The table row that matches the upperbound condition is the first table row in the table with the lowest secondary key that is > the given key"]
+    #[doc = ""]
+    #[doc = "  @brief Find the table row in a secondary quadruple-precision floating-point index table that matches the upperbound condition for a given secondary key"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @param secondary - Pointer to secondary key first used to determine the upperbound and which is then replaced with the secondary key of the found table row"]
+    #[doc = "  @param primary - Pointer to a `uint64_t` variable which will have its value set to the primary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*secondary` will be replaced with the secondary key of the found table row"]
+    #[doc = "  @post If and only if the table row is found, `*primary` will be replaced with the primary key of the found table row"]
+    #[doc = "  @return iterator to the found table row or the end iterator of the table if the table row could not be found"]
     pub fn db_idx_long_double_upperbound(
         code: capi_name,
         scope: u64,
@@ -617,6 +1438,13 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table"]
+    #[doc = ""]
+    #[doc = "  @brief Get an end iterator representing just-past-the-end of the last table row of a secondary quadruple-precision floating-point index table"]
+    #[doc = "  @param code - The name of the owner of the table"]
+    #[doc = "  @param scope - The scope where the table resides"]
+    #[doc = "  @param table - The table name"]
+    #[doc = "  @return end iterator of the table"]
     pub fn db_idx_long_double_end(
         code: capi_name,
         scope: u64,
@@ -624,6 +1452,16 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Checks if a transaction is authorized by a provided set of keys and permissions"]
+    #[doc = ""]
+    #[doc = "  @param trx_data - pointer to the start of the serialized transaction"]
+    #[doc = "  @param trx_size - size (in bytes) of the serialized transaction"]
+    #[doc = "  @param pubkeys_data - pointer to the start of the serialized vector of provided public keys"]
+    #[doc = "  @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)"]
+    #[doc = "  @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)"]
+    #[doc = "  @param perms_size - size (in bytes) of the serialized vector of provided permissions"]
+    #[doc = ""]
+    #[doc = "  @return 1 if the transaction is authorized, 0 otherwise"]
     pub fn check_transaction_authorization(
         trx_data: *const crate::c_char,
         trx_size: u32,
@@ -634,6 +1472,17 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Checks if a permission is authorized by a provided delay and a provided set of keys and permissions"]
+    #[doc = ""]
+    #[doc = "  @param account - the account owner of the permission"]
+    #[doc = "  @param permission - the name of the permission to check for authorization"]
+    #[doc = "  @param pubkeys_data - pointer to the start of the serialized vector of provided public keys"]
+    #[doc = "  @param pubkeys_size  - size (in bytes) of serialized vector of provided public keys (can be 0 if no public keys are to be provided)"]
+    #[doc = "  @param perms_data - pointer to the start of the serialized vector of provided permissions (empty permission name acts as wildcard)"]
+    #[doc = "  @param perms_size - size (in bytes) of the serialized vector of provided permissions"]
+    #[doc = "  @param delay_us - the provided delay in microseconds (cannot exceed INT64_MAX)"]
+    #[doc = ""]
+    #[doc = "  @return 1 if the permission is authorized, 0 otherwise"]
     pub fn check_permission_authorization(
         account: capi_name,
         permission: capi_name,
@@ -645,48 +1494,172 @@ extern "C" {
     ) -> i32;
 }
 extern "C" {
+    #[doc = "  Returns the last used time of a permission"]
+    #[doc = ""]
+    #[doc = "  @param account    - the account owner of the permission"]
+    #[doc = "  @param permission - the name of the permission"]
+    #[doc = ""]
+    #[doc = "  @return the last used time (in microseconds since Unix epoch) of the permission"]
     pub fn get_permission_last_used(
         account: capi_name,
         permission: capi_name,
     ) -> i64;
 }
 extern "C" {
+    #[doc = "  Returns the creation time of an account"]
+    #[doc = ""]
+    #[doc = "  @param account - the account"]
+    #[doc = ""]
+    #[doc = "  @return the creation time (in microseconds since Unix epoch) of the account"]
     pub fn get_account_creation_time(account: capi_name) -> i64;
 }
 extern "C" {
+    #[doc = "  Prints string"]
+    #[doc = ""]
+    #[doc = "  @param cstr - a null terminated string"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  prints(\"Hello World!\"); // Output: Hello World!"]
+    #[doc = "  @endcode"]
     pub fn prints(cstr: *const crate::c_char);
 }
 extern "C" {
+    #[doc = "  Prints string up to given length"]
+    #[doc = ""]
+    #[doc = "  @param cstr - pointer to string"]
+    #[doc = "  @param len - len of string to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  prints_l(\"Hello World!\", 5); // Output: Hello"]
+    #[doc = "  @endcode"]
     pub fn prints_l(cstr: *const crate::c_char, len: u32);
 }
 extern "C" {
+    #[doc = " Prints value as a 64 bit signed integer"]
+    #[doc = ""]
+    #[doc = " @brief Prints value as a 64 bit signed integer"]
+    #[doc = " @param value of 64 bit signed integer to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  printi(-1e+18); // Output: -1000000000000000000"]
+    #[doc = "  @endcode"]
     pub fn printi(value: i64);
 }
 extern "C" {
+    #[doc = " Prints value as a 64 bit unsigned integer"]
+    #[doc = ""]
+    #[doc = " @param value of 64 bit unsigned integer to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  printui(1e+18); // Output: 1000000000000000000"]
+    #[doc = "  @endcode"]
     pub fn printui(value: u64);
 }
 extern "C" {
+    #[doc = " Prints value as a 128 bit signed integer"]
+    #[doc = ""]
+    #[doc = " @param value is a pointer to the 128 bit signed integer to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  int128_t large_int(-87654323456);"]
+    #[doc = "  printi128(&large_int); // Output: -87654323456"]
+    #[doc = "  @endcode"]
     pub fn printi128(value: *const int128_t);
 }
 extern "C" {
+    #[doc = " Prints value as a 128 bit unsigned integer"]
+    #[doc = ""]
+    #[doc = " @param value is a pointer to the 128 bit unsigned integer to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  uint128_t large_int(87654323456);"]
+    #[doc = "  printui128(&large_int); // Output: 87654323456"]
+    #[doc = "  @endcode"]
     pub fn printui128(value: *const uint128_t);
 }
 extern "C" {
+    #[doc = " Prints value as single-precision floating point number"]
+    #[doc = ""]
+    #[doc = " @param value of float to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  float value = 5.0 / 10.0;"]
+    #[doc = "  printsf(value); // Output: 0.5"]
+    #[doc = "  @endcode"]
     pub fn printsf(value: f32);
 }
 extern "C" {
+    #[doc = " Prints value as double-precision floating point number"]
+    #[doc = ""]
+    #[doc = " @param value of double to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  double value = 5.0 / 10.0;"]
+    #[doc = "  printdf(value); // Output: 0.5"]
+    #[doc = "  @endcode"]
     pub fn printdf(value: f64);
 }
 extern "C" {
+    #[doc = " Prints value as quadruple-precision floating point number"]
+    #[doc = ""]
+    #[doc = " @param value is a pointer to the long double to be printed"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  long double value = 5.0 / 10.0;"]
+    #[doc = "  printqf(value); // Output: 0.5"]
+    #[doc = "  @endcode"]
     pub fn printqf(value: *const f64);
 }
 extern "C" {
+    #[doc = " Prints a 64 bit names as base32 encoded string"]
+    #[doc = ""]
+    #[doc = " @param name - 64 bit name to be printed"]
+    #[doc = ""]
+    #[doc = " Example:"]
+    #[doc = " @code"]
+    #[doc = " printn(\"abcde\"_n); // Output: abcde"]
+    #[doc = " @endcode"]
     pub fn printn(name: u64);
 }
 extern "C" {
+    #[doc = " Prints hexidecimal data of length datalen"]
+    #[doc = ""]
+    #[doc = " @brief Prints hexidecimal data of length datalen"]
+    #[doc = " @param data to be printed"]
+    #[doc = " @param datalen length of the data to be printed"]
+    #[doc = ""]
+    #[doc = " Example"]
+    #[doc = " @code"]
+    #[doc = " unsigned char rawData[9] = {0x49 0x20 0x6C 0x6F 0x76 0x65 0x20 0x62 0x6D};"]
+    #[doc = " printhex(&rawData, 9);"]
+    #[doc = " @endcode"]
     pub fn printhex(data: *const crate::c_void, datalen: u32);
 }
 extern "C" {
+    #[doc = " Get the resource limits of an account"]
+    #[doc = ""]
+    #[doc = " @param account - name of the account whose resource limit to get"]
+    #[doc = " @param ram_bytes - pointer to `int64_t` to hold retrieved ram limit in absolute bytes"]
+    #[doc = " @param net_weight - pointer to `int64_t` to hold net limit"]
+    #[doc = " @param cpu_weight - pointer to `int64_t` to hold cpu limit"]
     pub fn get_resource_limits(
         account: capi_name,
         ram_bytes: *mut i64,
@@ -695,6 +1668,12 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = " Set the resource limits of an account"]
+    #[doc = ""]
+    #[doc = " @param account - name of the account whose resource limit to be set"]
+    #[doc = " @param ram_bytes - ram limit in absolute bytes"]
+    #[doc = " @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)"]
+    #[doc = " @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)"]
     pub fn set_resource_limits(
         account: capi_name,
         ram_bytes: i64,
@@ -703,33 +1682,78 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = " Proposes a schedule change"]
+    #[doc = ""]
+    #[doc = " @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to \"pending\" automatically. Once the block that promotes the schedule is irreversible, the schedule will become \"active\""]
+    #[doc = " @param producer_data - packed data of produce_keys in the appropriate producer schedule order"]
+    #[doc = " @param producer_data_size - size of the data buffer"]
+    #[doc = ""]
+    #[doc = " @return -1 if proposing a new producer schedule was unsuccessful, otherwise returns the version of the new proposed schedule"]
     pub fn set_proposed_producers(
         producer_data: *mut crate::c_char,
         producer_data_size: u32,
     ) -> i64;
 }
 extern "C" {
+    #[doc = " Check if an account is privileged"]
+    #[doc = ""]
+    #[doc = " @param account - name of the account to be checked"]
+    #[doc = " @return true if the account is privileged"]
+    #[doc = " @return false if the account is not privileged"]
     pub fn is_privileged(account: capi_name) -> bool;
 }
 extern "C" {
+    #[doc = " Set the privileged status of an account"]
+    #[doc = ""]
+    #[doc = " @param account - name of the account whose privileged account to be set"]
+    #[doc = " @param is_priv - privileged status"]
     pub fn set_privileged(account: capi_name, is_priv: bool);
 }
 extern "C" {
+    #[doc = " Set the blockchain parameters"]
+    #[doc = ""]
+    #[doc = " @param data - pointer to blockchain parameters packed as bytes"]
+    #[doc = " @param datalen - size of the packed blockchain parameters"]
+    #[doc = " @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long that contains packed blockchain params data"]
     pub fn set_blockchain_parameters_packed(
         data: *mut crate::c_char,
         datalen: u32,
     );
 }
 extern "C" {
+    #[doc = " Retrieve the blolckchain parameters"]
+    #[doc = ""]
+    #[doc = " @param data - output buffer of the blockchain parameters, only retrieved if sufficent size to hold packed data."]
+    #[doc = " @param datalen - size of the data buffer, 0 to report required size."]
+    #[doc = " @return size of the blockchain parameters"]
+    #[doc = " @pre `data` is a valid pointer to a range of memory at least `datalen` bytes long"]
+    #[doc = " @post `data` is filled with packed blockchain parameters"]
     pub fn get_blockchain_parameters_packed(
         data: *mut crate::c_char,
         datalen: u32,
     ) -> u32;
 }
 extern "C" {
+    #[doc = "  Aborts processing of this action and unwinds all pending changes if the test condition is true"]
+    #[doc = ""]
+    #[doc = "  @param test - 0 to abort, 1 to ignore"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  eosio_assert(1 == 2, \"One is not equal to two.\");"]
+    #[doc = "  eosio_assert(1 == 1, \"One is not equal to one.\");"]
+    #[doc = "  @endcode"]
+    #[doc = ""]
+    #[doc = "  @param msg - a null terminated string explaining the reason for failure"]
     pub fn eosio_assert(test: u32, msg: *const crate::c_char);
 }
 extern "C" {
+    #[doc = "  Aborts processing of this action and unwinds all pending changes if the test condition is true"]
+    #[doc = ""]
+    #[doc = "  @param test - 0 to abort, 1 to ignore"]
+    #[doc = "  @param msg - a pointer to the start of string explaining the reason for failure"]
+    #[doc = "  @param msg_len - length of the string"]
     pub fn eosio_assert_message(
         test: u32,
         msg: *const crate::c_char,
@@ -737,15 +1761,41 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Aborts processing of this action and unwinds all pending changes if the test condition is true"]
+    #[doc = ""]
+    #[doc = "  @brief Aborts processing of this action and unwinds all pending changes"]
+    #[doc = "  @param test - 0 to abort, 1 to ignore"]
+    #[doc = "  @param code - the error code"]
     pub fn eosio_assert_code(test: u32, code: u64);
 }
 extern "C" {
+    #[doc = "  This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called."]
+    #[doc = ""]
+    #[doc = "  @param code - the exit code"]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  eosio_exit(0);"]
+    #[doc = "  eosio_exit(1);"]
+    #[doc = "  eosio_exit(2);"]
+    #[doc = "  eosio_exit(3);"]
+    #[doc = "  @endcode"]
     pub fn eosio_exit(code: i32);
 }
 extern "C" {
+    #[doc = "  Returns the time in microseconds from 1970 of the current block"]
+    #[doc = ""]
+    #[doc = "  @return time in microseconds from 1970 of the current block"]
     pub fn current_time() -> u64;
 }
 extern "C" {
+    #[doc = "  Sends a deferred transaction."]
+    #[doc = ""]
+    #[doc = "  @param sender_id - ID of sender"]
+    #[doc = "  @param payer - Account paying for RAM"]
+    #[doc = "  @param serialized_transaction - Pointer of serialized transaction to be deferred"]
+    #[doc = "  @param size - Size to reserve"]
+    #[doc = "  @param replace_existing - f this is `0` then if the provided sender_id is already in use by an in-flight transaction from this contract, which will be a failing assert. If `1` then transaction will atomically cancel/replace the inflight transaction"]
     pub fn send_deferred(
         sender_id: *const uint128_t,
         payer: capi_name,
@@ -755,24 +1805,84 @@ extern "C" {
     );
 }
 extern "C" {
+    #[doc = "  Cancels a deferred transaction."]
+    #[doc = ""]
+    #[doc = "  @brief Cancels a deferred transaction."]
+    #[doc = "  @param sender_id - The id of the sender"]
+    #[doc = ""]
+    #[doc = "  @pre The deferred transaction ID exists."]
+    #[doc = "  @pre The deferred transaction ID has not yet been published."]
+    #[doc = "  @post Deferred transaction canceled."]
+    #[doc = ""]
+    #[doc = "  @return 1 if transaction was canceled, 0 if transaction was not found"]
+    #[doc = ""]
+    #[doc = "  Example:"]
+    #[doc = ""]
+    #[doc = "  @code"]
+    #[doc = "  id = 0xffffffffffffffff"]
+    #[doc = "  cancel_deferred( id );"]
+    #[doc = "  @endcode"]
     pub fn cancel_deferred(sender_id: *const uint128_t) -> crate::c_int;
 }
 extern "C" {
+    #[doc = " Access a copy of the currently executing transaction."]
+    #[doc = ""]
+    #[doc = " @brief Access a copy of the currently executing transaction."]
+    #[doc = " @param buffer - a buffer to write the current transaction to"]
+    #[doc = " @param size - the size of the buffer, 0 to return required size"]
+    #[doc = " @return the size of the transaction written to the buffer, or number of bytes that can be copied if size==0 passed"]
     pub fn read_transaction(buffer: *mut crate::c_char, size: usize) -> usize;
 }
 extern "C" {
+    #[doc = " Gets the size of the currently executing transaction."]
+    #[doc = ""]
+    #[doc = " @brief Gets the size of the currently executing transaction."]
+    #[doc = " @return size of the currently executing transaction"]
     pub fn transaction_size() -> usize;
 }
 extern "C" {
+    #[doc = " Gets the block number used for TAPOS on the currently executing transaction."]
+    #[doc = ""]
+    #[doc = " @brief Gets the block number used for TAPOS on the currently executing transaction."]
+    #[doc = " @return block number used for TAPOS on the currently executing transaction"]
+    #[doc = " Example:"]
+    #[doc = " @code"]
+    #[doc = " int tbn = tapos_block_num();"]
+    #[doc = " @endcode"]
     pub fn tapos_block_num() -> crate::c_int;
 }
 extern "C" {
+    #[doc = " Gets the block prefix used for TAPOS on the currently executing transaction."]
+    #[doc = ""]
+    #[doc = " @brief Gets the block prefix used for TAPOS on the currently executing transaction."]
+    #[doc = " @return block prefix used for TAPOS on the currently executing transaction"]
+    #[doc = " Example:"]
+    #[doc = " @code"]
+    #[doc = " int tbp = tapos_block_prefix();"]
+    #[doc = " @endcode"]
     pub fn tapos_block_prefix() -> crate::c_int;
 }
 extern "C" {
+    #[doc = " Gets the expiration of the currently executing transaction."]
+    #[doc = ""]
+    #[doc = " @brief Gets the expiration of the currently executing transaction."]
+    #[doc = " @return expiration of the currently executing transaction in seconds since Unix epoch"]
+    #[doc = " Example:"]
+    #[doc = " @code"]
+    #[doc = " uint32_t tm = expiration();"]
+    #[doc = " eosio_print(tm);"]
+    #[doc = " @endcode"]
     pub fn expiration() -> u32;
 }
 extern "C" {
+    #[doc = " Retrieves the indicated action from the active transaction."]
+    #[doc = ""]
+    #[doc = " @brief Retrieves the indicated action from the active transaction."]
+    #[doc = " @param type - 0 for context free action, 1 for action"]
+    #[doc = " @param index - the index of the requested action"]
+    #[doc = " @param buff - output packed buff of the action"]
+    #[doc = " @param size - amount of buff read, pass 0 to have size returned"]
+    #[doc = " @return the size of the action, -1 on failure"]
     pub fn get_action(
         type_: u32,
         index: u32,
@@ -781,6 +1891,13 @@ extern "C" {
     ) -> crate::c_int;
 }
 extern "C" {
+    #[doc = " Retrieve the signed_transaction.context_free_data[index]."]
+    #[doc = ""]
+    #[doc = " @brief Retrieve the signed_transaction.context_free_data[index]."]
+    #[doc = " @param index - the index of the context_free_data entry to retrieve"]
+    #[doc = " @param buff - output buff of the context_free_data entry"]
+    #[doc = " @param size - amount of context_free_data[index] to retrieve into buff, 0 to report required size"]
+    #[doc = " @return size copied, or context_free_data[index].size() if 0 passed for size, or -1 if index not valid"]
     pub fn get_context_free_data(
         index: u32,
         buff: *mut crate::c_char,

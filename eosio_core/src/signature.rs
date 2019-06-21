@@ -1,33 +1,24 @@
-//! TODO docs
-
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/crypto.hpp#L93-L120>
+use crate::UnsignedInt;
 use eosio_bytes::{NumBytes, Read, Write};
 
-/// TODO docs
-#[derive(Read, Write, NumBytes, Clone, Copy)]
+/// EOSIO Signature
+#[derive(Read, Write, NumBytes, Clone)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct Signature([u8; 66]);
+pub struct Signature {
+    /// Type of the signature, could be either K1 or R1
+    pub type_: UnsignedInt,
+    /// Bytes of the signature
+    pub data: [u8; 66],
+}
 
 impl Signature {
     /// TODO docs.
     pub fn as_bytes(&self) -> &[u8] {
-        &self.0
+        &self.data
     }
     /// TODO docs.
-    pub fn to_bytes(&self) -> [u8; 66] {
-        &self.0
-    }
-}
-
-impl From<[u8; 66]> for Signature {
-    #[inline]
-    fn from(value: [u8; 66]) -> Self {
-        Self(value)
-    }
-}
-
-impl From<Signature> for [u8; 66] {
-    #[inline]
-    fn from(value: Signature) -> Self {
-        value.0
+    pub const fn to_bytes(&self) -> [u8; 66] {
+        self.data
     }
 }

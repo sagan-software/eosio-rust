@@ -2,8 +2,14 @@ use eosio_core::{TimePoint, TimePointSec};
 
 /// Gets the current time
 #[inline]
-pub fn current_time() -> TimePoint {
+pub fn current_time_point() -> TimePoint {
     TimePoint::from(unsafe { ::eosio_cdt_sys::current_time() } as i64)
+}
+
+/// Gets the current time
+#[inline]
+pub fn current_time_point_sec() -> TimePointSec {
+    current_time_point().into()
 }
 
 /// Gets the publication time

@@ -26,7 +26,7 @@ touch $ROOT/examples/addressbook/src/lib.rs
 touch $ROOT/examples/hello_bare/src/lib.rs
 touch $ROOT/examples/hello/src/lib.rs
 touch $ROOT/examples/tictactoe/src/lib.rs
-cargo clippy -- \
+cargo clippy -p eosio_core -- \
     -W clippy::complexity \
     -D clippy::correctness \
     -W clippy::pedantic \

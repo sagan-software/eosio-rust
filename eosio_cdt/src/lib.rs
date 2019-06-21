@@ -1,3 +1,4 @@
+//! TODO docs
 #![recursion_limit = "128"]
 #![deny(
     clippy::correctness,
@@ -32,13 +33,17 @@ mod account;
 mod action;
 mod check;
 mod crypto;
+mod permissions;
 mod print;
+mod privileged;
+mod singleton_index;
 mod table;
 mod table_primary;
 mod table_secondary;
 mod time;
 
 pub use self::{
-    account::*, action::*, check::*, crypto::*, print::*, table::*,
-    table_primary::*, table_secondary::*, time::*,
+    account::*, action::*, check::*, crypto::*, permissions::*, print::*,
+    privileged::*, singleton_index::*, table::*, table_primary::*,
+    table_secondary::*, time::*,
 };

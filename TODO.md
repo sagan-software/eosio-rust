@@ -1,12 +1,13 @@
 # `eosio_cdt`
 
-- [ ] Create test script using test files from `EOSIO/eosio.cdt` repo
+- [x] Create test script using test files from `EOSIO/eosio.cdt` repo
 - [ ] Create contract benchmarks
   - [ ] Create Rust benchmarking contract
   - [ ] Create C++ benchmarking contract
-- [ ] Re-implement sending inline actions
+- [x] Re-implement sending inline actions
 - [ ] Implement deferred transactions
-- [ ] Panic handler
+- [x] Panic handler
+- [ ] Singleton
 
 # `eosio_core`
 
@@ -50,7 +51,7 @@
   - [ ] `RemAssign`
   - [ ] `Sub`
   - [ ] `SubAssign`
-- [ ] `FromStr` for `Asset`
+- [x] `FromStr` for `Asset`
 - [ ] `FromStr` for `ExtendedAsset`
 - [ ] `FromStr` for `Authorization`
 - [ ] `Display` for `Authorization`
@@ -58,4 +59,11 @@
 - [ ] Create `TimePointSec` type
 - [ ] Create `BlockTimestamp` type
 - [ ] Create `PublicKey` type
+- [ ] Create `PrivateKey` type
 - [ ] Create `Signature` type
+- [ ] Create `ParseExtendedAssetError` enum
+- [ ] Create `ParseExtendedSymbolError` enum
+
+# `eosio_numstr_macros`
+
+- [ ] UI tests

@@ -60,13 +60,35 @@ where
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
         let is_some = bool::read(bytes, pos)?;
-        let item = T::read(bytes, pos)?;
-        let opt = if is_some { Some(item) } else { None };
-        Ok(opt)
+        if is_some {
+            Ok(Some(T::read(bytes, pos)?))
+        } else {
+            Ok(None)
+        }
     }
 }
 
 impl<T> Read for Vec<T>
+where
+    T: Read + Default + Clone,
+{
+    #[inline]
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        let capacity = usize::read(bytes, pos)?;
+
+        let mut results = Self::new();
+        results.resize(capacity, T::default());
+
+        for item in &mut results {
+            let r = T::read(bytes, pos)?;
+            *item = r;
+        }
+
+        Ok(results)
+    }
+}
+
+impl<T> Read for std::collections::VecDeque<T>
 where
     T: Read + Default + Clone,
 {

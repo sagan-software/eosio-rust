@@ -1,33 +1,34 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/crypto.hpp#L22-L48>
+use crate::UnsignedInt;
 use eosio_bytes::{NumBytes, Read, Write};
 
-/// TODO docs
-#[derive(Read, Write, NumBytes, Clone, Copy)]
+/// EOSIO Public Key
+#[derive(Read, Write, NumBytes, Clone)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
-pub struct PublicKey([u8; 34]);
+pub struct PublicKey {
+    /// Type of the public key, could be either K1 or R1
+    pub type_: UnsignedInt,
+    /// Bytes of the public key
+    pub data: [u8; 34],
+}
 
 impl PublicKey {
     /// TODO docs.
     pub fn as_bytes(&self) -> &[u8] {
-        &self.0
+        &self.data
     }
 
     /// TODO docs.
     pub const fn to_bytes(&self) -> [u8; 34] {
-        self.0
+        self.data
     }
 }
 
-impl From<[u8; 34]> for PublicKey {
-    #[inline]
-    fn from(value: [u8; 34]) -> Self {
-        Self(value)
-    }
-}
-
-impl From<PublicKey> for [u8; 34] {
-    #[inline]
-    fn from(value: PublicKey) -> Self {
-        value.0
+impl Default for PublicKey {
+    fn default() -> Self {
+        Self {
+            type_: UnsignedInt::default(),
+            data: [0_u8; 34],
+        }
     }
 }

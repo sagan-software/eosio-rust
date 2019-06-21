@@ -1,8 +1,10 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L134-L210>
 use eosio_bytes::*;
 use serde::Serialize;
 
-/// Block timestamp as milliseconds relative to the year 2000.
+/// This class is used in the block headers to represent the block time
+/// It is a parameterised class that takes an Epoch in milliseconds and
+/// and an interval in milliseconds and computes the number of slots.
 #[derive(
     Read,
     Write,

@@ -45,7 +45,10 @@ pub fn table(args: TokenStream, input: TokenStream) -> TokenStream {
     crate::table::expand(args, input)
 }
 
-#[proc_macro_derive(TableRow, attributes(table_name, primary, secondary))]
+#[proc_macro_derive(
+    TableRow,
+    attributes(table_name, primary, secondary, singleton)
+)]
 pub fn derive_table_row(input: TokenStream) -> TokenStream {
     crate::derive_table_row::expand(input)
 }

@@ -56,6 +56,34 @@ where
     }
 }
 
+impl<T> NumBytes for std::collections::VecDeque<T>
+where
+    T: NumBytes,
+{
+    #[inline]
+    fn num_bytes(&self) -> usize {
+        let mut count = 1;
+        for item in self.iter() {
+            count += item.num_bytes();
+        }
+        count
+    }
+}
+
+impl<T> NumBytes for &[T]
+where
+    T: NumBytes,
+{
+    #[inline]
+    fn num_bytes(&self) -> usize {
+        let mut count = 1;
+        for item in self.iter() {
+            count += item.num_bytes();
+        }
+        count
+    }
+}
+
 impl<T> NumBytes for Option<T>
 where
     T: NumBytes,

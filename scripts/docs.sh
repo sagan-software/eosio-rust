@@ -20,9 +20,29 @@ cargo doc \
     --exclude tictactoe \
     --exclude eosio_numstr_macros_impl \
     --exclude eosio_cdt_macros_impl \
+    --exclude benchmarks \
     --no-deps
 
 cp -rf $TARGET/doc/* $GH_PAGES/
+
+function build_readme {
+    printf "========= Building README.md: %s =========\n" $1
+    cargo readme \
+        --project-root $1 \
+        --output README.md \
+        --no-badges \
+        --no-license \
+        --no-title
+}
+
+build_readme eosio
+build_readme eosio_bytes
+build_readme eosio_bytes_derive
+build_readme eosio_core
+build_readme eosio_cdt_sys
+build_readme eosio_numstr
+build_readme eosio_numstr_macros
+build_readme eosio_numstr_macros_impl
 
 # cargo bench -p eosio_numstr
 # cp -rf $TARGET/criterion gh-pages/benchmarks

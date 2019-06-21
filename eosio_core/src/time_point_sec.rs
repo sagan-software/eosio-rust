@@ -1,8 +1,9 @@
-//! TODO docs
+//! https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L79-L132
+use crate::TimePoint;
 use eosio_bytes::*;
 use serde::Serialize;
 
-/// Time relative to unix epoch
+/// A lower resolution `TimePoint` accurate only to seconds from 1970
 #[derive(
     Read,
     Write,
@@ -84,5 +85,12 @@ impl From<TimePointSec> for u32 {
     #[inline]
     fn from(t: TimePointSec) -> Self {
         t.0
+    }
+}
+
+impl From<TimePoint> for TimePointSec {
+    #[inline]
+    fn from(t: TimePoint) -> Self {
+        Self((t.as_i64() as u32) / 1_000_000_u32)
     }
 }

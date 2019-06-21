@@ -40,5 +40,9 @@ build_contract addressbook
 build_contract hello
 build_contract hello_bare
 build_contract tictactoe
+build_contract eosio_bios
+build_contract eosio_forum
+build_contract eosio_msig
+# build_contract eosio_system
 build_contract eosio_token
 build_contract eosio_wrap

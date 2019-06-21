@@ -96,7 +96,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
         };
         send_inline_action(&action.to_action(
             current_receiver(),
-            vec![Authorization {
+            vec![PermissionLevel {
                 actor: st.issuer,
                 permission: n!(active).into(),
             }],

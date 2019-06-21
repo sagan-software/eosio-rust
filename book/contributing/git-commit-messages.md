@@ -21,6 +21,8 @@
     * ⬆️ `:arrow_up:` when upgrading dependencies
     * ⬇️ `:arrow_down:` when downgrading dependencies
     * 👕 `:shirt:` when removing linter warnings
+    * 🎉`:tada:` when tagging a release
+    * 🐳 `:whale:` when dealing with Docker
 
 Based on https://github.com/atom/atom/blob/master/CONTRIBUTING.md#git-commit-messages
 

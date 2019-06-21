@@ -2,9 +2,24 @@
 name = "eosio"
 version = "0.2.0"
 authors = ["Liam Curry <liam@sagan.software>"]
-license = "MIT/Apache-2.0"
+license = "MIT OR Apache-2.0"
 description = "Library for building EOSIO smart contracts"
 edition = "2018"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = [
+    "api-bindings",
+    "cryptography::cryptocurrencies",
+    "data-structures",
+    "external-ffi-bindings",
+    "wasm"
+]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio/"
+
+[badges]
+maintenance = { status = "actively-developed" }
+travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
 [features]
 default = ["std"]

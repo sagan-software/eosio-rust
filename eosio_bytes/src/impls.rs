@@ -81,7 +81,7 @@ macro_rules! impl_array {
         {
             #[inline]
             fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
-                usize::read(bytes, pos)?;
+                // usize::read(bytes, pos)?;
 
                 let mut items = [T::default(); $x];
                 for item in items.iter_mut() {
@@ -99,7 +99,11 @@ macro_rules! impl_array {
         {
             #[inline]
             fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
-                (&self[..]).write(bytes, pos)
+                // (&self[..]).write(bytes, pos)
+                for item in self.iter() {
+                    item.write(bytes, pos)?;
+                }
+                Ok(())
             }
         }
 
@@ -109,7 +113,8 @@ macro_rules! impl_array {
         {
             #[inline]
             fn num_bytes(&self) -> usize {
-                let mut count = 1;
+                // let mut count = 1;
+                let mut count = 0;
                 for item in self.iter() {
                     count += item.num_bytes();
                 }

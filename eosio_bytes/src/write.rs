@@ -72,6 +72,7 @@ impl Write for usize {
         pos: &mut usize,
     ) -> Result<(), WriteError> {
         // TODO: fix this when usize is larger than 1 byte?
+        // TODO this should be written as an UnsignedInt
         (*self as u8).write(bytes, pos)
     }
 }
@@ -88,10 +89,9 @@ where
     ) -> Result<(), WriteError> {
         self.is_some().write(bytes, pos)?;
         match self {
-            Some(item) => item.write(bytes, pos)?,
-            None => T::default().write(bytes, pos)?,
-        };
-        Ok(())
+            Some(item) => item.write(bytes, pos),
+            None => Ok(()),
+        }
     }
 }
 
@@ -114,6 +114,24 @@ where
 }
 
 impl<T> Write for Vec<T>
+where
+    T: Write,
+{
+    #[inline]
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
+        self.len().write(bytes, pos)?;
+        for item in self.iter() {
+            item.write(bytes, pos)?;
+        }
+        Ok(())
+    }
+}
+
+impl<T> Write for std::collections::VecDeque<T>
 where
     T: Write,
 {

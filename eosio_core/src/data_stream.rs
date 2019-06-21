@@ -11,15 +11,6 @@ pub struct DataStream {
 }
 
 impl DataStream {
-    /// Creates a new DataStream
-    #[inline]
-    pub fn with_capacity(capacity: usize) -> Self {
-        Self {
-            bytes: vec![0_u8; capacity],
-            pos: 0,
-        }
-    }
-
     /// Read something from the stream
     #[inline]
     pub fn read<T: Read>(&mut self) -> Result<T, ReadError> {
@@ -46,16 +37,22 @@ impl DataStream {
         self.bytes.get(self.pos..).unwrap_or_else(|| &self.bytes)
     }
 
-    /// Gets remaining number of bytes
-    #[inline]
-    pub fn remaining(&self) -> usize {
-        self.bytes.len() - self.pos
-    }
-
     /// Resets the data stream position
     #[inline]
     pub fn reset(&mut self) {
         self.pos = 0;
+    }
+
+    /// Get the current position
+    #[inline]
+    pub const fn position(&self) -> usize {
+        self.pos
+    }
+
+    /// Gets the remaining number of bytes
+    #[inline]
+    pub fn remaining(&self) -> usize {
+        self.bytes.len() - self.pos
     }
 }
 

@@ -126,7 +126,7 @@ fn eosio_token_tests(contract: &str, symbol: &str) -> Vec<Run> {
     vec![create, issue, transfer, retire, close, open]
 }
 
-const WARMUP_THRESHOLD: usize = 20;
+const WARMUP_ITERATIONS: usize = 20;
 
 fn main() {
     println!("Running benchmarks...");
@@ -134,12 +134,12 @@ fn main() {
     let mut rust_runs = Vec::new();
     let mut cpp_runs = Vec::new();
 
-    println!("Warming up for {} iterations...", WARMUP_THRESHOLD);
+    println!("Warming up for {} iterations...", WARMUP_ITERATIONS);
     for i in 0..500 {
         if i % 5 == 0 {
             println!("Iteration #{}", i);
         }
-        if i == WARMUP_THRESHOLD {
+        if i == WARMUP_ITERATIONS {
             println!("Done warming up! Saving results...");
         }
 
@@ -152,7 +152,7 @@ fn main() {
         let mut r = eosio_token_tests("eosio.token", &symbol);
         let mut c = eosio_token_tests("eosiotkncpp", &symbol);
 
-        if i >= WARMUP_THRESHOLD {
+        if i >= WARMUP_ITERATIONS {
             rust_runs.append(&mut r);
             cpp_runs.append(&mut c);
         }

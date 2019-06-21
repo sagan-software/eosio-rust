@@ -1,4 +1,4 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L234-L337>
 use crate::SymbolCode;
 use eosio_bytes::{NumBytes, Read, Write};
 use eosio_numstr::{symbol_code, symbol_from_chars, symbol_precision};
@@ -9,7 +9,7 @@ use std::str::FromStr;
 
 pub use eosio_numstr::ParseSymbolError;
 
-/// TODO docs
+/// Stores information about a symbol, the symbol can be 7 characters long.
 #[derive(
     Debug,
     PartialEq,
@@ -30,21 +30,27 @@ pub use eosio_numstr::ParseSymbolError;
 pub struct Symbol(u64);
 
 impl Symbol {
-    /// TODO docs
+    /// Construct a new symbol given a value.
     #[inline]
-    pub fn new(precision: u8, code: SymbolCode) -> Self {
+    pub const fn new(value: u64) -> Self {
+        Self(value)
+    }
+
+    /// Construct a new symbol given a `u8` precision and `SymbolCode`.
+    #[inline]
+    pub fn new_with_code(precision: u8, code: SymbolCode) -> Self {
         let mut value = code.as_u64();
         value |= u64::from(precision);
         Self(value)
     }
 
-    /// TODO docs
+    /// This symbol's precision
     #[inline]
     pub fn precision(&self) -> u8 {
         symbol_precision(self.as_u64())
     }
 
-    /// TODO docs
+    /// Returns representation of symbol name
     #[inline]
     pub fn code(&self) -> SymbolCode {
         symbol_code(self.as_u64()).into()
@@ -56,7 +62,7 @@ impl Symbol {
         self.0
     }
 
-    /// TODO docs
+    /// Is this symbol valid
     #[inline]
     pub fn is_valid(&self) -> bool {
         self.code().is_valid()

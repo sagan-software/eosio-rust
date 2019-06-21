@@ -1,15 +1,15 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L372-L450>
 use crate::{AccountName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
 use std::fmt;
 
-/// TODO docs
+/// Extended asset which stores the information of the owner of the symbol
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct ExtendedSymbol {
-    /// TODO docs
+    /// The symbol
     pub symbol: Symbol,
-    /// TODO docs
+    /// The token contract hosting the symbol
     pub contract: AccountName,
 }
 

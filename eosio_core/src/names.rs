@@ -1,4 +1,4 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/name.hpp#L28-L269>
 use eosio_bytes::{NumBytes, Read, Write};
 use eosio_numstr::{name_from_str, name_to_string};
 use serde::{Deserialize, Serialize};
@@ -16,6 +16,12 @@ macro_rules! declare_name_types {
         pub struct $ident(u64);
 
         impl $ident {
+            /// Creates a new name
+            #[inline]
+            pub const fn new(value: u64) -> Self {
+                Self(value)
+            }
+
             /// TODO docs
             #[inline]
             pub const fn as_u64(&self) -> u64 {

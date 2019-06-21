@@ -73,7 +73,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
             }
             #(#actions)*
             else if code == receiver {
-                #eosio::check(false, "unknown action");
+                #eosio::check(false, &format!("unknown action '{}'", #eosio::ActionName::from(action)));
             }
         }
     };

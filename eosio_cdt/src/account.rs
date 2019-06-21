@@ -59,45 +59,11 @@ pub fn active_producers() -> [Option<AccountName>; 21] {
     options
 }
 
-/// Priviledged
-#[inline]
-pub fn get_resource_limits<A: Into<AccountName>>(
-    account: A,
-) -> (RamBytes, NetWeight, CpuWeight) {
-    let mut ram_bytes = 0_i64;
-    let ram_bytes_ptr = &mut ram_bytes as *mut _ as *mut i64;
-    let mut net_weight = 0_i64;
-    let net_weight_ptr = &mut net_weight as *mut _ as *mut i64;
-    let mut cpu_weight = 0_i64;
-    let cpu_weight_ptr = &mut cpu_weight as *mut _ as *mut i64;
-    let a = account.into();
-    unsafe {
-        ::eosio_cdt_sys::get_resource_limits(
-            a.into(),
-            ram_bytes_ptr,
-            net_weight_ptr,
-            cpu_weight_ptr,
-        )
-    };
-    (
-        RamBytes::from(ram_bytes),
-        NetWeight::from(net_weight),
-        CpuWeight::from(cpu_weight),
-    )
-}
-
 /// Verifies that `name` name has auth.
 #[inline]
 pub fn has_auth<A: Into<AccountName>>(account: A) -> bool {
     let a = account.into();
     unsafe { ::eosio_cdt_sys::has_auth(a.into()) }
-}
-
-/// Check if an account is privileged
-#[inline]
-pub fn is_privileged<A: Into<AccountName>>(account: A) -> bool {
-    let a = account.into();
-    unsafe { ::eosio_cdt_sys::is_privileged(a.into()) }
 }
 
 /// Verifies that `name` is an account.

@@ -43,3 +43,15 @@ RUN PATH=/usr/local/eosio/bin:/usr/local/eosio.cdt/bin:$PATH
 ENV EOSIO_ROOT=/usr/local/eosio
 ENV EOSIO_CDT_ROOT=/usr/local/eosio.cdt
 ENV LD_LIBRARY_PATH=/usr/local/lib
+
+RUN git clone \
+    --recursive \
+    --branch v1.6.0 \
+    --single-branch \
+    https://github.com/EOSIO/eosio.contracts.git \
+    /eosio.contracts
+WORKDIR /eosio.contracts
+RUN ./build.sh
+RUN ./build/tests/unit_test --show_progress=yes
+
+WORKDIR /

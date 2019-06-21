@@ -24,6 +24,6 @@ pub extern "C" fn apply(_receiver: u64, _code: u64, _action: u64) {
     let name_ptr: *mut CVoid = &mut name_bytes[..] as *mut _ as *mut CVoid;
     unsafe { read_action_data(name_ptr, 8) };
 
-    // let name = u64::from_le_bytes(name_bytes);
-    // unsafe { printn(name) };
+    let name = u64::from_le_bytes(name_bytes);
+    unsafe { printn(name) };
 }

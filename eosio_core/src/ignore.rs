@@ -1,8 +1,9 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/ignore.hpp#L12-L20>
 use eosio_bytes::{NumBytes, Read, ReadError, Write, WriteError};
 use std::marker::PhantomData;
 
-/// TODO docs
+/// Tells the datastream to ignore this type, but allows the abi generator to
+/// add the correct type.
 #[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Hash, Default)]
 pub struct Ignore<T>(PhantomData<T>);
 

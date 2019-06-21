@@ -7,13 +7,13 @@ DIR="$(dirname "$SOURCE")"
 
 . $DIR/build.sh
 
-cargo test \
-    -p eosio_bytes \
-    -p eosio_bytes_derive \
-    -p eosio_cdt_sys \
-    -p eosio_core \
-    -p eosio_numstr \
-    -p eosio_numstr_macros
+# cargo test \
+#     -p eosio_bytes \
+#     -p eosio_bytes_derive \
+#     -p eosio_cdt_sys \
+#     -p eosio_core \
+#     -p eosio_numstr \
+#     -p eosio_numstr_macros
 
 docker run \
     --rm \

@@ -1,5 +1,4 @@
-//! TODO docs
-
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L24-L201>
 use crate::{ScopeName, Symbol};
 use eosio_bytes::{NumBytes, Read, Write};
 use eosio_numstr::{symbol_from_str, symbol_to_string, symbol_to_utf8};
@@ -9,7 +8,7 @@ use std::str::FromStr;
 
 pub use eosio_numstr::ParseSymbolError;
 
-/// TODO docs
+/// Stores the symbol code as a `u64` value
 #[derive(
     Debug,
     PartialEq,
@@ -72,6 +71,11 @@ impl fmt::Display for SymbolCode {
 }
 
 impl SymbolCode {
+    #[inline]
+    pub const fn new(value: u64) -> Self {
+        Self(value)
+    }
+
     /// TODO docs
     #[inline]
     pub fn is_valid(&self) -> bool {

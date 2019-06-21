@@ -1,4 +1,4 @@
-//! TODO docs
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/asset.hpp#L18-L369>
 use crate::{
     CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub,
     ParseSymbolError, Symbol,
@@ -15,20 +15,21 @@ use std::ops::{
 };
 use std::str::FromStr;
 
-/// TODO docs
+/// Stores information for owner of asset
 #[derive(
     Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes, Deserialize,
 )]
 #[eosio_bytes_root_path = "::eosio_bytes"]
 pub struct Asset {
-    /// TODO docs
+    /// The amount of the asset
     pub amount: i64,
-    /// TODO docs
+    /// The symbol name of the asset
     pub symbol: Symbol,
 }
 
 impl Asset {
-    /// TODO docs
+    /// Check if the asset is valid. A valid asset has its amount <= max_amount
+    /// and its symbol name valid
     #[inline]
     pub fn is_valid(&self) -> bool {
         self.symbol.is_valid()

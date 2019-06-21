@@ -1,3 +1,4 @@
+use crate::{PrimaryTableIndex, SecondaryTableKey};
 use eosio_bytes::{NumBytes, Read, ReadError, Write, WriteError};
 use eosio_core::{AccountName, ScopeName};
 
@@ -11,27 +12,18 @@ pub trait TableRow: Read + Write + NumBytes {
 
     /// TODO docs
     #[inline]
-    fn secondary_keys(
-        &self,
-    ) -> [Option<&crate::table_secondary::SecondaryTableKey>; 16] {
+    fn secondary_keys(&self) -> [Option<&SecondaryTableKey>; 16] {
         [None; 16]
     }
 
     /// TODO docs
     #[inline]
-    fn table<C, S>(
-        code: C,
-        scope: S,
-    ) -> crate::table_primary::PrimaryTableIndex<Self>
+    fn table<C, S>(code: C, scope: S) -> PrimaryTableIndex<Self>
     where
         C: Into<AccountName>,
         S: Into<ScopeName>,
     {
-        crate::table_primary::PrimaryTableIndex::new(
-            code,
-            scope,
-            Self::TABLE_NAME,
-        )
+        PrimaryTableIndex::new(code, scope, Self::TABLE_NAME)
     }
 }
 
