@@ -1,0 +1,11 @@
+[package]
+name = "eosio-bios"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+eosio = { path = "../../eosio" }

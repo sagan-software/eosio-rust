@@ -1,4 +1,4 @@
-use eosio_numstr::{SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
+use eosio_core::{SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
 use lazy_static::lazy_static;
 use rand::prelude::*;
 use regex::Regex;

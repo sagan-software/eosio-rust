@@ -1,0 +1,14 @@
+[package]
+name = "eosio-cdt-macros"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+[features]
+internal = ["eosio-cdt-macros-internal/internal"]
+contract = ["eosio-cdt-macros-internal/contract"]
+
+[dependencies]
+eosio-cdt-macros-internal = { path = "../eosio-cdt-macros-internal" }
+proc-macro-hack = "0.5"
+proc-macro-nested = "0.1"

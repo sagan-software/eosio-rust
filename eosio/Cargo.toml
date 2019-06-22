@@ -28,9 +28,7 @@ alloc = []
 contract = []
 
 [dependencies]
-eosio_bytes = { path = "../eosio_bytes", features = ["derive", "internal-use-only-root-path-is-eosio"] }
-eosio_core = { path = "../eosio_core" }
-eosio_cdt = { path = "../eosio_cdt" }
-eosio_cdt_macros = { path = "../eosio_cdt_macros", features = ["internal"] }
-eosio_cdt_sys = { path = "../eosio_cdt_sys" }
-eosio_numstr_macros = { path = "../eosio_numstr_macros" }
+eosio-core = { path = "../eosio-core", features = ["internal-use-only-root-path-is-eosio"] }
+eosio-core-macros = { path = "../eosio-core-macros" }
+eosio-cdt = { path = "../eosio-cdt" }
+eosio-cdt-macros = { path = "../eosio-cdt-macros", features = ["internal"] }

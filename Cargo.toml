@@ -1,5 +1,5 @@
 [profile.release]
-opt-level = 3
+opt-level = "z"
 debug = false
 rpath = false
 lto = true
@@ -10,28 +10,26 @@ codegen-units = 1
 members = [
     "benchmarks",
     "eosio",
-    # "eosio_abi",
-    "eosio_bytes",
-    "eosio_bytes_derive",
-    "eosio_cdt",
-    "eosio_cdt_macros",
-    "eosio_cdt_macros_impl",
-    "eosio_cdt_sys",
-    # "eosio_cli", TODO re-enable
-    "eosio_contracts/eosio_assert",
-    "eosio_contracts/eosio_bios",
-    "eosio_contracts/eosio_forum",
-    "eosio_contracts/eosio_msig",
-    "eosio_contracts/eosio_system",
-    "eosio_contracts/eosio_token",
-    "eosio_contracts/eosio_wrap",
-    "eosio_core",
-    "eosio_numstr",
-    "eosio_numstr_macros",
-    "eosio_numstr_macros_impl",
-    # "eosio_rpc",
+    "eosio-abi",
+    "eosio-cdt",
+    "eosio-cdt-macros",
+    "eosio-cdt-macros-internal",
+    "eosio-cdt-sys",
+    # "eosio-cli",
+    "eosio-contracts/eosio-assert",
+    "eosio-contracts/eosio-bios",
+    "eosio-contracts/eosio-forum",
+    "eosio-contracts/eosio-msig",
+    "eosio-contracts/eosio-system",
+    "eosio-contracts/eosio-token",
+    "eosio-contracts/eosio-wrap",
+    "eosio-core",
+    "eosio-core-derive",
+    "eosio-core-macros",
+    "eosio-core-macros-internal",
+    "eosio-rpc",
     "examples/addressbook",
-    "examples/hello_bare",
+    "examples/hello-bare",
     "examples/hello",
     "examples/tictactoe",
 ]
