@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use eosio_core::{
     AccountName, BlockchainParameters, CpuWeight, NetWeight, NumBytes,
     ProducerKey, RamBytes, Read, ReadError, Write, WriteError,

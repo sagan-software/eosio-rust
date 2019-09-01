@@ -3,7 +3,16 @@ use crate::{NumBytes, Read, Write};
 
 /// Tunable blockchain configuration that can be changed via consensus
 #[derive(
-    Read, Write, NumBytes, Clone, Default, Debug, PartialEq, PartialOrd,
+    Read,
+    Write,
+    NumBytes,
+    Clone,
+    Default,
+    Debug,
+    PartialEq,
+    PartialOrd,
+    serde::Serialize,
+    serde::Deserialize,
 )]
 #[eosio_core_root_path = "crate"]
 pub struct BlockchainParameters {

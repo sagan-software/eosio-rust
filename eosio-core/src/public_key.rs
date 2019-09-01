@@ -31,3 +31,16 @@ impl Default for PublicKey {
         }
     }
 }
+
+impl PartialEq for PublicKey {
+    fn eq(&self, other: &Self) -> bool {
+        self.type_ == other.type_ && self.as_bytes() == other.as_bytes()
+    }
+}
+
+impl std::fmt::Debug for PublicKey {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        std::fmt::Debug::fmt(&self.type_, f)?;
+        std::fmt::Debug::fmt(self.as_bytes(), f)
+    }
+}

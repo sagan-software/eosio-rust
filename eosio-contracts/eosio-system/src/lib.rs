@@ -16,9 +16,12 @@ pub struct BidRefund {
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L84-L108>
 #[eosio::table(global)]
 #[singleton]
+#[derive(Serialize, Deserialize)]
 pub struct EosioGlobalState {
     pub blockchain_parameters: BlockchainParameters,
+    #[serde(deserialize_with = "eosio::u64_or_string")]
     pub max_ram_size: u64,
+    #[serde(deserialize_with = "eosio::u64_or_string")]
     pub total_ram_bytes_reserved: u64,
     pub total_ram_stake: i64,
     pub last_producer_schedule_update: BlockTimestamp,
@@ -29,6 +32,7 @@ pub struct EosioGlobalState {
     pub total_activated_stake: i64,
     pub thresh_activated_stake_time: TimePoint,
     pub last_producer_schedule_size: u16,
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub total_producer_vote_weight: f64,
     pub last_name_close: BlockTimestamp,
 }
@@ -36,10 +40,12 @@ pub struct EosioGlobalState {
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L110-L124>
 #[eosio::table(global2)]
 #[singleton]
+#[derive(Serialize, Deserialize)]
 pub struct EosioGlobalState2 {
     pub new_ram_per_block: u16,
     pub last_ram_increase: BlockTimestamp,
     pub last_block_num: BlockTimestamp,
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub total_producer_votepay_share: f64,
     pub revision: u8,
 }
@@ -47,16 +53,21 @@ pub struct EosioGlobalState2 {
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L126-L132>
 #[eosio::table(global3)]
 #[singleton]
+#[derive(Serialize, Deserialize)]
 pub struct EosioGlobalState3 {
     pub last_vpay_state_update: TimePoint,
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub total_vpay_share_change_rate: f64,
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L134-L152>
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProducerInfo {
     pub owner: AccountName,
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub total_votes: f64,
-    pub producer_key: PublicKey,
+    // pub producer_key: PublicKey,
+    #[serde(deserialize_with = "eosio::bool_or_integer")]
     pub is_active: bool,
     pub url: String,
     pub unpaid_blocks: u32,
@@ -65,13 +76,16 @@ pub struct ProducerInfo {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L154-L163>
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProducerInfo2 {
     pub owner: AccountName,
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub votepay_share: f64,
     pub last_votepay_share_update: TimePoint,
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L165-L200>
+#[derive(Serialize, Deserialize)]
 pub struct VoterInfo {
     /// The voter
     pub owner: AccountName,
@@ -86,8 +100,10 @@ pub struct VoterInfo {
     /// new vote weight.  Vote weight is calculated as:
     ///
     ///     stated.amount * 2 ^ ( weeks_since_launch/weeks_per_year)
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub last_vote_weight: f64,
     /// Total vote weight delegated to this voter.
+    #[serde(deserialize_with = "eosio::f64_or_string")]
     pub proxied_vote_weight: f64,
     /// Wether the voter is a proxy for others.
     pub is_proxy: bool,
@@ -97,6 +113,7 @@ pub struct VoterInfo {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L216-L227>
+#[derive(Serialize, Deserialize)]
 pub struct RexPool {
     pub version: u8,
     pub total_lent: Asset,
@@ -105,10 +122,12 @@ pub struct RexPool {
     pub total_lendable: Asset,
     pub total_rex: Asset,
     pub namebid_proceeds: Asset,
+    #[serde(deserialize_with = "eosio::u64_or_string")]
     pub loan_num: u64,
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L231-L237>
+#[derive(Serialize, Deserialize)]
 pub struct RexFund {
     pub version: u8,
     pub owner: AccountName,
@@ -116,6 +135,7 @@ pub struct RexFund {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L241-L250>
+#[derive(Serialize, Deserialize)]
 pub struct RexBalance {
     pub version: u8,
     pub owner: AccountName,
@@ -126,6 +146,7 @@ pub struct RexBalance {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L254-L267>
+#[derive(Serialize, Deserialize)]
 pub struct RexLoan {
     pub version: u8,
     pub from: AccountName,
@@ -133,11 +154,13 @@ pub struct RexLoan {
     pub payment: Asset,
     pub balance: Asset,
     pub total_staked: Asset,
+    #[serde(deserialize_with = "eosio::u64_or_string")]
     pub loan_num: u64,
     pub expiration: TimePoint,
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L279-L291>
+#[derive(Serialize, Deserialize)]
 pub struct RexOrder {
     pub version: u8,
     pub owner: AccountName,
@@ -149,6 +172,7 @@ pub struct RexOrder {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L296-L300>
+#[derive(Serialize, Deserialize)]
 pub struct RexOrderOutcome {
     pub success: bool,
     pub proceeds: Asset,

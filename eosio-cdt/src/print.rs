@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use eosio_core::{
     AccountName, ActionName, Name, PermissionName, ScopeName, TableName,
 };

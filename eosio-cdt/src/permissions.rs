@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use eosio_core::{
     PermissionLevel, PublicKey, Read, ReadError, Transaction, Write, WriteError,
 };

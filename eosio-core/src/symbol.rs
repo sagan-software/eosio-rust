@@ -31,18 +31,16 @@ impl fmt::Display for ParseSymbolError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ParseSymbolError::IsEmpty => write!(f, "symbol is empty"),
-            ParseSymbolError::TooLong => write!(
+            Self::IsEmpty => write!(f, "symbol is empty"),
+            Self::TooLong => write!(
                 f,
                 "symbol is too long, must be {} chars or less",
                 SYMBOL_LEN_MAX
             ),
-            ParseSymbolError::BadChar(c) => {
+            Self::BadChar(c) => {
                 write!(f, "symbol contains invalid character '{}'", c)
             }
-            ParseSymbolError::BadPrecision => {
-                write!(f, "symbol precision is > 255")
-            }
+            Self::BadPrecision => write!(f, "symbol precision is > 255"),
         }
     }
 }
@@ -336,7 +334,7 @@ impl PartialEq<u64> for Symbol {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use eosio_core_macros::{n, s};
+    use eosio_core_macros::s;
 
     #[test]
     fn from_int() {
@@ -424,5 +422,4 @@ mod tests {
         test_ok("TGFT", s!(0, TGFT));
         test_err("tst", ParseSymbolError::BadChar('t'));
     }
-
 }

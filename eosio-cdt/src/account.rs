@@ -1,6 +1,5 @@
-use eosio_core::{
-    AccountName, CpuWeight, NetWeight, PermissionName, RamBytes, TimePoint,
-};
+//! TODO module docs.
+use eosio_core::{AccountName, PermissionName, TimePoint};
 
 /// Get the current receiver of the action.
 #[inline]

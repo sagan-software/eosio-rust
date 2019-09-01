@@ -1,7 +1,7 @@
 use eosio::{AccountName, ScopeName, TableName};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, Copy)]
 pub struct GetTableRowsParams {
     pub scope: ScopeName,
     pub code: AccountName,
@@ -52,15 +52,19 @@ impl GetTableRowsParams {
     }
 
     // TODO re-enable
-    // pub fn fetch<Row>(
-    //     self,
-    //     client: &crate::Client,
-    // ) -> impl futures::future::Future<Item = GetTableRows<Row>, Error = crate::Error>
-    // where
-    //     Row: for<'a> Deserialize<'a> + 'static,
-    // {
-    //     client.fetch::<GetTableRows<Row>, GetTableRowsParams>("/v1/chain/get_table_rows", self)
-    // }
+    pub fn fetch<Row>(
+        self,
+        client: &crate::HyperClient,
+    ) -> impl std::future::Future<Output = Result<GetTableRows<Row>, crate::Error>>
+    where
+        Row: for<'a> Deserialize<'a> + 'static + Send,
+    {
+        use crate::Client;
+        client.fetch::<GetTableRows<Row>, GetTableRowsParams>(
+            "/v1/chain/get_table_rows",
+            self,
+        )
+    }
 }
 
 pub fn get_table_rows<

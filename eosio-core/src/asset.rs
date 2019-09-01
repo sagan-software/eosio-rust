@@ -15,7 +15,16 @@ use std::str::FromStr;
 
 /// Stores information for owner of asset
 #[derive(
-    Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes, Deserialize,
+    Debug,
+    PartialEq,
+    PartialOrd,
+    Clone,
+    Copy,
+    Default,
+    Read,
+    Write,
+    NumBytes,
+    Deserialize,
 )]
 #[eosio_core_root_path = "crate"]
 pub struct Asset {
@@ -73,10 +82,10 @@ impl From<ParseSymbolError> for ParseAssetError {
     #[inline]
     fn from(value: ParseSymbolError) -> Self {
         match value {
-            ParseSymbolError::IsEmpty => ParseAssetError::SymbolIsEmpty,
-            ParseSymbolError::TooLong => ParseAssetError::SymbolTooLong,
-            ParseSymbolError::BadChar(c) => ParseAssetError::BadChar(c),
-            ParseSymbolError::BadPrecision => ParseAssetError::BadPrecision,
+            ParseSymbolError::IsEmpty => Self::SymbolIsEmpty,
+            ParseSymbolError::TooLong => Self::SymbolTooLong,
+            ParseSymbolError::BadChar(c) => Self::BadChar(c),
+            ParseSymbolError::BadPrecision => Self::BadPrecision,
         }
     }
 }
@@ -194,8 +203,8 @@ impl fmt::Display for AssetOpError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let msg = match *self {
-            AssetOpError::Overflow => "integer overflow",
-            AssetOpError::DifferentSymbols => "assets have different symbols",
+            Self::Overflow => "integer overflow",
+            Self::DifferentSymbols => "assets have different symbols",
         };
         write!(f, "{}", msg)
     }
@@ -218,11 +227,9 @@ impl fmt::Display for AssetDivOpError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let msg = match *self {
-            AssetDivOpError::Overflow => "integer overflow",
-            AssetDivOpError::DifferentSymbols => {
-                "assets have different symbols"
-            }
-            AssetDivOpError::DivideByZero => "divide by zero",
+            Self::Overflow => "integer overflow",
+            Self::DifferentSymbols => "assets have different symbols",
+            Self::DivideByZero => "divide by zero",
         };
         write!(f, "{}", msg)
     }
@@ -357,7 +364,7 @@ impl_op! {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use eosio_core_macros::{n, s};
+    use eosio_core_macros::s;
 
     macro_rules! test_to_string {
         ($($name:ident, $amount:expr, $symbol:expr, $expected:expr)*) => ($(
@@ -378,8 +385,8 @@ mod tests {
         to_string_fraction, 1_0001, s!(4, EOS), "1.0001 EOS"
         to_string_zero_precision, 10_001, s!(0, EOS), "10001 EOS"
         to_string_zero_precision_unsigned, -10_001, s!(0, EOS), "-10001 EOS"
-        to_string_max_number, std::i64::MAX, s!(4, EOS), "922337203685477.5807 EOS"
-        to_string_min_number, std::i64::MIN, s!(4, EOS), "-922337203685477.5808 EOS"
+        to_string_max_number, i64::max_value(), s!(4, EOS), "922337203685477.5807 EOS"
+        to_string_min_number, i64::min_value(), s!(4, EOS), "-922337203685477.5808 EOS"
         to_string_very_small_number, 1, s!(255, TST), "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST"
         to_string_very_small_number_neg, -1, s!(255, TST), "-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST"
     }
@@ -401,10 +408,10 @@ mod tests {
     test_from_str_ok! {
         from_str_ok_basic, "1.0000 EOS", 1_0000, s!(4, EOS)
         from_str_ok_zero_precision, "1 TST", 1, s!(0, TST)
-        from_str_ok_long, "1234567890.12345 TMP", 1234567890_12345, s!(5, TMP)
+        from_str_ok_long, "1234567890.12345 TMP", 123_456_789_012_345, s!(5, TMP)
         from_str_ok_signed_neg, "-1.0000 TLOS", -1_0000, s!(4, TLOS)
         from_str_ok_signed_zero_precision, "-1 SYS", -1, s!(0, SYS)
-        from_str_ok_signed_long, "-1234567890.12345 TGFT", -1234567890_12345, s!(5, TGFT)
+        from_str_ok_signed_long, "-1234567890.12345 TGFT", -123_456_789_012_345, s!(5, TGFT)
         from_str_ok_pos_sign, "+1 TST", 1, s!(0, TST)
         from_str_ok_fraction, "0.0001 EOS", 1, s!(4, EOS)
         from_str_ok_zero, "0.0000 EOS", 0, s!(4, EOS)

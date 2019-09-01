@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use crate::{Print, TableCursor, TableIndex, TableIterator, TableRow};
 use eosio_cdt_sys::c_void;
 use eosio_core::{AccountName, ReadError, ScopeName, TableName, WriteError};

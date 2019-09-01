@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use crate::{PrimaryTableIndex, SecondaryTableKey};
 use eosio_core::{
     AccountName, NumBytes, Read, ReadError, ScopeName, Write, WriteError,
@@ -13,7 +15,7 @@ pub trait TableRow: Read + Write + NumBytes {
 
     /// TODO docs
     #[inline]
-    fn secondary_keys(&self) -> [Option<&SecondaryTableKey>; 16] {
+    fn secondary_keys(&self) -> [Option<&dyn SecondaryTableKey>; 16] {
         [None; 16]
     }
 

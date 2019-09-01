@@ -1,10 +1,12 @@
 use crate::proc_macro::TokenStream;
+use eosio_core::NAME_UTF8_CHARS;
+use heck::CamelCase;
 use quote::quote;
 use syn::{parse_macro_input, FnArg, Ident, ItemFn};
 
 pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
-    let eosio = crate::paths::eosio();
+    let eosio_core = crate::paths::eosio_core();
     let ident = input.ident;
     let decl = input.decl;
     let inputs = decl.inputs;
@@ -46,24 +48,30 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let block = input.block;
 
     let call_site = ::proc_macro2::Span::call_site();
-    let struct_name = titlecase(ident.to_string().as_str());
-    let struct_ident =
-        Ident::new(format!("{}Action", struct_name).as_str(), call_site);
+    let struct_ident = {
+        let name = ident.to_string().as_str().to_camel_case();
+        Ident::new(&name, call_site)
+    };
+
+    let action_ident = {
+        let name = ident.to_string().as_str().to_camel_case().to_lowercase();
+        Ident::new(&name, call_site)
+    };
 
     let expanded = quote! {
-        #[derive(Clone, #eosio::Read, #eosio::Write, #eosio::NumBytes)]
+        #[derive(Clone, #eosio_core::Read, #eosio_core::Write, #eosio_core::NumBytes)]
         #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
         pub struct #struct_ident {
             #(#struct_fields)*
         }
 
         #[automatically_derived]
-        impl #eosio::ToAction for #struct_ident {
-            const NAME: u64 = n!(#ident);
+        impl #eosio_core::ToAction for #struct_ident {
+            const NAME: u64 = #eosio_core::n!(#action_ident);
         }
 
         #[automatically_derived]
-        impl #eosio::ActionFn for #struct_ident {
+        impl #eosio_core::ActionFn for #struct_ident {
             fn execute(self) {
                 #(#assign_args)*
                 #block
@@ -78,12 +86,4 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     };
     TokenStream::from(quote!(#expanded))
     // input
-}
-
-fn titlecase(s: &str) -> String {
-    let mut c = s.chars();
-    match c.next() {
-        None => String::new(),
-        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-    }
 }

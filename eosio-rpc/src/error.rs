@@ -25,14 +25,14 @@ impl From<serde_json::Error> for Error {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ErrorResponse {
     pub code: u16,
     pub message: String,
     pub error: ErrorMessage,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ErrorMessage {
     pub code: u16,
     pub name: String,
@@ -40,7 +40,7 @@ pub struct ErrorMessage {
     pub details: Vec<ErrorDetails>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ErrorDetails {
     pub message: String,
     pub file: String,

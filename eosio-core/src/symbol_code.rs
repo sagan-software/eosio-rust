@@ -70,6 +70,7 @@ impl fmt::Display for SymbolCode {
 }
 
 impl SymbolCode {
+    /// TODO docs
     #[inline]
     pub const fn new(value: u64) -> Self {
         Self(value)
@@ -179,5 +180,4 @@ mod tests {
         "tst",
         ParseSymbolError::BadChar('t')
     }
-
 }

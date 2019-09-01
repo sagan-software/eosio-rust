@@ -26,3 +26,7 @@ include = [
 [badges]
 maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
+
+[features]
+default = []
+mock = []

@@ -1,6 +1,7 @@
 use crate::error::Error;
-use futures::future::Future;
 use serde::{Deserialize, Serialize};
+use std::future::Future;
+use std::pin::Pin;
 
 pub trait Client {
     fn node(&self) -> &str;
@@ -9,8 +10,8 @@ pub trait Client {
         &self,
         path: &str,
         params: Params,
-    ) -> Box<dyn Future<Item = Output, Error = Error>>
+    ) -> Pin<Box<dyn Future<Output = Result<Output, Error>> + Send>>
     where
-        Output: 'static + for<'b> Deserialize<'b>,
+        Output: 'static + for<'b> Deserialize<'b> + Send,
         Params: Serialize;
 }

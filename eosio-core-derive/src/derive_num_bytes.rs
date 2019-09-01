@@ -31,7 +31,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                     let name = &f.ident;
                     let access = quote_spanned!(call_site => #var.#name);
                     quote_spanned! { f.span() =>
-                        count += NumBytes::num_bytes(&#access);
+                        count += #root::NumBytes::num_bytes(&#access);
                     }
                 });
                 quote! {
@@ -47,7 +47,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         };
                         let access = quote_spanned!(call_site => #var.#index);
                         quote_spanned! { f.span() =>
-                            count += NumBytes::num_bytes(&#access);
+                            count += #root::NumBytes::num_bytes(&#access);
                         }
                     });
                 quote! {
@@ -64,7 +64,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         #[automatically_derived]
         #[allow(unused_qualifications)]
-        impl #impl_generics NumBytes for #name #ty_generics #where_clause {
+        impl #impl_generics #root::NumBytes for #name #ty_generics #where_clause {
             #[inline]
             fn num_bytes(&self) -> usize {
                 let mut count = 0;

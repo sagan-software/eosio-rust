@@ -2,7 +2,7 @@
 use crate::{NumBytes, Read, Write};
 
 /// TODO docs
-/// TODO Read, Write, NumBytes needs a custom implementation based on fixed_bytes
+/// TODO Read, Write, `NumBytes` needs a custom implementation based on `fixed_bytes`
 #[derive(
     Read,
     Write,

@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use crate::{PrimaryTableIndex, TableCursor, TableIndex, TableRow};
 use eosio_core::{AccountName, ReadError, ScopeName, WriteError};
 
@@ -26,6 +28,17 @@ impl<T: TableRow> SingletonIndex<T> {
     #[inline]
     pub fn get(&self) -> Option<Result<T, ReadError>> {
         self.0.find(T::TABLE_NAME).map(|c| c.get())
+    }
+
+    /// TODO docs
+    #[inline]
+    pub fn get_or_default(&self) -> Result<T, ReadError>
+    where
+        T: Default,
+    {
+        self.0
+            .find(T::TABLE_NAME)
+            .map_or_else(|| Ok(T::default()), |c| c.get())
     }
 
     /// Sets the singleton value

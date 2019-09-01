@@ -31,4 +31,4 @@ contract = []
 eosio-core = { path = "../eosio-core", features = ["internal-use-only-root-path-is-eosio"] }
 eosio-core-macros = { path = "../eosio-core-macros" }
 eosio-cdt = { path = "../eosio-cdt" }
-eosio-cdt-macros = { path = "../eosio-cdt-macros", features = ["internal"] }
+eosio-cdt-macros = { path = "../eosio-cdt-macros", features = ["internal-use-only-root-path-is-eosio"] }

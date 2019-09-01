@@ -1,3 +1,4 @@
+//! TODO module docs.
 use eosio_core::{
     AccountName, Action, DataStream, DeferredTransactionId, NumBytes, Read,
     ReadError, ToAction, Transaction, Write, WriteError,

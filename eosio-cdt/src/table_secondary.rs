@@ -1,8 +1,12 @@
+//! TODO module docs.
+
 use crate::{
     PrimaryTableIndex, TableCursor, TableIndex, TableIterator, TableRow,
 };
 use eosio_cdt_sys::c_void;
-use eosio_core::{AccountName, ReadError, ScopeName, TableName, WriteError};
+use eosio_core::{
+    AccountName, Name, ReadError, ScopeName, TableName, WriteError,
+};
 use std::marker::PhantomData;
 
 /// TODO docs
@@ -353,6 +357,8 @@ secondary_keys_converted!(
     u64, u16
     u64, u32
     f64, f32
+    u64, Name
+    u64, AccountName
     // u64, TimePoint
 );
 

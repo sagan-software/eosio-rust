@@ -1,6 +1,5 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/name.hpp#L28-L269>
 use crate::{NumBytes, Read, Write};
-use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fmt;
@@ -27,12 +26,12 @@ impl fmt::Display for ParseNameError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ParseNameError::TooLong => write!(
+            Self::TooLong => write!(
                 f,
                 "name is too long, must be {} chars or less",
                 NAME_LEN_MAX
             ),
-            ParseNameError::BadChar(c) => write!(
+            Self::BadChar(c) => write!(
                 f,
                 "name contains invalid character '{}'; must only contain the following characters: {}",
                 c,
@@ -162,10 +161,46 @@ pub fn name_to_utf8(name: u64) -> [u8; 13] {
     chars
 }
 
+/// TODO docs
+struct NameVisitor<
+    T: FromStr<Err = ParseNameError> + From<u64> + std::fmt::Display,
+>(std::marker::PhantomData<T>);
+
+impl<'de, T> serde::de::Visitor<'de> for NameVisitor<T>
+where
+    T: FromStr<Err = ParseNameError> + From<u64> + std::fmt::Display,
+{
+    type Value = T;
+
+    #[inline]
+    fn expecting(
+        &self,
+        formatter: &mut ::std::fmt::Formatter,
+    ) -> ::std::fmt::Result {
+        formatter.write_str("an EOSIO name string or number")
+    }
+
+    #[inline]
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: ::serde::de::Error,
+    {
+        value.parse::<T>().map_err(serde::de::Error::custom)
+    }
+
+    #[inline]
+    fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        Ok(value.into())
+    }
+}
+
 macro_rules! declare_name_types {
     ($($ident:ident)*) => ($(
         /// TODO docs
-        #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord, Read, Write, NumBytes, Serialize, Deserialize)]
+        #[derive(Debug, PartialEq, Eq, Clone, Copy, Default, Hash, PartialOrd, Ord, Read, Write, NumBytes)]
         #[eosio_core_root_path = "crate"]
         pub struct $ident(u64);
 
@@ -248,6 +283,25 @@ macro_rules! declare_name_types {
             #[inline]
             fn eq(&self, other: &String) -> bool {
                 self.to_string().as_str() == other.as_str()
+            }
+        }
+
+        impl<'de> serde::Deserialize<'de> for $ident {
+            #[inline]
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                deserializer.deserialize_any(NameVisitor(std::marker::PhantomData::<Self>))
+            }
+        }
+
+        impl serde::Serialize for $ident {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                serializer.serialize_str(self.to_string().as_str())
             }
         }
     )*)

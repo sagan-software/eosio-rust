@@ -32,6 +32,7 @@ travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 [dependencies]
 eosio-core-derive = { version = "0.2", path = "../eosio-core-derive" }
 serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"
 
 [dev-dependencies]
 eosio-core-macros = { version = "0.2", path = "../eosio-core-macros" }

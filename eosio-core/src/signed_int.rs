@@ -55,7 +55,7 @@ impl Read for SignedInt {
         let mut by = 0_u32;
         loop {
             let b = u8::read(bytes, pos)?;
-            v |= (((b & 0x7f) as u32) << by) as u32;
+            v |= u32::from(b & 0x7f) << by;
             by += 7;
             if b & 0x80 == 0 {
                 break;
@@ -92,7 +92,7 @@ macro_rules! write_read_tests {
         #[cfg(test)]
         #[test]
         fn $i() {
-            let mut bytes = [0u8; 10];
+            let mut bytes = [0_u8; 10];
             let mut write_pos = 0;
             let varint: SignedInt = $v.into();
             assert_eq!(varint.num_bytes(), $n);

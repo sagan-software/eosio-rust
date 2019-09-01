@@ -25,10 +25,10 @@ macro_rules! builder {
     ($path:expr, $params:ty, $output:ty) => {
         impl $params {
             pub fn fetch<C: crate::Client>(
-                &self,
-                client: C,
-            ) -> impl futures::future::Future<Item = $output, Error = crate::Error> {
-                client.fetch::<$output, $params>($path, self.clone())
+                self,
+                client: &C,
+            ) -> impl std::future::Future<Output = Result<$output, crate::Error>> {
+                client.fetch::<$output, $params>($path, self)
             }
         }
     };

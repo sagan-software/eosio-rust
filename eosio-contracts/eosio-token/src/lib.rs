@@ -88,7 +88,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     add_balance(st.issuer, quantity, st.issuer);
 
     if to != st.issuer {
-        let action = TransferAction {
+        let action = Transfer {
             from: st.issuer,
             to,
             quantity,

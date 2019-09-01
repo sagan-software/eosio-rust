@@ -2,7 +2,7 @@
 use crate::{NumBytes, Read, Write};
 
 /// TODO docs
-/// TODO Read, Write, NumBytes needs a custom implementation based on fixed_bytes
+/// TODO Read, Write, `NumBytes` needs a custom implementation based on `fixed_bytes`
 #[derive(Read, Write, NumBytes, Clone, Copy)]
 #[eosio_core_root_path = "crate"]
 pub struct Checksum512([u8; 64]);

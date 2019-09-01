@@ -22,16 +22,16 @@
 #![allow(clippy::use_self)]
 #![allow(clippy::unseparated_literal_suffix)]
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "mock")))]
 mod bindings;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(feature = "mock")))]
 pub use self::bindings::*;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(not(target_arch = "wasm32"), feature = "mock"))]
 mod mock_bindings;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(not(target_arch = "wasm32"), feature = "mock"))]
 pub use self::mock_bindings::*;
 
 pub use std::ffi::c_void;

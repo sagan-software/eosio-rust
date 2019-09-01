@@ -1,6 +1,7 @@
-//! https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L79-L132
+//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L79-L132>
 use crate::{NumBytes, Read, TimePoint, Write};
 use serde::Serialize;
+use std::convert::TryInto;
 
 /// A lower resolution `TimePoint` accurate only to seconds from 1970
 #[derive(
@@ -48,8 +49,12 @@ impl<'de> ::serde::de::Visitor<'de> for TimePointSecVisitor {
     where
         E: ::serde::de::Error,
     {
-        match value.parse::<u32>() {
-            Ok(n) => Ok(TimePointSec(n)),
+        match value.parse::<chrono::NaiveDateTime>() {
+            Ok(n) => n
+                .timestamp()
+                .try_into()
+                .map(TimePointSec)
+                .map_err(::serde::de::Error::custom),
             Err(e) => Err(::serde::de::Error::custom(e)),
         }
     }

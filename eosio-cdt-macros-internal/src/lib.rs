@@ -11,14 +11,24 @@ mod print;
 mod table;
 
 mod paths {
-    #[cfg(feature = "internal")]
-    pub fn eosio() -> ::proc_macro2::TokenStream {
-        ::quote::quote!(crate)
+    #[cfg(feature = "internal-use-only-root-path-is-eosio")]
+    pub fn eosio_core() -> ::proc_macro2::TokenStream {
+        ::quote::quote!(::eosio)
     }
 
-    #[cfg(not(feature = "internal"))]
-    pub fn eosio() -> ::proc_macro2::TokenStream {
+    #[cfg(not(feature = "internal-use-only-root-path-is-eosio"))]
+    pub fn eosio_core() -> ::proc_macro2::TokenStream {
+        ::quote::quote!(::eosio_core)
+    }
+
+    #[cfg(feature = "internal-use-only-root-path-is-eosio")]
+    pub fn eosio_cdt() -> ::proc_macro2::TokenStream {
         ::quote::quote!(::eosio)
+    }
+
+    #[cfg(not(feature = "internal-use-only-root-path-is-eosio"))]
+    pub fn eosio_cdt() -> ::proc_macro2::TokenStream {
+        ::quote::quote!(::eosio_cdt)
     }
 }
 

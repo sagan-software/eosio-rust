@@ -673,9 +673,10 @@ mod tests {
     macro_rules! test_type {
         ($($i:ident, $t:ty, $e:expr)*) => ($(
             #[test]
+            #[allow(clippy::float_cmp)]
             fn $i() {
                 let expected_pos = $e.num_bytes();
-                let mut bytes = [0u8; 100];
+                let mut bytes = [0_u8; 100];
                 let thing: $t = $e;
 
                 let mut write_pos = 0;
@@ -710,26 +711,26 @@ mod tests {
         test_tuple2, (u8, u16), (1_u8, 2_u16)
         test_tuple3, (u8, u16, u32), (1_u8, 2_u16, 3_u32)
         test_tuple4, (u8, u16, u32, u64), (1_u8, 2_u16, 3_u32, 4_u64)
-        test_array1, [u8; 1], [1u8; 1]
-        test_array2, [u8; 2], [1u8; 2]
-        test_array3, [u8; 3], [1u8; 3]
-        test_array4, [u8; 4], [1u8; 4]
-        test_array5, [u8; 5], [1u8; 5]
-        test_array6, [u8; 6], [1u8; 6]
-        test_array7, [u8; 7], [1u8; 7]
-        test_array8, [u8; 8], [1u8; 8]
-        test_array9, [u8; 9], [1u8; 9]
-        test_array10, [u8; 10], [1u8; 10]
-        test_array11, [u8; 11], [1u8; 11]
-        test_array12, [u8; 12], [1u8; 12]
-        test_array13, [u8; 13], [1u8; 13]
-        test_array14, [u8; 14], [1u8; 14]
-        test_array15, [u8; 15], [1u8; 15]
-        test_array16, [u8; 16], [1u8; 16]
-        test_array17, [u8; 17], [1u8; 17]
-        test_array18, [u8; 18], [1u8; 18]
-        test_array19, [u8; 19], [1u8; 19]
-        test_array20, [u8; 20], [1u8; 20]
+        test_array1, [u8; 1], [1_u8; 1]
+        test_array2, [u8; 2], [1_u8; 2]
+        test_array3, [u8; 3], [1_u8; 3]
+        test_array4, [u8; 4], [1_u8; 4]
+        test_array5, [u8; 5], [1_u8; 5]
+        test_array6, [u8; 6], [1_u8; 6]
+        test_array7, [u8; 7], [1_u8; 7]
+        test_array8, [u8; 8], [1_u8; 8]
+        test_array9, [u8; 9], [1_u8; 9]
+        test_array10, [u8; 10], [1_u8; 10]
+        test_array11, [u8; 11], [1_u8; 11]
+        test_array12, [u8; 12], [1_u8; 12]
+        test_array13, [u8; 13], [1_u8; 13]
+        test_array14, [u8; 14], [1_u8; 14]
+        test_array15, [u8; 15], [1_u8; 15]
+        test_array16, [u8; 16], [1_u8; 16]
+        test_array17, [u8; 17], [1_u8; 17]
+        test_array18, [u8; 18], [1_u8; 18]
+        test_array19, [u8; 19], [1_u8; 19]
+        test_array20, [u8; 20], [1_u8; 20]
         test_f32, f32, -0.12345_f32
         test_f64, f64, -0.12345_f64
     );
@@ -784,6 +785,7 @@ mod tests {
     // }
 
     #[test]
+    #[allow(clippy::result_unwrap_used)]
     fn test_read_pos() {
         let bytes = &[
             10, 9, 0, 1, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 20, 4, 3, 2, 1, 1,
@@ -819,6 +821,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::result_unwrap_used)]
     fn test_write_pos() {
         let bytes = &mut [0u8; 1000];
 
@@ -835,5 +838,4 @@ mod tests {
         1_u64.write(bytes, &mut pos).unwrap();
         assert_eq!(pos, 15);
     }
-
 }

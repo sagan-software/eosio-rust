@@ -23,7 +23,7 @@ use std::convert::{TryFrom, TryInto};
 pub struct TimePoint(i64);
 
 impl TimePoint {
-    /// Gets the nanoseconds
+    /// Gets the microseconds
     #[inline]
     pub const fn as_i64(self) -> i64 {
         self.0
@@ -49,8 +49,8 @@ impl<'de> ::serde::de::Visitor<'de> for TimePointVisitor {
     where
         E: ::serde::de::Error,
     {
-        match value.parse::<i64>() {
-            Ok(n) => Ok(TimePoint(n)),
+        match value.parse::<chrono::NaiveDateTime>() {
+            Ok(n) => Ok(TimePoint(n.timestamp_nanos() / 1000)),
             Err(e) => Err(::serde::de::Error::custom(e)),
         }
     }

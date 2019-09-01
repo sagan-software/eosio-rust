@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 use eosio_core::{TimePoint, TimePointSec};
 
 /// Gets the current time

@@ -1,12 +1,22 @@
 use crate::error::Error;
 use crate::Client;
-use hyper;
-use hyper::rt::{self, Future, Stream};
+use futures::compat::Future01CompatExt;
+use futures::future::FutureExt;
+use hyper::rt::{Future, Stream};
 use hyper_tls::HttpsConnector;
 use serde::{Deserialize, Serialize};
+use std::pin::Pin;
 
 pub struct HyperClient {
     node: String,
+}
+
+impl HyperClient {
+    pub fn new(node: &str) -> Self {
+        Self {
+            node: node.to_owned(),
+        }
+    }
 }
 
 impl Client for HyperClient {
@@ -18,9 +28,9 @@ impl Client for HyperClient {
         &self,
         path: &str,
         params: Params,
-    ) -> Box<Future<Item = Output, Error = Error>>
+    ) -> Pin<Box<dyn std::future::Future<Output = Result<Output, Error>> + Send>>
     where
-        Output: 'static + for<'b> Deserialize<'b>,
+        Output: 'static + for<'b> Deserialize<'b> + Send,
         Params: Serialize,
     {
         let https = HttpsConnector::new(4).unwrap();
@@ -34,22 +44,24 @@ impl Client for HyperClient {
         let json = serde_json::to_string(&params).unwrap();
         let mut req = hyper::Request::new(hyper::Body::from(json));
         *req.method_mut() = hyper::Method::POST;
-        *req.uri_mut() = uri.clone();
+        *req.uri_mut() = uri;
         req.headers_mut().insert(
             hyper::header::CONTENT_TYPE,
             hyper::header::HeaderValue::from_static("application/json"),
         );
 
-        let future = client
+        client
             .request(req)
             .and_then(|res| res.into_body().concat2())
             .from_err::<Error>()
             .and_then(|body| {
+                let s = std::str::from_utf8(&body).unwrap();
+                println!("!!!!!!!!!!!!!!!!!!! {}", s);
                 let res = serde_json::from_slice(&body)?;
                 Ok(res)
             })
-            .from_err();
-
-        Box::new(future)
+            .from_err()
+            .compat()
+            .boxed()
     }
 }

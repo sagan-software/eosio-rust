@@ -1,3 +1,5 @@
+//! TODO module docs.
+
 /// Aborts processing of this action and unwinds all pending changes if the test condition is true
 #[inline]
 pub fn check(pred: bool, msg: &str) {

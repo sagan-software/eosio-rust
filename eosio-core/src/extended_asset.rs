@@ -1,9 +1,22 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/asset.hpp#L371-L481>
 use crate::{AccountName, Asset, NumBytes, Read, Write};
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Extended asset which stores the information of the owner of the asset
-#[derive(Debug, PartialEq, Clone, Copy, Default, NumBytes, Read, Write)]
+#[derive(
+    Debug,
+    PartialEq,
+    PartialOrd,
+    Clone,
+    Copy,
+    Default,
+    NumBytes,
+    Read,
+    Write,
+    Serialize,
+    Deserialize,
+)]
 #[eosio_core_root_path = "crate"]
 pub struct ExtendedAsset {
     /// The asset
