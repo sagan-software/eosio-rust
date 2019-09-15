@@ -14,9 +14,9 @@ pub struct BidRefund {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L84-L108>
-#[eosio::table(global)]
+#[derive(Serialize, Deserialize, Table, Read, Write, NumBytes)]
+#[table_name = "global"]
 #[singleton]
-#[derive(Serialize, Deserialize)]
 pub struct EosioGlobalState {
     pub blockchain_parameters: BlockchainParameters,
     #[serde(deserialize_with = "eosio::u64_or_string")]
@@ -38,9 +38,9 @@ pub struct EosioGlobalState {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L110-L124>
-#[eosio::table(global2)]
+#[table_name = "global2"]
 #[singleton]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Table, Read, Write, NumBytes)]
 pub struct EosioGlobalState2 {
     pub new_ram_per_block: u16,
     pub last_ram_increase: BlockTimestamp,
@@ -51,9 +51,9 @@ pub struct EosioGlobalState2 {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L126-L132>
-#[eosio::table(global3)]
+#[table_name = "global3"]
 #[singleton]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Table, Read, Write, NumBytes)]
 pub struct EosioGlobalState3 {
     pub last_vpay_state_update: TimePoint,
     #[serde(deserialize_with = "eosio::f64_or_string")]

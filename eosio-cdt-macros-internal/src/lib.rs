@@ -6,7 +6,6 @@ extern crate proc_macro;
 
 mod abi;
 mod action;
-mod derive_table_row;
 mod print;
 mod table;
 
@@ -53,12 +52,4 @@ pub fn print(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn table(args: TokenStream, input: TokenStream) -> TokenStream {
     crate::table::expand(args, input)
-}
-
-#[proc_macro_derive(
-    TableRow,
-    attributes(table_name, primary, secondary, singleton)
-)]
-pub fn derive_table_row(input: TokenStream) -> TokenStream {
-    crate::derive_table_row::expand(input)
 }

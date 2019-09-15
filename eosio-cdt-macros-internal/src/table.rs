@@ -11,7 +11,7 @@ pub fn expand(args: TokenStream, input: TokenStream) -> TokenStream {
     let name =
         LitStr::new(format!("{}", quote!(#name)).as_str(), Span::call_site());
     let expanded = quote! {
-        #[derive(Debug, #eosio_cdt::TableRow, #eosio_core::Read, #eosio_core::Write, #eosio_core::NumBytes, Clone, PartialEq, PartialOrd)]
+        #[derive(Debug, #eosio_core::Read, #eosio_core::Write, #eosio_core::NumBytes, Clone, PartialEq, PartialOrd)]
         #[table_name = #name]
         #input
     };

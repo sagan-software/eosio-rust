@@ -53,6 +53,7 @@ mod signature;
 mod signed_int;
 mod symbol;
 mod symbol_code;
+mod table;
 mod time_point;
 mod time_point_sec;
 mod transaction;
@@ -67,6 +68,6 @@ pub use self::{
     extended_asset::*, extended_symbol::*, ignore::*, json::*, names::*,
     ops::*, permission_level::*, producer_key::*, producer_schedule::*,
     public_key::*, resources::*, signature::*, signed_int::*, symbol::*,
-    symbol_code::*, time_point::*, time_point_sec::*, transaction::*,
+    symbol_code::*, table::*, time_point::*, time_point_sec::*, transaction::*,
     unsigned_int::*,
 };

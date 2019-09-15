@@ -13,56 +13,56 @@ pub trait Print {
 impl Print for u8 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printui(u64::from(*self)) }
+        unsafe { eosio_cdt_sys::printui(u64::from(*self)) }
     }
 }
 
 impl Print for u16 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printui(u64::from(*self)) }
+        unsafe { eosio_cdt_sys::printui(u64::from(*self)) }
     }
 }
 
 impl Print for u32 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printui(u64::from(*self)) }
+        unsafe { eosio_cdt_sys::printui(u64::from(*self)) }
     }
 }
 
 impl Print for u64 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printui(*self) }
+        unsafe { eosio_cdt_sys::printui(*self) }
     }
 }
 
 impl Print for i8 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printi(i64::from(*self)) }
+        unsafe { eosio_cdt_sys::printi(i64::from(*self)) }
     }
 }
 
 impl Print for i16 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printi(i64::from(*self)) }
+        unsafe { eosio_cdt_sys::printi(i64::from(*self)) }
     }
 }
 
 impl Print for i32 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printi(i64::from(*self)) }
+        unsafe { eosio_cdt_sys::printi(i64::from(*self)) }
     }
 }
 
 impl Print for i64 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printi(*self) }
+        unsafe { eosio_cdt_sys::printi(*self) }
     }
 }
 
@@ -70,6 +70,7 @@ impl<'a> Print for &'a str {
     #[inline]
     fn print(&self) {
         let ptr = self.as_ptr();
+        #[allow(clippy::cast_possible_truncation)]
         let len = self.len() as u32;
         unsafe { ::eosio_cdt_sys::prints_l(ptr, len) }
     }

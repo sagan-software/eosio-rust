@@ -6,11 +6,13 @@ pub struct Account {
 }
 
 #[cfg(feature = "contract")]
-impl TableRow for Account {
-    const TABLE_NAME: u64 = n!(accounts);
+impl Table for Account {
+    const NAME: u64 = n!(accounts);
 
-    fn primary_key(&self) -> u64 {
-        self.balance.symbol.code().into()
+    type Row = Self;
+
+    fn primary_key(row: &Self::Row) -> u64 {
+        row.balance.symbol.code().into()
     }
 }
 
@@ -22,11 +24,13 @@ pub struct CurrencyStats {
 }
 
 #[cfg(feature = "contract")]
-impl TableRow for CurrencyStats {
-    const TABLE_NAME: u64 = n!(stat);
+impl Table for CurrencyStats {
+    const NAME: u64 = n!(stat);
 
-    fn primary_key(&self) -> u64 {
-        self.supply.symbol.code().into()
+    type Row = Self;
+
+    fn primary_key(row: &Self::Row) -> u64 {
+        row.supply.symbol.code().into()
     }
 }
 

@@ -8,9 +8,7 @@ use syn::{
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let eosio_core = crate::paths::eosio_core();
-    let eosio_cdt = crate::paths::eosio_cdt();
-
+    let eosio_core = crate::root_path(&input);
     let name = input.ident.clone();
 
     let mut generics = input.generics.clone();
@@ -53,9 +51,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
     });
 
     if table_name.is_none() {
-        panic!(
-            "#[table_name] attribute must be used when deriving from TableRow"
-        );
+        panic!("#[table_name] attribute must be used when deriving from Table");
     }
 
     let expanded = match input.data {
@@ -96,24 +92,26 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 if is_singleton {
                     quote! {
                         #[automatically_derived]
-                        impl #impl_generics #eosio_cdt::TableRow for #name #ty_generics #where_clause {
-                            const TABLE_NAME: u64 = #eosio_core::n!(#table_name);
+                        impl #impl_generics #eosio_core::Table for #name #ty_generics #where_clause {
+                            const NAME: u64 = #eosio_core::n!(#table_name);
+
+                            type Row = Self;
 
                             #[inline]
-                            fn primary_key(&self) -> u64 {
-                                Self::TABLE_NAME
+                            fn primary_key(_row: &Self::Row) -> u64 {
+                                Self::NAME
                             }
                         }
 
                         #[automatically_derived]
                         impl #impl_generics #name #ty_generics #where_clause {
                             #[inline]
-                            pub fn singleton<C, S>(code: C, scope: S) -> #eosio_cdt::SingletonIndex<Self>
+                            pub fn singleton<C, S>(code: C, scope: S) -> #eosio_core::SingletonIndex<Self>
                             where
                                 C: Into<AccountName>,
                                 S: Into<ScopeName>,
                             {
-                                #eosio_cdt::SingletonIndex::new(code, scope)
+                                #eosio_core::SingletonIndex::new(code, scope)
                             }
                         }
                     }
@@ -132,18 +130,18 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             Some((ident, ty)) => {
                                 secondary_keys_expanded = quote! {
                                     #secondary_keys_expanded
-                                    Some(&self.#ident),
+                                    Some(#eosio_core::SecondaryKey::from(row.#ident)),
                                 };
                                 secondary_keys_constructors = quote! {
                                     #secondary_keys_constructors
 
                                     #[inline]
-                                    pub fn #ident<C, S>(code: C, scope: S) -> #eosio_cdt::SecondaryTableIndex<#ty, Self>
+                                    pub fn #ident<C, S>(code: C, scope: S) -> #eosio_core::SecondaryTableIndex<#ty, Self>
                                     where
                                         C: Into<#eosio_core::AccountName>,
                                         S: Into<#eosio_core::ScopeName>,
                                     {
-                                        #eosio_cdt::SecondaryTableIndex::new(code, scope, #eosio_core::n!(#table_name), #ty::default(), #i)
+                                        #eosio_core::SecondaryTableIndex::new(code, scope, #eosio_core::n!(#table_name), #i)
                                     }
                                 };
                             }
@@ -158,19 +156,21 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
                     quote! {
                         #[automatically_derived]
-                        impl #impl_generics #eosio_cdt::TableRow for #name #ty_generics #where_clause {
-                            const TABLE_NAME: u64 = #eosio_core::n!(#table_name);
+                        impl #impl_generics #eosio_core::Table for #name #ty_generics #where_clause {
+                            const NAME: u64 = #eosio_core::n!(#table_name);
+
+                            type Row = Self;
 
                             #[inline]
-                            fn primary_key(&self) -> u64 {
-                                self.#primary_key.into()
+                            fn primary_key(row: &Self::Row) -> u64 {
+                                row.#primary_key.into()
                             }
 
                             #[inline]
-                            fn secondary_keys(&self) -> [Option<&#eosio_cdt::SecondaryTableKey>; 16] {
-                                [
+                            fn secondary_keys(row: &Self::Row) -> #eosio_core::SecondaryKeys {
+                                SecondaryKeys::from([
                                     #secondary_keys_expanded
-                                ]
+                                ])
                             }
                         }
 

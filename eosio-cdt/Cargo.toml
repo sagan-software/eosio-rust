@@ -30,4 +30,3 @@ travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 [dependencies]
 eosio-core = { version = "0.2", path = "../eosio-core" }
 eosio-cdt-sys = { version = "0.2", path = "../eosio-cdt-sys" }
-mashup = "0.1"

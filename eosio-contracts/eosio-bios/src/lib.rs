@@ -164,8 +164,8 @@ pub fn setabi(account: AccountName, abi: Vec<u8>) {
     }
 }
 
-#[eosio::table(abihash)]
-#[derive(Default)]
+#[derive(Default, Table, Read, Write, NumBytes)]
+#[table_name = "abihash"]
 pub struct AbiHash {
     #[primary]
     pub owner: AccountName,

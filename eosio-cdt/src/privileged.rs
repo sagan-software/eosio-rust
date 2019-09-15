@@ -72,6 +72,7 @@ pub fn set_blockchain_parameters(
     let mut buf = vec![0_u8; size];
     params.write(&mut buf, &mut 0)?;
     let buf_ptr = &mut buf as *mut _ as *mut u8;
+    #[allow(clippy::cast_possible_truncation)]
     unsafe {
         ::eosio_cdt_sys::set_blockchain_parameters_packed(buf_ptr, size as u32)
     }
@@ -84,6 +85,7 @@ pub fn get_blockchain_parameters() -> Result<BlockchainParameters, ReadError> {
     let expected_size = std::mem::size_of::<BlockchainParameters>();
     let mut buf = vec![0_u8; expected_size];
     let buf_ptr = &mut buf as *mut _ as *mut u8;
+    #[allow(clippy::cast_possible_truncation)]
     let actual_size = unsafe {
         ::eosio_cdt_sys::get_blockchain_parameters_packed(
             buf_ptr,
@@ -103,6 +105,7 @@ pub fn set_proposed_producers(prods: &[ProducerKey]) -> Option<u64> {
     let size = prods.num_bytes();
     let mut buf = vec![0_u8; size];
     let buf_ptr = &mut buf as *mut _ as *mut u8;
+    #[allow(clippy::cast_possible_truncation)]
     let result = unsafe {
         ::eosio_cdt_sys::set_proposed_producers(buf_ptr, size as u32)
     };

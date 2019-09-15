@@ -26,9 +26,6 @@
 )]
 #![allow(clippy::module_name_repetitions)]
 
-#[macro_use]
-extern crate mashup;
-
 mod account;
 mod action;
 mod check;

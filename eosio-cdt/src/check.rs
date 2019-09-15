@@ -5,6 +5,7 @@
 pub fn check(pred: bool, msg: &str) {
     if !pred {
         let msg_ptr = msg.as_ptr();
+        #[allow(clippy::cast_possible_truncation)]
         let msg_len = msg.len() as u32;
         unsafe { ::eosio_cdt_sys::eosio_assert_message(0, msg_ptr, msg_len) }
     }

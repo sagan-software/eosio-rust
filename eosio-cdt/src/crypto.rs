@@ -6,6 +6,7 @@ use eosio_core::{Checksum160, Checksum256, Checksum512};
 #[inline]
 pub fn ripemd160(data: &str) -> Checksum160 {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let mut c_hash = capi_checksum160::default();
     let c_hash_ptr: *mut capi_checksum160 =
@@ -18,6 +19,7 @@ pub fn ripemd160(data: &str) -> Checksum160 {
 #[inline]
 pub fn assert_ripemd160(checksum: &Checksum160, data: &str) {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let c_hash = capi_checksum160 {
         hash: checksum.to_bytes(),
@@ -32,6 +34,7 @@ pub fn assert_ripemd160(checksum: &Checksum160, data: &str) {
 #[inline]
 pub fn sha1(data: &str) -> Checksum160 {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let mut c_hash = capi_checksum160::default();
     let c_hash_ptr: *mut capi_checksum160 =
@@ -44,6 +47,7 @@ pub fn sha1(data: &str) -> Checksum160 {
 #[inline]
 pub fn assert_sha1(checksum: &Checksum160, data: &str) {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let c_hash = capi_checksum160 {
         hash: checksum.to_bytes(),
@@ -58,6 +62,7 @@ pub fn assert_sha1(checksum: &Checksum160, data: &str) {
 #[inline]
 pub fn sha256(data: &str) -> Checksum256 {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let mut c_hash = capi_checksum256::default();
     let c_hash_ptr = &mut c_hash as *mut _ as *mut capi_checksum256;
@@ -69,6 +74,7 @@ pub fn sha256(data: &str) -> Checksum256 {
 #[inline]
 pub fn assert_sha256(checksum: &Checksum256, data: &str) {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let c_hash = capi_checksum256 {
         hash: checksum.to_bytes(),
@@ -82,6 +88,7 @@ pub fn assert_sha256(checksum: &Checksum256, data: &str) {
 #[inline]
 pub fn sha512(data: &str) -> Checksum512 {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let mut c_hash = capi_checksum512::default();
     let c_hash_ptr: *mut capi_checksum512 =
@@ -94,6 +101,7 @@ pub fn sha512(data: &str) -> Checksum512 {
 #[inline]
 pub fn assert_sha512(checksum: &Checksum512, data: &str) {
     let data_ptr = data.as_ptr();
+    #[allow(clippy::cast_possible_truncation)]
     let data_len = data.len() as u32;
     let c_hash = capi_checksum512 {
         hash: checksum.to_bytes(),

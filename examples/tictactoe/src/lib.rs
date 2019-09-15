@@ -19,7 +19,7 @@ fn create(host: AccountName, challenger: AccountName) {
     assert!(is_account(challenger), "challenger account doesn't exist");
 
     let _self = current_receiver();
-    let table = Game::table(_self, host);
+    let table: PrimaryTableIndex<Game> = PrimaryTableIndex::new(_self, host);
 
     assert!(!table.exists(challenger), "game already exists");
 
@@ -37,7 +37,7 @@ fn restart(host: AccountName, challenger: AccountName, by: u8) {
     require_auth(if by == HOST { host } else { challenger });
 
     let _self = current_receiver();
-    let table = Game::table(_self, host);
+    let table: PrimaryTableIndex<Game> = PrimaryTableIndex::new(_self, host);
     let cursor = table.find(challenger).expect("game doesn't exist");
     let mut game = cursor.get().expect("read");
 
@@ -51,7 +51,7 @@ fn close(host: AccountName, challenger: AccountName) {
     require_auth(host);
 
     let _self = current_receiver();
-    let table = Game::table(_self, host);
+    let table: PrimaryTableIndex<Game> = PrimaryTableIndex::new(_self, host);
     let cursor = table.find(challenger).expect("game doesn't exist");
 
     cursor.erase().expect("read");
@@ -73,7 +73,7 @@ fn makemove(
 
     // Check if game exists
     let _self = current_receiver();
-    let table = Game::table(_self, host);
+    let table: PrimaryTableIndex<Game> = PrimaryTableIndex::new(_self, host);
     let cursor = table.find(challenger).expect("game doesn't exist");
 
     let mut game = cursor.get().expect("failed to read game");
@@ -93,7 +93,8 @@ fn makemove(
 
 eosio::abi!(create, restart, close, makemove);
 
-#[eosio::table(games)]
+#[derive(Table, Read, Write, NumBytes)]
+#[table_name = "game"]
 struct Game {
     host: AccountName,
     #[primary]

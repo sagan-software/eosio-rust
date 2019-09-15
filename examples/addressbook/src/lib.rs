@@ -102,7 +102,8 @@ fn likezip(zip: u32) {
 
 eosio::abi!(add, update, erase, like, likezip);
 
-#[eosio::table(address)]
+#[derive(Table, Read, Write, NumBytes)]
+#[table_name = "address"]
 struct Address {
     #[primary]
     account: AccountName,

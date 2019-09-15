@@ -29,6 +29,7 @@ extern crate proc_macro;
 
 mod derive_num_bytes;
 mod derive_read;
+mod derive_table;
 mod derive_write;
 
 use crate::proc_macro::TokenStream;
@@ -54,6 +55,16 @@ pub fn derive_read(input: TokenStream) -> TokenStream {
 #[proc_macro_derive(NumBytes, attributes(eosio_core_root_path))]
 pub fn derive_num_bytes(input: TokenStream) -> TokenStream {
     crate::derive_num_bytes::expand(input)
+}
+
+/// TODO docs
+#[inline]
+#[proc_macro_derive(
+    Table,
+    attributes(table_name, primary, secondary, singleton)
+)]
+pub fn derive_table(input: TokenStream) -> TokenStream {
+    crate::derive_table::expand(input)
 }
 
 /// The default root path using the `eosio` crate.

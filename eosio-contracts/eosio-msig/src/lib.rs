@@ -1,15 +1,15 @@
 use eosio::*;
 
-#[eosio::table(proposal)]
-#[derive(Default)]
+#[derive(Default, Table, Read, Write, NumBytes)]
+#[table_name = "proposal"]
 pub struct Proposal {
     #[primary]
     pub proposal_name: Name,
     pub packed_transaction: Vec<char>,
 }
 
-#[eosio::table(approvals)]
-#[derive(Default)]
+#[derive(Default, Table, Read, Write, NumBytes)]
+#[table_name = "proposal"]
 pub struct OldApprovalsInfo {
     #[primary]
     pub proposal_name: Name,
@@ -25,8 +25,8 @@ pub struct Approval {
     pub time: TimePoint,
 }
 
-#[eosio::table(approvals2)]
-#[derive(Default)]
+#[derive(Default, Table, Read, Write, NumBytes)]
+#[table_name = "approvals2"]
 pub struct ApprovalsInfo {
     pub version: u8,
     #[primary]
@@ -35,8 +35,8 @@ pub struct ApprovalsInfo {
     pub provided_approvals: Vec<Approval>,
 }
 
-#[eosio::table(invals)]
-#[derive(Default)]
+#[derive(Default, Table, Read, Write, NumBytes)]
+#[table_name = "invals"]
 pub struct Invalidation {
     #[primary]
     pub account: AccountName,

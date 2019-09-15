@@ -43,6 +43,6 @@ build_contract tictactoe
 build_contract eosio-bios
 build_contract eosio-forum
 build_contract eosio-msig
-# build_contract eosio-system
+build_contract eosio-system
 build_contract eosio-token
 build_contract eosio-wrap

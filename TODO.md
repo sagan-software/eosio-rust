@@ -1,3 +1,11 @@
+- [ ] Create concrete `SecondaryKey` type
+- [ ] Create concrete `SecondaryKeys` type
+- [ ] Create `From<T>` impls for `SecondaryKeys`
+- [ ] Move `TableRow` trait to `eosio-core`
+- [ ] Move most of `TableRow` functions to new `Table` trait
+- [ ] Move generated secondary key functions to `eosio::table` macro
+
+
 # `eosio_cdt`
 
 - [x] Create test script using test files from `EOSIO/eosio.cdt` repo
@@ -7,7 +15,7 @@
 - [x] Re-implement sending inline actions
 - [ ] Implement deferred transactions
 - [x] Panic handler
-- [ ] Singleton
+- [x] Singleton
 
 # `eosio_core`
 
