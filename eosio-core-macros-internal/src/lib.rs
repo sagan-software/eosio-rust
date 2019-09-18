@@ -8,9 +8,11 @@
 //! [`proc_macro_hygiene`]: https://doc.rust-lang.org/beta/unstable-book/language-features/proc-macro-hygiene.html
 //! [`proc_macro_hack`]: https://github.com/dtolnay/proc-macro-hack
 //!
-#![allow(clippy::unimplemented)]
-#![allow(clippy::missing_inline_in_public_items)]
-#![allow(clippy::missing_docs_in_private_items)]
+#![allow(
+    clippy::unimplemented,
+    clippy::missing_inline_in_public_items,
+    clippy::missing_docs_in_private_items
+)]
 extern crate proc_macro;
 
 mod n;
