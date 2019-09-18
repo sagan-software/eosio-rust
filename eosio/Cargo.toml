@@ -21,12 +21,6 @@ documentation = "https://sagan-software.github.io/eosio-rust/eosio/"
 maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
-[features]
-default = ["std"]
-std = []
-alloc = []
-contract = []
-
 [dependencies]
 eosio-core = { path = "../eosio-core", features = ["internal-use-only-root-path-is-eosio"] }
 eosio-core-macros = { path = "../eosio-core-macros" }
