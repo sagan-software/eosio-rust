@@ -132,6 +132,10 @@ pub fn expand(input: TokenStream) -> TokenStream {
                                     #secondary_keys_expanded
                                     Some(#eosio_core::SecondaryKey::from(row.#ident)),
                                 };
+                                let ident = Ident::new(
+                                    format!("by_{}", quote!(#ident)).as_str(),
+                                    Span::call_site(),
+                                );
                                 secondary_keys_constructors = quote! {
                                     #secondary_keys_constructors
 
