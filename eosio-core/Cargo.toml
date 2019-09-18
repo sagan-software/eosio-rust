@@ -36,12 +36,16 @@ chrono = "0.4"
 
 [dev-dependencies]
 eosio-core-macros = { version = "0.2", path = "../eosio-core-macros" }
-criterion = "0.2"
+criterion = "0.3"
 
 [features]
 default = []
 internal-use-only-root-path-is-eosio = ["eosio-core-derive/internal-use-only-root-path-is-eosio"]
 
-# [[bench]]
-# name = "bench_main"
-# harness = false
+[[bench]]
+name = "bytes"
+harness = false
+
+[[bench]]
+name = "names"
+harness = false
