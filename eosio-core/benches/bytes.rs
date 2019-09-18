@@ -1,9 +1,9 @@
 #[macro_use]
 extern crate criterion;
-extern crate eosio_bytes;
+extern crate eosio_core;
 
 use criterion::{black_box, Criterion};
-use eosio_bytes::*;
+use eosio_core::*;
 
 fn u8_write(c: &mut Criterion) {
     c.bench_function_over_inputs(
