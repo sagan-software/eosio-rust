@@ -293,12 +293,28 @@ impl IntoNativeSecondaryKey for f64 {
     }
 }
 
-impl IntoNativeSecondaryKey for u32 {
-    type Native = u64;
-    #[inline]
-    fn into_native_secondary_key(self) -> Self::Native {
-        self.into()
-    }
+macro_rules! impl_into_type {
+    ($($t:ty, $x:ty)*) => ($(
+        impl IntoNativeSecondaryKey for $x {
+            type Native = $t;
+            #[inline]
+            fn into_native_secondary_key(self) -> Self::Native {
+                self.into()
+            }
+        }
+    )*)
+}
+
+impl_into_type! {
+    u64, u8
+    u64, u16
+    u64, u32
+    u64, eosio_core::Name
+    u64, eosio_core::AccountName
+    u64, eosio_core::TableName
+    u64, eosio_core::PermissionName
+    u64, eosio_core::ScopeName
+    u64, eosio_core::ActionName
 }
 
 /// TODO docs
