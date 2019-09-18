@@ -1,5 +1,19 @@
 use eosio::*;
 
+#[eosio::table(address)]
+struct Address {
+    #[primary]
+    account: AccountName,
+    first_name: String,
+    last_name: String,
+    street: String,
+    city: String,
+    state: String,
+    #[secondary]
+    zip: u32,
+    liked: u64,
+}
+
 #[eosio::action]
 fn add(
     account: AccountName,
@@ -12,8 +26,8 @@ fn add(
 ) {
     require_auth(account);
 
-    let _self = current_receiver();
-    let table = Address::table(_self, _self);
+    let code = current_receiver();
+    let table = Address::table(code, code);
 
     let address = table.find(account);
     assert!(address.is_none(), "Address for account already exists");
@@ -43,8 +57,8 @@ fn update(
 ) {
     require_auth(account);
 
-    let _self = current_receiver();
-    let table = Address::table(_self, _self);
+    let code = current_receiver();
+    let table = Address::table(code, code);
     let cursor = table.find(account).expect("Address for account not found");
 
     let mut address = cursor.get().expect("read");
@@ -62,8 +76,8 @@ fn update(
 fn erase(account: AccountName) {
     require_auth(account);
 
-    let _self = current_receiver();
-    let addresses = Address::table(_self, _self);
+    let code = current_receiver();
+    let addresses = Address::table(code, code);
     let cursor = addresses
         .find(account)
         .expect("Address for account not found");
@@ -73,8 +87,8 @@ fn erase(account: AccountName) {
 
 #[eosio::action]
 fn like(account: AccountName) {
-    let _self = current_receiver();
-    let addresses = Address::table(_self, _self);
+    let code = current_receiver();
+    let addresses = Address::table(code, code);
     let cursor = addresses
         .find(account)
         .expect("Address for account not found");
@@ -88,8 +102,8 @@ fn like(account: AccountName) {
 
 #[eosio::action]
 fn likezip(zip: u32) {
-    let _self = current_receiver();
-    let table = Address::zip(_self, _self);
+    let code = current_receiver();
+    let table = Address::by_zip(code, code);
     for cursor in table.lower_bound(zip).into_iter() {
         let mut addr = cursor.get().expect("read");
         if addr.zip != zip {
@@ -101,18 +115,3 @@ fn likezip(zip: u32) {
 }
 
 eosio::abi!(add, update, erase, like, likezip);
-
-#[derive(Table, Read, Write, NumBytes)]
-#[table_name = "address"]
-struct Address {
-    #[primary]
-    account: AccountName,
-    first_name: String,
-    last_name: String,
-    street: String,
-    city: String,
-    state: String,
-    #[secondary]
-    zip: u32,
-    liked: u64,
-}
