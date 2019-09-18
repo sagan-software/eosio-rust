@@ -9,7 +9,7 @@ use eosio_core::{
 #[inline]
 pub fn is_privileged<A: Into<AccountName>>(account: A) -> bool {
     let a = account.into();
-    unsafe { ::eosio_cdt_sys::is_privileged(a.into()) }
+    unsafe { eosio_cdt_sys::is_privileged(a.into()) }
 }
 
 /// Get the resource limits of an account
@@ -25,7 +25,7 @@ pub fn get_resource_limits<A: Into<AccountName>>(
     let cpu_weight_ptr = &mut cpu_weight as *mut _ as *mut i64;
     let a = account.into();
     unsafe {
-        ::eosio_cdt_sys::get_resource_limits(
+        eosio_cdt_sys::get_resource_limits(
             a.into(),
             ram_bytes_ptr,
             net_weight_ptr,
@@ -48,7 +48,7 @@ pub fn set_resource_limits(
     cpu_weight: i64,
 ) {
     unsafe {
-        ::eosio_cdt_sys::set_resource_limits(
+        eosio_cdt_sys::set_resource_limits(
             account.into(),
             ram_bytes,
             net_weight,
@@ -60,7 +60,7 @@ pub fn set_resource_limits(
 /// Set the privileged status of an account
 #[inline]
 pub fn set_privileged(account: AccountName, is_priv: bool) {
-    unsafe { ::eosio_cdt_sys::set_privileged(account.into(), is_priv) }
+    unsafe { eosio_cdt_sys::set_privileged(account.into(), is_priv) }
 }
 
 /// Set the blockchain parameters
@@ -74,7 +74,7 @@ pub fn set_blockchain_parameters(
     let buf_ptr = &mut buf as *mut _ as *mut u8;
     #[allow(clippy::cast_possible_truncation)]
     unsafe {
-        ::eosio_cdt_sys::set_blockchain_parameters_packed(buf_ptr, size as u32)
+        eosio_cdt_sys::set_blockchain_parameters_packed(buf_ptr, size as u32)
     }
     Ok(())
 }
@@ -87,7 +87,7 @@ pub fn get_blockchain_parameters() -> Result<BlockchainParameters, ReadError> {
     let buf_ptr = &mut buf as *mut _ as *mut u8;
     #[allow(clippy::cast_possible_truncation)]
     let actual_size = unsafe {
-        ::eosio_cdt_sys::get_blockchain_parameters_packed(
+        eosio_cdt_sys::get_blockchain_parameters_packed(
             buf_ptr,
             expected_size as u32,
         )
@@ -106,9 +106,8 @@ pub fn set_proposed_producers(prods: &[ProducerKey]) -> Option<u64> {
     let mut buf = vec![0_u8; size];
     let buf_ptr = &mut buf as *mut _ as *mut u8;
     #[allow(clippy::cast_possible_truncation)]
-    let result = unsafe {
-        ::eosio_cdt_sys::set_proposed_producers(buf_ptr, size as u32)
-    };
+    let result =
+        unsafe { eosio_cdt_sys::set_proposed_producers(buf_ptr, size as u32) };
     if result >= 0 {
         Some(result as u64)
     } else {

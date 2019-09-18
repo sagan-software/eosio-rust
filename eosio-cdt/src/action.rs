@@ -10,7 +10,7 @@ pub fn eosio_exit<C>(code: C)
 where
     C: Into<i32>,
 {
-    unsafe { ::eosio_cdt_sys::eosio_exit(code.into()) }
+    unsafe { eosio_cdt_sys::eosio_exit(code.into()) }
 }
 
 /// TODO docs.
@@ -21,7 +21,7 @@ pub fn send_inline_action(action: &Action) -> Result<(), WriteError> {
     let mut pos = 0;
     action.write(&mut bytes, &mut pos)?;
     let ptr = bytes[..].as_mut_ptr();
-    unsafe { ::eosio_cdt_sys::send_inline(ptr, pos) }
+    unsafe { eosio_cdt_sys::send_inline(ptr, pos) }
     Ok(())
 }
 
@@ -35,7 +35,7 @@ pub fn send_context_free_inline_action(
     let mut pos = 0;
     action.write(&mut bytes, &mut pos)?;
     let ptr = bytes[..].as_mut_ptr();
-    unsafe { ::eosio_cdt_sys::send_context_free_inline(ptr, pos) }
+    unsafe { eosio_cdt_sys::send_context_free_inline(ptr, pos) }
     Ok(())
 }
 
@@ -69,7 +69,7 @@ where
     let sender_id = id.as_u128();
     let sender_id_ptr = &sender_id as *const _ as *const u128;
     unsafe {
-        ::eosio_cdt_sys::send_deferred(
+        eosio_cdt_sys::send_deferred(
             sender_id_ptr,
             payer.into().into(),
             bytes.as_ptr(),
@@ -85,7 +85,7 @@ where
 pub fn cancel_deferred(id: &DeferredTransactionId) -> bool {
     let sender_id = id.as_u128();
     let sender_id_ptr = &sender_id as *const _ as *const u128;
-    let result = unsafe { ::eosio_cdt_sys::cancel_deferred(sender_id_ptr) };
+    let result = unsafe { eosio_cdt_sys::cancel_deferred(sender_id_ptr) };
     result == 1
 }
 
@@ -97,12 +97,12 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
     /// TODO docs.
     #[inline]
     fn read_data() -> Result<Self, ReadError> {
-        let num_bytes = unsafe { ::eosio_cdt_sys::action_data_size() };
+        let num_bytes = unsafe { eosio_cdt_sys::action_data_size() };
         let mut bytes = vec![0_u8; num_bytes as usize];
-        let ptr: *mut ::eosio_cdt_sys::c_void =
-            &mut bytes[..] as *mut _ as *mut ::eosio_cdt_sys::c_void;
+        let ptr: *mut eosio_cdt_sys::c_void =
+            &mut bytes[..] as *mut _ as *mut eosio_cdt_sys::c_void;
         unsafe {
-            ::eosio_cdt_sys::read_action_data(ptr, num_bytes);
+            eosio_cdt_sys::read_action_data(ptr, num_bytes);
         }
         let mut pos = 0;
         Self::read(&bytes, &mut pos)
@@ -112,12 +112,12 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
 /// TODO docs
 #[inline]
 pub fn current_data_stream() -> DataStream {
-    let num_bytes = unsafe { ::eosio_cdt_sys::action_data_size() };
+    let num_bytes = unsafe { eosio_cdt_sys::action_data_size() };
     let mut bytes = vec![0_u8; num_bytes as usize];
-    let ptr: *mut ::eosio_cdt_sys::c_void =
-        &mut bytes[..] as *mut _ as *mut ::eosio_cdt_sys::c_void;
+    let ptr: *mut eosio_cdt_sys::c_void =
+        &mut bytes[..] as *mut _ as *mut eosio_cdt_sys::c_void;
     unsafe {
-        ::eosio_cdt_sys::read_action_data(ptr, num_bytes);
+        eosio_cdt_sys::read_action_data(ptr, num_bytes);
     }
     bytes.into()
 }

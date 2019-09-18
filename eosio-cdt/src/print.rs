@@ -72,7 +72,7 @@ impl<'a> Print for &'a str {
         let ptr = self.as_ptr();
         #[allow(clippy::cast_possible_truncation)]
         let len = self.len() as u32;
-        unsafe { ::eosio_cdt_sys::prints_l(ptr, len) }
+        unsafe { eosio_cdt_sys::prints_l(ptr, len) }
     }
 }
 
@@ -87,7 +87,7 @@ impl Print for bool {
     #[inline]
     fn print(&self) {
         let out = if *self { "true" } else { "false" };
-        unsafe { ::eosio_cdt_sys::prints(out.as_ptr()) }
+        unsafe { eosio_cdt_sys::prints(out.as_ptr()) }
     }
 }
 
@@ -101,14 +101,14 @@ impl Print for usize {
 impl Print for f32 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printsf(*self) }
+        unsafe { eosio_cdt_sys::printsf(*self) }
     }
 }
 
 impl Print for f64 {
     #[inline]
     fn print(&self) {
-        unsafe { ::eosio_cdt_sys::printdf(*self) }
+        unsafe { eosio_cdt_sys::printdf(*self) }
     }
 }
 
@@ -116,8 +116,8 @@ impl Print for char {
     #[inline]
     fn print(&self) {
         let num = *self as u8;
-        let ptr = &num as *const ::eosio_cdt_sys::c_char;
-        unsafe { ::eosio_cdt_sys::prints_l(ptr, 1) }
+        let ptr = &num as *const eosio_cdt_sys::c_char;
+        unsafe { eosio_cdt_sys::prints_l(ptr, 1) }
     }
 }
 
@@ -144,7 +144,7 @@ macro_rules! impl_print_for_names {
         impl Print for $ident {
             #[inline]
             fn print(&self) {
-                unsafe { ::eosio_cdt_sys::printn(self.as_u64()) }
+                unsafe { eosio_cdt_sys::printn(self.as_u64()) }
             }
         }
     )*)
