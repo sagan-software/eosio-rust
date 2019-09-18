@@ -1,7 +1,5 @@
-use eosio::*;
-
 #[eosio::action]
-fn hi(name: AccountName) {
+fn hi(name: eosio::AccountName) {
     eosio::print!("Hi, ", name);
 }
 
