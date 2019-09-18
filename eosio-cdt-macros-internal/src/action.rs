@@ -1,5 +1,4 @@
 use crate::proc_macro::TokenStream;
-use eosio_core::NAME_UTF8_CHARS;
 use heck::CamelCase;
 use quote::quote;
 use syn::{parse_macro_input, FnArg, Ident, ItemFn};
@@ -7,6 +6,7 @@ use syn::{parse_macro_input, FnArg, Ident, ItemFn};
 pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
     let eosio_core = crate::paths::eosio_core();
+    let eosio_cdt = crate::paths::eosio_cdt();
     let ident = input.ident;
     let decl = input.decl;
     let inputs = decl.inputs;
@@ -71,7 +71,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         #[automatically_derived]
-        impl #eosio_core::ActionFn for #struct_ident {
+        impl #eosio_cdt::ActionFn for #struct_ident {
             fn execute(self) {
                 #(#assign_args)*
                 #block
@@ -80,8 +80,8 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         // TODO: keep original function intact so it can be called like normal
         #vis fn #ident() {
-            let s = #struct_ident::read_data().expect("read");
-            s.execute();
+            let s = <#struct_ident as #eosio_cdt::ActionFn>::read_data().expect("read");
+            #eosio_cdt::ActionFn::execute(s);
         }
     };
     TokenStream::from(quote!(#expanded))
