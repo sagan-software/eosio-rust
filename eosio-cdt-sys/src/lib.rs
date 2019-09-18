@@ -10,17 +10,19 @@
 //! [`eosio`]: https://crates.io/crates/eosio
 //! [`eosio_cdt`]: https://crates.io/crates/eosio_cdt
 
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-#![allow(improper_ctypes)]
-#![allow(dead_code)]
-#![allow(clippy::missing_docs_in_private_items)]
-#![allow(clippy::missing_inline_in_public_items)]
-#![allow(clippy::missing_const_for_fn)]
-#![allow(clippy::op_ref)]
-#![allow(clippy::use_self)]
-#![allow(clippy::unseparated_literal_suffix)]
+#![allow(
+    non_upper_case_globals,
+    non_camel_case_types,
+    non_snake_case,
+    improper_ctypes,
+    dead_code,
+    clippy::missing_docs_in_private_items,
+    clippy::missing_inline_in_public_items,
+    clippy::missing_const_for_fn,
+    clippy::op_ref,
+    clippy::use_self,
+    clippy::unseparated_literal_suffix
+)]
 
 // #[cfg(all(target_arch = "wasm32", not(feature = "mock")))]
 mod bindings;
