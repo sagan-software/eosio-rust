@@ -9,6 +9,3 @@ crate-type = ["cdylib"]
 
 [dependencies]
 eosio = { path = "../../eosio" }
-
-[features]
-contract = ["eosio/contract"]
