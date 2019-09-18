@@ -4,11 +4,6 @@ version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
 
-[features]
-default = ["contract"]
-contract = []
-web = ["serde"]
-
 [lib]
 crate-type = ["cdylib"]
 
