@@ -1,5 +1,5 @@
 use crate::proc_macro::TokenStream;
-use heck::{CamelCase, TitleCase};
+use heck::CamelCase;
 use quote::quote;
 use syn::parse::{Parse, ParseStream, Result as ParseResult};
 use syn::punctuated::Punctuated;
