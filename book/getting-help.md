@@ -17,3 +17,4 @@ Otherwise if you are stuck on something or run into problems, here are some reso
   - [Ask on r/rust](https://www.reddit.com/r/rust)
 
 [open an issue]: https://github.com/sagan-software/eosio-rust/issues/new
+[telegram]: https://t.me/eosio_rs

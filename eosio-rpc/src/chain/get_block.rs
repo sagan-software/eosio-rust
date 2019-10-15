@@ -1,21 +1,23 @@
 use eosio::{AccountName, ActionName, PermissionLevel};
-use serde_derive::{Deserialize, Serialize};
+use serde::de::{self, Visitor};
+use serde::{Deserialize, Serialize};
+use std::fmt;
 
-crate::builder!("/v1/chain/get_block", GetBlockParams, GetBlock);
+crate::builder!("/v1/chain/get_block", GetBlock, Block);
 
 #[derive(Serialize, Clone)]
-pub struct GetBlockParams {
-    block_num_or_id: String,
+pub struct GetBlock {
+    pub block_num_or_id: String,
 }
 
-pub fn get_block<B: ToString>(block_num_or_id: B) -> GetBlockParams {
-    GetBlockParams {
+pub fn get_block<B: ToString>(block_num_or_id: B) -> GetBlock {
+    GetBlock {
         block_num_or_id: block_num_or_id.to_string(),
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct GetBlock {
+pub struct Block {
     pub timestamp: String,
     pub producer: AccountName,
     pub confirmed: u16,
@@ -31,6 +33,12 @@ pub struct GetBlock {
     pub id: String,
     pub block_num: u64,
     pub ref_block_prefix: u64,
+}
+
+impl Block {
+    pub fn num_actions(&self) -> usize {
+        self.transactions.iter().map(Transaction::num_actions).sum()
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -54,8 +62,55 @@ pub struct Transaction {
     pub trx: Trx,
 }
 
+impl Transaction {
+    pub fn num_actions(&self) -> usize {
+        match &self.trx {
+            Trx::Standard(trx) => {
+                trx.transaction.actions.len() + trx.transaction.context_free_actions.len()
+            }
+            Trx::Deferred(_) => 0,
+        }
+    }
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub enum Trx {
+    Standard(StandardTrx),
+    Deferred(String), // TODO use TransactionId, convert String to u128
+}
+
+struct TrxVisitor;
+
+impl<'de> Visitor<'de> for TrxVisitor {
+    type Value = Trx;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a transaction struct or deferred transaction ID")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> {
+        Ok(Trx::Deferred(v.to_string()))
+    }
+
+    fn visit_map<M>(self, map: M) -> Result<Self::Value, M::Error>
+    where
+        M: de::MapAccess<'de>,
+    {
+        Deserialize::deserialize(de::value::MapAccessDeserializer::new(map)).map(Trx::Standard)
+    }
+}
+
+impl<'de> Deserialize<'de> for Trx {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: de::Deserializer<'de>,
+    {
+        deserializer.deserialize_any(TrxVisitor)
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Trx {
+pub struct StandardTrx {
     pub id: String,
     pub signatures: Vec<String>,
     pub compression: String,
@@ -82,6 +137,6 @@ pub struct Action {
     pub account: AccountName,
     pub name: ActionName,
     pub authorization: Vec<PermissionLevel>,
-    pub data: ::serde_json::Value,
-    pub hex_data: String,
+    pub data: serde_json::Value,
+    pub hex_data: Option<String>,
 }

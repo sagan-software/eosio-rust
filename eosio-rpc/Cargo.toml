@@ -6,8 +6,7 @@ edition = "2018"
 
 [dependencies]
 cfg-if = "0.1.2"
-serde = "1.0"
-serde_derive = "1.0"
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 eosio = { path = "../eosio" }
 eosio-abi = { path = "../eosio-abi" }
@@ -32,7 +31,5 @@ features = [
 ]
 
 [features]
-default = ["use-hyper"]
-use-web-sys = ["wasm-bindgen", "wasm-bindgen-futures", "js-sys", "web-sys"]
-use-hyper = ["hyper", "hyper-tls"]
-use-stdweb = ["stdweb"]
+browser = ["wasm-bindgen", "wasm-bindgen-futures", "js-sys", "web-sys"]
+server = ["hyper", "hyper-tls"]

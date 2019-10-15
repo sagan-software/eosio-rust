@@ -1,6 +1,6 @@
 # Install EOS
 
-An EOS node is required to deploy and test smart contracts. The easiest way to setup a node is to use Docker. See the [official Docker quickstart guide](https://developers.eos.io/eosio-nodeos/docs/docker-quickstart) for instructions.
+To test and deploy smart contracts you will want to have a local EOS node running. The easiest way to setup a node is with Docker. See the [official Docker quickstart guide](https://developers.eos.io/eosio-nodeos/docs/docker-quickstart) for instructions.
 
 We recommend using `docker-compose` to manage `nodeos` and `keosd` containers. You can download the official [`docker-compose-latest.yml`](https://raw.githubusercontent.com/EOSIO/eos/master/Docker/docker-compose-latest.yml) file and start the containers using these commands:
 
@@ -15,15 +15,15 @@ docker-compose -f docker-compose-latest.yml up
 
 ```yaml
 services:
-  keosd:
-    volumes:
-      - ./:mnt/dev/project:ro
+    keosd:
+        volumes:
+            - ./:mnt/dev/project:ro
 ```
 
 **Note #2!** If you are expecting to see console output from `nodeos` then be sure to add `--contracts-console` to the end of the `nodeosd` command like so (abbreviated):
 
 ```yaml
 services:
-  nodeosd:
-    command: /opt/eosio/bin/nodeosd.sh ... --contracts-console
+    nodeosd:
+        command: /opt/eosio/bin/nodeosd.sh ... --contracts-console
 ```

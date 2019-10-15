@@ -101,6 +101,16 @@ where
                             f64::db_idx_remove(itr);
                         }
                     }
+                    SecondaryKey::U128(v) => {
+                        let end =
+                            u128::db_idx_end(self.code, self.scope, table);
+                        let itr = v.clone().db_idx_find_primary(
+                            self.code, self.scope, table, pk,
+                        );
+                        if itr != end {
+                            u128::db_idx_remove(itr);
+                        }
+                    }
                 }
             }
         }
@@ -134,6 +144,9 @@ where
                         v.db_idx_upsert(self.code, self.scope, table, payer, pk)
                     }
                     SecondaryKey::F64(v) => {
+                        v.db_idx_upsert(self.code, self.scope, table, payer, pk)
+                    }
+                    SecondaryKey::U128(v) => {
                         v.db_idx_upsert(self.code, self.scope, table, payer, pk)
                     }
                 };
@@ -331,6 +344,9 @@ where
                         v.db_idx_store(self.scope, table, payer, id)
                     }
                     SecondaryKey::F64(v) => {
+                        v.db_idx_store(self.scope, table, payer, id)
+                    }
+                    SecondaryKey::U128(v) => {
                         v.db_idx_store(self.scope, table, payer, id)
                     }
                 };

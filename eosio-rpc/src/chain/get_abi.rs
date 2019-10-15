@@ -1,6 +1,6 @@
 use eosio::AccountName;
 use eosio_abi::Abi;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 crate::builder!("/v1/chain/get_abi", GetAbiParams, GetAbi);
 

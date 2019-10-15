@@ -17,6 +17,10 @@ repository = "https://github.com/sagan-software/eosio-rust"
 homepage = "https://sagan-software.github.io/eosio-rust/"
 documentation = "https://sagan-software.github.io/eosio-rust/eosio/"
 
+[features]
+default = ["cdt"]
+cdt = ["eosio-cdt", "eosio-cdt-macros"]
+
 [badges]
 maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
@@ -24,5 +28,5 @@ travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 [dependencies]
 eosio-core = { path = "../eosio-core", features = ["internal-use-only-root-path-is-eosio"] }
 eosio-core-macros = { path = "../eosio-core-macros" }
-eosio-cdt = { path = "../eosio-cdt" }
-eosio-cdt-macros = { path = "../eosio-cdt-macros", features = ["internal-use-only-root-path-is-eosio"] }
+eosio-cdt = { path = "../eosio-cdt", optional = true }
+eosio-cdt-macros = { path = "../eosio-cdt-macros", optional = true, features = ["internal-use-only-root-path-is-eosio"] }

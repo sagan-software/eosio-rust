@@ -63,17 +63,18 @@ pub struct Transaction {
 }
 
 /// TODO docs
+/// TODO represet this as a String for RPC
 #[derive(Clone, Debug)]
-pub struct DeferredTransactionId(u128);
+pub struct TransactionId(u128);
 
-impl DeferredTransactionId {
+impl TransactionId {
     /// TODO docs
     pub const fn as_u128(&self) -> u128 {
         self.0
     }
 }
 
-impl From<u128> for DeferredTransactionId {
+impl From<u128> for TransactionId {
     fn from(value: u128) -> Self {
         Self(value)
     }

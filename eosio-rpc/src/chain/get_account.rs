@@ -1,5 +1,5 @@
 use eosio::{AccountName, PermissionLevel, PermissionName};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 crate::builder!("/v1/chain/get_account", GetAccountParams, GetAccount);
 

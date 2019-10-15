@@ -1,5 +1,5 @@
 use eosio::AccountName;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 crate::builder!(
     "/v1/chain/get_currency_stats",

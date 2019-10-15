@@ -1,3 +1,4 @@
+use crate::Client;
 use eosio::{AccountName, ScopeName, TableName};
 use serde::{Deserialize, Serialize};
 
@@ -52,19 +53,18 @@ impl GetTableRowsParams {
     }
 
     // TODO re-enable
-    pub fn fetch<Row>(
-        self,
-        client: &crate::HyperClient,
-    ) -> impl std::future::Future<Output = Result<GetTableRows<Row>, crate::Error>>
-    where
-        Row: for<'a> Deserialize<'a> + 'static + Send,
-    {
-        use crate::Client;
-        client.fetch::<GetTableRows<Row>, GetTableRowsParams>(
-            "/v1/chain/get_table_rows",
-            self,
-        )
-    }
+    // pub fn fetch<Row>(
+    //     self,
+    //     client: Box<dyn Client>,
+    // ) -> impl std::future::Future<Output = Result<GetTableRows<Row>, crate::Error>>
+    // where
+    //     Row: for<'a> Deserialize<'a> + 'static + Send,
+    // {
+    //     client.fetch::<GetTableRows<Row>, GetTableRowsParams>(
+    //         "/v1/chain/get_table_rows",
+    //         self,
+    //     )
+    // }
 }
 
 pub fn get_table_rows<

@@ -7,7 +7,7 @@ pub fn exec(executer: Ignore<AccountName>, trx: Ignore<Transaction>) {
     let executer = ds.read::<AccountName>().expect("read");
     require_auth(executer);
 
-    let id: DeferredTransactionId = {
+    let id: TransactionId = {
         let now = current_time_point().as_i64() as u128;
         let value = u128::from(executer.as_u64()) << 64 | now;
         value.into()

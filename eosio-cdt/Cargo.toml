@@ -1,6 +1,6 @@
 [package]
 name = "eosio-cdt"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT OR Apache-2.0"
 description = "Idiomatic Rust bindings for EOSIO smart contracts."

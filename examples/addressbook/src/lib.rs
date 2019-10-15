@@ -1,5 +1,7 @@
 use eosio::*;
 
+eosio::abi!(add, update, erase, like, likezip);
+
 #[eosio::table(address)]
 struct Address {
     #[primary]
@@ -113,5 +115,3 @@ fn likezip(zip: u32) {
         cursor.modify(None, &addr).expect("write");
     }
 }
-
-eosio::abi!(add, update, erase, like, likezip);

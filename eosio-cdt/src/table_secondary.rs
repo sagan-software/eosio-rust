@@ -269,6 +269,19 @@ impl NativeSecondaryKey for f64 {
     const FIND_SECONDARY: FindSecondaryFn<Self> = db_idx_double_find_secondary;
 }
 
+impl NativeSecondaryKey for u128 {
+    const END: EndFn = db_idx128_end;
+    const NEXT: NextFn = db_idx128_next;
+    const PREVIOUS: PreviousFn = db_idx128_previous;
+    const REMOVE: RemoveFn = db_idx128_remove;
+    const STORE: StoreFn<Self> = db_idx128_store;
+    const UPDATE: UpdateFn<Self> = db_idx128_update;
+    const LOWERBOUND: LowerboundFn<Self> = db_idx128_lowerbound;
+    const UPPERBOUND: UpperboundFn<Self> = db_idx128_upperbound;
+    const FIND_PRIMARY: FindPrimaryFn<Self> = db_idx128_find_primary;
+    const FIND_SECONDARY: FindSecondaryFn<Self> = db_idx128_find_secondary;
+}
+
 /// TODO docs
 pub trait IntoNativeSecondaryKey {
     /// TODO docs
@@ -286,6 +299,14 @@ impl IntoNativeSecondaryKey for u64 {
 }
 
 impl IntoNativeSecondaryKey for f64 {
+    type Native = Self;
+    #[inline]
+    fn into_native_secondary_key(self) -> Self::Native {
+        self
+    }
+}
+
+impl IntoNativeSecondaryKey for u128 {
     type Native = Self;
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {

@@ -1,4 +1,4 @@
-# Introduction
+# EOSIO Rust
 
 > **DISCLAIMER:** _This project is in early development and we looking for feedback on all APIs and features. All APIs and features should be considered unstable and insecure until version `1.0` is released. This code is not yet suitable for production environments where user funds are at risk. Thank you._
 
@@ -6,10 +6,10 @@ This project intends to enable developers to write full-stack EOSIO applications
 
 The primary goals of this project are to provide Rust crates that:
 
-- Enable developers to write secure EOSIO smart contracts.
-- Streamline the development of full-stack EOSIO web applications.
-- Simplify managing and updating EOSIO table schemas.
-- Allow developers to publish reusable smart contract code.
+-   Enable developers to write secure EOSIO smart contracts.
+-   Streamline the development of full-stack EOSIO web applications.
+-   Simplify managing and updating EOSIO table schemas.
+-   Allow developers to publish reusable smart contract code.
 
 [wasm_bindgen]: https://github.com/rustwasm/wasm-bindgen/
 [stdweb]: https://github.com/koute/stdweb/

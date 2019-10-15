@@ -74,7 +74,6 @@ bindgen \
     --whitelist-type capi_checksum256 \
     --whitelist-type capi_checksum160 \
     --whitelist-type capi_checksum512 \
-    --no-doc-comments \
     wrapper.hpp \
     -- \
     -I ./eosio.cdt/libraries \

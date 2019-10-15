@@ -1,53 +1,117 @@
 use eosio::*;
 
 #[eosio::action]
-pub fn post(
-    account: AccountName,
-    post_num: u32,
+pub fn propose(
+    proposer: AccountName,
+    proposal_name: Name,
     title: String,
-    content: String,
-    reply_to_account: AccountName,
-    reply_to_post_num: u32,
-    certify: bool,
+    proposal_json: String,
+    expires_at: TimePointSec,
 ) {
-    require_auth(account);
-    assert!(
-        title.len() < 128,
-        "Title should be less than 128 characters long."
-    );
-    assert!(
-        content.is_empty(),
-        "Content should be more than 0 characters long."
-    );
-    assert!(
-        content.len() < 1024 * 1024 * 10,
-        "Content should be less than 10 KB long."
-    );
-    assert!(
-        post_num > 0,
-        "Post number should be greater than 0 to post."
-    );
-    if reply_to_account.as_u64() == 0 {
-        assert!(reply_to_post_num == 0, "If reply_to_account is not set, reply_to_post_num should not be set.");
-    } else {
-        assert!(
-            is_account(reply_to_account),
-            "reply_to_account must be a valid account."
-        );
-        assert!(
-            title.is_empty(),
-            "If the post is a reply, there should not be a title."
-        );
-    }
 }
 
 #[eosio::action]
-pub fn remove(account: AccountName, post_num: u32) {
-    require_auth(account);
-    assert!(
-        post_num > 0,
-        "Post number should be greater than 0 to remove."
-    );
+pub fn expire(proposal_name: Name) {}
+
+#[eosio::action]
+pub fn vote(
+    voter: AccountName,
+    proposal_name: Name,
+    vote: u8,
+    vote_json: String,
+) {
 }
 
-eosio::abi!(post, remove);
+#[eosio::action]
+pub fn unvote(voter: AccountName, proposal_name: Name) {}
+
+#[eosio::action]
+pub fn clnproposal(proposal_name: Name, max_count: u64) {}
+
+#[eosio::action]
+pub fn post(
+    poster: AccountName,
+    post_uuid: String,
+    content: String,
+    reply_to_poster: AccountName,
+    reply_to_poster_uuid: String,
+    certify: bool,
+    json_metadata: String,
+) {
+}
+
+#[eosio::action]
+pub fn unpost(poster: AccountName, post_uuid: String) {}
+
+#[eosio::action]
+pub fn status(account: AccountName, content: String) {}
+
+const FREEZE_PERIOD_IN_SECONDS: u32 = 3 * 24 * 60 * 60;
+const SIX_MONTHS_IN_SECONDS: u32 =
+    (6.0 * (365.25 / 12.0) * 24.0 * 60.0 * 60.0) as u32;
+
+fn compute_by_proposal_key(proposal_name: Name, voter: AccountName) -> u128 {
+    u128::from(proposal_name.as_u64()) << 64 | u128::from(voter.as_u64())
+}
+
+fn compute_by_voter_key(proposal_name: Name, voter: AccountName) -> u128 {
+    u128::from(voter.as_u64()) << 64 | u128::from(voter.as_u64())
+}
+
+#[eosio::table(proposal)]
+pub struct ProposalRow {
+    #[primary]
+    proposal_name: Name,
+    #[secondary]
+    proposer: AccountName,
+    title: String,
+    proposal_json: String,
+    created_at: TimePointSec,
+    expires_at: TimePointSec,
+}
+
+impl ProposalRow {
+    fn is_expired(&self) -> bool {
+        current_time_point_sec() >= self.expires_at
+    }
+
+    fn can_be_cleaned_up(&self) -> bool {
+        current_time_point_sec() > self.expires_at + FREEZE_PERIOD_IN_SECONDS
+    }
+}
+
+#[derive(Read, Write, NumBytes)]
+pub struct VoteRow {
+    id: u64,
+    proposal_name: Name,
+    voter: AccountName,
+    vote: u8,
+    vote_json: String,
+    updated_at: TimePointSec,
+}
+
+impl Table for VoteRow {
+    const NAME: u64 = n!(vote);
+
+    type Row = Self;
+
+    fn primary_key(row: &Self::Row) -> u64 {
+        row.id
+    }
+
+    fn secondary_keys(row: &Self::Row) -> SecondaryKeys {
+        (
+            compute_by_proposal_key(row.proposal_name, row.voter),
+            compute_by_voter_key(row.proposal_name, row.voter),
+        )
+            .into()
+    }
+}
+
+#[eosio::table(status)]
+pub struct StatusRow {
+    #[primary]
+    account: AccountName,
+    content: String,
+    updated_at: TimePointSec,
+}

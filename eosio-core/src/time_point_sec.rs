@@ -98,3 +98,19 @@ impl From<TimePoint> for TimePointSec {
         Self((t.as_i64() as u32) / 1_000_000_u32)
     }
 }
+
+impl std::ops::Add<u32> for TimePointSec {
+    type Output = Self;
+
+    fn add(self, rhs: u32) -> Self::Output {
+        Self(self.0 + rhs)
+    }
+}
+
+impl std::ops::Add<TimePointSec> for u32 {
+    type Output = TimePointSec;
+
+    fn add(self, rhs: TimePointSec) -> Self::Output {
+        TimePointSec(rhs.0 + self)
+    }
+}

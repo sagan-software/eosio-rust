@@ -1,29 +1,36 @@
+// Declare the EOSIO externs to read action data and print to the console.
 extern "C" {
+    pub fn read_action_data(msg: *mut CVoid, len: u32) -> u32;
     pub fn prints_l(cstr: *const u8, len: u32);
     pub fn printn(name: u64);
-    pub fn read_action_data(msg: *mut CVoid, len: u32) -> u32;
 }
 
 #[repr(u8)]
 pub enum CVoid {
     // Two dummy variants so the #[repr] attribute can be used.
-    #[doc(hidden)]
     Variant1,
-    #[doc(hidden)]
     Variant2,
 }
 
+// EOSIO smart contracts are expected to have an `apply` function.
 #[no_mangle]
 pub extern "C" fn apply(_receiver: u64, _code: u64, _action: u64) {
-    let msg = "Hi, ";
-    let msg_ptr = msg.as_ptr();
-    let msg_len = msg.len() as u32;
-    unsafe { prints_l(msg_ptr, msg_len) };
+    // First print "Hi, " to the console.
+    {
+        let msg = "Hi, ";
+        let ptr = msg.as_ptr();
+        let len = msg.len() as u32;
+        unsafe { prints_l(ptr, len) };
+    }
 
-    let mut name_bytes = [0u8; 8];
-    let name_ptr: *mut CVoid = &mut name_bytes[..] as *mut _ as *mut CVoid;
-    unsafe { read_action_data(name_ptr, 8) };
+    // Read the action data, which is one EOSIO name (a u64, or 8 bytes).
+    let name = {
+        let mut bytes = [0u8; 8];
+        let ptr: *mut CVoid = &mut bytes[..] as *mut _ as *mut CVoid;
+        unsafe { read_action_data(ptr, 8) };
+        u64::from_le_bytes(bytes)
+    };
 
-    let name = u64::from_le_bytes(name_bytes);
+    // Finally, print the name to the console.
     unsafe { printn(name) };
 }

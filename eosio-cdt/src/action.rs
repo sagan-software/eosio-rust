@@ -1,7 +1,7 @@
 //! TODO module docs.
 use eosio_core::{
-    AccountName, Action, DataStream, DeferredTransactionId, NumBytes, Read,
-    ReadError, ToAction, Transaction, Write, WriteError,
+    AccountName, Action, DataStream, NumBytes, Read, ReadError, ToAction,
+    Transaction, TransactionId, Write, WriteError,
 };
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
@@ -42,7 +42,7 @@ pub fn send_context_free_inline_action(
 /// TODO docs
 #[inline]
 pub fn send_deferred<P>(
-    id: &DeferredTransactionId,
+    id: &TransactionId,
     payer: P,
     trx: &Transaction,
     replace_existing: bool,
@@ -58,7 +58,7 @@ where
 /// TODO docs
 #[inline]
 pub fn send_deferred_bytes<P>(
-    id: &DeferredTransactionId,
+    id: &TransactionId,
     payer: P,
     bytes: &[u8],
     replace_existing: bool,
@@ -82,7 +82,7 @@ where
 
 /// TODO docs
 #[inline]
-pub fn cancel_deferred(id: &DeferredTransactionId) -> bool {
+pub fn cancel_deferred(id: &TransactionId) -> bool {
     let sender_id = id.as_u128();
     let sender_id_ptr = &sender_id as *const _ as *const u128;
     let result = unsafe { eosio_cdt_sys::cancel_deferred(sender_id_ptr) };

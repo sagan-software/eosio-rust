@@ -1,99 +1,76 @@
 # Quick Start
 
-Create the project:
+In this quick-start tutorial we will create a simple EOSIO smart contract in Rust that accepts an account name and prints a greeting message.
+
+Create a new Rust library:
 
 ```sh
-cargo +nightly new hello --lib
-cd hello
+cargo new hello --lib
 ```
 
-File `Cargo.toml`:
+Edit `Cargo.toml`:
 
 ```toml
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-eosio = "0.2"
-
-[profile.release]
-lto = true
+{{#include ../examples/hello/Cargo.toml}}
 ```
 
-File `.cargo/config`:
+Edit `src/lib.rs`:
 
-```toml
-[target.wasm32-unknown-unknown]
-rustflags = [
-  "-C", "link-args=-z stack-size=48000"
-]
+```rust,no_run,noplaypen
+{{#include ../examples/hello/src/lib.rs}}
 ```
 
-File `src/lib.rs`:
+Compile with the following command:
 
-```rust
-use eosio::*;
-
-#[eosio_action]
-fn hi(name: AccountName) {
-    eosio_print!("Hello, ", name);
-}
-
-eosio_abi!(hi);
+```sh
+RUSTFLAGS="-C link-args=-zstack-size=48000" \
+cargo build --release -target=wasm32-unknown-unknown
 ```
 
-File `hello.abi.json`:
+The smart contract should now be built at `target/wasm32-unknown-unknown/release/hello.wasm`
+
+## Deploying
+
+
+Create a new file called `abi.json` (in future versions this will be automatically generated):
 
 ```json
 {
-	"version": "eosio::abi/1.0",
-	"structs": [
-		{
-			"name": "hi",
-			"base": "",
-			"fields": [
-				{
-					"name": "name",
-					"type": "name"
-				}
-			]
-		}
-	],
-	"actions": [
-		{
-			"name": "hi",
-			"type": "hi"
-		}
-	]
+    "version": "eosio::abi/1.0",
+    "structs": [
+        {
+            "name": "hi",
+            "base": "",
+            "fields": [
+                {
+                    "name": "name",
+                    "type": "name"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "hi",
+            "type": "hi"
+        }
+    ]
 }
 ```
 
-Compile and minify the smart contract (requires [optional dependencies](#optional-dependencies)):
+Assuming you have `cleos` setup and have created the `hello` account:
 
 ```sh
-cargo build --release --target=wasm32-unknown-unknown
-wasm-gc target/wasm32-unknown-unknown/release/hello.wasm hello_gc.wasm
-wasm-opt hello_gc.wasm --output hello_gc_opt.wasm -Oz
+cleos set abi hello abi.json
+cleos set code hello target/wasm32-unknown-unknown/release/hello.wasm
 ```
 
-Deploying the smart contract will depend on how you have your EOSIO node setup. Assuming you followed the `docker-compose` instructions above, run these commands in a terminal:
+## Say Hello
+
+Finally, say hello:
 
 ```sh
-alias cleos='docker-compose exec keosd cleos --url http://nodeosd:8888 --wallet-url http://127.0.0.1:8900'
-
-# Create a wallet and the 'hello' account
-PUBKEY=EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-PRIVKEY=5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
-cleos wallet create --to-console
-cleos wallet import --private-key $PRIVKEY
-cleos create account eosio hello $PUBKEY $PUBKEY
-
-# Deploy the ABI and WASM files
-cleos set abi hello /mnt/dev/project/hello.abi.json
-cleos set code hello /mnt/dev/project/hello_gc_opt.wasm
-
-# Say hello
 cleos push action hello hi '["world"]' -p 'hello@active'
 ```
 
-If all went well you should see `Hello, world` in the console.
+If all went well you should see `Hello, world` in the console. Otherwise, if the transaction was sent successfully but you don't see any output, you may need to use the `--contract-console` option with `nodeos`.
