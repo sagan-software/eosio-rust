@@ -8,6 +8,7 @@ matrix:
 git:
     submodules: false
 before_install:
+    - sudo apt-get install -y binaryen
     - docker pull sagansoftware/eos:latest
 install:
     - rustup target add wasm32-unknown-unknown
@@ -16,4 +17,4 @@ install:
 services:
     - docker
 script:
-    - bash scripts/test.sh
+    - cargo run-tests

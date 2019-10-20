@@ -1,0 +1,43 @@
+[package]
+name = "eosio"
+version = "0.2.1"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "Core types and traits related to EOSIO blockchains"
+repository = "https://github.com/sagan-software/eosio-rust"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = [
+    "api-bindings",
+    "cryptography::cryptocurrencies",
+    "data-structures",
+    "parsing",
+    "value-formatting"
+]
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio-core/"
+readme = "README.md"
+include = [
+    "Cargo.toml",
+    "src/**/*.rs",
+    "README.md",
+    "LICENSE-APACHE",
+    "LICENSE-MIT"
+]
+
+[badges]
+maintenance = { status = "actively-developed" }
+travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
+
+[dependencies]
+eosio-numstr = { path = "../eosio-numstr" }
+eosio-macros = { path = "../eosio-macros" }
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "bytes"
+harness = false

@@ -1,6 +1,6 @@
 #[eosio::action]
 fn hi(name: eosio::AccountName) {
-    eosio::print!("Hello, ", name, "!");
+    eosio_cdt::print!("Hello, ", name, "!");
 }
 
-eosio::abi!(hi);
+eosio_cdt::abi!(hi);

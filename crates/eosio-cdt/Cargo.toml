@@ -1,0 +1,32 @@
+[package]
+name = "eosio-cdt"
+version = "0.2.2"
+authors = ["Liam Curry <liam@sagan.software>"]
+license = "MIT OR Apache-2.0"
+description = "Idiomatic Rust bindings for EOSIO smart contracts."
+edition = "2018"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = [
+    "api-bindings",
+    "cryptography::cryptocurrencies",
+    "wasm"
+]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio-cdt/"
+readme = "README.md"
+include = [
+    "/Cargo.toml",
+    "/src/**/*.rs",
+    "/README.md",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT"
+]
+
+[badges]
+maintenance = { status = "actively-developed" }
+travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
+
+[dependencies]
+eosio = { path = "../eosio" }
+eosio-cdt-sys = { path = "../eosio-cdt-sys" }

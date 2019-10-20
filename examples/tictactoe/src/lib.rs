@@ -1,4 +1,5 @@
 use eosio::*;
+use eosio_cdt::*;
 
 const BOARD_WIDTH: u16 = 3;
 const BOARD_HEIGHT: u16 = 3;
@@ -101,7 +102,7 @@ fn makemove(
     cursor.modify(None, &game).expect("write");
 }
 
-eosio::abi!(create, restart, close, makemove);
+eosio_cdt::abi!(create, restart, close, makemove);
 
 impl Game {
     fn new(host: AccountName, challenger: AccountName) -> Self {

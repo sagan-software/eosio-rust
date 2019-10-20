@@ -1,0 +1,8 @@
+[alias]
+run-bench = "run -p scripts -- run-bench"
+run-build = "run -p scripts -- run-build"
+run-examples = "run -p scripts -- run-examples"
+run-tests = "run -p scripts -- run-tests"
+docker-init = "run -p scripts -- docker-init"
+docker-up = "run -p scripts -- docker-up"
+deploy-examples = "run -p scripts -- deploy-examples"
