@@ -1,4 +1,4 @@
-<img src="logo.svg" width="300"/>
+<img src="./book/logo.svg" width="300"/>
 
 # EOSIO SDK for Rust
 

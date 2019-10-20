@@ -31,17 +31,17 @@ fn wasm_gc<I: AsRef<Path>, O: AsRef<Path>>(
         .status()
 }
 
-fn wasm_opt<I: AsRef<Path>, O: AsRef<Path>>(
-    input: I,
-    output: O,
-) -> io::Result<ExitStatus> {
-    Command::new("wasm-opt")
-        .arg("-Oz")
-        .arg("--output")
-        .arg(output.as_ref())
-        .arg(canonicalize(input)?)
-        .status()
-}
+// fn wasm_opt<I: AsRef<Path>, O: AsRef<Path>>(
+//     input: I,
+//     output: O,
+// ) -> io::Result<ExitStatus> {
+//     Command::new("wasm-opt")
+//         .arg("-Oz")
+//         .arg("--output")
+//         .arg(output.as_ref())
+//         .arg(canonicalize(input)?)
+//         .status()
+// }
 
 fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
     input: I,
@@ -61,14 +61,13 @@ pub fn build_contract(package: &str) -> io::Result<()> {
     let bin = package.replace('-', "_");
     let wasm = target_dir.join(format!("{}.wasm", bin));
     let gc_wasm = target_dir.join(format!("{}_gc.wasm", bin));
-    let gc_opt_wasm = target_dir.join(format!("{}_gc_opt.wasm", bin));
-    let gc_opt_wat = target_dir.join(format!("{}_gc_opt.wat", bin));
+    let gc_wat = target_dir.join(format!("{}_gc.wat", bin));
     remove_file_if_exists(&gc_wasm)?;
-    remove_file_if_exists(&gc_opt_wasm)?;
-    remove_file_if_exists(&gc_opt_wat)?;
+    // remove_file_if_exists(&gc_opt_wasm)?;
+    remove_file_if_exists(&gc_wat)?;
     wasm_gc(wasm, &gc_wasm)?;
-    wasm_opt(gc_wasm, &gc_opt_wasm)?;
-    wasm2wat(gc_opt_wasm, gc_opt_wat)?;
+    // wasm_opt(gc_wasm, &gc_opt_wasm)?;
+    wasm2wat(gc_wasm, gc_wat)?;
     Ok(())
 }
 

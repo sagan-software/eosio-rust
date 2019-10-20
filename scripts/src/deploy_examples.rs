@@ -16,7 +16,7 @@ fn deploy_example_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
         .arg("set")
         .arg("code")
         .arg(account)
-        .arg(format!("mnt/dev/release/{}_gc_opt.wasm", bin))
+        .arg(format!("mnt/dev/release/{}_gc.wasm", bin))
         .status()
 }
 
@@ -25,7 +25,7 @@ fn deploy_eosio_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
         .arg("set")
         .arg("code")
         .arg(account)
-        .arg(format!("mnt/dev/release/{}_gc_opt.wasm", bin))
+        .arg(format!("mnt/dev/release/{}_gc.wasm", bin))
         .status()
 }
 

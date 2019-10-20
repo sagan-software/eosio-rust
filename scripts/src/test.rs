@@ -27,7 +27,7 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
             .join("target")
             .join("wasm32-unknown-unknown")
             .join("release")
-            .join("eosio_token_gc_opt.wasm");
+            .join("eosio_token_gc.wasm");
         format!(
             "{}:/eosio.contracts/build/contracts/eosio.token/eosio.token.wasm:ro",
             path.to_string_lossy()
@@ -38,7 +38,7 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
             .join("target")
             .join("wasm32-unknown-unknown")
             .join("release")
-            .join("eosio_wrap_gc_opt.wasm");
+            .join("eosio_wrap_gc.wasm");
         format!(
             "{}:/eosio.contracts/build/contracts/eosio.wrap/eosio.wrap.wasm:ro",
             path.to_string_lossy()
