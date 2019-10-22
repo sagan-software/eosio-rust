@@ -240,5 +240,22 @@ macro_rules! name_type {
                 value.as_name()
             }
         }
+
+        impl std::str::FromStr for $ident {
+            type Err = $crate::name::ParseNameError;
+            #[inline]
+            fn from_str(s: &str) -> Result<Self, Self::Err> {
+                let name = $crate::name::Name::from_str(s)?;
+                Ok(Self(name))
+            }
+        }
+
+        impl std::convert::TryFrom<&str> for $ident {
+            type Error = $crate::name::ParseNameError;
+            #[inline]
+            fn try_from(value: &str) -> Result<Self, Self::Error> {
+                std::str::FromStr::from_str(value)
+            }
+        }
     };
 }
