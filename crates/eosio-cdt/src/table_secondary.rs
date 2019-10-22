@@ -91,6 +91,7 @@ pub trait NativeSecondaryKey: Default {
     /// TODO docs
     const FIND_SECONDARY: FindSecondaryFn<Self>;
     /// TODO docs
+    #[must_use]
     #[inline]
     fn db_idx_end(
         code: AccountName,
@@ -100,6 +101,7 @@ pub trait NativeSecondaryKey: Default {
         unsafe { Self::END(code.as_u64(), scope.as_u64(), table.as_u64()) }
     }
     /// TODO docs
+    #[must_use]
     #[inline]
     fn db_idx_next(iterator: i32) -> (i32, u64) {
         let mut pk = 0_u64;
@@ -108,6 +110,7 @@ pub trait NativeSecondaryKey: Default {
         (itr, pk)
     }
     /// TODO docs
+    #[must_use]
     #[inline]
     fn db_idx_previous(iterator: i32) -> (i32, u64) {
         let mut pk = 0_u64;
@@ -292,6 +295,7 @@ pub trait IntoNativeSecondaryKey {
 
 impl IntoNativeSecondaryKey for u64 {
     type Native = Self;
+    #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
         self
@@ -300,6 +304,7 @@ impl IntoNativeSecondaryKey for u64 {
 
 impl IntoNativeSecondaryKey for f64 {
     type Native = Self;
+    #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
         self
@@ -308,6 +313,7 @@ impl IntoNativeSecondaryKey for f64 {
 
 impl IntoNativeSecondaryKey for u128 {
     type Native = Self;
+    #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
         self
@@ -318,6 +324,7 @@ macro_rules! impl_into_type {
     ($($t:ty, $x:ty)*) => ($(
         impl IntoNativeSecondaryKey for $x {
             type Native = $t;
+            #[must_use]
             #[inline]
             fn into_native_secondary_key(self) -> Self::Native {
                 self.into()
@@ -426,6 +433,7 @@ where
 {
     type Item = Self;
     type IntoIter = SecondaryTableIterator<'a, K, T>;
+    #[must_use]
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         let secondary_end = K::Native::db_idx_end(
@@ -532,11 +540,13 @@ where
 {
     type Cursor = SecondaryTableCursor<'a, K, T>;
 
+    #[must_use]
     #[inline]
     fn code(&'a self) -> AccountName {
         self.code
     }
 
+    #[must_use]
     #[inline]
     fn scope(&'a self) -> ScopeName {
         self.scope

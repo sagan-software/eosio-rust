@@ -2,6 +2,7 @@
 use eosio::{AccountName, PermissionName, TimePoint};
 
 /// Get the current receiver of the action.
+#[must_use]
 #[inline]
 pub fn current_receiver() -> AccountName {
     let name = unsafe { eosio_cdt_sys::current_receiver() };
@@ -31,6 +32,7 @@ where
 
 // TODO: support chains that have more/less than 21 producers
 /// Gets the top 21 producers
+#[must_use]
 #[inline]
 pub fn active_producers() -> [Option<AccountName>; 21] {
     let mut producers = [0_u64; 21];

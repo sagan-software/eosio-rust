@@ -1,8 +1,8 @@
 //! TODO module docs.
 
 use eosio::{
-    AccountName, Action, DataStream, NumBytes, Read, ReadError, ToAction,
-    Transaction, TransactionId, Write, WriteError,
+    AccountName, Action, DataStream, NumBytes, Read, ReadError, Transaction,
+    TransactionId, Write, WriteError,
 };
 
 /// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
@@ -82,6 +82,7 @@ where
 }
 
 /// TODO docs
+#[must_use]
 #[inline]
 pub fn cancel_deferred(id: &TransactionId) -> bool {
     let sender_id = id.as_u128();
@@ -90,6 +91,7 @@ pub fn cancel_deferred(id: &TransactionId) -> bool {
     result == 1
 }
 
+/// TODO docs
 #[inline]
 pub fn read_action_data<T: Read>() -> Result<T, ReadError> {
     let num_bytes = unsafe { eosio_cdt_sys::action_data_size() };
@@ -104,6 +106,7 @@ pub fn read_action_data<T: Read>() -> Result<T, ReadError> {
 }
 
 /// TODO docs
+#[must_use]
 #[inline]
 pub fn current_data_stream() -> DataStream {
     let num_bytes = unsafe { eosio_cdt_sys::action_data_size() };

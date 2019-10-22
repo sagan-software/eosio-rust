@@ -31,6 +31,7 @@ impl<T> PartialEq for PrimaryTableCursor<T>
 where
     T: Table,
 {
+    #[must_use]
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.value == other.value
@@ -163,6 +164,7 @@ where
 {
     type Item = Self;
     type IntoIter = PrimaryTableIterator<T>;
+    #[must_use]
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         let end = unsafe {
@@ -260,11 +262,13 @@ where
 {
     type Cursor = PrimaryTableCursor<T>;
 
+    #[must_use]
     #[inline]
     fn code(&self) -> AccountName {
         self.code
     }
 
+    #[must_use]
     #[inline]
     fn scope(&self) -> ScopeName {
         self.scope

@@ -97,6 +97,7 @@ pub fn get_blockchain_parameters() -> Result<BlockchainParameters, ReadError> {
 }
 
 /// Proposes a schedule change
+#[must_use]
 #[inline]
 pub fn set_proposed_producers(prods: &[ProducerKey]) -> Option<u64> {
     let size = prods.num_bytes();

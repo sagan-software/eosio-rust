@@ -3,6 +3,7 @@ use eosio::{Checksum160, Checksum256, Checksum512};
 use eosio_cdt_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 
 /// Hashes `data` using RIPEMD160.
+#[must_use]
 #[inline]
 pub fn ripemd160(data: &str) -> Checksum160 {
     let data_ptr = data.as_ptr();
@@ -31,6 +32,7 @@ pub fn assert_ripemd160(checksum: &Checksum160, data: &str) {
 }
 
 /// Hashes `data` using SHA1.
+#[must_use]
 #[inline]
 pub fn sha1(data: &str) -> Checksum160 {
     let data_ptr = data.as_ptr();
@@ -59,6 +61,7 @@ pub fn assert_sha1(checksum: &Checksum160, data: &str) {
 }
 
 /// Hashes `data` using SHA256.
+#[must_use]
 #[inline]
 pub fn sha256(data: &str) -> Checksum256 {
     let data_ptr = data.as_ptr();
@@ -85,6 +88,7 @@ pub fn assert_sha256(checksum: &Checksum256, data: &str) {
 }
 
 /// Hashes `data` using SHA512.
+#[must_use]
 #[inline]
 pub fn sha512(data: &str) -> Checksum512 {
     let data_ptr = data.as_ptr();
