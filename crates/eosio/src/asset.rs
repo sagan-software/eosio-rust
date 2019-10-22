@@ -2,7 +2,7 @@ use crate::account::AccountName;
 use crate::bytes::{NumBytes, Read, Write};
 use crate::ops::{CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub};
 use crate::symbol::{ParseSymbolError, Symbol};
-use eosio_numstr::symbol_from_chars;
+use eosio_numstr::{symbol_from_chars, SYMBOL_LEN_MAX};
 use serde::{Deserialize, Serialize, Serializer};
 use std::convert::TryFrom;
 use std::error::Error;
@@ -78,6 +78,26 @@ pub enum ParseAssetError {
     /// TODO docs
     SymbolTooLong,
 }
+
+impl fmt::Display for ParseAssetError {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::BadChar(c) => {
+                write!(f, "asset contains invalid character '{}'", c)
+            }
+            Self::BadPrecision => write!(f, "bad precision"),
+            Self::SymbolIsEmpty => write!(f, "symbol is empty"),
+            Self::SymbolTooLong => write!(
+                f,
+                "symbol is too long, must be {} characters or less",
+                SYMBOL_LEN_MAX
+            ),
+        }
+    }
+}
+
+impl Error for ParseAssetError {}
 
 impl From<ParseSymbolError> for ParseAssetError {
     #[inline]
