@@ -21,7 +21,7 @@ members = [
     "crates/eosio-numstr",
     "crates/eosio-cdt",
     "crates/eosio-cdt-sys",
-    # "eosio-cli",
+    "crates/eosio-cli",
     # "eosio-rpc",
     "examples/addressbook",
     "examples/hello-bare",
