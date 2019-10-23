@@ -11,6 +11,8 @@ pub const NAME_LEN_MAX: usize = 12;
 /// An error which can be returned when parsing an EOSIO name.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParseNameError {
+    /// The name is empty
+    Empty,
     /// The name is over the maximum allowed length.
     TooLong,
     /// The name contains an unallowed character.
@@ -23,6 +25,10 @@ impl fmt::Display for ParseNameError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
+            Self::Empty => write!(
+                f,
+                "name is empty",
+            ),
             Self::TooLong => write!(
                 f,
                 "name is too long, must be {} chars or less",
@@ -100,7 +106,11 @@ where
         }
     }
 
-    Ok(value)
+    if value > 0 {
+        Ok(value)
+    } else {
+        Err(ParseNameError::Empty)
+    }
 }
 
 /// Converts a character to a symbol.
