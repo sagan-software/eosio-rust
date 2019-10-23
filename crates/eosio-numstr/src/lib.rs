@@ -50,7 +50,7 @@ impl fmt::Display for ParseNameError {
 ///
 /// ```
 /// use eosio_numstr::{name_from_str, ParseNameError};
-/// assert_eq!(name_from_str(""), Ok(0));
+/// assert_eq!(name_from_str(""), Err(ParseNameError::Empty));
 /// assert_eq!(name_from_str("a"), Ok(3458764513820540928));
 /// assert_eq!(name_from_str("123456789012"), Err(ParseNameError::BadChar('6')));
 /// assert_eq!(name_from_str("123451234512"), Ok(614251535012020768));
@@ -71,7 +71,7 @@ pub fn name_from_str(value: &str) -> Result<u64, ParseNameError> {
 ///
 /// ```
 /// use eosio_numstr::{name_from_chars, ParseNameError};
-/// assert_eq!(name_from_chars("".chars()), Ok(0));
+/// assert_eq!(name_from_chars("".chars()), Err(ParseNameError::Empty));
 /// assert_eq!(name_from_chars("a".chars()), Ok(3458764513820540928));
 /// assert_eq!(name_from_chars("123456789012".chars()), Err(ParseNameError::BadChar('6')));
 /// assert_eq!(name_from_chars("123451234512".chars()), Ok(614251535012020768));
