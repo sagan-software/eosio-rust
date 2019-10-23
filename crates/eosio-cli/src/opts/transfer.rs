@@ -1,4 +1,4 @@
-use eosio::AccountName;
+use eosio::{AccountName, Asset};
 use structopt::StructOpt;
 
 /// Transfer tokens from account to account
@@ -9,7 +9,7 @@ pub struct Transfer {
     /// The account receiving tokens
     pub recipient: AccountName,
     /// The amount of tokens to send
-    pub amount: String,
+    pub amount: Asset,
     /// The memo for the transfer
     pub memo: Option<String>,
     /// The contract which controls the token

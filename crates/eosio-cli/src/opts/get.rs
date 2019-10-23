@@ -1,4 +1,6 @@
-use eosio::{AccountName, ScopeName, TableName};
+use eosio::{
+    AccountName, BlockNum, BlockNumOrId, ScopeName, SymbolCode, TableName,
+};
 use structopt::StructOpt;
 
 /// Retrieve various items and information from the blockchain
@@ -38,7 +40,7 @@ pub enum Get {
 #[derive(StructOpt, Debug)]
 pub struct GetBlock {
     /// The number or ID of the block to retrieve
-    pub block: String,
+    pub block: BlockNumOrId,
     /// Get block header state from fork database instead
     #[structopt(long)]
     pub header_state: bool,
@@ -50,7 +52,7 @@ pub struct GetAccount {
     /// The name of the account to retrieve
     pub name: AccountName,
     /// The expected core symbol of the chain you are querying
-    pub core_symbol: Option<String>,
+    pub core_symbol: Option<SymbolCode>,
     /// Output in JSON format
     #[structopt(short, long)]
     pub json: bool,
@@ -165,7 +167,7 @@ pub struct GetCurrencyBalance {
     /// The account to query balances for
     pub account: AccountName,
     /// The symbol for the currency if the contract operates multiple currencies
-    pub symbol: Option<String>,
+    pub symbol: Option<SymbolCode>,
 }
 
 /// Retrieve the stats of for a given currency
@@ -174,7 +176,7 @@ pub struct GetCurrencyStats {
     /// The contract that operates the currency
     pub contract: AccountName,
     /// The symbol for the currency if the contract operates multiple currencies
-    pub symbol: String,
+    pub symbol: SymbolCode,
 }
 
 /// Retrieve accounts associated with a public key
@@ -198,7 +200,7 @@ pub struct GetTransaction {
     pub id: String,
     /// the block number this transaction may be in
     #[structopt(short, long)]
-    pub block_hint: Option<u64>,
+    pub block_hint: Option<BlockNum>,
 }
 
 /// Retrieve all actions with specific account name referenced in authorization

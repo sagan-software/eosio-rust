@@ -11,6 +11,7 @@ pub mod transfer;
 pub mod version;
 pub mod wallet;
 pub mod wrap;
+use eosio::{BlockNumOrId, PermissionLevel};
 use structopt::StructOpt;
 
 #[derive(StructOpt, Debug)]
@@ -95,10 +96,10 @@ pub struct TransactionOpts {
     /// set the reference block num or block id used for TAPOS (Transaction as
     /// Proof-of-Stake)
     #[structopt(short, long)]
-    pub ref_block: Option<String>,
+    pub ref_block: Option<BlockNumOrId>,
     /// An account and permission level to authorize, as in 'account@permission'
     #[structopt(short, long = "permission")]
-    pub permission_level: Option<String>,
+    pub permission_level: Option<PermissionLevel>,
     /// set an upper limit on the milliseconds of cpu usage budget, for the execution
     /// of the transaction
     #[structopt(long, default_value = "0")]
