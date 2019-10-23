@@ -1,9 +1,6 @@
-use crate::opts::BuildCmd;
 use crate::shared::cleos;
-use std::fs::canonicalize;
 use std::io;
-use std::path::{Path, PathBuf};
-use std::process::{Command, ExitStatus};
+use std::process::ExitStatus;
 
 fn deploy_example_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
     cleos()
@@ -12,15 +9,6 @@ fn deploy_example_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
         .arg(account)
         .arg(format!("mnt/dev/examples/{}/{}.abi.json", bin, bin))
         .status()?;
-    cleos()
-        .arg("set")
-        .arg("code")
-        .arg(account)
-        .arg(format!("mnt/dev/release/{}_gc.wasm", bin))
-        .status()
-}
-
-fn deploy_eosio_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
     cleos()
         .arg("set")
         .arg("code")

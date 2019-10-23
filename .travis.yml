@@ -16,4 +16,5 @@ install:
 services:
     - docker
 script:
-    - cargo run-tests
+    - cargo unit-tests
+    - cargo docker-tests

@@ -1,22 +1,6 @@
 use crate::opts::RunTestsCmd;
-use crate::shared::get_target_dir;
-use path_slash::PathExt;
 use std::io;
 use std::process::{Command, ExitStatus};
-
-fn cargo_test() -> io::Result<ExitStatus> {
-    Command::new("cargo")
-        .arg("test")
-        .arg("-p")
-        .arg("eosio")
-        .arg("-p")
-        .arg("eosio-macros")
-        .arg("-p")
-        .arg("eosio-macros-internal")
-        .arg("-p")
-        .arg("eosio-numstr")
-        .status()
-}
 
 fn eosio_contract_tests() -> io::Result<ExitStatus> {
     crate::build_contract("eosio-token")?;
@@ -60,7 +44,6 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
         .status()
 }
 
-pub fn run_test(opts: RunTestsCmd) {
-    cargo_test().unwrap();
+pub fn run_test(_opts: RunTestsCmd) {
     eosio_contract_tests().unwrap();
 }

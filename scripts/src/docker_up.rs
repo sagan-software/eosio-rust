@@ -1,8 +1,5 @@
-use crate::opts::BuildCmd;
-use crate::shared::{get_target_dir, remove_file_if_exists};
-use std::fs::canonicalize;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::{Command, ExitStatus};
 
 fn docker_compose() -> Command {

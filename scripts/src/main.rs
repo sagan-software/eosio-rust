@@ -15,6 +15,5 @@ fn main() {
         Cmd::DockerUp => run_docker_up(),
         Cmd::DockerInit => run_docker_init().unwrap(),
         Cmd::DeployExamples => run_deploy_examples().unwrap(),
-        _ => println!("TODO: {:#?}", opt),
     }
 }

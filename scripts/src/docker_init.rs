@@ -1,14 +1,9 @@
-use crate::opts::BuildCmd;
 use crate::shared::{cleos, push_action};
-use std::fs::canonicalize;
 use std::io;
-use std::path::{Path, PathBuf};
-use std::process::{Command, ExitStatus};
+use std::process::ExitStatus;
 
 const PUBKEY: &str = "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV";
 const PRIVKEY: &str = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3";
-const TELOS_PUBKEY: &str =
-    "TLOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV";
 
 fn create_wallet() -> io::Result<ExitStatus> {
     cleos()
