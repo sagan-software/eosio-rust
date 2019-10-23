@@ -1,6 +1,10 @@
 //! TODO docs
-use crate::varint::UnsignedInt;
+use crate::varint::{SignedInt, UnsignedInt};
 pub use eosio_macros::{NumBytes, Read, Write};
+use std::num::{
+    NonZeroI16, NonZeroI32, NonZeroI64, NonZeroIsize, NonZeroU16, NonZeroU32,
+    NonZeroU64, NonZeroU8, NonZeroUsize,
+};
 use std::ops::Deref;
 
 /// Count the number of bytes a type is expected to use.
@@ -41,7 +45,7 @@ pub enum WriteError {
     TryFromIntError,
 }
 
-macro_rules! impl_num {
+macro_rules! impl_nums {
     ($($t:ty, $s:expr)*) => ($(
         impl NumBytes for $t
         {
@@ -102,15 +106,59 @@ macro_rules! impl_num {
     )*)
 }
 
-impl_num!(
-    u8, 1
-    u16, 2
+impl_nums! {
     i16, 2
-    u32, 4
     i32, 4
-    u64, 8
     i64, 8
-); // TODO i8 u128 i128
+    u16, 2
+    u32, 4
+    u64, 8
+    u8, 1
+} // TODO i8 u128 i128
+
+macro_rules! impl_non_zero_nums {
+    ($($t:ty, $non_zero:ty)*) => ($(
+        impl NumBytes for $non_zero {
+            #[inline]
+            fn num_bytes(&self) -> usize {
+                self.get().num_bytes()
+            }
+        }
+
+        impl Read for $non_zero {
+            #[inline]
+            fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+                let n = <$t as Read>::read(bytes, pos)?;
+                // TODO don't panic
+                let num = Self::new(n).expect("got zero for non-zero number");
+                Ok(num)
+            }
+        }
+
+        impl Write for $non_zero {
+            #[inline]
+            fn write(
+                &self,
+                bytes: &mut [u8],
+                pos: &mut usize,
+            ) -> Result<(), WriteError> {
+                self.get().write(bytes, pos)
+            }
+        }
+    )*)
+}
+
+impl_non_zero_nums! {
+    i16, NonZeroI16
+    i32, NonZeroI32
+    i64, NonZeroI64
+    isize, NonZeroIsize
+    u16, NonZeroU16
+    u32, NonZeroU32
+    u64, NonZeroU64
+    u8, NonZeroU8
+    usize, NonZeroUsize
+} // TODO i8 u128 i128
 
 impl NumBytes for f32 {
     #[inline]
@@ -239,6 +287,31 @@ impl Write for usize {
         pos: &mut usize,
     ) -> Result<(), WriteError> {
         UnsignedInt::from(*self).write(bytes, pos)
+    }
+}
+
+impl NumBytes for isize {
+    #[inline]
+    fn num_bytes(&self) -> usize {
+        SignedInt::from(*self).num_bytes()
+    }
+}
+
+impl Read for isize {
+    #[inline]
+    fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
+        SignedInt::read(bytes, pos).map(std::convert::Into::into)
+    }
+}
+
+impl Write for isize {
+    #[inline]
+    fn write(
+        &self,
+        bytes: &mut [u8],
+        pos: &mut usize,
+    ) -> Result<(), WriteError> {
+        SignedInt::from(*self).write(bytes, pos)
     }
 }
 
@@ -670,12 +743,13 @@ impl_array! {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::*;
 
     macro_rules! test_type {
         ($($i:ident, $t:ty, $e:expr)*) => ($(
             #[test]
-            #[allow(clippy::float_cmp)]
+            #[allow(clippy::float_cmp, clippy::option_unwrap_used)]
             fn $i() {
                 let expected_pos = $e.num_bytes();
                 let mut bytes = [0_u8; 100];
@@ -735,6 +809,15 @@ mod tests {
         test_array20, [u8; 20], [1_u8; 20]
         test_f32, f32, -0.12345_f32
         test_f64, f64, -0.12345_f64
+        test_non_zero_u8, NonZeroU8, NonZeroU8::new(1_u8).unwrap()
+        test_non_zero_u16, NonZeroU16, NonZeroU16::new(1_u16).unwrap()
+        test_non_zero_u32, NonZeroU32, NonZeroU32::new(1_u32).unwrap()
+        test_non_zero_u64, NonZeroU64, NonZeroU64::new(1_u64).unwrap()
+        test_non_zero_usize, NonZeroUsize, NonZeroUsize::new(1_usize).unwrap()
+        test_non_zero_i16, NonZeroI16, NonZeroI16::new(-1_i16).unwrap()
+        test_non_zero_i32, NonZeroI32, NonZeroI32::new(-1_i32).unwrap()
+        test_non_zero_i64, NonZeroI64, NonZeroI64::new(-1_i64).unwrap()
+        test_non_zero_isize, NonZeroIsize, NonZeroIsize::new(-1_isize).unwrap()
     );
 
     // #[test]

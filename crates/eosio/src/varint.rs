@@ -26,9 +26,21 @@ impl From<isize> for SignedInt {
     }
 }
 
+impl From<SignedInt> for isize {
+    fn from(v: SignedInt) -> Self {
+        v.0 as Self
+    }
+}
+
 impl From<i32> for SignedInt {
     fn from(v: i32) -> Self {
         Self(v)
+    }
+}
+
+impl From<SignedInt> for i32 {
+    fn from(v: SignedInt) -> Self {
+        v.0
     }
 }
 
