@@ -21,30 +21,35 @@ use serde::{Deserialize, Serialize};
 pub struct UnsignedInt(u32);
 
 impl From<usize> for UnsignedInt {
+    #[must_use]
     fn from(v: usize) -> Self {
         Self(v as u32)
     }
 }
 
 impl From<UnsignedInt> for usize {
+    #[must_use]
     fn from(v: UnsignedInt) -> Self {
         v.0 as Self
     }
 }
 
 impl From<u32> for UnsignedInt {
+    #[must_use]
     fn from(v: u32) -> Self {
         Self(v)
     }
 }
 
 impl From<u16> for UnsignedInt {
+    #[must_use]
     fn from(v: u16) -> Self {
         Self(v.into())
     }
 }
 
 impl From<u8> for UnsignedInt {
+    #[must_use]
     fn from(v: u8) -> Self {
         Self(v.into())
     }
@@ -52,6 +57,7 @@ impl From<u8> for UnsignedInt {
 
 impl NumBytes for UnsignedInt {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         let mut val = u64::from(self.0);
         let mut bytes = 0_usize;

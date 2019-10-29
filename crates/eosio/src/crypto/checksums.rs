@@ -10,11 +10,13 @@ macro_rules! checksum_type {
 
         impl $ident {
             /// TODO docs.
+            #[must_use]
             pub fn as_bytes(&self) -> &[u8] {
                 &self.0
             }
 
             /// TODO docs.
+            #[must_use]
             pub const fn to_bytes(&self) -> [u8; $bytes] {
                 self.0
             }
@@ -22,6 +24,7 @@ macro_rules! checksum_type {
 
         impl From<[u8; $bytes]> for $ident {
             #[inline]
+            #[must_use]
             fn from(value: [u8; $bytes]) -> Self {
                 Self(value)
             }
@@ -29,6 +32,7 @@ macro_rules! checksum_type {
 
         impl From<$ident> for [u8; $bytes] {
             #[inline]
+            #[must_use]
             fn from(value: $ident) -> Self {
                 value.0
             }

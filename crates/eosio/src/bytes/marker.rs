@@ -12,7 +12,7 @@ impl<T> NumBytes for PhantomData<T> {
 impl<T> Read for PhantomData<T> {
     #[inline]
     fn read(_bytes: &[u8], _pos: &mut usize) -> Result<Self, ReadError> {
-        Ok(PhantomData)
+        Ok(Self)
     }
 }
 

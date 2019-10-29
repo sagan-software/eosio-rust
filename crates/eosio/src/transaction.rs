@@ -79,12 +79,14 @@ pub struct TransactionId(u128);
 
 impl TransactionId {
     /// TODO docs
+    #[must_use]
     pub const fn as_u128(&self) -> u128 {
         self.0
     }
 }
 
 impl From<u128> for TransactionId {
+    #[must_use]
     fn from(value: u128) -> Self {
         Self(value)
     }

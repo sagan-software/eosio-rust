@@ -5,6 +5,7 @@ use super::SecondaryKey;
 pub struct SecondaryKeys([Option<SecondaryKey>; 16]);
 
 impl From<[Option<SecondaryKey>; 16]> for SecondaryKeys {
+    #[must_use]
     fn from(v: [Option<SecondaryKey>; 16]) -> Self {
         Self(v)
     }
@@ -25,6 +26,7 @@ impl SecondaryKeys {
 }
 
 impl From<()> for SecondaryKeys {
+    #[must_use]
     fn from(_v: ()) -> Self {
         Self::default()
     }

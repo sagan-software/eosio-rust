@@ -7,23 +7,27 @@ pub struct SecondaryTableName(TableName, usize);
 impl SecondaryTableName {
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn new(primary: TableName, index: usize) -> Self {
         Self(primary, index)
     }
 
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn primary(&self) -> TableName {
         self.0
     }
 
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn index(&self) -> usize {
         self.1
     }
 
     /// TODO docs
+    #[must_use]
     pub const fn as_u64(&self) -> u64 {
         let index = self.1 as u64;
         let table = self.0.as_u64();
@@ -34,6 +38,7 @@ impl SecondaryTableName {
 
 impl From<SecondaryTableName> for u64 {
     #[inline]
+    #[must_use]
     fn from(t: SecondaryTableName) -> Self {
         t.as_u64()
     }

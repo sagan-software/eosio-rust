@@ -30,6 +30,7 @@ impl BlockTimestamp {
 
     /// Gets the milliseconds
     #[inline]
+    #[must_use]
     pub const fn as_u32(self) -> u32 {
         self.0
     }
@@ -81,6 +82,7 @@ impl<'de> ::serde::de::Deserialize<'de> for BlockTimestamp {
 
 impl From<u32> for BlockTimestamp {
     #[inline]
+    #[must_use]
     fn from(i: u32) -> Self {
         Self(i)
     }
@@ -88,6 +90,7 @@ impl From<u32> for BlockTimestamp {
 
 impl From<BlockTimestamp> for u32 {
     #[inline]
+    #[must_use]
     fn from(t: BlockTimestamp) -> Self {
         t.0
     }

@@ -35,12 +35,14 @@ pub struct Symbol(u64);
 impl Symbol {
     /// Construct a new symbol given a value.
     #[inline]
+    #[must_use]
     pub const fn new(value: u64) -> Self {
         Self(value)
     }
 
     /// Construct a new symbol given a `u8` precision and `SymbolCode`.
     #[inline]
+    #[must_use]
     pub fn new_with_code(precision: u8, code: SymbolCode) -> Self {
         let mut value = code.as_u64();
         value |= u64::from(precision);
@@ -49,24 +51,28 @@ impl Symbol {
 
     /// This symbol's precision
     #[inline]
+    #[must_use]
     pub fn precision(&self) -> u8 {
         symbol_precision(self.as_u64())
     }
 
     /// Returns representation of symbol name
     #[inline]
+    #[must_use]
     pub fn code(&self) -> SymbolCode {
         symbol_code(self.as_u64()).into()
     }
 
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn as_u64(&self) -> u64 {
         self.0
     }
 
     /// Is this symbol valid
     #[inline]
+    #[must_use]
     pub fn is_valid(&self) -> bool {
         self.code().is_valid()
     }
@@ -130,6 +136,7 @@ impl TryFrom<String> for Symbol {
 
 impl From<u64> for Symbol {
     #[inline]
+    #[must_use]
     fn from(n: u64) -> Self {
         Self(n)
     }
@@ -137,6 +144,7 @@ impl From<u64> for Symbol {
 
 impl PartialEq<u64> for Symbol {
     #[inline]
+    #[must_use]
     fn eq(&self, other: &u64) -> bool {
         self.as_u64() == *other
     }

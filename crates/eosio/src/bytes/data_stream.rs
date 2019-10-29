@@ -32,6 +32,7 @@ impl DataStream {
 
     /// Gets bytes as slice
     #[inline]
+    #[must_use]
     pub fn as_bytes(&self) -> &[u8] {
         self.bytes.get(self.pos..).unwrap_or_else(|| &self.bytes)
     }
@@ -44,18 +45,21 @@ impl DataStream {
 
     /// Get the current position
     #[inline]
+    #[must_use]
     pub const fn position(&self) -> usize {
         self.pos
     }
 
     /// Gets the remaining number of bytes
     #[inline]
+    #[must_use]
     pub fn remaining(&self) -> usize {
         self.bytes.len() - self.pos
     }
 }
 
 impl From<Vec<u8>> for DataStream {
+    #[must_use]
     fn from(bytes: Vec<u8>) -> Self {
         Self { bytes, pos: 0 }
     }
@@ -63,7 +67,7 @@ impl From<Vec<u8>> for DataStream {
 
 impl Deref for DataStream {
     type Target = [u8];
-
+    #[must_use]
     fn deref(&self) -> &Self::Target {
         self.as_bytes()
     }

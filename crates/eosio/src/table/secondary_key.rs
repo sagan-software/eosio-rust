@@ -10,18 +10,21 @@ pub enum SecondaryKey {
 }
 
 impl From<u64> for SecondaryKey {
+    #[must_use]
     fn from(v: u64) -> Self {
         Self::U64(v)
     }
 }
 
 impl From<f64> for SecondaryKey {
+    #[must_use]
     fn from(v: f64) -> Self {
         Self::F64(v)
     }
 }
 
 impl From<u128> for SecondaryKey {
+    #[must_use]
     fn from(v: u128) -> Self {
         Self::U128(v)
     }
@@ -30,6 +33,7 @@ impl From<u128> for SecondaryKey {
 macro_rules! impl_into_type {
     ($($t:ty, $x:ty)*) => ($(
         impl From<$x> for SecondaryKey {
+            #[must_use]
             fn from(v: $x) -> Self {
                 let v: $t = v.into();
                 v.into()

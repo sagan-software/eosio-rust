@@ -41,6 +41,7 @@ where
     }
 
     /// TODO docs
+    #[must_use]
     pub fn primary_index(&self) -> PrimaryTableIndex<T> {
         PrimaryTableIndex::new(self.code, self.scope)
     }

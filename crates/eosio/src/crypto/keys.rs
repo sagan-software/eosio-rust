@@ -15,17 +15,20 @@ macro_rules! key_type {
 
         impl $ident {
             /// TODO docs.
+            #[must_use]
             pub fn as_bytes(&self) -> &[u8] {
                 &self.data
             }
 
             /// TODO docs.
+            #[must_use]
             pub const fn to_bytes(&self) -> [u8; $bytes] {
                 self.data
             }
         }
 
         impl Default for $ident {
+            #[must_use]
             fn default() -> Self {
                 Self {
                     type_: UnsignedInt::default(),
@@ -35,6 +38,7 @@ macro_rules! key_type {
         }
 
         impl PartialEq for $ident {
+            #[must_use]
             fn eq(&self, other: &Self) -> bool {
                 self.type_ == other.type_ && self.as_bytes() == other.as_bytes()
             }

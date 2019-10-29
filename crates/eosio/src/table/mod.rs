@@ -20,18 +20,21 @@ name_type!(TableName);
 name_type!(ScopeName);
 
 impl From<AccountName> for ScopeName {
+    #[must_use]
     fn from(value: AccountName) -> Self {
         Self::new(value.as_u64())
     }
 }
 
 impl From<Symbol> for ScopeName {
+    #[must_use]
     fn from(value: Symbol) -> Self {
         Self::new(value.as_u64())
     }
 }
 
 impl From<SymbolCode> for ScopeName {
+    #[must_use]
     fn from(value: SymbolCode) -> Self {
         Self::new(value.as_u64())
     }

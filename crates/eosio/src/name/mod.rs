@@ -46,7 +46,7 @@ where
 }
 
 /// TODO docs
-/// TODO use NonZeroU64
+/// TODO use `NonZeroU64`
 #[derive(
     Debug,
     PartialEq,
@@ -67,12 +67,14 @@ pub struct Name(u64);
 impl Name {
     /// Creates a new name
     #[inline]
+    #[must_use]
     pub const fn new(value: u64) -> Self {
         Self(value)
     }
 
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn as_u64(&self) -> u64 {
         self.0
     }
@@ -80,6 +82,7 @@ impl Name {
 
 impl From<u64> for Name {
     #[inline]
+    #[must_use]
     fn from(n: u64) -> Self {
         Self(n)
     }
@@ -87,6 +90,7 @@ impl From<u64> for Name {
 
 impl From<Name> for u64 {
     #[inline]
+    #[must_use]
     fn from(i: Name) -> Self {
         i.0
     }
@@ -127,6 +131,7 @@ impl fmt::Display for Name {
 
 impl From<Name> for String {
     #[inline]
+    #[must_use]
     fn from(i: Name) -> Self {
         i.to_string()
     }
@@ -134,6 +139,7 @@ impl From<Name> for String {
 
 impl PartialEq<Name> for String {
     #[inline]
+    #[must_use]
     fn eq(&self, other: &Name) -> bool {
         self.as_str() == other.to_string().as_str()
     }
@@ -141,6 +147,7 @@ impl PartialEq<Name> for String {
 
 impl PartialEq<String> for Name {
     #[inline]
+    #[must_use]
     fn eq(&self, other: &String) -> bool {
         self.to_string().as_str() == other.as_str()
     }

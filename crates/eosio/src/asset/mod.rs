@@ -38,9 +38,10 @@ pub struct Asset {
 }
 
 impl Asset {
-    /// Check if the asset is valid. A valid asset has its amount <= max_amount
+    /// Check if the asset is valid. A valid asset has its amount <= `max_amount`
     /// and its symbol name valid
     #[inline]
+    #[must_use]
     pub fn is_valid(&self) -> bool {
         self.symbol.is_valid()
     }
@@ -265,6 +266,7 @@ macro_rules! impl_op {
         impl $checked_trait<i64> for Asset {
             type Output = Option<Self>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: i64) -> Self::Output {
                 self.amount.$checked_fn(other).map(|amount| Self {
                     amount,
@@ -276,6 +278,7 @@ macro_rules! impl_op {
         impl $checked_trait<u64> for Asset {
             type Output = Option<Self>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: u64) -> Self::Output {
                 u64::try_from(other).ok().and_then(|other| self.$checked_fn(other))
             }
@@ -284,6 +287,7 @@ macro_rules! impl_op {
         impl $checked_trait<u128> for Asset {
             type Output = Option<Self>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: u128) -> Self::Output {
                 u64::try_from(other).ok().and_then(|other| self.$checked_fn(other))
             }
@@ -292,6 +296,7 @@ macro_rules! impl_op {
         impl $checked_trait<i128> for Asset {
             type Output = Option<Self>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: i128) -> Self::Output {
                 u64::try_from(other).ok().and_then(|other| self.$checked_fn(other))
             }
@@ -300,6 +305,7 @@ macro_rules! impl_op {
         impl $checked_trait<isize> for Asset {
             type Output = Option<Self>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: isize) -> Self::Output {
                 u64::try_from(other).ok().and_then(|other| self.$checked_fn(other))
             }
@@ -308,6 +314,7 @@ macro_rules! impl_op {
         impl $checked_trait<usize> for Asset {
             type Output = Option<Self>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: usize) -> Self::Output {
                 u64::try_from(other).ok().and_then(|other| self.$checked_fn(other))
             }
@@ -316,6 +323,7 @@ macro_rules! impl_op {
         impl $checked_trait for Asset {
             type Output = Result<Self, $checked_error>;
             #[inline]
+            #[must_use]
             fn $checked_fn(self, other: Self) -> Self::Output {
                 if self.symbol == other.symbol {
                     self.$checked_fn(other.amount)
@@ -329,6 +337,7 @@ macro_rules! impl_op {
         impl $op_trait for Asset {
             type Output = Self;
             #[inline]
+            #[must_use]
             fn $op_fn(self, rhs: Self) -> Self::Output {
                 match self.$checked_fn(rhs) {
                     Ok(output) => output,
@@ -342,6 +351,7 @@ macro_rules! impl_op {
         impl $op_trait<i64> for Asset {
             type Output = Self;
             #[inline]
+            #[must_use]
             fn $op_fn(self, rhs: i64) -> Self::Output {
                 match self.$checked_fn(rhs) {
                     Some(output) => output,
@@ -355,6 +365,7 @@ macro_rules! impl_op {
         impl $op_trait<Asset> for i64 {
             type Output = Asset;
             #[inline]
+            #[must_use]
             fn $op_fn(self, rhs: Asset) -> Self::Output {
                 rhs.$op_fn(self)
             }

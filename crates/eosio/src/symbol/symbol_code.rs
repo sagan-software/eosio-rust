@@ -27,6 +27,7 @@ pub struct SymbolCode(u64);
 
 impl From<u64> for SymbolCode {
     #[inline]
+    #[must_use]
     fn from(n: u64) -> Self {
         Self(n)
     }
@@ -34,6 +35,7 @@ impl From<u64> for SymbolCode {
 
 impl From<SymbolCode> for u64 {
     #[inline]
+    #[must_use]
     fn from(s: SymbolCode) -> Self {
         s.0
     }
@@ -41,6 +43,7 @@ impl From<SymbolCode> for u64 {
 
 impl From<SymbolCode> for [u8; 7] {
     #[inline]
+    #[must_use]
     fn from(s: SymbolCode) -> Self {
         symbol_to_utf8(s.0)
     }
@@ -56,12 +59,14 @@ impl fmt::Display for SymbolCode {
 impl SymbolCode {
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn new(value: u64) -> Self {
         Self(value)
     }
 
     /// TODO docs
     #[inline]
+    #[must_use]
     pub fn is_valid(&self) -> bool {
         let chars = symbol_to_utf8(self.0);
         for &c in &chars {
@@ -77,6 +82,7 @@ impl SymbolCode {
 
     /// TODO docs
     #[inline]
+    #[must_use]
     pub const fn as_u64(&self) -> u64 {
         self.0
     }

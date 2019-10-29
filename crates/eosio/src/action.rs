@@ -88,11 +88,11 @@ pub struct PermissionLevel {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParsePermissionLevelError {
     /// TODO docs
-    InvalidFormat,
+    Format,
     /// TODO docs
-    InvalidActor(ParseNameError),
+    Actor(ParseNameError),
     /// TODO docs
-    InvalidPermission(ParseNameError),
+    Permission(ParseNameError),
 }
 
 impl Error for ParsePermissionLevelError {}
@@ -101,12 +101,12 @@ impl fmt::Display for ParsePermissionLevelError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::InvalidFormat => write!(
+            Self::Format => write!(
                 f,
                 "invalid format, must be in the format 'actor@permission'"
             ),
-            Self::InvalidActor(err) => write!(f, "invalid actor name: {}", err),
-            Self::InvalidPermission(err) => {
+            Self::Actor(err) => write!(f, "invalid actor name: {}", err),
+            Self::Permission(err) => {
                 write!(f, "invalid permission name: {}", err)
             }
         }
@@ -117,22 +117,19 @@ impl FromStr for PermissionLevel {
     type Err = ParsePermissionLevelError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split('@');
-        let actor = parts
-            .next()
-            .ok_or(ParsePermissionLevelError::InvalidFormat)?;
+        let actor = parts.next().ok_or(ParsePermissionLevelError::Format)?;
         let actor = actor
             .parse::<AccountName>()
-            .map_err(ParsePermissionLevelError::InvalidActor)?;
-        let permission = parts
-            .next()
-            .ok_or(ParsePermissionLevelError::InvalidFormat)?;
+            .map_err(ParsePermissionLevelError::Actor)?;
+        let permission =
+            parts.next().ok_or(ParsePermissionLevelError::Format)?;
         let permission = permission
             .parse::<PermissionName>()
-            .map_err(ParsePermissionLevelError::InvalidPermission)?;
+            .map_err(ParsePermissionLevelError::Permission)?;
         if parts.next().is_none() {
             Ok(Self { actor, permission })
         } else {
-            Err(ParsePermissionLevelError::InvalidFormat)
+            Err(ParsePermissionLevelError::Format)
         }
     }
 }
@@ -180,7 +177,7 @@ mod permission_level_tests {
         for input in &["hello", "hello@world@"] {
             assert_eq!(
                 PermissionLevel::from_str(input),
-                Err(ParsePermissionLevelError::InvalidFormat)
+                Err(ParsePermissionLevelError::Format)
             );
         }
     }
@@ -197,7 +194,7 @@ mod permission_level_tests {
         ] {
             assert_eq!(
                 PermissionLevel::from_str(input),
-                Err(ParsePermissionLevelError::InvalidActor(*expected))
+                Err(ParsePermissionLevelError::Actor(*expected))
             );
         }
     }
@@ -213,7 +210,7 @@ mod permission_level_tests {
         ] {
             assert_eq!(
                 PermissionLevel::from_str(input),
-                Err(ParsePermissionLevelError::InvalidPermission(*expected))
+                Err(ParsePermissionLevelError::Permission(*expected))
             );
         }
     }

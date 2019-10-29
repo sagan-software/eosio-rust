@@ -21,36 +21,42 @@ use serde::{Deserialize, Serialize};
 pub struct SignedInt(i32);
 
 impl From<isize> for SignedInt {
+    #[must_use]
     fn from(v: isize) -> Self {
         Self(v as i32)
     }
 }
 
 impl From<SignedInt> for isize {
+    #[must_use]
     fn from(v: SignedInt) -> Self {
         v.0 as Self
     }
 }
 
 impl From<i32> for SignedInt {
+    #[must_use]
     fn from(v: i32) -> Self {
         Self(v)
     }
 }
 
 impl From<SignedInt> for i32 {
+    #[must_use]
     fn from(v: SignedInt) -> Self {
         v.0
     }
 }
 
 impl From<i16> for SignedInt {
+    #[must_use]
     fn from(v: i16) -> Self {
         Self(v.into())
     }
 }
 
 impl From<i8> for SignedInt {
+    #[must_use]
     fn from(v: i8) -> Self {
         Self(v.into())
     }
@@ -58,6 +64,7 @@ impl From<i8> for SignedInt {
 
 impl NumBytes for SignedInt {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         let mut val = ((self.0 << 1) ^ (self.0 >> 31)) as u32;
         let mut bytes = 0_usize;

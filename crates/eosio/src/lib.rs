@@ -10,7 +10,7 @@
 )]
 #![warn(
     clippy::complexity,
-    // clippy::pedantic,
+    clippy::pedantic,
     clippy::nursery,
     clippy::style,
     clippy::perf,
@@ -19,11 +19,9 @@
     clippy::else_if_without_else,
     clippy::float_cmp_const,
     clippy::mem_forget,
-    clippy::missing_inline_in_public_items,
     clippy::use_debug
 )]
 #![allow(
-    clippy::missing_inline_in_public_items,
     clippy::missing_docs_in_private_items,
     clippy::module_name_repetitions,
     clippy::trivially_copy_pass_by_ref

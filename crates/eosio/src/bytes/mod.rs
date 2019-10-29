@@ -239,10 +239,10 @@ mod tests {
     #[test]
     #[allow(clippy::result_unwrap_used)]
     fn test_write_pos() {
-        let bytes = &mut [0u8; 1000];
+        let bytes = &mut [0_u8; 1000];
 
         let mut pos = 0;
-        1u8.write(bytes, &mut pos).unwrap();
+        1_u8.write(bytes, &mut pos).unwrap();
         assert_eq!(pos, 1);
 
         1_u16.write(bytes, &mut pos).unwrap();
