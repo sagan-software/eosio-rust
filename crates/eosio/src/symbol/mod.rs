@@ -1,116 +1,16 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L234-L337>
-use crate::account::AccountName;
+mod extended_symbol;
+mod symbol_code;
+
+pub use self::{extended_symbol::ExtendedSymbol, symbol_code::SymbolCode};
+
 use crate::bytes::{NumBytes, Read, Write};
-use eosio_numstr::{
-    symbol_code, symbol_from_chars, symbol_from_str, symbol_precision,
-    symbol_to_string, symbol_to_utf8,
-};
+use eosio_numstr::{symbol_code, symbol_from_chars, symbol_precision};
 pub use eosio_numstr::{ParseSymbolError, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
-use std::error::Error;
 use std::fmt;
 use std::str::FromStr;
-
-/// Stores the symbol code as a `u64` value
-#[derive(
-    Debug,
-    PartialEq,
-    Eq,
-    Clone,
-    Copy,
-    Default,
-    Read,
-    Write,
-    NumBytes,
-    Hash,
-    PartialOrd,
-    Ord,
-)]
-#[__eosio_path = "crate::bytes"]
-pub struct SymbolCode(u64);
-
-impl From<u64> for SymbolCode {
-    #[inline]
-    fn from(n: u64) -> Self {
-        Self(n)
-    }
-}
-
-impl From<SymbolCode> for u64 {
-    #[inline]
-    fn from(s: SymbolCode) -> Self {
-        s.0
-    }
-}
-
-impl From<SymbolCode> for [u8; 7] {
-    #[inline]
-    fn from(s: SymbolCode) -> Self {
-        symbol_to_utf8(s.0)
-    }
-}
-
-impl fmt::Display for SymbolCode {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", symbol_to_string(self.0 << 8))
-    }
-}
-
-impl SymbolCode {
-    /// TODO docs
-    #[inline]
-    pub const fn new(value: u64) -> Self {
-        Self(value)
-    }
-
-    /// TODO docs
-    #[inline]
-    pub fn is_valid(&self) -> bool {
-        let chars = symbol_to_utf8(self.0);
-        for &c in &chars {
-            if c == b' ' {
-                continue;
-            }
-            if !(b'A' <= c && c <= b'Z') {
-                return false;
-            }
-        }
-        true
-    }
-
-    /// TODO docs
-    #[inline]
-    pub const fn as_u64(&self) -> u64 {
-        self.0
-    }
-}
-
-impl TryFrom<&str> for SymbolCode {
-    type Error = ParseSymbolError;
-    #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let symbol: Symbol = symbol_from_str(0, value)?.into();
-        Ok(symbol.code())
-    }
-}
-
-impl TryFrom<String> for SymbolCode {
-    type Error = ParseSymbolError;
-    #[inline]
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        Self::try_from(value.as_str())
-    }
-}
-
-impl FromStr for SymbolCode {
-    type Err = ParseSymbolError;
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from(s)
-    }
-}
 
 /// Stores information about a symbol, the symbol can be 7 characters long.
 #[derive(
@@ -391,60 +291,5 @@ mod symbol_tests {
         test_ok("EOS", s!(4, EOS));
         test_ok("TGFT", s!(0, TGFT));
         test_err("tst", ParseSymbolError::BadChar('t'));
-    }
-}
-
-/// Extended asset which stores the information of the owner of the symbol
-/// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L372-L450>
-#[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
-#[__eosio_path = "crate::bytes"]
-pub struct ExtendedSymbol {
-    /// The symbol
-    pub symbol: Symbol,
-    /// The token contract hosting the symbol
-    pub contract: AccountName,
-}
-
-impl fmt::Display for ExtendedSymbol {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use std::ops::Deref;
-        write!(f, "{}@{}", self.symbol, self.contract.deref())
-    }
-}
-
-#[cfg(test)]
-mod extended_symbol_tests {
-    use super::*;
-    use eosio_macros::{n, s};
-
-    macro_rules! test_to_string {
-        ($($name:ident, $symbol:expr, $contract:expr, $expected:expr)*) => ($(
-            #[test]
-            fn $name() {
-                let extended = ExtendedSymbol {
-                    symbol: $symbol.into(),
-                    contract: $contract.into(),
-                };
-                assert_eq!(extended.to_string(), $expected);
-            }
-        )*)
-    }
-
-    test_to_string! {
-        to_string,
-        s!(4, EOS),
-        n!(eosio.token),
-        "4,EOS@eosio.token"
-
-        to_string_zero_precision,
-        s!(0, TST),
-        n!(test),
-        "0,TST@test"
-
-        to_string_one_precision,
-        s!(1, TGFT),
-        n!(greatfiltert),
-        "1,TGFT@greatfiltert"
     }
 }
