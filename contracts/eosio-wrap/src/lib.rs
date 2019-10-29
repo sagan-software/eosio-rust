@@ -1,8 +1,12 @@
 use eosio::*;
 use eosio_cdt::*;
+use std::marker::PhantomData;
 
 #[eosio::action]
-pub fn exec(executer: Ignore<AccountName>, trx: Ignore<Transaction<Vec<u8>>>) {
+pub fn exec(
+    executer: PhantomData<AccountName>,
+    trx: PhantomData<Transaction<Vec<u8>>>,
+) {
     require_auth(current_receiver());
     let mut ds = current_data_stream();
     let executer = ds.read::<AccountName>().expect("read");
