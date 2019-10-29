@@ -1,5 +1,6 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/contracts/eosio/privileged.hpp#L40-L160>
 use crate::bytes::{NumBytes, Read, Write};
+use serde::{Deserialize, Serialize};
 
 /// Tunable blockchain configuration that can be changed via consensus
 #[derive(
@@ -11,8 +12,24 @@ use crate::bytes::{NumBytes, Read, Write};
     Debug,
     PartialEq,
     PartialOrd,
-    serde::Serialize,
-    serde::Deserialize,
+    Serialize,
+    Deserialize,
+)]
+#[__eosio_path = "crate::bytes"]
+pub struct ChainId(String);
+
+/// Tunable blockchain configuration that can be changed via consensus
+#[derive(
+    Read,
+    Write,
+    NumBytes,
+    Clone,
+    Default,
+    Debug,
+    PartialEq,
+    PartialOrd,
+    Serialize,
+    Deserialize,
 )]
 #[__eosio_path = "crate::bytes"]
 pub struct BlockchainParameters {
