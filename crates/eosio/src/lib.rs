@@ -19,12 +19,12 @@
     clippy::else_if_without_else,
     clippy::float_cmp_const,
     clippy::mem_forget,
-    clippy::missing_docs_in_private_items,
     clippy::missing_inline_in_public_items,
     clippy::use_debug
 )]
 #![allow(
     clippy::missing_inline_in_public_items,
+    clippy::missing_docs_in_private_items,
     clippy::module_name_repetitions,
     clippy::trivially_copy_pass_by_ref
 )]
@@ -43,7 +43,7 @@ pub use self::action::{
 };
 
 mod asset;
-pub use self::asset::*;
+pub use self::asset::{Asset, ExtendedAsset};
 
 mod block;
 pub use self::block::*;
@@ -52,20 +52,22 @@ mod blockchain_parameters;
 pub use self::blockchain_parameters::*;
 
 mod bytes;
-pub use self::bytes::*;
+pub use self::bytes::{
+    DataStream, NumBytes, Read, ReadError, Write, WriteError,
+};
 
 mod crypto;
-pub use self::crypto::*;
-
-mod ignore;
-pub use self::ignore::*;
+pub use self::crypto::{
+    Checksum160, Checksum256, Checksum512, PrivateKey, ProducerKey, PublicKey,
+    Signature,
+};
 
 mod json;
 pub use self::json::*;
 
 #[macro_use]
 mod name;
-pub use self::name::*;
+pub use self::name::Name;
 
 mod ops;
 pub use self::ops::*;
@@ -77,16 +79,21 @@ mod resources;
 pub use self::resources::*;
 
 mod symbol;
-pub use self::symbol::*;
+pub use self::symbol::{
+    ExtendedSymbol, Symbol, SymbolCode, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS,
+};
 
 mod table;
-pub use self::table::*;
+pub use self::table::{
+    PrimaryTableIndex, ScopeName, SecondaryKey, SecondaryKeys,
+    SecondaryTableIndex, SecondaryTableName, Table, TableName,
+};
 
 mod time;
-pub use self::time::*;
+pub use self::time::{BlockTimestamp, TimePoint, TimePointSec};
 
 mod transaction;
 pub use self::transaction::*;
 
 mod varint;
-pub use self::varint::*;
+pub use self::varint::{SignedInt, UnsignedInt};
