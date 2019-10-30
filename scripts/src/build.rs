@@ -1,12 +1,11 @@
 use crate::opts::BuildCmd;
 use crate::shared::{get_target_dir, remove_file_if_exists};
-use std::fs::canonicalize;
 use std::io;
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 
 fn cargo_build(package: &str) -> io::Result<ExitStatus> {
-    log::info!("Building package '{}'", package);
+    println!("building package: {}", package);
     Command::new("cargo")
         .env("RUSTFLAGS", "-C link-args=-zstack-size=48000")
         .arg("build")
@@ -21,8 +20,13 @@ fn wasm_gc<I: AsRef<Path>, O: AsRef<Path>>(
     input: I,
     output: O,
 ) -> io::Result<ExitStatus> {
+    println!(
+        "running wasm-gc (input: {:#?}, output: {:#?})",
+        input.as_ref(),
+        output.as_ref()
+    );
     Command::new("wasm-gc")
-        .arg(canonicalize(input)?)
+        .arg(input.as_ref())
         .arg(output.as_ref())
         .status()
 }
@@ -43,8 +47,13 @@ fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
     input: I,
     output: O,
 ) -> io::Result<ExitStatus> {
+    println!(
+        "running wasm2wat (input: {:#?}, output: {:#?})",
+        input.as_ref(),
+        output.as_ref()
+    );
     Command::new("wasm2wat")
-        .arg(canonicalize(input)?)
+        .arg(input.as_ref())
         .arg("-o")
         .arg(output.as_ref())
         .arg("--generate-names")
