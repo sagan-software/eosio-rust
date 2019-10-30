@@ -54,6 +54,11 @@ fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
 pub fn build_contract(package: &str) -> io::Result<()> {
     cargo_build(package)?;
     let target_dir = get_target_dir()?;
+    let paths = std::fs::read_dir(&target_dir).unwrap();
+
+    for path in paths {
+        println!("Name: {}", path.unwrap().path().display())
+    }
     let bin = package.replace('-', "_");
     let wasm = target_dir.join(format!("{}.wasm", bin));
     let gc_wasm = target_dir.join(format!("{}_gc.wasm", bin));

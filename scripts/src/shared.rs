@@ -21,11 +21,9 @@ pub fn get_target_dir() -> io::Result<PathBuf> {
     println!("111");
     let mut exe = std::env::current_exe()?;
     exe.pop();
+    exe.pop();
     println!("222 {:#?}", exe);
-    Ok(exe
-        .join("..")
-        .join("wasm32-unknown-unknown")
-        .join("release"))
+    Ok(exe.join("wasm32-unknown-unknown").join("release"))
 }
 
 pub fn remove_file_if_exists<P: AsRef<Path>>(path: P) -> io::Result<()> {
