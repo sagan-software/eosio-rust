@@ -8,7 +8,7 @@ matrix:
 git:
     submodules: false
 before_install:
-    - docker pull sagansoftware/eos:latest
+    - docker pull sagansoftware/eosio.contracts:1.9.0-rc1
 install:
     - rustup target add wasm32-unknown-unknown
     - rustup component add rustfmt

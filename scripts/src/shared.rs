@@ -1,4 +1,4 @@
-use std::fs::{canonicalize, remove_file};
+use std::fs::remove_file;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus};
@@ -18,12 +18,11 @@ pub fn cleos() -> Command {
 }
 
 pub fn get_target_dir() -> io::Result<PathBuf> {
-    canonicalize(
-        Path::new(".")
-            .join("target")
-            .join("wasm32-unknown-unknown")
-            .join("release"),
-    )
+    let cwd = std::env::current_dir()?;
+    Ok(cwd
+        .join("target")
+        .join("wasm32-unknown-unknown")
+        .join("release"))
 }
 
 pub fn remove_file_if_exists<P: AsRef<Path>>(path: P) -> io::Result<()> {
