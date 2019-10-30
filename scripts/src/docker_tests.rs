@@ -7,6 +7,7 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
     crate::build_contract("eosio-token")?;
     crate::build_contract("eosio-wrap")?;
     let target_dir = get_target_dir()?;
+    println!("333 {:#?}", target_dir);
     let eosio_token_volume = {
         let path = target_dir.join("eosio_token_gc.wasm");
         format!(
@@ -38,5 +39,6 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
 }
 
 pub fn run_test(_opts: RunTestsCmd) {
+    println!("444");
     eosio_contract_tests().unwrap();
 }

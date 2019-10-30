@@ -18,8 +18,10 @@ pub fn cleos() -> Command {
 }
 
 pub fn get_target_dir() -> io::Result<PathBuf> {
+    println!("111");
     let mut exe = std::env::current_exe()?;
     exe.pop();
+    println!("222 {:#?}", exe);
     Ok(exe
         .join("..")
         .join("wasm32-unknown-unknown")
