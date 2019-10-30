@@ -68,6 +68,9 @@ bindgen \
     --whitelist-function send_deferred \
     --whitelist-function tapos_.+ \
     --whitelist-function transaction_size \
+    --whitelist-function get_sender \
+    --whitelist-function preactivate_feature \
+    --whitelist-function is_feature_activated \
     --whitelist-type capi_name \
     --whitelist-type capi_public_key \
     --whitelist-type capi_signature \

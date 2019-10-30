@@ -73,6 +73,10 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
         .expect("token with symbol does not exist, create token before issue");
 
     let mut st = cursor.get().expect("read");
+    assert!(
+        to == st.issuer,
+        "tokens can only be issued to issuer account"
+    );
     require_auth(st.issuer);
     assert!(quantity.is_valid(), "invalid quantity");
     assert!(quantity.amount > 0, "must issue positive quantity");
@@ -196,6 +200,8 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
 #[eosio::action]
 fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
     require_auth(ram_payer);
+    assert!(is_account(owner), "owner account does not exist");
+
     let code = current_receiver();
     let symbol_code = symbol.code();
 

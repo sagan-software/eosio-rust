@@ -37,7 +37,7 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
         .arg(eosio_wrap_volume)
         .arg("--entrypoint")
         .arg("/eosio.contracts/build/tests/unit_test")
-        .arg("sagansoftware/eos:latest")
+        .arg("sagansoftware/eosio.contracts:1.9.0-rc1")
         .arg("--show_progress=yes")
         .arg("--run_test=eosio_token_tests")
         .arg("--run_test=eosio_wrap_tests")

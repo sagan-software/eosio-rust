@@ -3,7 +3,7 @@
 pub type uint128_t = u128;
 pub type int128_t = i128;
 pub type capi_name = u64;
-#[doc = " EOSIO Public Key. It is 34 bytes."]
+#[doc = " EOSIO Public Key. K1 and R1 keys are 34 bytes.  Newer keys can be variable-sized"]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct capi_public_key {
@@ -36,7 +36,7 @@ impl ::std::cmp::PartialEq for capi_public_key {
         &self.data[..] == &other.data[..]
     }
 }
-#[doc = " EOSIO Signature. It is 66 bytes."]
+#[doc = " EOSIO Signature. K1 and R1 signatures are 66 bytes. Newer signatures can be variable-sized"]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct capi_signature {
@@ -1684,6 +1684,8 @@ extern "C" {
 extern "C" {
     #[doc = " Proposes a schedule change"]
     #[doc = ""]
+    #[doc = " This is exactly equivalent to calling `set_proposed_producers_ex(0, producer_data, producer_data_size)`"]
+    #[doc = ""]
     #[doc = " @note Once the block that contains the proposal becomes irreversible, the schedule is promoted to \"pending\" automatically. Once the block that promotes the schedule is irreversible, the schedule will become \"active\""]
     #[doc = " @param producer_data - packed data of produce_keys in the appropriate producer schedule order"]
     #[doc = " @param producer_data_size - size of the data buffer"]
@@ -1732,6 +1734,12 @@ extern "C" {
         data: *mut crate::c_char,
         datalen: u32,
     ) -> u32;
+}
+extern "C" {
+    #[doc = " Pre-activate protocol feature"]
+    #[doc = ""]
+    #[doc = " @param feature_digest - digest of the protocol feature to pre-activate"]
+    pub fn preactivate_feature(feature_digest: *const capi_checksum256);
 }
 extern "C" {
     #[doc = "  Aborts processing of this action and unwinds all pending changes if the test condition is true"]
@@ -1787,6 +1795,21 @@ extern "C" {
     #[doc = ""]
     #[doc = "  @return time in microseconds from 1970 of the current block"]
     pub fn current_time() -> u64;
+}
+extern "C" {
+    #[doc = " Check if specified protocol feature has been activated"]
+    #[doc = ""]
+    #[doc = " @param feature_digest - digest of the protocol feature"]
+    #[doc = " @return true if the specified protocol feature has been activated, false otherwise"]
+    pub fn is_feature_activated(
+        feature_digest: *const capi_checksum256,
+    ) -> bool;
+}
+extern "C" {
+    #[doc = " Return name of account that sent current inline action"]
+    #[doc = ""]
+    #[doc = " @return name of account that sent the current inline action (empty name if not called from inline action)"]
+    pub fn get_sender() -> capi_name;
 }
 extern "C" {
     #[doc = "  Sends a deferred transaction."]
