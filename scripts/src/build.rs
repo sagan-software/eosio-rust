@@ -63,10 +63,11 @@ fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
 pub fn build_contract(package: &str) -> io::Result<()> {
     cargo_build(package)?;
     let target_dir = get_target_dir()?;
-    let paths = std::fs::read_dir(&target_dir).unwrap();
-
-    for path in paths {
-        println!("Name: {}", path.unwrap().path().display())
+    {
+        let paths = std::fs::read_dir(&target_dir).unwrap();
+        for path in paths {
+            println!("Name: {}", path.unwrap().path().display())
+        }
     }
     let bin = package.replace('-', "_");
     let wasm = target_dir.join(format!("{}.wasm", bin));
@@ -76,6 +77,13 @@ pub fn build_contract(package: &str) -> io::Result<()> {
     // remove_file_if_exists(&gc_opt_wasm)?;
     remove_file_if_exists(&gc_wat)?;
     wasm_gc(wasm, &gc_wasm)?;
+
+    {
+        let paths = std::fs::read_dir(&target_dir).unwrap();
+        for path in paths {
+            println!("Name: {}", path.unwrap().path().display())
+        }
+    }
     // wasm_opt(gc_wasm, &gc_opt_wasm)?;
     wasm2wat(gc_wasm, gc_wat)?;
     Ok(())
