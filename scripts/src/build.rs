@@ -60,9 +60,9 @@ fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
         .status()
 }
 
-pub fn build_contract(package: &str) -> io::Result<()> {
-    cargo_build(package)?;
-    let target_dir = get_target_dir()?;
+pub fn build_contract(package: &str) {
+    cargo_build(package).expect("failed to run cargo build");
+    let target_dir = get_target_dir().expect("failed to get target directory");
     {
         let paths = std::fs::read_dir(&target_dir).unwrap();
         for path in paths {
@@ -73,10 +73,12 @@ pub fn build_contract(package: &str) -> io::Result<()> {
     let wasm = target_dir.join(format!("{}.wasm", bin));
     let gc_wasm = target_dir.join(format!("{}_gc.wasm", bin));
     let gc_wat = target_dir.join(format!("{}_gc.wat", bin));
-    remove_file_if_exists(&gc_wasm)?;
+    remove_file_if_exists(&gc_wasm)
+        .expect(&format!("failed to remove {:#?}", gc_wasm));
     // remove_file_if_exists(&gc_opt_wasm)?;
-    remove_file_if_exists(&gc_wat)?;
-    wasm_gc(wasm, &gc_wasm)?;
+    remove_file_if_exists(&gc_wat)
+        .expect(&format!("failed to remove {:#?}", gc_wat));
+    wasm_gc(wasm, &gc_wasm).expect("failed to run wasm-gc");
 
     {
         let paths = std::fs::read_dir(&target_dir).unwrap();
@@ -85,8 +87,10 @@ pub fn build_contract(package: &str) -> io::Result<()> {
         }
     }
     // wasm_opt(gc_wasm, &gc_opt_wasm)?;
-    wasm2wat(gc_wasm, gc_wat)?;
-    Ok(())
+    println!("??? 8888");
+    wasm2wat(gc_wasm, gc_wat).expect("failed to run wasm2wat");
+    println!("??? 9999");
+    println!("BUILT CONTRACT {}", package);
 }
 
 const ALL: &[&str] = &[
@@ -100,11 +104,11 @@ const ALL: &[&str] = &[
 pub fn run_build(opts: BuildCmd) {
     match opts.package {
         Some(pkg) => {
-            build_contract(&pkg).unwrap();
+            build_contract(&pkg);
         }
         None => {
             for pkg in ALL {
-                build_contract(pkg).unwrap();
+                build_contract(pkg);
             }
         }
     }

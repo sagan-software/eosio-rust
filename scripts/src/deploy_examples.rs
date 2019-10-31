@@ -24,7 +24,7 @@ pub fn run_deploy_examples() -> io::Result<()> {
         ("hello-bare", "hello_bare", "hellobare"),
         ("tictactoe", "tictactoe", "tictactoe"),
     ] {
-        crate::build_contract(package)?;
+        crate::build_contract(package);
         deploy_example_contract(account, bin)?;
     }
     Ok(())
