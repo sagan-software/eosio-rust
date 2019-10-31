@@ -43,54 +43,40 @@ fn wasm_gc<I: AsRef<Path>, O: AsRef<Path>>(
 //         .status()
 // }
 
-fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
-    input: I,
-    output: O,
-) -> io::Result<ExitStatus> {
-    println!(
-        "running wasm2wat (input: {:#?}, output: {:#?})",
-        input.as_ref(),
-        output.as_ref()
-    );
-    Command::new("wasm2wat")
-        .arg(input.as_ref())
-        .arg("-o")
-        .arg(output.as_ref())
-        .arg("--generate-names")
-        .status()
-}
+// fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(
+//     input: I,
+//     output: O,
+// ) -> io::Result<ExitStatus> {
+//     println!(
+//         "running wasm2wat (input: {:#?}, output: {:#?})",
+//         input.as_ref(),
+//         output.as_ref()
+//     );
+//     Command::new("wasm2wat")
+//         .arg(input.as_ref())
+//         .arg("-o")
+//         .arg(output.as_ref())
+//         .arg("--generate-names")
+//         .status()
+// }
 
 pub fn build_contract(package: &str) {
     cargo_build(package).expect("failed to run cargo build");
     let target_dir = get_target_dir().expect("failed to get target directory");
-    {
-        let paths = std::fs::read_dir(&target_dir).unwrap();
-        for path in paths {
-            println!("Name: {}", path.unwrap().path().display())
-        }
-    }
     let bin = package.replace('-', "_");
     let wasm = target_dir.join(format!("{}.wasm", bin));
     let gc_wasm = target_dir.join(format!("{}_gc.wasm", bin));
     let gc_wat = target_dir.join(format!("{}_gc.wat", bin));
-    remove_file_if_exists(&gc_wasm)
-        .expect(&format!("failed to remove {:#?}", gc_wasm));
+    remove_file_if_exists(&gc_wasm).unwrap_or_else(|e| {
+        panic!("failed to remove {:#?}: {:#?}", gc_wasm, e)
+    });
     // remove_file_if_exists(&gc_opt_wasm)?;
     remove_file_if_exists(&gc_wat)
-        .expect(&format!("failed to remove {:#?}", gc_wat));
+        .unwrap_or_else(|e| panic!("failed to remove {:#?}: {:#?}", gc_wat, e));
     wasm_gc(wasm, &gc_wasm).expect("failed to run wasm-gc");
-
-    {
-        let paths = std::fs::read_dir(&target_dir).unwrap();
-        for path in paths {
-            println!("Name: {}", path.unwrap().path().display())
-        }
-    }
+    // These two commands require binaryen:
     // wasm_opt(gc_wasm, &gc_opt_wasm)?;
-    println!("??? 8888");
-    wasm2wat(gc_wasm, gc_wat).expect("failed to run wasm2wat");
-    println!("??? 9999");
-    println!("BUILT CONTRACT {}", package);
+    // wasm2wat(gc_wasm, gc_wat).expect("failed to run wasm2wat");
 }
 
 const ALL: &[&str] = &[

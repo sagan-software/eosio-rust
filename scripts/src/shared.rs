@@ -1,4 +1,4 @@
-use std::fs::{canonicalize, remove_file};
+use std::fs::remove_file;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus};
@@ -18,11 +18,9 @@ pub fn cleos() -> Command {
 }
 
 pub fn get_target_dir() -> io::Result<PathBuf> {
-    println!("111");
     let mut exe = std::env::current_exe()?;
     exe.pop();
     exe.pop();
-    println!("222 {:#?}", exe);
     Ok(exe.join("wasm32-unknown-unknown").join("release"))
 }
 
