@@ -14,13 +14,14 @@ pub enum Cmd {
     DockerInit,
     DockerUp,
     RunBench,
-    RunBuild(BuildCmd),
+    BuildContracts(BuildContracts),
+    BuildDocs,
     RunExamples,
     RunTests(RunTestsCmd),
 }
 
 #[derive(StructOpt, Debug)]
-pub struct BuildCmd {
+pub struct BuildContracts {
     /// The package to build
     #[structopt(short = "p", long = "package")]
     pub package: Option<String>,

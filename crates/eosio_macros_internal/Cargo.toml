@@ -1,0 +1,35 @@
+[package]
+name = "eosio_macros_internal"
+version = "0.3.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+license = "MIT OR Apache-2.0"
+description = "Internal use only."
+edition = "2018"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = ["development-tools::procedural-macro-helpers"]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio-core-macros-internal/"
+readme = "README.md"
+include = [
+    "/Cargo.toml",
+    "/src/**/*.rs",
+    "/README.md",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT"
+]
+
+[lib]
+proc-macro = true
+path = "src/lib.rs"
+
+[dependencies]
+eosio_numstr = { version = "0.3", path = "../eosio_numstr" }
+heck = "0.3"
+proc-macro-hack = "0.5"
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "1.0", features = ["full"] }
+
+[dev-dependencies]
+eosio = { version = "0.3", path = "../eosio" }

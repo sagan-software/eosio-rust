@@ -1,13 +1,11 @@
 [package]
-name = "tictactoe"
+name = "eosio_wrap"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
-publish = false
 
 [lib]
 crate-type = ["cdylib"]
-doc = false
 
 [dependencies]
 eosio = { path = "../../crates/eosio" }

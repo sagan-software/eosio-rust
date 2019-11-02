@@ -1,14 +1,13 @@
 [package]
-name = "tictactoe"
+name = "eosio_token"
 version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
-publish = false
 
 [lib]
 crate-type = ["cdylib"]
-doc = false
 
 [dependencies]
 eosio = { path = "../../crates/eosio" }
 eosio_cdt = { path = "../../crates/eosio_cdt" }
+serde = { version = "1.0", optional = true, features = ["derive"] }

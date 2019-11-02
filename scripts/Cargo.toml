@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
 
+[lib]
+doc = false
+
 [dependencies]
 plotters = "0.2.1"
 regex = "1"

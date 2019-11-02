@@ -2,10 +2,12 @@
 name = "addressbook"
 version = "0.1.0"
 edition = "2018"
+publish = false
 
 [lib]
 crate-type = ["cdylib"]
+doc = false
 
 [dependencies]
 eosio = { path = "../../crates/eosio" }
-eosio-cdt = { path = "../../crates/eosio-cdt" }
+eosio_cdt = { path = "../../crates/eosio_cdt" }

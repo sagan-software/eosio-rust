@@ -1,0 +1,9 @@
+[package]
+name = "hello_bare"
+version = "0.1.0"
+edition = "2018"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+doc = false

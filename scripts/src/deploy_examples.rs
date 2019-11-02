@@ -21,7 +21,7 @@ pub fn run_deploy_examples() -> io::Result<()> {
     for (package, bin, account) in &[
         ("addressbook", "addressbook", "addressbook"),
         ("hello", "hello", "hello"),
-        ("hello-bare", "hello_bare", "hellobare"),
+        ("hello_bare", "hello_bare", "hellobare"),
         ("tictactoe", "tictactoe", "tictactoe"),
     ] {
         crate::build_contract(package);

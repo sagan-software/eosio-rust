@@ -5,8 +5,8 @@ use std::process::{Command, ExitStatus};
 
 fn eosio_contract_tests() -> io::Result<ExitStatus> {
     let target_dir = get_target_dir()?;
-    crate::build_contract("eosio-token");
-    crate::build_contract("eosio-wrap");
+    crate::build_contract("eosio_token");
+    crate::build_contract("eosio_wrap");
     let eosio_token_volume = {
         let path = target_dir.join("eosio_token_gc.wasm");
         format!(

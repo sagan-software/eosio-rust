@@ -9,7 +9,8 @@ fn main() {
     let opt = Opt::from_args();
     match opt.cmd {
         Cmd::RunBench => run_bench(),
-        Cmd::RunBuild(opts) => run_build(opts),
+        Cmd::BuildContracts(opts) => build_contracts(opts),
+        Cmd::BuildDocs => build_docs().unwrap(),
         Cmd::RunExamples => run_examples().unwrap(),
         Cmd::RunTests(opts) => run_test(opts),
         Cmd::DockerUp => run_docker_up(),
