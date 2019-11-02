@@ -2,7 +2,7 @@ use super::{
     PrimaryTableIndex, ScopeName, SecondaryTableName, Table, TableName,
 };
 use crate::AccountName;
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 /// TODO docs
 #[derive(Copy, Clone, Debug)]

@@ -1,4 +1,4 @@
-error: unexpected end of input, name contains invalid character '0'; must only contain the following characters: .12345abcdefghijklmnopqrstuvwxyz
+error: unexpected end of input, name contains invalid character '0'
  --> $DIR/name-bad-char.rs:6:13
   |
 6 |     let _ = n!(test1230);

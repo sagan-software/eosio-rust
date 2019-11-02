@@ -1,5 +1,3 @@
-//! TODO module docs.
-
 use crate::{PrimaryTableIndexExt, TableCursor, TableIndex};
 use eosio::{
     table::Table, AccountName, PrimaryTableIndex, ReadError, ScopeName,

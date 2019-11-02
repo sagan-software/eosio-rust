@@ -1,17 +1,14 @@
 use crate::proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::quote;
-use syn::{
-    parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam,
-    Meta,
-};
+use syn::{parse_macro_input, Data, DeriveInput, Fields, Meta};
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let eosio = crate::root_path(&input);
     let name = input.ident.clone();
 
-    let mut generics = input.generics.clone();
+    let generics = input.generics.clone();
     // for param in &mut generics.params {
     //     if let GenericParam::Type(ref mut type_param) = *param {
     //         type_param.bounds.push(parse_quote!(#eosio::Read));
@@ -20,33 +17,37 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let (is_singleton, table_name) = input.attrs.iter().fold((false, None), |(a, b), attr| {
-        match attr.interpret_meta() {
-            Some(meta) => {
-                let name = meta.name();
-                if name == "table_name" {
-                    if b.is_some() {
-                        panic!("only 1 table_name attribute allowed per struct");
-                    }
-                    match meta {
-                        Meta::NameValue(meta) => {
-                            let lit = meta.lit;
-                            let s = Ident::new(format!("{}", quote!(#lit)).as_str().trim_matches('"'), Span::call_site());
-                            (a, Some(s))
+        match attr.parse_meta() {
+            Ok(meta) => {
+                match meta.path().get_ident() {
+                    Some(name) => {
+                        if name == "table_name" {
+                            if b.is_some() {
+                                panic!("only 1 table_name attribute allowed per struct");
+                            }
+                            match meta {
+                                Meta::NameValue(meta) => {
+                                    let lit = meta.lit;
+                                    let s = Ident::new(format!("{}", quote!(#lit)).as_str().trim_matches('"'), Span::call_site());
+                                    (a, Some(s))
+                                }
+                                _ => {
+                                    panic!("invalid table_name attribute. must be in the form #[table_name = \"test\"]");
+                                }
+                            }
+                        } else if name == "singleton" {
+                            if a {
+                                panic!("only 1 singleton attribute allowed per struct");
+                            }
+                            (true, b)
+                        } else {
+                            (a, b)
                         }
-                        _ => {
-                            panic!("invalid table_name attribute. must be in the form #[table_name = \"test\"]");
-                        }
                     }
-                } else if name == "singleton" {
-                    if a {
-                        panic!("only 1 singleton attribute allowed per struct");
-                    }
-                    (true, b)
-                } else {
-                    (a, b)
+                    None => (a, b)
                 }
             }
-            None => (a, b),
+            Err(_) => (a, b),
         }
     });
 
@@ -61,10 +62,15 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 let mut secondary_keys = Vec::new();
                 for field in fields.named.iter() {
                     for attr in field.attrs.iter() {
-                        let name = attr.interpret_meta().map(|m| m.name());
-                        let (is_primary, is_secondary) = name
-                            .map(|n| (n == "primary", n == "secondary"))
-                            .unwrap_or_else(|| (false, false));
+                        let (is_primary, is_secondary) = attr
+                            .parse_meta()
+                            .map(|m| match m.path().get_ident() {
+                                Some(name) => {
+                                    (name == "primary", name == "secondary")
+                                }
+                                None => (false, false),
+                            })
+                            .unwrap_or_else(|_| (false, false));
 
                         if is_singleton {
                             if is_primary {

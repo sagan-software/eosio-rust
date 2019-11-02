@@ -1,29 +1,25 @@
-//! TODO module docs.
-
 use crate::{
     NativeSecondaryKey, Print, TableCursor, TableIndex, TableIterator,
 };
+use core::iter::IntoIterator;
+use core::marker::PhantomData;
+use core::ptr::null_mut;
 use eosio::{
     AccountName, NumBytes, PrimaryTableIndex, Read, ReadError, ScopeName,
     SecondaryKey, SecondaryTableName, Table, Write, WriteError,
 };
 use eosio_cdt_sys::*;
-use std::marker::PhantomData;
 
-/// TODO docs
+/// Cursor for a primary table index
 #[allow(clippy::missing_inline_in_public_items)]
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableCursor<T>
 where
     T: Table,
 {
-    /// TODO docs
     value: i32,
-    /// TODO docs
     code: AccountName,
-    /// TODO docs
     scope: ScopeName,
-    /// TODO docs
     data: PhantomData<T>,
 }
 
@@ -58,8 +54,7 @@ where
 {
     #[inline]
     fn get(&self) -> Result<T::Row, ReadError> {
-        let nullptr: *mut c_void =
-            ::std::ptr::null_mut() as *mut _ as *mut c_void;
+        let nullptr: *mut c_void = null_mut() as *mut _ as *mut c_void;
         let size = unsafe { db_get_i64(self.value, nullptr, 0) };
         #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let mut bytes = vec![0_u8; size as usize];
@@ -184,22 +179,17 @@ where
     }
 }
 
-/// TODO docs
+/// Iterator for a `PrimaryTableIndex`
 #[allow(clippy::missing_inline_in_public_items)]
 #[derive(Copy, Clone, Debug)]
 pub struct PrimaryTableIterator<T>
 where
     T: Table,
 {
-    /// TODO docs
     value: i32,
-    /// TODO docs
     end: i32,
-    /// TODO docs
     code: AccountName,
-    /// TODO docs
     scope: ScopeName,
-    /// TODO docs
     data: PhantomData<T>,
 }
 
@@ -366,19 +356,19 @@ where
     }
 }
 
-/// TODO docs
+/// Trait for functions of a `PrimaryTableIndex` that only apply within a smart contract
 pub trait PrimaryTableIndexExt<'a, T>:
     TableIndex<'a, u64, T, Cursor = PrimaryTableCursor<T>>
 where
     T: Table + 'a,
 {
-    /// TODO docs
+    /// Returns the first row in the table
     #[inline]
     fn begin(&'a self) -> Option<Self::Cursor> {
         self.lower_bound(u64::min_value())
     }
 
-    /// TODO docs
+    /// Iterate over rows in the table
     #[inline]
     fn iter(&'a self) -> PrimaryTableIterator<T> {
         self.begin().map_or_else(
@@ -389,17 +379,17 @@ where
                 scope: self.scope(),
                 data: PhantomData,
             },
-            std::iter::IntoIterator::into_iter,
+            IntoIterator::into_iter,
         )
     }
 
-    /// TODO docs
+    /// Total number of rows in the table
     #[inline]
     fn count(&'a self) -> usize {
         self.iter().count()
     }
 
-    /// TODO docs
+    /// Returns true if the table contains a row with the specified primary key
     #[inline]
     fn exists<Id>(&'a self, id: Id) -> bool
     where
@@ -408,7 +398,7 @@ where
         self.find(id).is_some()
     }
 
-    /// TODO docs
+    /// Returns the last row in the table
     #[inline]
     fn end(&'a self) -> i32 {
         unsafe {
@@ -420,7 +410,7 @@ where
         }
     }
 
-    /// TODO docs
+    /// Returns a cursor pointing to a row with the specified primary key, if it exists
     #[inline]
     fn find<Id>(&'a self, id: Id) -> Option<PrimaryTableCursor<T>>
     where
@@ -449,7 +439,7 @@ where
         }
     }
 
-    /// TODO docs
+    /// Gets the next available primary key
     #[inline]
     fn available_primary_key(&'a self) -> Option<u64> {
         if self.begin().is_none() {

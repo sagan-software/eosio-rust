@@ -1,6 +1,6 @@
 [package]
 name = "eosio-cdt-sys"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT OR Apache-2.0"
 description = "Low-level FFI bindings for EOSIO smart contract development."

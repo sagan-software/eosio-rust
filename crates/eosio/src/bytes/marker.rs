@@ -1,9 +1,10 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/ignore.hpp#L12-L20>
 use crate::{NumBytes, Read, ReadError, Write, WriteError};
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 impl<T> NumBytes for PhantomData<T> {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         0
     }

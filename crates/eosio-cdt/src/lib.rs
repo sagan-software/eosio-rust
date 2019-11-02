@@ -1,4 +1,5 @@
 //! TODO docs
+#![no_std]
 #![recursion_limit = "128"]
 #![deny(
     clippy::correctness,
@@ -20,11 +21,13 @@
     clippy::else_if_without_else,
     clippy::float_cmp_const,
     clippy::mem_forget,
-    clippy::missing_docs_in_private_items,
     clippy::missing_inline_in_public_items,
     clippy::use_debug
 )]
 #![allow(clippy::module_name_repetitions)]
+
+#[macro_use]
+extern crate alloc;
 
 #[macro_use]
 mod abi;

@@ -19,6 +19,7 @@
 //! assert_eq!(s!(0, EOS), 1_397_703_936);
 //! assert_eq!(s!(1, EDNA), 280_485_971_201);
 //! ```
+#![no_std]
 #![allow(clippy::missing_docs_in_private_items)]
 
 use proc_macro_hack::proc_macro_hack;

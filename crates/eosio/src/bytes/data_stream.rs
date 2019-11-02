@@ -1,5 +1,6 @@
 use super::{Read, ReadError, Write, WriteError};
-use std::ops::Deref;
+use alloc::vec::Vec;
+use core::ops::Deref;
 
 /// A stream of bytes
 pub struct DataStream {

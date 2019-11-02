@@ -1,5 +1,3 @@
-//! TODO module docs.
-
 use eosio::{
     AccountName, BlockchainParameters, CpuWeight, NetWeight, NumBytes,
     ProducerKey, RamBytes, Read, ReadError, Write, WriteError,
@@ -79,7 +77,7 @@ pub fn set_blockchain_parameters(
 /// Retrieve the blolckchain parameters
 #[inline]
 pub fn get_blockchain_parameters() -> Result<BlockchainParameters, ReadError> {
-    let expected_size = std::mem::size_of::<BlockchainParameters>();
+    let expected_size = BlockchainParameters::default().num_bytes();
     let mut buf = vec![0_u8; expected_size];
     let buf_ptr = &mut buf as *mut _ as *mut u8;
     #[allow(clippy::cast_possible_truncation)]

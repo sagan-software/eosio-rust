@@ -1,5 +1,4 @@
-//! TODO module docs.
-
+use alloc::vec::Vec;
 use eosio::{
     PermissionLevel, PublicKey, Read, ReadError, Transaction, Write, WriteError,
 };

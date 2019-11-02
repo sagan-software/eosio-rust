@@ -10,7 +10,7 @@ struct EosioSymbol(u64);
 
 impl Parse for EosioSymbol {
     fn parse(input: ParseStream) -> Result<Self> {
-        let precision = input.parse::<LitInt>()?.value();
+        let precision = input.parse::<LitInt>()?.base10_parse::<u64>()?;
         input.parse::<Token![,]>()?;
 
         let mut code = String::new();

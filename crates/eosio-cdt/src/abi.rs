@@ -1,3 +1,4 @@
+/// Generates an `apply` function that is called when the smart contract is invoked.
 #[macro_export]
 macro_rules! abi {
     ($($t:ty),*) => {

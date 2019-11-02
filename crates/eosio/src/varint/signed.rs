@@ -1,23 +1,12 @@
 use crate::bytes::{NumBytes, Read, ReadError, Write, WriteError};
-use serde::{Deserialize, Serialize};
 
 /// Variable Length Signed Integer. This provides more efficient serialization
 /// of 32-bit signed int. It serializes a 32-bit signed integer in as few bytes
 /// as possible. `SignedInt` is signed and uses
 /// [Zig-Zag encoding](https://developers.google.com/protocol-buffers/docs/encoding#signed-integers)
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/varint.hpp#L239-L465>
-#[derive(
-    PartialEq,
-    Eq,
-    PartialOrd,
-    Ord,
-    Debug,
-    Clone,
-    Hash,
-    Default,
-    Serialize,
-    Deserialize,
-)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Hash, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct SignedInt(i32);
 
 impl From<isize> for SignedInt {

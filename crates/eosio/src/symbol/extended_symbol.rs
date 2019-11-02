@@ -1,8 +1,9 @@
 use super::Symbol;
 use crate::account::AccountName;
 use crate::bytes::{NumBytes, Read, Write};
+use core::fmt;
+use core::ops::Deref;
 pub use eosio_numstr::{ParseSymbolError, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
-use std::fmt;
 
 /// Extended asset which stores the information of the owner of the symbol
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L372-L450>
@@ -18,7 +19,6 @@ pub struct ExtendedSymbol {
 impl fmt::Display for ExtendedSymbol {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use std::ops::Deref;
         write!(f, "{}@{}", self.symbol, self.contract.deref())
     }
 }
@@ -26,6 +26,7 @@ impl fmt::Display for ExtendedSymbol {
 #[cfg(test)]
 mod extended_symbol_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::{n, s};
 
     macro_rules! test_to_string {

@@ -46,10 +46,26 @@ impl_into_type! {
     u64, u8
     u64, u16
     u64, u32
-    // u64, ScopeName
-    // u64, TableName
-    // u64, crate::account::AccountName
-    // u64, crate::action::PermissionName
-    // u64, crate::action::ActionName
-    // u64, crate::name::Name
+}
+
+macro_rules! impl_as_u64_type {
+    ($($t:ty)*) => ($(
+        impl From<$t> for SecondaryKey {
+            #[must_use]
+            fn from(v: $t) -> Self {
+                Self::U64(v.as_u64())
+            }
+        }
+    )*)
+}
+
+impl_as_u64_type! {
+    crate::account::AccountName
+    crate::action::ActionName
+    crate::action::PermissionName
+    crate::name::Name
+    crate::symbol::Symbol
+    crate::symbol::SymbolCode
+    crate::table::ScopeName
+    crate::table::TableName
 }

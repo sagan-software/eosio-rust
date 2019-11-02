@@ -1,5 +1,5 @@
 use super::{NumBytes, Read, ReadError, Write, WriteError};
-use std::num::{
+use core::num::{
     NonZeroI16, NonZeroI32, NonZeroI64, NonZeroIsize, NonZeroU16, NonZeroU32,
     NonZeroU64, NonZeroU8, NonZeroUsize,
 };
@@ -8,6 +8,7 @@ macro_rules! impl_non_zero_nums {
     ($($t:ty, $non_zero:ty)*) => ($(
         impl NumBytes for $non_zero {
             #[inline]
+            #[must_use]
             fn num_bytes(&self) -> usize {
                 self.get().num_bytes()
             }

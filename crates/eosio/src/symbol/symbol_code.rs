@@ -1,11 +1,12 @@
 use crate::bytes::{NumBytes, Read, Write};
+use alloc::string::String;
+use core::convert::TryFrom;
+use core::fmt;
+use core::str::FromStr;
 use eosio_numstr::{
     symbol_code, symbol_from_str, symbol_to_string, symbol_to_utf8,
     ParseSymbolError,
 };
-use std::convert::TryFrom;
-use std::fmt;
-use std::str::FromStr;
 
 /// Stores the symbol code as a `u64` value
 #[derive(
@@ -116,6 +117,7 @@ impl FromStr for SymbolCode {
 #[cfg(test)]
 mod symbol_code_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::s;
     use eosio_numstr::symbol_code;
 

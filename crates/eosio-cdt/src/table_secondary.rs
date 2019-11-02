@@ -1,25 +1,15 @@
-//! TODO module docs.
-
 use crate::{PrimaryTableIndexExt, TableCursor, TableIndex, TableIterator};
+use core::ptr::null_mut;
 use eosio::{
     AccountName, Read, ReadError, ScopeName, SecondaryTableIndex,
     SecondaryTableName, Table, WriteError,
 };
 use eosio_cdt_sys::*;
 
-/// TODO docs
 type EndFn = unsafe extern "C" fn(code: u64, scope: u64, table: u64) -> i32;
-
-/// TODO docs
 type NextFn = unsafe extern "C" fn(itr: i32, primary: *mut u64) -> i32;
-
-/// TODO docs
 type PreviousFn = unsafe extern "C" fn(itr: i32, primary: *mut u64) -> i32;
-
-/// TODO docs
 type RemoveFn = unsafe extern "C" fn(itr: i32);
-
-/// TODO docs
 type StoreFn<T> = unsafe extern "C" fn(
     scope: u64,
     table: u64,
@@ -27,12 +17,8 @@ type StoreFn<T> = unsafe extern "C" fn(
     id: u64,
     secondary: *const T,
 ) -> i32;
-
-/// TODO docs
 type UpdateFn<T> =
     unsafe extern "C" fn(itr: i32, payer: u64, secondary: *const T);
-
-/// TODO docs
 type LowerboundFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
@@ -40,8 +26,6 @@ type LowerboundFn<T> = unsafe extern "C" fn(
     secondary: *mut T,
     primary: *mut u64,
 ) -> i32;
-
-/// TODO docs
 type UpperboundFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
@@ -49,8 +33,6 @@ type UpperboundFn<T> = unsafe extern "C" fn(
     secondary: *mut T,
     primary: *mut u64,
 ) -> i32;
-
-/// TODO docs
 type FindPrimaryFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
@@ -58,8 +40,6 @@ type FindPrimaryFn<T> = unsafe extern "C" fn(
     secondary: *mut T,
     primary: u64,
 ) -> i32;
-
-/// TODO docs
 type FindSecondaryFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
@@ -68,29 +48,29 @@ type FindSecondaryFn<T> = unsafe extern "C" fn(
     primary: *mut u64,
 ) -> i32;
 
-/// TODO docs
+/// Trait for types that are natively supported by EOSIO to be used as secondary keys
 pub trait NativeSecondaryKey: Default {
-    /// TODO docs
+    /// Unsafe native end function
     const END: EndFn;
-    /// TODO docs
+    /// Unsafe native next function
     const NEXT: NextFn;
-    /// TODO docs
+    /// Unsafe native previous function
     const PREVIOUS: PreviousFn;
-    /// TODO docs
+    /// Unsafe native remove function
     const REMOVE: RemoveFn;
-    /// TODO docs
+    /// Unsafe native store function
     const STORE: StoreFn<Self>;
-    /// TODO docs
+    /// Unsafe native update function
     const UPDATE: UpdateFn<Self>;
-    /// TODO docs
+    /// Unsafe native lowerbound function
     const LOWERBOUND: LowerboundFn<Self>;
-    /// TODO docs
+    /// Unsafe native upperbound function
     const UPPERBOUND: UpperboundFn<Self>;
-    /// TODO docs
+    /// Unsafe native find_primary function
     const FIND_PRIMARY: FindPrimaryFn<Self>;
-    /// TODO docs
+    /// Unsafe native find_secondary function
     const FIND_SECONDARY: FindSecondaryFn<Self>;
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[must_use]
     #[inline]
     fn db_idx_end(
@@ -100,7 +80,7 @@ pub trait NativeSecondaryKey: Default {
     ) -> i32 {
         unsafe { Self::END(code.as_u64(), scope.as_u64(), table.as_u64()) }
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[must_use]
     #[inline]
     fn db_idx_next(iterator: i32) -> (i32, u64) {
@@ -109,7 +89,7 @@ pub trait NativeSecondaryKey: Default {
         let itr = unsafe { Self::NEXT(iterator, ptr) };
         (itr, pk)
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[must_use]
     #[inline]
     fn db_idx_previous(iterator: i32) -> (i32, u64) {
@@ -118,12 +98,12 @@ pub trait NativeSecondaryKey: Default {
         let itr = unsafe { Self::PREVIOUS(iterator, ptr) };
         (itr, pk)
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_remove(iterator: i32) {
         unsafe { Self::REMOVE(iterator) }
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_store(
         &self,
@@ -142,12 +122,12 @@ pub trait NativeSecondaryKey: Default {
             )
         }
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_update(&self, iterator: i32, payer: AccountName) {
         unsafe { Self::UPDATE(iterator, payer.as_u64(), self as *const Self) }
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_lowerbound(
         &mut self,
@@ -167,7 +147,7 @@ pub trait NativeSecondaryKey: Default {
         };
         (itr, pk)
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_upperbound(
         &mut self,
@@ -187,7 +167,7 @@ pub trait NativeSecondaryKey: Default {
         };
         (itr, pk)
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_find_primary(
         &mut self,
@@ -206,7 +186,7 @@ pub trait NativeSecondaryKey: Default {
             )
         }
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_find_secondary(
         &self,
@@ -226,7 +206,7 @@ pub trait NativeSecondaryKey: Default {
         };
         (itr, pk)
     }
-    /// TODO docs
+    /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_upsert(
         &mut self,
@@ -285,11 +265,11 @@ impl NativeSecondaryKey for u128 {
     const FIND_SECONDARY: FindSecondaryFn<Self> = db_idx128_find_secondary;
 }
 
-/// TODO docs
+/// Trait for types that can be turned into types that are native secondary keys
 pub trait IntoNativeSecondaryKey {
-    /// TODO docs
+    /// The native secondary key type
     type Native: NativeSecondaryKey;
-    /// TODO docs
+    /// Turn self into the native secondary key type
     fn into_native_secondary_key(self) -> Self::Native;
 }
 
@@ -345,18 +325,15 @@ impl_into_type! {
     // u64, eosio_core::ActionName
 }
 
-/// TODO docs
+/// Cursor for a `SecondaryTableIndex`
 #[allow(clippy::missing_inline_in_public_items)]
 #[derive(Debug, Copy, Clone)]
 pub struct SecondaryTableCursor<'a, K, T>
 where
     T: Table,
 {
-    /// TODO docs
     value: i32,
-    /// TODO docs
     pk: u64,
-    /// TODO docs
     index: &'a SecondaryTableIndex<K, T>,
 }
 
@@ -375,8 +352,7 @@ where
                 self.pk,
             )
         };
-        let nullptr: *mut c_void =
-            ::std::ptr::null_mut() as *mut _ as *mut c_void;
+        let nullptr: *mut c_void = null_mut() as *mut _ as *mut c_void;
         let size = unsafe { db_get_i64(self.value, nullptr, 0) };
         let mut bytes = vec![
             0_u8;
@@ -458,22 +434,17 @@ where
     }
 }
 
-/// TODO docs
+/// Iterate over a secondary table index
 #[allow(clippy::missing_inline_in_public_items)]
 #[derive(Copy, Clone, Debug)]
 pub struct SecondaryTableIterator<'a, K, T>
 where
     T: Table,
 {
-    /// TODO docs
     value: i32,
-    /// TODO docs
     pk: u64,
-    /// TODO docs
     pk_end: i32,
-    /// TODO docs
     sk_end: i32,
-    /// TODO docs
     index: &'a SecondaryTableIndex<K, T>,
 }
 

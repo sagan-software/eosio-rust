@@ -1,4 +1,3 @@
-//! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/crypto.hpp#L156-L264>
 use eosio::{Checksum160, Checksum256, Checksum512};
 use eosio_cdt_sys::{capi_checksum160, capi_checksum256, capi_checksum512};
 

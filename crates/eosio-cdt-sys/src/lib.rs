@@ -9,7 +9,7 @@
 //! [`EOSIO/eosio.cdt`]: https://github.com/EOSIO/eosio.cdt
 //! [`eosio`]: https://crates.io/crates/eosio
 //! [`eosio_cdt`]: https://crates.io/crates/eosio_cdt
-
+#![no_std]
 #![allow(
     non_upper_case_globals,
     non_camel_case_types,
@@ -36,6 +36,6 @@ pub use self::bindings::*;
 // #[cfg(any(not(target_arch = "wasm32"), feature = "mock"))]
 // pub use self::mock_bindings::*;
 
-pub use std::ffi::c_void;
+pub use core::ffi::c_void;
 pub type c_char = u8;
 pub type c_int = i32;

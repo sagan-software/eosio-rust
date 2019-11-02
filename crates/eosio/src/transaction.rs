@@ -3,7 +3,7 @@ use crate::action::Action;
 use crate::bytes::{NumBytes, Read, Write};
 use crate::time::TimePointSec;
 use crate::varint::UnsignedInt;
-use serde::{Deserialize, Serialize};
+use alloc::vec::Vec;
 
 /// TODO docs
 #[derive(
@@ -18,11 +18,10 @@ use serde::{Deserialize, Serialize};
     Clone,
     Hash,
     Default,
-    Serialize,
-    Deserialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
-pub struct Extension(u16, Vec<char>);
+pub struct TransactionExtension(u16, Vec<char>);
 
 /// TODO docs
 #[derive(
@@ -37,9 +36,8 @@ pub struct Extension(u16, Vec<char>);
     Clone,
     Hash,
     Default,
-    Serialize,
-    Deserialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct TransactionHeader {
     /// TODO docs
@@ -57,9 +55,8 @@ pub struct TransactionHeader {
 }
 
 /// TODO docs
-#[derive(
-    Clone, Debug, Serialize, Deserialize, Read, Write, NumBytes, Default,
-)]
+#[derive(Clone, Debug, Read, Write, NumBytes, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct Transaction<T: Default + Clone> {
     /// TODO docs
@@ -69,7 +66,7 @@ pub struct Transaction<T: Default + Clone> {
     /// TODO docs
     pub actions: Vec<Action<T>>,
     /// TODO docs
-    pub transaction_extensions: Vec<Extension>,
+    pub transaction_extensions: Vec<TransactionExtension>,
 }
 
 /// TODO docs

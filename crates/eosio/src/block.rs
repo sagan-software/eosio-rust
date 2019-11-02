@@ -1,9 +1,9 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L134-L210>
 use crate::bytes::{NumBytes, Read, Write};
-use serde::{Deserialize, Serialize};
-use std::fmt;
-use std::num::{NonZeroU64, ParseIntError};
-use std::str::FromStr;
+use alloc::string::{String, ToString};
+use core::fmt;
+use core::num::{NonZeroU64, ParseIntError};
+use core::str::FromStr;
 
 /// TODO docs
 #[derive(
@@ -18,9 +18,8 @@ use std::str::FromStr;
     Clone,
     Hash,
     Default,
-    Serialize,
-    Deserialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct BlockId(String);
 
@@ -43,9 +42,8 @@ impl fmt::Display for BlockId {
     Clone,
     Copy,
     Hash,
-    Serialize,
-    Deserialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct BlockNum(NonZeroU64);
 
@@ -63,10 +61,9 @@ impl FromStr for BlockNum {
 }
 
 /// TODO docs
-#[derive(
-    PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Hash, Serialize, Deserialize,
-)]
-#[serde(untagged)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(untagged))]
 pub enum BlockNumOrId {
     /// TODO docs
     Id(BlockId),
@@ -79,7 +76,7 @@ impl FromStr for BlockNumOrId {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.parse::<BlockNum>() {
             Ok(num) => Ok(Self::Num(num)),
-            Err(_) => Ok(Self::Id(BlockId(s.to_owned()))),
+            Err(_) => Ok(Self::Id(BlockId(s.to_string()))),
         }
     }
 }

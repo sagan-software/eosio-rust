@@ -1,11 +1,13 @@
 use super::{NumBytes, Read, ReadError, Write, WriteError};
 use crate::varint::{SignedInt, UnsignedInt};
+use core::convert::Into;
 
 macro_rules! impl_nums {
     ($($t:ty, $s:expr)*) => ($(
         impl NumBytes for $t
         {
             #[inline]
+            #[must_use]
             fn num_bytes(&self) -> usize {
                 $s
             }
@@ -74,6 +76,7 @@ impl_nums! {
 
 impl NumBytes for f32 {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         4
     }
@@ -101,6 +104,7 @@ impl Write for f32 {
 
 impl NumBytes for f64 {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         8
     }
@@ -128,6 +132,7 @@ impl Write for f64 {
 
 impl NumBytes for bool {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         1
     }
@@ -154,6 +159,7 @@ impl Write for bool {
 
 impl NumBytes for char {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         1
     }
@@ -179,6 +185,7 @@ impl Write for char {
 
 impl NumBytes for usize {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         UnsignedInt::from(*self).num_bytes()
     }
@@ -187,7 +194,7 @@ impl NumBytes for usize {
 impl Read for usize {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
-        UnsignedInt::read(bytes, pos).map(std::convert::Into::into)
+        UnsignedInt::read(bytes, pos).map(Into::into)
     }
 }
 
@@ -204,6 +211,7 @@ impl Write for usize {
 
 impl NumBytes for isize {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         SignedInt::from(*self).num_bytes()
     }
@@ -212,7 +220,7 @@ impl NumBytes for isize {
 impl Read for isize {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
-        SignedInt::read(bytes, pos).map(std::convert::Into::into)
+        SignedInt::read(bytes, pos).map(Into::into)
     }
 }
 
@@ -320,6 +328,7 @@ where
 
 impl<'a> NumBytes for &str {
     #[inline]
+    #[must_use]
     fn num_bytes(&self) -> usize {
         let len = self.len();
         len.num_bytes() + len

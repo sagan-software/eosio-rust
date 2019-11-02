@@ -90,7 +90,10 @@ pub(crate) fn root_path(input: &DeriveInput) -> Path {
         .iter()
         .fold(None, |acc, attr| match attr.parse_meta() {
             Ok(meta) => {
-                let name = meta.name();
+                let name = match meta.path().get_ident() {
+                    Some(name) => name,
+                    None => return acc,
+                };
                 if name == "__eosio_path" {
                     match meta {
                         Meta::NameValue(meta) => match meta.lit {

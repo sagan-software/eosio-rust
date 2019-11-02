@@ -1,4 +1,3 @@
-//! TODO module docs.
 use eosio::{AccountName, PermissionName, TimePoint};
 
 /// Get the current receiver of the action.

@@ -1,13 +1,12 @@
-//! TODO module docs.
-
+use alloc::string::String;
 use eosio::{
     AccountName, ActionName, Name, PermissionName, ScopeName, TableName,
     TimePoint, TimePointSec,
 };
 
-/// TODO docs.
+/// Trait for types that can be printed from within EOSIO smart contracts
 pub trait Print {
-    /// TODO docs.
+    /// Print to the console
     fn print(&self);
 }
 
@@ -95,7 +94,7 @@ impl Print for bool {
 impl Print for usize {
     #[inline]
     fn print(&self) {
-        (*self as u32).print()
+        (*self as u64).print()
     }
 }
 
@@ -178,6 +177,7 @@ impl Print for TimePointSec {
     }
 }
 
+/// Prints arbitrary data to the nodeos console
 #[macro_export]
 macro_rules! print {
     ($e:expr) => (

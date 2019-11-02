@@ -11,6 +11,7 @@ fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 pushd ${DIR}
 bindgen \
+    --use-core \
     --distrust-clang-mangling \
     --no-layout-tests \
     --output src/bindings.rs \

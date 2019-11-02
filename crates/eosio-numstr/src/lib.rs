@@ -1,6 +1,73 @@
-use std::convert::TryFrom;
-use std::error::Error;
-use std::fmt;
+//! This crate provides functions for converting EOSIO names and
+//! symbols, represented as `u64`, to and from string representations.
+//!
+//! Creating an EOSIO name:
+//!
+//! ```
+//! use eosio_numstr::name_from_str;
+//! let name = name_from_str("eosio").unwrap();
+//! assert_eq!(name, 6138663577826885632);
+//! ```
+//!
+#![cfg_attr(
+    feature = "alloc",
+    doc = r##"Converting an EOSIO name to a string:
+
+```
+use eosio_numstr::{name_from_str, name_to_string};
+let name = name_from_str("eosio").unwrap();
+assert_eq!(name_to_string(name), "eosio");
+```"##
+)]
+//!
+//! Creating an EOSIO symbol:
+//!
+//! ```
+//! use eosio_numstr::symbol_from_str;
+//! let symbol = symbol_from_str(4, "EOS").unwrap();
+//! assert_eq!(symbol, 1397703940);
+//! ```
+//!
+#![cfg_attr(
+    feature = "alloc",
+    doc = r##"Converting an EOSIO symbol to a string:
+
+```
+use eosio_numstr::{symbol_from_str, symbol_to_string};
+let symbol = symbol_from_str(4, "EOS").unwrap();
+assert_eq!(symbol_to_string(symbol), "EOS");
+```"##
+)]
+#![no_std]
+#![deny(
+    clippy::correctness,
+    clippy::indexing_slicing,
+    clippy::option_unwrap_used,
+    clippy::result_unwrap_used,
+    clippy::unimplemented,
+    clippy::wrong_pub_self_convention,
+    clippy::wrong_self_convention
+)]
+#![warn(
+    clippy::complexity,
+    clippy::pedantic,
+    clippy::nursery,
+    clippy::style,
+    clippy::perf,
+    clippy::cargo,
+    clippy::dbg_macro,
+    clippy::else_if_without_else,
+    clippy::float_cmp_const,
+    clippy::mem_forget,
+    clippy::use_debug
+)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "alloc")]
+use alloc::string::String;
+use core::{char, convert::TryFrom, fmt};
 
 /// All possible characters that can be used in EOSIO names.
 pub const NAME_UTF8_CHARS: [u8; 32] = *b".12345abcdefghijklmnopqrstuvwxyz";
@@ -19,27 +86,19 @@ pub enum ParseNameError {
     BadChar(char),
 }
 
-impl Error for ParseNameError {}
-
 impl fmt::Display for ParseNameError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::Empty => write!(
-                f,
-                "name is empty",
-            ),
+            Self::Empty => write!(f, "name is empty",),
             Self::TooLong => write!(
                 f,
                 "name is too long, must be {} chars or less",
                 NAME_LEN_MAX
             ),
-            Self::BadChar(c) => write!(
-                f,
-                "name contains invalid character '{}'; must only contain the following characters: {}",
-                c,
-                String::from_utf8_lossy(&NAME_UTF8_CHARS)
-            ),
+            Self::BadChar(c) => {
+                write!(f, "name contains invalid character '{}'", c,)
+            }
         }
     }
 }
@@ -116,14 +175,15 @@ where
 /// Converts a character to a symbol.
 fn char_to_symbol(c: char) -> Option<char> {
     if c >= 'a' && c <= 'z' {
-        ::std::char::from_u32((c as u32 - 'a' as u32) + 6)
+        char::from_u32((c as u32 - 'a' as u32) + 6)
     } else if c >= '1' && c <= '5' {
-        ::std::char::from_u32((c as u32 - '1' as u32) + 1)
+        char::from_u32((c as u32 - '1' as u32) + 1)
     } else {
         None
     }
 }
 
+#[cfg(feature = "alloc")]
 /// Converts an EOSIO name value into a string.
 ///
 /// # Examples
@@ -136,6 +196,7 @@ fn char_to_symbol(c: char) -> Option<char> {
 /// assert_eq!(name_to_string(614251535012020768), "123451234512");
 /// ```
 #[inline]
+#[must_use]
 pub fn name_to_string(name: u64) -> String {
     String::from_utf8_lossy(&name_to_utf8(name))
         .trim_matches('.')
@@ -154,6 +215,7 @@ pub fn name_to_string(name: u64) -> String {
 /// assert_eq!(name_to_utf8(614251535012020768), *b"123451234512.");
 /// ```
 #[inline]
+#[must_use]
 pub fn name_to_utf8(name: u64) -> [u8; 13] {
     let mut chars = [b'.'; 13]; // TODO: make this 12 instead of 13
     let mut t = name;
@@ -186,8 +248,6 @@ pub enum ParseSymbolError {
     /// TODO docs
     BadPrecision,
 }
-
-impl Error for ParseSymbolError {}
 
 impl fmt::Display for ParseSymbolError {
     #[inline]
@@ -267,6 +327,7 @@ where
     Ok(result)
 }
 
+#[cfg(feature = "alloc")]
 /// Converts an EOSIO symbol value into a string.
 ///
 /// # Examples
@@ -280,6 +341,7 @@ where
 /// assert_eq!(symbol_to_string(0), "");
 /// ```
 #[inline]
+#[must_use]
 pub fn symbol_to_string(name: u64) -> String {
     String::from_utf8_lossy(&symbol_to_utf8(name)).trim().into()
 }
@@ -297,6 +359,7 @@ pub fn symbol_to_string(name: u64) -> String {
 /// assert_eq!(symbol_to_utf8(0), *b"       ");
 /// ```
 #[inline]
+#[must_use]
 pub fn symbol_to_utf8(value: u64) -> [u8; SYMBOL_LEN_MAX] {
     let mask: u64 = 0xff;
     let mut chars = [b' '; SYMBOL_LEN_MAX];
@@ -322,6 +385,7 @@ pub fn symbol_to_utf8(value: u64) -> [u8; SYMBOL_LEN_MAX] {
 /// assert_eq!(symbol_precision(5138124851399447552), 0); // 0,TESTING
 /// ```
 #[inline]
+#[must_use]
 pub fn symbol_precision(value: u64) -> u8 {
     u8::try_from(value & 255).unwrap_or_default()
 }
@@ -337,6 +401,7 @@ pub fn symbol_precision(value: u64) -> u8 {
 /// assert_eq!(symbol_code(5138124851399447552), 20070800200779092); // 0,TESTING
 /// ```
 #[inline]
+#[must_use]
 pub const fn symbol_code(value: u64) -> u64 {
     value >> 8
 }
@@ -352,6 +417,7 @@ pub const fn symbol_code(value: u64) -> u64 {
 /// assert_eq!(symbol_code_length(5138124851399447552), 7); // 0,TESTING
 /// ```
 #[inline]
+#[must_use]
 pub fn symbol_code_length(symbol: u64) -> usize {
     let mut sym = symbol;
     sym >>= 8; // skip precision

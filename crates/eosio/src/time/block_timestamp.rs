@@ -1,5 +1,4 @@
 use crate::{NumBytes, Read, Write};
-use serde::Serialize;
 
 /// This class is used in the block headers to represent the block time
 /// It is a parameterised class that takes an Epoch in milliseconds and
@@ -17,7 +16,6 @@ use serde::Serialize;
     Copy,
     Hash,
     Default,
-    Serialize,
 )]
 #[__eosio_path = "crate::bytes"]
 pub struct BlockTimestamp(u32);
@@ -37,48 +35,48 @@ impl BlockTimestamp {
 }
 
 /// TODO docs
-struct BlockTimestampVisitor;
+// struct BlockTimestampVisitor;
 
-impl<'de> ::serde::de::Visitor<'de> for BlockTimestampVisitor {
-    type Value = BlockTimestamp;
+// impl<'de> ::serde::de::Visitor<'de> for BlockTimestampVisitor {
+//     type Value = BlockTimestamp;
 
-    #[inline]
-    fn expecting(
-        &self,
-        formatter: &mut ::std::fmt::Formatter,
-    ) -> ::std::fmt::Result {
-        formatter.write_str("a second timestamp as a number or string")
-    }
+//     #[inline]
+//     fn expecting(
+//         &self,
+//         formatter: &mut ::std::fmt::Formatter,
+//     ) -> ::std::fmt::Result {
+//         formatter.write_str("a second timestamp as a number or string")
+//     }
 
-    #[inline]
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: ::serde::de::Error,
-    {
-        match value.parse::<u32>() {
-            Ok(n) => Ok(BlockTimestamp(n)),
-            Err(e) => Err(::serde::de::Error::custom(e)),
-        }
-    }
+//     #[inline]
+//     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+//     where
+//         E: ::serde::de::Error,
+//     {
+//         match value.parse::<u32>() {
+//             Ok(n) => Ok(BlockTimestamp(n)),
+//             Err(e) => Err(::serde::de::Error::custom(e)),
+//         }
+//     }
 
-    #[inline]
-    fn visit_u32<E>(self, value: u32) -> Result<Self::Value, E>
-    where
-        E: ::serde::de::Error,
-    {
-        Ok(BlockTimestamp(value))
-    }
-}
+//     #[inline]
+//     fn visit_u32<E>(self, value: u32) -> Result<Self::Value, E>
+//     where
+//         E: ::serde::de::Error,
+//     {
+//         Ok(BlockTimestamp(value))
+//     }
+// }
 
-impl<'de> ::serde::de::Deserialize<'de> for BlockTimestamp {
-    #[inline]
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: ::serde::de::Deserializer<'de>,
-    {
-        deserializer.deserialize_any(BlockTimestampVisitor)
-    }
-}
+// impl<'de> ::serde::de::Deserialize<'de> for BlockTimestamp {
+//     #[inline]
+//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+//     where
+//         D: ::serde::de::Deserializer<'de>,
+//     {
+//         deserializer.deserialize_any(BlockTimestampVisitor)
+//     }
+// }
 
 impl From<u32> for BlockTimestamp {
     #[inline]

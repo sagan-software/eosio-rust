@@ -3,20 +3,19 @@ use crate::account::AccountName;
 use crate::bytes::{NumBytes, Read, Write};
 use crate::name::ParseNameError;
 use crate::name_type;
-use serde::{Deserialize, Serialize};
-use std::convert::TryFrom;
-use std::error::Error;
-use std::fmt;
-use std::str::FromStr;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::convert::TryFrom;
+use core::fmt;
+use core::str::FromStr;
 
 name_type!(ActionName);
 name_type!(PermissionName);
 
 /// This is the packed representation of an action along with meta-data about
 /// the authorization levels.
-#[derive(
-    Clone, Debug, Serialize, Deserialize, Read, Write, NumBytes, Default,
-)]
+#[derive(Clone, Debug, Read, Write, NumBytes, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct Action<T> {
     /// Name of the account the action is intended for
@@ -73,9 +72,8 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
     Hash,
     PartialOrd,
     Ord,
-    Serialize,
-    Deserialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct PermissionLevel {
     /// TODO docs
@@ -94,8 +92,6 @@ pub enum ParsePermissionLevelError {
     /// TODO docs
     Permission(ParseNameError),
 }
-
-impl Error for ParsePermissionLevelError {}
 
 impl fmt::Display for ParsePermissionLevelError {
     #[inline]
@@ -160,6 +156,7 @@ impl fmt::Display for PermissionLevel {
 #[cfg(test)]
 mod permission_level_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::n;
 
     #[test]

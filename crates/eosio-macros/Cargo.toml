@@ -1,6 +1,6 @@
 [package]
 name = "eosio-macros"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT OR Apache-2.0"
 description = "Macros for creating compile-time EOSIO names and symbols."
@@ -29,9 +29,8 @@ maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
 [dependencies]
-eosio-macros-internal = { path = "../eosio-macros-internal" }
+eosio-macros-internal = { version = "0.3", path = "../eosio-macros-internal" }
 proc-macro-hack = "0.5"
-proc-macro-nested = "0.1"
 
 [dev-dependencies]
 trybuild = "1.0"

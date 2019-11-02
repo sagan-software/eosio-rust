@@ -1,24 +1,15 @@
 use super::Asset;
 use crate::account::AccountName;
 use crate::bytes::{NumBytes, Read, Write};
-use serde::{Deserialize, Serialize};
-use std::fmt;
+use core::fmt;
+use core::ops::Deref;
 
 /// Extended asset which stores the information of the owner of the asset
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/asset.hpp#L371-L481>
 #[derive(
-    Debug,
-    PartialEq,
-    PartialOrd,
-    Clone,
-    Copy,
-    Default,
-    NumBytes,
-    Read,
-    Write,
-    Serialize,
-    Deserialize,
+    Debug, PartialEq, PartialOrd, Clone, Copy, Default, NumBytes, Read, Write,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct ExtendedAsset {
     /// The asset
@@ -30,7 +21,6 @@ pub struct ExtendedAsset {
 impl fmt::Display for ExtendedAsset {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use std::ops::Deref;
         write!(f, "{} @ {}", self.quantity, self.contract.deref())
     }
 }
@@ -128,6 +118,7 @@ impl fmt::Display for ExtendedAsset {
 #[cfg(test)]
 mod extended_asset_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::{n, s};
 
     macro_rules! test_to_string {

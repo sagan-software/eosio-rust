@@ -1,4 +1,5 @@
 //! TODO docs
+use core::fmt;
 use serde::{Deserializer, Serializer};
 
 /// TODO docs
@@ -16,10 +17,7 @@ pub struct BoolOrIntegerVisitor;
 impl<'de> serde::de::Visitor<'de> for BoolOrIntegerVisitor {
     type Value = bool;
 
-    fn expecting(
-        &self,
-        formatter: &mut std::fmt::Formatter,
-    ) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a bool or integer")
     }
 
@@ -63,10 +61,7 @@ pub struct F64OrStringVisitor;
 impl<'de> serde::de::Visitor<'de> for F64OrStringVisitor {
     type Value = f64;
 
-    fn expecting(
-        &self,
-        formatter: &mut std::fmt::Formatter,
-    ) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a number or string")
     }
 
@@ -100,10 +95,7 @@ pub struct U64OrStringVisitor;
 impl<'de> serde::de::Visitor<'de> for U64OrStringVisitor {
     type Value = u64;
 
-    fn expecting(
-        &self,
-        formatter: &mut std::fmt::Formatter,
-    ) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a number or string")
     }
 

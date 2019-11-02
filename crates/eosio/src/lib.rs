@@ -1,4 +1,5 @@
 //! TODO docs
+#![no_std]
 #![deny(
     clippy::correctness,
     clippy::indexing_slicing,
@@ -27,13 +28,16 @@
     clippy::trivially_copy_pass_by_ref
 )]
 
+#[macro_use]
+extern crate alloc;
+
 pub use eosio_macros::{action, n, s, table};
 
 mod abi;
 pub use self::abi::*;
 
 mod account;
-pub use self::account::*;
+pub use self::account::AccountName;
 
 mod action;
 pub use self::action::{
@@ -60,21 +64,25 @@ pub use self::crypto::{
     Signature,
 };
 
+#[cfg(feature = "serde")]
 mod json;
+#[cfg(feature = "serde")]
 pub use self::json::*;
 
 #[macro_use]
 mod name;
-pub use self::name::Name;
+pub use self::name::{Name, NAME_LEN_MAX, NAME_UTF8_CHARS};
 
 mod ops;
-pub use self::ops::*;
+pub use self::ops::{
+    CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub,
+};
 
 mod producer_schedule;
 pub use self::producer_schedule::*;
 
 mod resources;
-pub use self::resources::*;
+pub use self::resources::{CpuWeight, NetWeight, RamBytes};
 
 mod symbol;
 pub use self::symbol::{
@@ -91,7 +99,9 @@ mod time;
 pub use self::time::{BlockTimestamp, TimePoint, TimePointSec};
 
 mod transaction;
-pub use self::transaction::*;
+pub use self::transaction::{
+    Transaction, TransactionExtension, TransactionHeader, TransactionId,
+};
 
 mod varint;
 pub use self::varint::{SignedInt, UnsignedInt};

@@ -11,27 +11,15 @@ pub struct capi_public_key {
 }
 impl Default for capi_public_key {
     fn default() -> Self {
-        unsafe { ::std::mem::zeroed() }
+        unsafe { ::core::mem::zeroed() }
     }
 }
-impl ::std::fmt::Debug for capi_public_key {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        write!(
-            f,
-            "capi_public_key {{ data: [{}] }}",
-            self.data
-                .iter()
-                .enumerate()
-                .map(|(i, v)| format!(
-                    "{}{:?}",
-                    if i > 0 { ", " } else { "" },
-                    v
-                ))
-                .collect::<String>()
-        )
+impl ::core::fmt::Debug for capi_public_key {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+        write!(f, "capi_public_key {{ data: [...] }}")
     }
 }
-impl ::std::cmp::PartialEq for capi_public_key {
+impl ::core::cmp::PartialEq for capi_public_key {
     fn eq(&self, other: &capi_public_key) -> bool {
         &self.data[..] == &other.data[..]
     }
@@ -44,27 +32,15 @@ pub struct capi_signature {
 }
 impl Default for capi_signature {
     fn default() -> Self {
-        unsafe { ::std::mem::zeroed() }
+        unsafe { ::core::mem::zeroed() }
     }
 }
-impl ::std::fmt::Debug for capi_signature {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        write!(
-            f,
-            "capi_signature {{ data: [{}] }}",
-            self.data
-                .iter()
-                .enumerate()
-                .map(|(i, v)| format!(
-                    "{}{:?}",
-                    if i > 0 { ", " } else { "" },
-                    v
-                ))
-                .collect::<String>()
-        )
+impl ::core::fmt::Debug for capi_signature {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+        write!(f, "capi_signature {{ data: [...] }}")
     }
 }
-impl ::std::cmp::PartialEq for capi_signature {
+impl ::core::cmp::PartialEq for capi_signature {
     fn eq(&self, other: &capi_signature) -> bool {
         &self.data[..] == &other.data[..]
     }
@@ -93,27 +69,15 @@ pub struct capi_checksum512 {
 }
 impl Default for capi_checksum512 {
     fn default() -> Self {
-        unsafe { ::std::mem::zeroed() }
+        unsafe { ::core::mem::zeroed() }
     }
 }
-impl ::std::fmt::Debug for capi_checksum512 {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        write!(
-            f,
-            "capi_checksum512 {{ hash: [{}] }}",
-            self.hash
-                .iter()
-                .enumerate()
-                .map(|(i, v)| format!(
-                    "{}{:?}",
-                    if i > 0 { ", " } else { "" },
-                    v
-                ))
-                .collect::<String>()
-        )
+impl ::core::fmt::Debug for capi_checksum512 {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+        write!(f, "capi_checksum512 {{ hash: [...] }}")
     }
 }
-impl ::std::cmp::PartialEq for capi_checksum512 {
+impl ::core::cmp::PartialEq for capi_checksum512 {
     fn eq(&self, other: &capi_checksum512) -> bool {
         &self.hash[..] == &other.hash[..]
     }

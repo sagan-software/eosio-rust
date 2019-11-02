@@ -5,15 +5,14 @@ use syn::{parse_macro_input, FnArg, Ident, ItemFn};
 
 pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
-    let ident = input.ident;
-    let decl = input.decl;
-    let inputs = decl.inputs;
-    let vis = input.vis;
+    let ident = input.sig.ident;
+    let inputs = input.sig.inputs;
+    // let vis = input.vis;
     let mut struct_fields = quote!();
     let mut assign_args = quote!();
     for input in inputs.iter() {
         match input {
-            FnArg::Captured(input) => {
+            FnArg::Typed(input) => {
                 let pat = &input.pat;
                 let ty = &input.ty;
                 let ty_str = quote!(#ty).to_string();
@@ -60,7 +59,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         #[derive(Clone, eosio::Read, eosio::Write, eosio::NumBytes)]
         #[cfg_attr(feature = "serde", derive(::serde::Serialize, ::serde::Deserialize))]
         pub struct #struct_ident {
-            #(#struct_fields)*
+            #struct_fields
         }
 
         pub type #action_ident = #struct_ident;
@@ -73,7 +72,7 @@ pub fn expand(_args: TokenStream, input: TokenStream) -> TokenStream {
         #[automatically_derived]
         impl eosio::ActionFn for #struct_ident {
             fn call(self) {
-                #(#assign_args)*
+                #assign_args
                 #block
             }
         }

@@ -1,8 +1,39 @@
 [package]
 name = "eosio-numstr"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
+description = "Basic helper functions to work with EOSIO names and symbols"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+keywords = ["eos", "eosio", "blockchain", "crypto", "dapp"]
+categories = [
+    "cryptography::cryptocurrencies",
+    "algorithms",
+    "encoding",
+    "parsing",
+    "value-formatting"
+]
+repository = "https://github.com/sagan-software/eosio-rust"
+homepage = "https://sagan-software.github.io/eosio-rust/"
+documentation = "https://sagan-software.github.io/eosio-rust/eosio-numstr/"
+include = [
+    "/Cargo.toml",
+    "/src/**/*.rs",
+    "/README.md",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT"
+]
+
+[badges]
+maintenance = { status = "actively-developed" }
+travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
+
+[features]
+alloc = []
+
+[package.metadata."docs.rs"]
+all-features = true
 
 [dev-dependencies]
 criterion = "0.3"

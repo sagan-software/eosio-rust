@@ -1,5 +1,4 @@
-//! TODO module docs.
-
+use alloc::vec::Vec;
 use eosio::{
     AccountName, Action, DataStream, NumBytes, Read, ReadError, Transaction,
     TransactionId, Write, WriteError,
@@ -14,7 +13,7 @@ where
     unsafe { eosio_cdt_sys::eosio_exit(code.into()) }
 }
 
-/// TODO docs.
+/// Sends an inline action
 #[inline]
 pub fn send_inline_action(action: &Action<Vec<u8>>) -> Result<(), WriteError> {
     let size = action.num_bytes();
@@ -26,7 +25,7 @@ pub fn send_inline_action(action: &Action<Vec<u8>>) -> Result<(), WriteError> {
     Ok(())
 }
 
-/// TODO docs.
+/// Sends a context free inline action
 #[inline]
 pub fn send_context_free_inline_action(
     action: &Action<Vec<u8>>,
@@ -40,7 +39,7 @@ pub fn send_context_free_inline_action(
     Ok(())
 }
 
-/// TODO docs
+/// Sends a deferred transaction
 #[inline]
 pub fn send_deferred<P>(
     id: &TransactionId,
@@ -56,7 +55,7 @@ where
     send_deferred_bytes(id, payer, &bytes, replace_existing)
 }
 
-/// TODO docs
+/// Sends a deferred transaction from raw bytes
 #[inline]
 pub fn send_deferred_bytes<P>(
     id: &TransactionId,
@@ -81,7 +80,7 @@ where
     Ok(())
 }
 
-/// TODO docs
+/// Cancels a deferred transaction
 #[must_use]
 #[inline]
 pub fn cancel_deferred(id: &TransactionId) -> bool {
@@ -91,7 +90,7 @@ pub fn cancel_deferred(id: &TransactionId) -> bool {
     result == 1
 }
 
-/// TODO docs
+/// Reads action data
 #[inline]
 pub fn read_action_data<T: Read>() -> Result<T, ReadError> {
     let num_bytes = unsafe { eosio_cdt_sys::action_data_size() };
@@ -105,7 +104,7 @@ pub fn read_action_data<T: Read>() -> Result<T, ReadError> {
     T::read(&bytes, &mut pos)
 }
 
-/// TODO docs
+/// Get a `DataStream` of the current action data
 #[must_use]
 #[inline]
 pub fn current_data_stream() -> DataStream {

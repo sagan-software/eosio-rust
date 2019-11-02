@@ -9,8 +9,7 @@ mod primitives;
 pub use self::data_stream::DataStream;
 pub use eosio_macros::{NumBytes, Read, Write};
 
-use std::error::Error;
-use std::fmt;
+use core::fmt;
 
 /// Count the number of bytes a type is expected to use.
 pub trait NumBytes {
@@ -30,8 +29,6 @@ pub enum ReadError {
     /// Not enough bytes.
     NotEnoughBytes,
 }
-
-impl Error for ReadError {}
 
 impl fmt::Display for ReadError {
     #[inline]
@@ -61,8 +58,6 @@ pub enum WriteError {
     TryFromIntError,
 }
 
-impl Error for WriteError {}
-
 impl fmt::Display for WriteError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -76,6 +71,8 @@ impl fmt::Display for WriteError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ::alloc::string::{String, ToString};
+    use ::alloc::vec::Vec;
 
     macro_rules! test_type {
         ($($i:ident, $t:ty, $e:expr)*) => ($(

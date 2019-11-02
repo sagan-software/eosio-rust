@@ -11,11 +11,13 @@ macro_rules! name_type {
             Hash,
             PartialOrd,
             Ord,
-            serde::Serialize,
-            serde::Deserialize,
             crate::bytes::Read,
             crate::bytes::Write,
             crate::bytes::NumBytes,
+        )]
+        #[cfg_attr(
+            feature = "serde",
+            derive(serde::Serialize, serde::Deserialize)
         )]
         #[__eosio_path = "crate::bytes"]
         pub struct $ident($crate::name::Name);
@@ -37,7 +39,7 @@ macro_rules! name_type {
             }
         }
 
-        impl std::ops::Deref for $ident {
+        impl core::ops::Deref for $ident {
             type Target = $crate::name::Name;
             #[must_use]
             fn deref(&self) -> &Self::Target {
@@ -45,14 +47,14 @@ macro_rules! name_type {
             }
         }
 
-        impl std::convert::AsRef<$crate::name::Name> for $ident {
+        impl core::convert::AsRef<$crate::name::Name> for $ident {
             #[must_use]
             fn as_ref(&self) -> &$crate::name::Name {
                 &self.0
             }
         }
 
-        impl std::convert::AsRef<$ident> for $ident {
+        impl core::convert::AsRef<$ident> for $ident {
             #[must_use]
             fn as_ref(&self) -> &Self {
                 self
@@ -87,7 +89,7 @@ macro_rules! name_type {
             }
         }
 
-        impl std::str::FromStr for $ident {
+        impl core::str::FromStr for $ident {
             type Err = $crate::name::ParseNameError;
             #[inline]
             fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -96,11 +98,11 @@ macro_rules! name_type {
             }
         }
 
-        impl std::convert::TryFrom<&str> for $ident {
+        impl core::convert::TryFrom<&str> for $ident {
             type Error = $crate::name::ParseNameError;
             #[inline]
             fn try_from(value: &str) -> Result<Self, Self::Error> {
-                std::str::FromStr::from_str(value)
+                core::str::FromStr::from_str(value)
             }
         }
     };

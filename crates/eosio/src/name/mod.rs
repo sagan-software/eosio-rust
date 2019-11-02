@@ -4,46 +4,12 @@ mod name_type;
 pub use eosio_numstr::{ParseNameError, NAME_LEN_MAX, NAME_UTF8_CHARS};
 
 use crate::bytes::{NumBytes, Read, Write};
+use alloc::string::{String, ToString};
+use core::convert::TryFrom;
+use core::fmt;
+use core::marker::PhantomData;
+use core::str::FromStr;
 use eosio_numstr::{name_from_str, name_to_string};
-use std::convert::TryFrom;
-use std::fmt;
-use std::str::FromStr;
-
-/// TODO docs
-struct NameVisitor<
-    T: FromStr<Err = ParseNameError> + From<u64> + std::fmt::Display,
->(std::marker::PhantomData<T>);
-
-impl<'de, T> serde::de::Visitor<'de> for NameVisitor<T>
-where
-    T: FromStr<Err = ParseNameError> + From<u64> + std::fmt::Display,
-{
-    type Value = T;
-
-    #[inline]
-    fn expecting(
-        &self,
-        formatter: &mut ::std::fmt::Formatter,
-    ) -> ::std::fmt::Result {
-        formatter.write_str("an EOSIO name string or number")
-    }
-
-    #[inline]
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: ::serde::de::Error,
-    {
-        value.parse::<T>().map_err(serde::de::Error::custom)
-    }
-
-    #[inline]
-    fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(value.into())
-    }
-}
 
 /// TODO docs
 /// TODO use `NonZeroU64`
@@ -153,17 +119,53 @@ impl PartialEq<String> for Name {
     }
 }
 
+/// TODO docs
+#[cfg(feature = "serde")]
+struct NameVisitor<T: FromStr<Err = ParseNameError> + From<u64> + fmt::Display>(
+    PhantomData<T>,
+);
+
+#[cfg(feature = "serde")]
+impl<'de, T> serde::de::Visitor<'de> for NameVisitor<T>
+where
+    T: FromStr<Err = ParseNameError> + From<u64> + fmt::Display,
+{
+    type Value = T;
+
+    #[inline]
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("an EOSIO name string or number")
+    }
+
+    #[inline]
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: ::serde::de::Error,
+    {
+        value.parse::<T>().map_err(serde::de::Error::custom)
+    }
+
+    #[inline]
+    fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        Ok(value.into())
+    }
+}
+
+#[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for Name {
     #[inline]
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        deserializer
-            .deserialize_any(NameVisitor(std::marker::PhantomData::<Self>))
+        deserializer.deserialize_any(NameVisitor(PhantomData::<Self>))
     }
 }
 
+#[cfg(feature = "serde")]
 impl serde::Serialize for Name {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

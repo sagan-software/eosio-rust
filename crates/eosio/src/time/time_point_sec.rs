@@ -1,7 +1,8 @@
 use super::TimePoint;
 use crate::bytes::{NumBytes, Read, Write};
-use serde::Serialize;
-use std::convert::TryInto;
+use core::convert::TryInto;
+use core::fmt;
+use core::ops::Add;
 
 /// A lower resolution `TimePoint` accurate only to seconds from 1970
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L79-L132>
@@ -18,8 +19,8 @@ use std::convert::TryInto;
     Copy,
     Hash,
     Default,
-    Serialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct TimePointSec(u32);
 
@@ -39,49 +40,49 @@ impl TimePointSec {
     }
 }
 
-/// TODO docs
+#[cfg(feature = "serde")]
 struct TimePointSecVisitor;
 
-impl<'de> ::serde::de::Visitor<'de> for TimePointSecVisitor {
+#[cfg(feature = "serde")]
+impl<'de> serde::de::Visitor<'de> for TimePointSecVisitor {
     type Value = TimePointSec;
 
     #[inline]
-    fn expecting(
-        &self,
-        formatter: &mut ::std::fmt::Formatter,
-    ) -> ::std::fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a second timestamp as a number or string")
     }
 
+    #[cfg(feature = "chrono")]
     #[inline]
     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
     where
-        E: ::serde::de::Error,
+        E: serde::de::Error,
     {
         match value.parse::<chrono::NaiveDateTime>() {
             Ok(n) => n
                 .timestamp()
                 .try_into()
                 .map(TimePointSec)
-                .map_err(::serde::de::Error::custom),
-            Err(e) => Err(::serde::de::Error::custom(e)),
+                .map_err(serde::de::Error::custom),
+            Err(e) => Err(serde::de::Error::custom(e)),
         }
     }
 
     #[inline]
     fn visit_u32<E>(self, value: u32) -> Result<Self::Value, E>
     where
-        E: ::serde::de::Error,
+        E: serde::de::Error,
     {
         Ok(TimePointSec(value))
     }
 }
 
-impl<'de> ::serde::de::Deserialize<'de> for TimePointSec {
+#[cfg(feature = "serde")]
+impl<'de> serde::de::Deserialize<'de> for TimePointSec {
     #[inline]
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: ::serde::de::Deserializer<'de>,
+        D: serde::de::Deserializer<'de>,
     {
         deserializer.deserialize_any(TimePointSecVisitor)
     }
@@ -111,7 +112,7 @@ impl From<TimePoint> for TimePointSec {
     }
 }
 
-impl std::ops::Add<u32> for TimePointSec {
+impl Add<u32> for TimePointSec {
     type Output = Self;
 
     #[must_use]
@@ -120,7 +121,7 @@ impl std::ops::Add<u32> for TimePointSec {
     }
 }
 
-impl std::ops::Add<TimePointSec> for u32 {
+impl Add<TimePointSec> for u32 {
     type Output = TimePointSec;
 
     #[must_use]

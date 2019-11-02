@@ -1,6 +1,6 @@
 [package]
 name = "eosio-cdt"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 license = "MIT OR Apache-2.0"
 description = "Idiomatic Rust bindings for EOSIO smart contracts."
@@ -28,5 +28,5 @@ maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
 [dependencies]
-eosio = { path = "../eosio" }
-eosio-cdt-sys = { path = "../eosio-cdt-sys" }
+eosio = { version = "0.3", path = "../eosio" }
+eosio-cdt-sys = { version = "0.3", path = "../eosio-cdt-sys" }

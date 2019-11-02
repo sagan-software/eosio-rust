@@ -5,11 +5,11 @@ pub trait TableCursor<T>: IntoIterator
 where
     T: Table,
 {
-    /// TODO docs
+    /// Read and deserialize the current table row
     fn get(&self) -> Result<T::Row, ReadError>;
-    /// TODO docs
+    /// Erase the current row
     fn erase(&self) -> Result<T::Row, ReadError>;
-    /// TODO docs
+    /// Modify the current row
     fn modify(
         &self,
         payer: Option<AccountName>,
@@ -22,17 +22,17 @@ pub trait TableIndex<'a, K, T>
 where
     T: Table + 'a,
 {
-    /// TODO docs
+    /// The kind of cursor this table index uses
     type Cursor: TableCursor<T> + 'a;
-    /// TODO docs
+    /// Returns the account name of the smart contract
     fn code(&'a self) -> AccountName;
-    /// TODO docs
+    /// Returns the table scope
     fn scope(&'a self) -> ScopeName;
-    /// TODO docs
+    /// Returns a cursor pointing to the first row that matches a key
     fn lower_bound<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor>;
-    /// TODO docs
+    /// Returns a cursor pointing to the last row that matches a key
     fn upper_bound<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor>;
-    /// TODO docs
+    /// Inserts a new row into the table
     fn emplace(
         &'a self,
         payer: AccountName,

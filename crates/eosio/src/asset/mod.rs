@@ -4,31 +4,22 @@ pub use self::extended_asset::ExtendedAsset;
 use crate::bytes::{NumBytes, Read, Write};
 use crate::ops::{CheckedAdd, CheckedDiv, CheckedMul, CheckedRem, CheckedSub};
 use crate::symbol::{ParseSymbolError, Symbol};
-use eosio_numstr::{symbol_from_chars, SYMBOL_LEN_MAX};
-use serde::{Deserialize, Serialize, Serializer};
-use std::convert::TryFrom;
-use std::error::Error;
-use std::fmt;
-use std::ops::{
+use alloc::string::{String, ToString};
+use core::convert::TryFrom;
+use core::fmt;
+use core::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub,
     SubAssign,
 };
-use std::str::FromStr;
+use core::str::FromStr;
+use eosio_numstr::{symbol_from_chars, SYMBOL_LEN_MAX};
 
 /// Stores information for owner of asset
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/asset.hpp#L18-L369>
 #[derive(
-    Debug,
-    PartialEq,
-    PartialOrd,
-    Clone,
-    Copy,
-    Default,
-    Read,
-    Write,
-    NumBytes,
-    Deserialize,
+    Debug, PartialEq, PartialOrd, Clone, Copy, Default, Read, Write, NumBytes,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct Asset {
     /// The amount of the asset
@@ -99,8 +90,6 @@ impl fmt::Display for ParseAssetError {
         }
     }
 }
-
-impl Error for ParseAssetError {}
 
 impl From<ParseSymbolError> for ParseAssetError {
     #[inline]
@@ -203,11 +192,12 @@ impl TryFrom<String> for Asset {
     }
 }
 
-impl Serialize for Asset {
+#[cfg(feature = "serde")]
+impl serde::Serialize for Asset {
     #[inline]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer,
+        S: serde::Serializer,
     {
         let s = self.to_string();
         serializer.serialize_str(s.as_str())
@@ -234,8 +224,6 @@ impl fmt::Display for AssetOpError {
     }
 }
 
-impl Error for AssetOpError {}
-
 /// TODO docs
 #[derive(Debug, Clone, Copy)]
 pub enum AssetDivOpError {
@@ -258,8 +246,6 @@ impl fmt::Display for AssetDivOpError {
         write!(f, "{}", msg)
     }
 }
-
-impl Error for AssetDivOpError {}
 
 macro_rules! impl_op {
     ($($checked_trait:ident, $checked_error:ident, $checked_fn:ident, $op_trait:ident, $op_fn:ident, $assign_trait:ident, $assign_fn:ident)*) => ($(
@@ -398,6 +384,7 @@ impl_op! {
 #[cfg(test)]
 mod asset_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::s;
 
     macro_rules! test_to_string {

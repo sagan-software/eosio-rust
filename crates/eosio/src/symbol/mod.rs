@@ -5,12 +5,12 @@ mod symbol_code;
 pub use self::{extended_symbol::ExtendedSymbol, symbol_code::SymbolCode};
 
 use crate::bytes::{NumBytes, Read, Write};
+use alloc::string::String;
+use core::convert::TryFrom;
+use core::fmt;
+use core::str::FromStr;
 use eosio_numstr::{symbol_code, symbol_from_chars, symbol_precision};
 pub use eosio_numstr::{ParseSymbolError, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
-use serde::{Deserialize, Serialize};
-use std::convert::TryFrom;
-use std::fmt;
-use std::str::FromStr;
 
 /// Stores information about a symbol, the symbol can be 7 characters long.
 #[derive(
@@ -26,9 +26,8 @@ use std::str::FromStr;
     Hash,
     PartialOrd,
     Ord,
-    Serialize,
-    Deserialize,
 )]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[__eosio_path = "crate::bytes"]
 pub struct Symbol(u64);
 
@@ -153,6 +152,7 @@ impl PartialEq<u64> for Symbol {
 #[cfg(test)]
 mod symbol_code_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::s;
     use eosio_numstr::symbol_code;
 
@@ -212,6 +212,7 @@ mod symbol_code_tests {
 #[cfg(test)]
 mod symbol_tests {
     use super::*;
+    use alloc::string::ToString;
     use eosio_macros::s;
 
     #[test]
@@ -252,7 +253,7 @@ mod symbol_tests {
 
     #[test]
     fn from_str() {
-        use std::str::FromStr;
+        use core::str::FromStr;
 
         fn test_ok(input: &str, expected: u64) {
             let ok = Ok(expected.into());
@@ -281,7 +282,7 @@ mod symbol_tests {
 
     #[test]
     fn code_from_str() {
-        use std::str::FromStr;
+        use core::str::FromStr;
 
         fn test_ok(input: &str, expected: u64) {
             let ok = Ok(Symbol::from(expected).code());
