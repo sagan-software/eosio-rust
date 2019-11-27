@@ -20,7 +20,7 @@ use core::num::TryFromIntError;
     Hash,
     Default,
 )]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct TimePoint(i64);
 
 impl TimePoint {

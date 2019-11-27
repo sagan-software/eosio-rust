@@ -15,8 +15,7 @@ pub struct BidRefund {
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L84-L108>
 #[derive(Serialize, Deserialize, Table, Read, Write, NumBytes)]
-#[table_name = "global"]
-#[singleton]
+#[eosio(name = "global", singleton)]
 pub struct EosioGlobalState {
     pub blockchain_parameters: BlockchainParameters,
     #[serde(deserialize_with = "eosio::u64_or_string")]
@@ -38,9 +37,8 @@ pub struct EosioGlobalState {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L110-L124>
-#[table_name = "global2"]
-#[singleton]
 #[derive(Serialize, Deserialize, Table, Read, Write, NumBytes)]
+#[eosio(name = "global2", singleton)]
 pub struct EosioGlobalState2 {
     pub new_ram_per_block: u16,
     pub last_ram_increase: BlockTimestamp,
@@ -51,9 +49,8 @@ pub struct EosioGlobalState2 {
 }
 
 /// <https://github.com/EOSIO/eosio.contracts/blob/c046863a65d7e98424312ee8009f0acb493e6231/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L126-L132>
-#[table_name = "global3"]
-#[singleton]
 #[derive(Serialize, Deserialize, Table, Read, Write, NumBytes)]
+#[eosio(name = "global3", singleton)]
 pub struct EosioGlobalState3 {
     pub last_vpay_state_update: TimePoint,
     #[serde(deserialize_with = "eosio::f64_or_string")]
@@ -179,20 +176,20 @@ pub struct RexOrderOutcome {
     pub stake_change: Asset,
 }
 
-pub const ACTIVE_PERMISSION: PermissionName = PermissionName::new(n!(active));
-pub const TOKEN_ACCOUNT: AccountName = AccountName::new(n!(eosio.token));
-pub const RAM_ACCOUNT: AccountName = AccountName::new(n!(eosio.ram));
-pub const RAMFEE_ACCOUNT: AccountName = AccountName::new(n!(eosio.ramfee));
-pub const STAKE_ACCOUNT: AccountName = AccountName::new(n!(eosio.stake));
-pub const BPAY_ACCOUNT: AccountName = AccountName::new(n!(eosio.bpay));
-pub const VPAY_ACCOUNT: AccountName = AccountName::new(n!(eosio.vpay));
-pub const NAMES_ACCOUNT: AccountName = AccountName::new(n!(eosio.names));
-pub const SAVING_ACCOUNT: AccountName = AccountName::new(n!(eosio.saving));
-pub const REX_ACCOUNT: AccountName = AccountName::new(n!(eosio.rex));
-pub const NULL_ACCOUNT: AccountName = AccountName::new(n!(eosio.null));
-pub const RAMCORE_SYMBOL: Symbol = Symbol::new(s!(4, RAMCORE));
-pub const RAM_SYMBOL: Symbol = Symbol::new(s!(0, RAM));
-pub const REX_SYMBOL: Symbol = Symbol::new(s!(4, REX));
+pub const ACTIVE_PERMISSION: PermissionName = PermissionName::new(n!("active"));
+pub const TOKEN_ACCOUNT: AccountName = AccountName::new(n!("eosio.token"));
+pub const RAM_ACCOUNT: AccountName = AccountName::new(n!("eosio.ram"));
+pub const RAMFEE_ACCOUNT: AccountName = AccountName::new(n!("eosio.ramfee"));
+pub const STAKE_ACCOUNT: AccountName = AccountName::new(n!("eosio.stake"));
+pub const BPAY_ACCOUNT: AccountName = AccountName::new(n!("eosio.bpay"));
+pub const VPAY_ACCOUNT: AccountName = AccountName::new(n!("eosio.vpay"));
+pub const NAMES_ACCOUNT: AccountName = AccountName::new(n!("eosio.names"));
+pub const SAVING_ACCOUNT: AccountName = AccountName::new(n!("eosio.saving"));
+pub const REX_ACCOUNT: AccountName = AccountName::new(n!("eosio.rex"));
+pub const NULL_ACCOUNT: AccountName = AccountName::new(n!("eosio.null"));
+pub const RAMCORE_SYMBOL: Symbol = Symbol::new(s!(4, "RAMCORE"));
+pub const RAM_SYMBOL: Symbol = Symbol::new(s!(0, "RAM"));
+pub const REX_SYMBOL: Symbol = Symbol::new(s!(4, "REX"));
 
 pub fn init(version: UnsignedInt, core: Symbol) {}
 

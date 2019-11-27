@@ -8,7 +8,7 @@ pub use eosio_numstr::{ParseSymbolError, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
 /// Extended asset which stores the information of the owner of the symbol
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L372-L450>
 #[derive(Debug, PartialEq, Clone, Copy, Default, Read, Write, NumBytes)]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct ExtendedSymbol {
     /// The symbol
     pub symbol: Symbol,
@@ -44,18 +44,18 @@ mod extended_symbol_tests {
 
     test_to_string! {
         to_string,
-        s!(4, EOS),
-        n!(eosio.token),
+        s!(4, "EOS"),
+        n!("eosio.token"),
         "4,EOS@eosio.token"
 
         to_string_zero_precision,
-        s!(0, TST),
-        n!(test),
+        s!(0, "TST"),
+        n!("test"),
         "0,TST@test"
 
         to_string_one_precision,
-        s!(1, TGFT),
-        n!(greatfiltert),
+        s!(1, "TGFT"),
+        n!("greatfiltert"),
         "1,TGFT@greatfiltert"
     }
 }

@@ -8,7 +8,7 @@ macro_rules! key_type {
         /// EOSIO Public Key
         /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/crypto.hpp#L22-L48>
         #[derive(Read, Write, NumBytes, Clone)]
-        #[__eosio_path = "crate::bytes"]
+        #[eosio(crate_path = "crate::bytes")]
         pub struct $ident {
             /// Type of the public key, could be either K1 or R1
             pub type_: UnsignedInt,
@@ -61,13 +61,13 @@ key_type!(Signature, 66);
 
 /// TODO docs
 #[derive(Read, Write, NumBytes, Clone)]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct PrivateKey(String);
 
 /// Maps producer with its signing key, used for producer schedule
 /// <https://github.com/EOSIO/eosio.cdt/blob/796ff8bee9a0fc864f665a0a4d018e0ff18ac383/libraries/eosiolib/contracts/eosio/producer_schedule.hpp#L15-L45>
 #[derive(Read, Write, NumBytes, Clone, Default)]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct ProducerKey {
     /// Name of the producer
     pub producer_name: AccountName,

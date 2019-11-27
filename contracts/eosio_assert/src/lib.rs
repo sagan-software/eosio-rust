@@ -33,7 +33,7 @@ pub fn setchain(
     _chain_name: Ignore<String>,
     _icon: Ignore<Checksum256>,
 ) {
-    require_auth(n!(eosio));
+    require_auth(n!("eosio"));
 }
 
 // #[eosio::action("add.manifest")]
@@ -43,7 +43,6 @@ pub fn add_manifest(
     appmeta: Ignore<String>,
     whitelist: Ignore<Vec<ContractAction>>,
 ) {
-
 }
 
 // #[eosio::action("del.manifest")]
@@ -56,5 +55,4 @@ pub fn require(
     actions: Vec<ContractAction>,
     abi_hashes: Vec<Checksum256>,
 ) {
-
 }

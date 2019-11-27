@@ -20,96 +20,80 @@ mod derive_num_bytes;
 mod derive_read;
 mod derive_table;
 mod derive_write;
+mod internal;
 mod n;
 mod s;
 mod table;
 
 use crate::proc_macro::TokenStream;
-use proc_macro2::Span;
 use proc_macro_hack::proc_macro_hack;
-use syn::{DeriveInput, Lit, LitStr, Meta, Path};
+use quote::quote;
+use syn::{parse_macro_input, DeriveInput, ItemFn};
 
 #[proc_macro_hack]
 pub fn n(input: TokenStream) -> TokenStream {
-    crate::n::expand(input)
+    use crate::n::EosioName;
+    let item = parse_macro_input!(input as EosioName);
+    quote!(#item).into()
 }
 
 #[proc_macro_hack]
 pub fn s(input: TokenStream) -> TokenStream {
-    crate::s::expand(input)
+    use crate::s::EosioSymbol;
+    let item = parse_macro_input!(input as EosioSymbol);
+    quote!(#item).into()
 }
 
 #[proc_macro_attribute]
 pub fn action(args: TokenStream, input: TokenStream) -> TokenStream {
-    crate::action::expand(args, input)
+    use crate::action::{ActionArgs, ActionFn};
+    let args = parse_macro_input!(args as ActionArgs);
+    let item = parse_macro_input!(input as ItemFn);
+    let action = ActionFn::new(args, item);
+    quote!(#action).into()
 }
 
 #[proc_macro_attribute]
 pub fn table(args: TokenStream, input: TokenStream) -> TokenStream {
-    crate::table::expand(args, input)
+    use crate::table::{Table, TableArgs};
+    let args = parse_macro_input!(args as TableArgs);
+    let input = parse_macro_input!(input as DeriveInput);
+    let table = Table::new(args, input);
+    quote!(#table).into()
 }
 
 /// Derive the `Write` trait
 #[inline]
-#[proc_macro_derive(Write, attributes(__eosio_path))]
+#[proc_macro_derive(Write, attributes(eosio))]
 pub fn derive_write(input: TokenStream) -> TokenStream {
-    crate::derive_write::expand(input)
+    use crate::derive_write::DeriveWrite;
+    let item = parse_macro_input!(input as DeriveWrite);
+    quote!(#item).into()
 }
 
 /// Derive the `Read` trait
 #[inline]
-#[proc_macro_derive(Read, attributes(__eosio_path))]
+#[proc_macro_derive(Read, attributes(eosio))]
 pub fn derive_read(input: TokenStream) -> TokenStream {
-    crate::derive_read::expand(input)
+    use crate::derive_read::DeriveRead;
+    let item = parse_macro_input!(input as DeriveRead);
+    quote!(#item).into()
 }
 
 /// Derive the `NumBytes` trait
 #[inline]
-#[proc_macro_derive(NumBytes, attributes(__eosio_path))]
+#[proc_macro_derive(NumBytes, attributes(eosio))]
 pub fn derive_num_bytes(input: TokenStream) -> TokenStream {
-    crate::derive_num_bytes::expand(input)
+    use crate::derive_num_bytes::DeriveNumBytes;
+    let item = parse_macro_input!(input as DeriveNumBytes);
+    quote!(#item).into()
 }
 
 /// TODO docs
 #[inline]
-#[proc_macro_derive(
-    Table,
-    attributes(table_name, primary, secondary, singleton)
-)]
+#[proc_macro_derive(Table, attributes(eosio))]
 pub fn derive_table(input: TokenStream) -> TokenStream {
-    crate::derive_table::expand(input)
-}
-
-/// The default root path using the `eosio` crate.
-const DEFAULT_ROOT_PATH: &str = "::eosio";
-
-/// Get the root path for types/traits.
-pub(crate) fn root_path(input: &DeriveInput) -> Path {
-    let litstr = input
-        .attrs
-        .iter()
-        .fold(None, |acc, attr| match attr.parse_meta() {
-            Ok(meta) => {
-                let name = match meta.path().get_ident() {
-                    Some(name) => name,
-                    None => return acc,
-                };
-                if name == "__eosio_path" {
-                    match meta {
-                        Meta::NameValue(meta) => match meta.lit {
-                            Lit::Str(s) => Some(s),
-                            _ => panic!("eosio_path must be a lit str"),
-                        },
-                        _ => acc,
-                    }
-                } else {
-                    acc
-                }
-            }
-            Err(_) => acc,
-        })
-        .unwrap_or_else(|| LitStr::new(DEFAULT_ROOT_PATH, Span::call_site()));
-    litstr
-        .parse_with(Path::parse_mod_style)
-        .expect("bad path for __eosio_path")
+    use crate::derive_table::DeriveTable;
+    let item = parse_macro_input!(input as DeriveTable);
+    quote!(#item).into()
 }

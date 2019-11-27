@@ -21,7 +21,7 @@ use core::ops::Add;
     Default,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct TimePointSec(u32);
 
 impl TimePointSec {

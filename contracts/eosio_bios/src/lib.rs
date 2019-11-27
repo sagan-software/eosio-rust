@@ -165,9 +165,9 @@ pub fn setabi(account: AccountName, abi: Vec<u8>) {
 }
 
 #[derive(Default, Table, Read, Write, NumBytes)]
-#[table_name = "abihash"]
+#[eosio(name = "abihash")]
 pub struct AbiHash {
-    #[primary]
+    #[eosio(primary_key)]
     pub owner: AccountName,
     pub hash: Checksum256,
 }

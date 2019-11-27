@@ -1,5 +1,5 @@
-error: expected literal
+error: expected integer literal
  --> $DIR/symbol-bad-format.rs:6:16
   |
-6 |     let _ = s!(EOS);
-  |                ^^^
+6 |     let _ = s!("EOS");
+  |                ^^^^^

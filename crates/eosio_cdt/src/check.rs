@@ -19,3 +19,43 @@ where
         unsafe { eosio_cdt_sys::eosio_assert_code(0, code.into()) }
     }
 }
+
+pub trait Check {
+    type Output;
+    fn check(self, msg: &str) -> Self::Output;
+}
+
+impl<T, E> Check for Result<T, E> {
+    type Output = T;
+    #[inline]
+    fn check(self, msg: &str) -> Self::Output {
+        if let Ok(t) = self {
+            t
+        } else {
+            check(false, msg);
+            unreachable!();
+        }
+    }
+}
+
+impl<T> Check for Option<T> {
+    type Output = T;
+    #[inline]
+    fn check(self, msg: &str) -> Self::Output {
+        if let Some(t) = self {
+            t
+        } else {
+            check(false, msg);
+            unreachable!();
+        }
+    }
+}
+
+impl Check for bool {
+    type Output = Self;
+    #[inline]
+    fn check(self, msg: &str) -> Self::Output {
+        check(self, msg);
+        self
+    }
+}

@@ -16,7 +16,7 @@ name_type!(PermissionName);
 /// the authorization levels.
 #[derive(Clone, Debug, Read, Write, NumBytes, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct Action<T> {
     /// Name of the account the action is intended for
     pub account: AccountName,
@@ -74,7 +74,7 @@ pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
     Ord,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct PermissionLevel {
     /// TODO docs
     pub actor: AccountName,
@@ -162,8 +162,8 @@ mod permission_level_tests {
     #[test]
     fn test_from_str_ok() {
         let ok = Ok(PermissionLevel {
-            actor: AccountName::new(n!(hello)),
-            permission: PermissionName::new(n!(world)),
+            actor: AccountName::new(n!("hello")),
+            permission: PermissionName::new(n!("world")),
         });
         assert_eq!(PermissionLevel::from_str("hello@world"), ok);
         assert_eq!(PermissionLevel::try_from("hello@world"), ok);
@@ -215,8 +215,8 @@ mod permission_level_tests {
     #[test]
     fn test_display() {
         let p = PermissionLevel {
-            actor: AccountName::new(n!(hello)),
-            permission: PermissionName::new(n!(world)),
+            actor: AccountName::new(n!("hello")),
+            permission: PermissionName::new(n!("world")),
         };
         assert_eq!("hello@world", p.to_string());
     }

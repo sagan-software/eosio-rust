@@ -3,16 +3,16 @@ use eosio_cdt::*;
 
 eosio_cdt::abi!(add, update, erase, like, likezip);
 
-#[eosio::table(address)]
+#[eosio::table("address")]
 struct Address {
-    #[primary]
+    #[eosio(primary_key)]
     account: AccountName,
     first_name: String,
     last_name: String,
     street: String,
     city: String,
     state: String,
-    #[secondary]
+    #[eosio(secondary_key)]
     zip: u32,
     liked: u64,
 }

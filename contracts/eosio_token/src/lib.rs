@@ -7,7 +7,7 @@ pub struct Account {
 }
 
 impl Table for Account {
-    const NAME: TableName = TableName::new(n!(accounts));
+    const NAME: TableName = TableName::new(n!("accounts"));
 
     type Row = Self;
 
@@ -24,7 +24,7 @@ pub struct CurrencyStats {
 }
 
 impl Table for CurrencyStats {
-    const NAME: TableName = TableName::new(n!(stat));
+    const NAME: TableName = TableName::new(n!("stat"));
 
     type Row = Self;
 
@@ -75,7 +75,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     let mut st = cursor.get().expect("read");
     assert!(
         to == st.issuer,
-        "tokens can only be issued to issuer account"
+        "tokens can only be issued to issuer account",
     );
     require_auth(st.issuer);
     assert!(quantity.is_valid(), "invalid quantity");
@@ -105,7 +105,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             current_receiver(),
             vec![PermissionLevel {
                 actor: st.issuer,
-                permission: n!(active).into(),
+                permission: n!("active").into(),
             }],
         ))
         .expect("failed to send inline action");

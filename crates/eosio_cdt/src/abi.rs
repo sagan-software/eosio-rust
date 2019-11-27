@@ -13,7 +13,7 @@ macro_rules! abi {
                     .unwrap_or_else(|| panic_info.to_string());
                 $crate::check(false, &message);
             }));
-            if code == eosio::n!(eosio) && action == eosio::n!(onerror) {
+            if code == eosio::n!("eosio") && action == eosio::n!("onerror") {
                 panic!(
                     "onerror action's are only valid from the \"eosio\" system account"
                 )

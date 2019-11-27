@@ -1,78 +1,103 @@
 //! Derive `NumBytes`.
-use crate::proc_macro::TokenStream;
-use quote::{quote, quote_spanned};
+use crate::internal::get_root_path;
+use proc_macro2::TokenStream;
+use quote::{quote, quote_spanned, ToTokens};
+use syn::parse::{Parse, ParseStream, Result as ParseResult};
 use syn::spanned::Spanned;
 use syn::{
-    parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam,
-    Index,
+    parse_quote, Data, DeriveInput, Fields, GenericParam, Generics, Ident,
+    Index, Path,
 };
 
-/// Expand input
-pub fn expand(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    let root = crate::root_path(&input);
+pub struct DeriveNumBytes {
+    ident: Ident,
+    generics: Generics,
+    data: Data,
+    root_path: Path,
+}
 
-    let name = input.ident;
-
-    let mut generics = input.generics;
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(NumBytes));
-        }
-    }
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-
-    let call_site = ::proc_macro2::Span::call_site();
-    let var = quote!(self);
-    let add_to_count = match input.data {
-        Data::Struct(ref data) => match data.fields {
-            Fields::Named(ref fields) => {
-                let recurse = fields.named.iter().map(|f| {
-                    let name = &f.ident;
-                    let access = quote_spanned!(call_site => #var.#name);
-                    quote_spanned! { f.span() =>
-                        count += #root::NumBytes::num_bytes(&#access);
-                    }
-                });
-                quote! {
-                    #(#recurse)*
-                }
+impl Parse for DeriveNumBytes {
+    fn parse(input: ParseStream) -> ParseResult<Self> {
+        let DeriveInput {
+            attrs,
+            ident,
+            mut generics,
+            data,
+            ..
+        } = input.parse()?;
+        let root_path = get_root_path(&attrs);
+        for param in &mut generics.params {
+            if let GenericParam::Type(ref mut type_param) = *param {
+                type_param.bounds.push(parse_quote!(#root_path::NumBytes));
             }
-            Fields::Unnamed(ref fields) => {
-                let recurse =
-                    fields.unnamed.iter().enumerate().map(|(i, f)| {
-                        let index = Index {
-                            index: i as u32,
-                            span: call_site,
-                        };
-                        let access = quote_spanned!(call_site => #var.#index);
+        }
+        Ok(Self {
+            ident,
+            generics,
+            data,
+            root_path,
+        })
+    }
+}
+
+impl ToTokens for DeriveNumBytes {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let name = &self.ident;
+        let (impl_generics, ty_generics, where_clause) =
+            &self.generics.split_for_impl();
+        let call_site = ::proc_macro2::Span::call_site();
+        let var = quote!(self);
+        let root = &self.root_path;
+        let add_to_count = match &self.data {
+            Data::Struct(ref data) => match data.fields {
+                Fields::Named(ref fields) => {
+                    let recurse = fields.named.iter().map(|f| {
+                        let name = &f.ident;
+                        let access = quote_spanned!(call_site => #var.#name);
                         quote_spanned! { f.span() =>
                             count += #root::NumBytes::num_bytes(&#access);
                         }
                     });
-                quote! {
-                    #(#recurse)*
+                    quote! {
+                        #(#recurse)*
+                    }
+                }
+                Fields::Unnamed(ref fields) => {
+                    let recurse =
+                        fields.unnamed.iter().enumerate().map(|(i, f)| {
+                            let index = Index {
+                                index: i as u32,
+                                span: call_site,
+                            };
+                            let access =
+                                quote_spanned!(call_site => #var.#index);
+                            quote_spanned! { f.span() =>
+                                count += #root::NumBytes::num_bytes(&#access);
+                            }
+                        });
+                    quote! {
+                        #(#recurse)*
+                    }
+                }
+                Fields::Unit => {
+                    quote! {}
+                }
+            },
+            Data::Enum(_) | Data::Union(_) => unimplemented!(),
+        };
+
+        let expanded = quote! {
+            #[automatically_derived]
+            #[allow(unused_qualifications)]
+            impl #impl_generics #root::NumBytes for #name #ty_generics #where_clause {
+                #[inline]
+                fn num_bytes(&self) -> usize {
+                    let mut count = 0;
+                    #add_to_count
+                    count
                 }
             }
-            Fields::Unit => {
-                quote! {}
-            }
-        },
-        Data::Enum(_) | Data::Union(_) => unimplemented!(),
-    };
-
-    let expanded = quote! {
-        #[automatically_derived]
-        #[allow(unused_qualifications)]
-        impl #impl_generics #root::NumBytes for #name #ty_generics #where_clause {
-            #[inline]
-            fn num_bytes(&self) -> usize {
-                let mut count = 0;
-                #add_to_count
-                count
-            }
-        }
-    };
-
-    TokenStream::from(expanded)
+        };
+        expanded.to_tokens(tokens);
+    }
 }

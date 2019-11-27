@@ -7,7 +7,7 @@ use alloc::string::String;
     Read, Write, NumBytes, Clone, Default, Debug, PartialEq, PartialOrd,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct ChainId(String);
 
 /// Tunable blockchain configuration that can be changed via consensus
@@ -15,7 +15,7 @@ pub struct ChainId(String);
     Read, Write, NumBytes, Clone, Default, Debug, PartialEq, PartialOrd,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct BlockchainParameters {
     /// The maximum net usage in instructions for a block
     pub max_block_net_usage: u64,

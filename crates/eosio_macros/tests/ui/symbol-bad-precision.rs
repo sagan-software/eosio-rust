@@ -3,5 +3,5 @@ extern crate eosio_macros;
 use eosio_macros::s;
 
 fn main() {
-    let _ = s!(256, EOS);
+    let _ = s!(256, "EOS");
 }

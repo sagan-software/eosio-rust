@@ -28,7 +28,7 @@ pub use eosio_numstr::{ParseSymbolError, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
     Ord,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct Symbol(u64);
 
 impl Symbol {
@@ -169,9 +169,9 @@ mod symbol_code_tests {
     }
 
     test_to_string! {
-        to_string, s!(4, EOS), "EOS"
-        to_string_zero_precision, s!(0, TGFT), "TGFT"
-        to_string_nine_precision, s!(9, SYS), "SYS"
+        to_string, s!(4, "EOS"), "EOS"
+        to_string_zero_precision, s!(0, "TGFT"), "TGFT"
+        to_string_nine_precision, s!(9, "SYS"), "SYS"
     }
 
     macro_rules! test_from_str_ok {
@@ -186,9 +186,9 @@ mod symbol_code_tests {
     }
 
     test_from_str_ok! {
-        from_str_ok1, "TST", s!(0, TST)
-        from_str_ok2, "EOS", s!(4, EOS)
-        from_str_ok3, "TGFT", s!(0, TGFT)
+        from_str_ok1, "TST", s!(0, "TST")
+        from_str_ok2, "EOS", s!(4, "EOS")
+        from_str_ok3, "TGFT", s!(0, "TGFT")
     }
 
     macro_rules! test_from_str_err {
@@ -236,9 +236,9 @@ mod symbol_tests {
         fn test(value: u64, expected: &str) {
             assert_eq!(Symbol::from(value).to_string(), expected);
         }
-        test(s!(2, TGFT), "2,TGFT");
-        test(s!(0, TGFT), "0,TGFT");
-        test(s!(4, EOS), "4,EOS");
+        test(s!(2, "TGFT"), "2,TGFT");
+        test(s!(0, "TGFT"), "0,TGFT");
+        test(s!(4, "EOS"), "4,EOS");
     }
 
     #[test]
@@ -246,9 +246,9 @@ mod symbol_tests {
         fn test(value: u64, expected: &str) {
             assert_eq!(Symbol::from(value).code().to_string(), expected);
         }
-        test(s!(4, EOS), "EOS");
-        test(s!(0, TGFT), "TGFT");
-        test(s!(9, SYS), "SYS");
+        test(s!(4, "EOS"), "EOS");
+        test(s!(0, "TGFT"), "TGFT");
+        test(s!(9, "SYS"), "SYS");
     }
 
     #[test]
@@ -269,10 +269,10 @@ mod symbol_tests {
             assert_eq!(Symbol::from_str(input), err);
         }
 
-        test_ok("4,EOS", s!(4, EOS));
-        test_ok("0,TST", s!(0, TST));
-        test_ok("9,TGFT", s!(9, TGFT));
-        test_ok("   4,EOS    ", s!(4, EOS));
+        test_ok("4,EOS", s!(4, "EOS"));
+        test_ok("0,TST", s!(0, "TST"));
+        test_ok("9,TGFT", s!(9, "TGFT"));
+        test_ok("   4,EOS    ", s!(4, "EOS"));
         test_err("4,  EOS", ParseSymbolError::BadChar(' '));
         test_err("   4, EOS    ", ParseSymbolError::BadChar(' '));
         test_err("10,EOS", ParseSymbolError::BadChar('0'));
@@ -296,9 +296,9 @@ mod symbol_tests {
             assert_eq!(SymbolCode::try_from(input), err);
         }
 
-        test_ok("TST", s!(0, TST));
-        test_ok("EOS", s!(4, EOS));
-        test_ok("TGFT", s!(0, TGFT));
+        test_ok("TST", s!(0, "TST"));
+        test_ok("EOS", s!(4, "EOS"));
+        test_ok("TGFT", s!(0, "TGFT"));
         test_err("tst", ParseSymbolError::BadChar('t'));
     }
 }

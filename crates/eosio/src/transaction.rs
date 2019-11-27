@@ -20,7 +20,7 @@ use alloc::vec::Vec;
     Default,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct TransactionExtension(u16, Vec<char>);
 
 /// TODO docs
@@ -38,7 +38,7 @@ pub struct TransactionExtension(u16, Vec<char>);
     Default,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct TransactionHeader {
     /// TODO docs
     pub expiration: TimePointSec,
@@ -57,7 +57,7 @@ pub struct TransactionHeader {
 /// TODO docs
 #[derive(Clone, Debug, Read, Write, NumBytes, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct Transaction<T: Default + Clone> {
     /// TODO docs
     pub header: TransactionHeader,

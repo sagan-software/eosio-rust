@@ -1,7 +1,7 @@
 error: unexpected end of input, name contains invalid character '0'
  --> $DIR/name-bad-char.rs:6:13
   |
-6 |     let _ = n!(test1230);
-  |             ^^^^^^^^^^^^
+6 |     let _ = n!("test1230");
+  |             ^^^^^^^^^^^^^^
   |
   = note: this error originates in a macro outside of the current crate (in Nightly builds, run with -Z external-macro-backtrace for more info)

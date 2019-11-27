@@ -17,7 +17,7 @@ use crate::{NumBytes, Read, Write};
     Hash,
     Default,
 )]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct BlockTimestamp(u32);
 
 impl BlockTimestamp {

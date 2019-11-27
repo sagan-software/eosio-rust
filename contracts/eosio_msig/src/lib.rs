@@ -1,24 +1,24 @@
 use eosio::*;
 
-#[eosio::table(proposal)]
+#[eosio::table("proposal")]
 pub struct Proposal {
-    #[primary]
+    #[eosio(primary_key)]
     pub proposal_name: Name,
     pub packed_transaction: Vec<char>,
 }
 
-#[eosio::table(proposal)]
+#[eosio::table("proposal")]
 pub struct OldApprovalsInfo {
-    #[primary]
+    #[eosio(primary_key)]
     pub proposal_name: Name,
     pub requested_approvals: Vec<PermissionLevel>,
     pub provided_approvals: Vec<PermissionLevel>,
 }
 
-#[eosio::table(approvals2)]
+#[eosio::table("approvals2")]
 pub struct ApprovalsInfo {
     pub version: u8,
-    #[primary]
+    #[eosio(primary_key)]
     pub proposal_name: Name,
     pub requested_approvals: Vec<Approval>,
     pub provided_approvals: Vec<Approval>,
@@ -32,9 +32,9 @@ pub struct Approval {
     pub time: TimePoint,
 }
 
-#[eosio::table(invals)]
+#[eosio::table("invals")]
 pub struct Invalidation {
-    #[primary]
+    #[eosio(primary_key)]
     pub account: AccountName,
     pub last_invalidation_time: TimePoint,
 }

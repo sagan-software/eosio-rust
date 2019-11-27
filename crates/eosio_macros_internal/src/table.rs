@@ -1,27 +1,48 @@
-use crate::proc_macro::TokenStream;
-use proc_macro2::{Ident, Span};
-use quote::quote;
-use syn::{parse_macro_input, DeriveInput, LitStr};
+use proc_macro2::TokenStream as TokenStream2;
+use quote::{quote, ToTokens};
+use syn::parse::{Parse, ParseStream, Result as ParseResult};
+use syn::{DeriveInput, LitStr};
 
-pub fn expand(args: TokenStream, input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    let name = parse_macro_input!(args as Ident);
-    let name =
-        LitStr::new(format!("{}", quote!(#name)).as_str(), Span::call_site());
-    let expanded = quote! {
-        #[derive(
-            Clone,
-            Debug,
-            eosio::NumBytes,
-            eosio::Read,
-            eosio::Write,
-            eosio::Table,
-            PartialEq,
-            PartialOrd
-        )]
-        #[table_name = #name]
-        #input
-    };
-    TokenStream::from(expanded)
-    // input
+pub struct Table {
+    input: DeriveInput,
+    args: TableArgs,
+}
+
+impl Table {
+    pub const fn new(args: TableArgs, input: DeriveInput) -> Self {
+        Self { args, input }
+    }
+}
+
+pub struct TableArgs {
+    name: LitStr,
+}
+
+impl Parse for TableArgs {
+    fn parse(input: ParseStream) -> ParseResult<Self> {
+        let name = input.parse::<LitStr>()?;
+        Ok(Self { name })
+    }
+}
+
+impl ToTokens for Table {
+    fn to_tokens(&self, tokens: &mut TokenStream2) {
+        let input = &self.input;
+        let name = &self.args.name;
+        let expanded = quote! {
+            #[derive(
+                Clone,
+                Debug,
+                eosio::NumBytes,
+                eosio::Read,
+                eosio::Write,
+                eosio::Table,
+                PartialEq,
+                PartialOrd
+            )]
+            #[eosio(table_name = #name)]
+            #input
+        };
+        expanded.to_tokens(tokens);
+    }
 }

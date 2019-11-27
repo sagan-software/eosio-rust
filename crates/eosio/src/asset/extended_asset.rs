@@ -10,7 +10,7 @@ use core::ops::Deref;
     Debug, PartialEq, PartialOrd, Clone, Copy, Default, NumBytes, Read, Write,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct ExtendedAsset {
     /// The asset
     pub quantity: Asset,
@@ -140,32 +140,32 @@ mod extended_asset_tests {
     test_to_string! {
         to_string,
         1_0000,
-        s!(4, EOS),
-        n!(eosio.token),
+        s!(4, "EOS"),
+        n!("eosio.token"),
         "1.0000 EOS @ eosio.token"
 
         to_string_signed,
         -1_0000,
-        s!(4, EOS),
-        n!(eosio.token),
+        s!(4, "EOS"),
+        n!("eosio.token"),
         "-1.0000 EOS @ eosio.token"
 
         to_string_decimal,
         1_0001,
-        s!(4, EOS),
-        n!(eosio.token),
+        s!(4, "EOS"),
+        n!("eosio.token"),
         "1.0001 EOS @ eosio.token"
 
         to_string_zero_precision,
         10_001,
-        s!(0, EOS),
-        n!(eosio.token),
+        s!(0, "EOS"),
+        n!("eosio.token"),
         "10001 EOS @ eosio.token"
 
         to_string_zero_precision_signed,
         -10_001,
-        s!(0, EOS),
-        n!(eosio.token),
+        s!(0, "EOS"),
+        n!("eosio.token"),
         "-10001 EOS @ eosio.token"
     }
 }

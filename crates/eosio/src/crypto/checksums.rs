@@ -5,7 +5,7 @@ macro_rules! checksum_type {
         /// TODO docs
         /// TODO Read, Write, `NumBytes` needs a custom implementation based on `fixed_bytes`
         #[derive(Read, Write, NumBytes, Clone, Copy)]
-        #[__eosio_path = "crate::bytes"]
+        #[eosio(crate_path = "crate::bytes")]
         pub struct $ident([u8; $bytes]);
 
         impl $ident {

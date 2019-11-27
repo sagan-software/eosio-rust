@@ -58,11 +58,11 @@ fn compute_by_voter_key(proposal_name: Name, voter: AccountName) -> u128 {
     u128::from(voter.as_u64()) << 64 | u128::from(voter.as_u64())
 }
 
-#[eosio::table(proposal)]
+#[eosio::table("proposal")]
 pub struct ProposalRow {
-    #[primary]
+    #[eosio(primary_key)]
     proposal_name: Name,
-    #[secondary]
+    #[eosio(secondary_key)]
     proposer: AccountName,
     title: String,
     proposal_json: String,
@@ -91,7 +91,7 @@ pub struct VoteRow {
 }
 
 impl Table for VoteRow {
-    const NAME: u64 = n!(vote);
+    const NAME: u64 = n!("vote");
 
     type Row = Self;
 
@@ -108,9 +108,9 @@ impl Table for VoteRow {
     }
 }
 
-#[eosio::table(status)]
+#[eosio::table("status")]
 pub struct StatusRow {
-    #[primary]
+    #[eosio(primary_key)]
     account: AccountName,
     content: String,
     updated_at: TimePointSec,

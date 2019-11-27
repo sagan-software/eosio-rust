@@ -27,7 +27,7 @@ use eosio_numstr::{name_from_str, name_to_string};
     Write,
     NumBytes,
 )]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct Name(u64);
 
 impl Name {

@@ -19,7 +19,7 @@ macro_rules! name_type {
             feature = "serde",
             derive(serde::Serialize, serde::Deserialize)
         )]
-        #[__eosio_path = "crate::bytes"]
+        #[eosio(crate_path = "crate::bytes")]
         pub struct $ident($crate::name::Name);
 
         impl $ident {

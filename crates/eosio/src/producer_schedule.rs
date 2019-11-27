@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 /// Defines both the order, account name, and signing keys of the active set
 /// of producers.
 #[derive(Read, Write, NumBytes, Clone, Default)]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct ProducerSchedule {
     /// Version number of the schedule. It is sequentially incrementing
     /// version number.

@@ -20,7 +20,7 @@ use core::str::FromStr;
     Default,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct BlockId(String);
 
 impl fmt::Display for BlockId {
@@ -44,7 +44,7 @@ impl fmt::Display for BlockId {
     Hash,
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[__eosio_path = "crate::bytes"]
+#[eosio(crate_path = "crate::bytes")]
 pub struct BlockNum(NonZeroU64);
 
 impl fmt::Display for BlockNum {
