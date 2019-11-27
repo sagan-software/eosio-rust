@@ -20,7 +20,7 @@ macro_rules! abi {
             }
 
             $(
-                else if code == receiver && action == <$t as eosio::ToAction>::NAME.as_u64() {
+                else if code == receiver && action == <$t as eosio::ActionFn>::NAME.as_u64() {
                     let data = $crate::read_action_data::<$t>().expect("read");
                     <$t as eosio::ActionFn>::call(data)
                 }

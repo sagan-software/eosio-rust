@@ -28,11 +28,12 @@ pub struct Action<T> {
     pub data: T,
 }
 
-/// TODO docs
-pub trait ToAction: Write + NumBytes {
+/// TODO docs.
+pub trait ActionFn: Read + Write + NumBytes + Clone {
     /// TODO docs
     const NAME: ActionName;
-
+    /// TODO docs.
+    fn call(self);
     /// TODO docs
     #[inline]
     fn to_action(
@@ -50,12 +51,6 @@ pub trait ToAction: Write + NumBytes {
             data,
         }
     }
-}
-
-/// TODO docs.
-pub trait ActionFn: ToAction + Read + Write + NumBytes + Clone {
-    /// TODO docs.
-    fn call(self);
 }
 
 /// A permission

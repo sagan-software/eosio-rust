@@ -41,7 +41,7 @@ pub use self::account::AccountName;
 
 mod action;
 pub use self::action::{
-    Action, ActionFn, ActionName, PermissionLevel, PermissionName, ToAction,
+    Action, ActionFn, ActionName, PermissionLevel, PermissionName,
 };
 
 mod asset;

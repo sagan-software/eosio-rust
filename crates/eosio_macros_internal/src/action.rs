@@ -102,12 +102,8 @@ impl ToTokens for ActionFn {
             pub type #type_ident = #struct_ident;
 
             #[automatically_derived]
-            impl eosio::ToAction for #struct_ident {
-                const NAME: eosio::ActionName = eosio::ActionName::new(eosio::n!(#action_name));
-            }
-
-            #[automatically_derived]
             impl eosio::ActionFn for #struct_ident {
+                const NAME: eosio::ActionName = eosio::ActionName::new(eosio::n!(#action_name));
                 fn call(self) {
                     #assign_args
                     #block
