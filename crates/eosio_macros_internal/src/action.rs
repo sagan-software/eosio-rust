@@ -35,17 +35,6 @@ impl ActionFn {
         Ident::new(&name, self.sig.ident.span())
     }
 
-    pub fn action_ident(&self) -> Ident {
-        let name = self
-            .sig
-            .ident
-            .to_string()
-            .as_str()
-            .to_camel_case()
-            .to_lowercase();
-        Ident::new(&name, self.sig.ident.span())
-    }
-
     pub fn action_name(&self) -> LitStr {
         if let Some(lit) = &self.args.name {
             lit.clone()
@@ -61,7 +50,6 @@ impl ActionFn {
 impl ToTokens for ActionFn {
     fn to_tokens(&self, tokens: &mut TokenStream2) {
         let inputs = &self.sig.inputs;
-        // let vis = input.vis;
         let mut struct_fields = quote!();
         let mut assign_args = quote!();
         for input in inputs.iter() {
@@ -99,7 +87,7 @@ impl ToTokens for ActionFn {
         let block = &self.block;
 
         let struct_ident = self.struct_ident();
-        let action_ident = self.action_ident();
+        let type_ident = &self.sig.ident;
         let action_name = self.action_name();
 
         let expanded = quote! {
@@ -111,7 +99,7 @@ impl ToTokens for ActionFn {
 
             // This makes the abi! macro work nicer
             #[allow(non_camel_case_types)]
-            pub type #action_ident = #struct_ident;
+            pub type #type_ident = #struct_ident;
 
             #[automatically_derived]
             impl eosio::ToAction for #struct_ident {
