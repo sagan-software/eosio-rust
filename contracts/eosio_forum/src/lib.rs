@@ -1,4 +1,5 @@
 use eosio::*;
+use eosio_cdt::*;
 
 #[eosio::action]
 pub fn propose(
@@ -91,7 +92,7 @@ pub struct VoteRow {
 }
 
 impl Table for VoteRow {
-    const NAME: u64 = n!("vote");
+    const NAME: TableName = TableName::new(n!("vote"));
 
     type Row = Self;
 

@@ -323,7 +323,12 @@ impl ToTokens for Singleton {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let table_name = &self.name;
         let name = &self.ident;
-        let eosio = &self.crate_path;
+        // let eosio = &self.crate_path;
+
+        let default_path = LitStr::new("::eosio", Span::call_site())
+            .parse_with(Path::parse_mod_style)
+            .unwrap();
+        let eosio = &self.crate_path.as_ref().unwrap_or(&default_path);
         let (impl_generics, ty_generics, where_clause) =
             &self.generics.split_for_impl();
         let expanded = quote! {
@@ -342,12 +347,12 @@ impl ToTokens for Singleton {
             #[automatically_derived]
             impl #impl_generics #name #ty_generics #where_clause {
                 #[inline]
-                pub fn singleton<C, S>(code: C, scope: S) -> #eosio::SingletonIndex<Self>
+                pub fn singleton<C, S>(code: C, scope: S) -> ::eosio_cdt::SingletonIndex<Self>
                 where
-                    C: Into<AccountName>,
-                    S: Into<ScopeName>,
+                    C: Into<#eosio::AccountName>,
+                    S: Into<#eosio::ScopeName>,
                 {
-                    #eosio::SingletonIndex::new(code, scope)
+                    ::eosio_cdt::SingletonIndex::new(code, scope)
                 }
             }
         };

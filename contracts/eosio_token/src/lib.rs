@@ -56,7 +56,7 @@ fn create(issuer: AccountName, max_supply: Asset) {
         issuer,
     };
 
-    stats_table.emplace(code, &stats).expect("write");
+    stats_table.emplace(code, stats).expect("write");
 }
 
 #[eosio::action]
@@ -90,7 +90,7 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
     );
 
     st.supply += quantity;
-    cursor.modify(None, &st).expect("write");
+    cursor.modify(Payer::Same, st).expect("write");
 
     add_balance(st.issuer, quantity, st.issuer);
 
@@ -132,7 +132,7 @@ fn retire(quantity: Asset, memo: String) {
     assert!(symbol == st.supply.symbol, "symbol precision mismatch");
 
     st.supply -= quantity;
-    cursor.modify(None, &st).expect("write");
+    cursor.modify(Payer::Same, st).expect("write");
     sub_balance(st.issuer, quantity);
 }
 
@@ -177,7 +177,7 @@ fn sub_balance(owner: AccountName, value: Asset) {
     assert!(from.balance.amount >= value.amount, "overdrawn balance");
 
     from.balance -= value;
-    cursor.modify(None, &from).expect("write");
+    cursor.modify(Payer::Same, from).expect("write");
 }
 
 fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
@@ -188,7 +188,9 @@ fn add_balance(owner: AccountName, value: Asset, ram_payer: AccountName) {
         Some(cursor) => {
             let mut account = cursor.get().expect("read");
             account.balance += value;
-            cursor.modify(Some(ram_payer), &account).expect("write");
+            cursor
+                .modify(Payer::New(ram_payer), &account)
+                .expect("write");
         }
         None => {
             let account = Account { balance: value };
@@ -218,7 +220,7 @@ fn open(owner: AccountName, symbol: Symbol, ram_payer: AccountName) {
         let account = Account {
             balance: Asset { amount: 0, symbol },
         };
-        accts_table.emplace(ram_payer, &account).expect("write");
+        accts_table.emplace(ram_payer, account).expect("write");
     }
 }
 

@@ -31,6 +31,9 @@
 #[macro_use]
 extern crate alloc;
 
+// TODO remove
+// extern crate std;
+
 pub use eosio_macros::{action, n, s, table};
 
 mod abi;
@@ -47,6 +50,9 @@ pub use self::action::{
 mod asset;
 pub use self::asset::{Asset, ExtendedAsset};
 
+mod binary_extension;
+pub use self::binary_extension::BinaryExtension;
+
 mod block;
 pub use self::block::*;
 
@@ -60,8 +66,7 @@ pub use self::bytes::{
 
 mod crypto;
 pub use self::crypto::{
-    Checksum160, Checksum256, Checksum512, PrivateKey, ProducerKey, PublicKey,
-    Signature,
+    Checksum160, Checksum256, Checksum512, PrivateKey, PublicKey, Signature,
 };
 
 #[cfg(feature = "serde")]

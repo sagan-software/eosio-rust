@@ -54,7 +54,9 @@ pub use self::print::*;
 mod privileged;
 pub use self::privileged::*;
 
-// mod singleton_index;
+mod singleton_index;
+pub use self::singleton_index::*;
+
 mod table;
 pub use self::table::*;
 
@@ -66,6 +68,8 @@ pub use self::table_secondary::*;
 
 mod time;
 pub use self::time::*;
+
+pub use eosio_cdt_sys as sys;
 
 // pub use self::{
 //     account::*, action::*, check::*, crypto::*, permissions::*, print::*,

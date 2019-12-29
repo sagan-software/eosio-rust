@@ -45,7 +45,7 @@ fn add(
         zip,
         liked: 0,
     };
-    table.emplace(account, &address).expect("write");
+    table.emplace(account, address).expect("write");
 }
 
 #[eosio::action]
@@ -72,7 +72,7 @@ fn update(
     address.state = state;
     address.zip = zip;
 
-    cursor.modify(None, &address).expect("write");
+    cursor.modify(Payer::Same, address).expect("write");
 }
 
 #[eosio::action]
@@ -99,7 +99,7 @@ fn like(account: AccountName) {
     let mut address = cursor.get().expect("read");
     address.liked += 1;
     cursor
-        .modify(Some(address.account), &address)
+        .modify(Payer::New(address.account), address)
         .expect("write");
 }
 
@@ -113,6 +113,6 @@ fn likezip(zip: u32) {
             break;
         }
         addr.liked += 1;
-        cursor.modify(None, &addr).expect("write");
+        cursor.modify(Payer::Same, addr).expect("write");
     }
 }

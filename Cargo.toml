@@ -9,10 +9,10 @@ codegen-units = 1
 [workspace]
 members = [
     # "contracts/eosio-assert",
-    # "contracts/eosio-bios",
-    # "contracts/eosio-forum",
-    # "contracts/eosio-msig",
-    # "contracts/eosio-system",
+    "contracts/eosio_bios",
+    "contracts/eosio_forum",
+    "contracts/eosio_msig",
+    "contracts/eosio_system",
     "contracts/eosio_token",
     "contracts/eosio_wrap",
     "crates/eosio",

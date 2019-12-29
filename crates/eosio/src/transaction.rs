@@ -58,7 +58,7 @@ pub struct TransactionHeader {
 #[derive(Clone, Debug, Read, Write, NumBytes, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
-pub struct Transaction<T: Default + Clone> {
+pub struct Transaction<T: Default + Clone = Vec<u8>> {
     /// TODO docs
     pub header: TransactionHeader,
     /// TODO docs
@@ -86,5 +86,11 @@ impl From<u128> for TransactionId {
     #[must_use]
     fn from(value: u128) -> Self {
         Self(value)
+    }
+}
+
+impl AsRef<TransactionId> for TransactionId {
+    fn as_ref(&self) -> &Self {
+        self
     }
 }

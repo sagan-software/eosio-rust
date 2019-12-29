@@ -2,7 +2,7 @@ use eosio::*;
 
 #[test]
 fn struct_named_fields() {
-    #[derive(Read, Write, PartialEq, Debug)]
+    #[derive(Read, Write, NumBytes, PartialEq, Debug)]
     struct Thing {
         a: u64,
         b: u64,
@@ -28,7 +28,7 @@ fn struct_named_fields() {
 
 #[test]
 fn struct_unnamed_fields() {
-    #[derive(Read, Write, PartialEq, Debug)]
+    #[derive(Read, Write, NumBytes, PartialEq, Debug)]
     struct Thing(u64, u64, u32);
 
     let thing1 = Thing(1, 2, 3);

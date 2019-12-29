@@ -2,7 +2,7 @@ FROM sagansoftware/eosio.cdt:1.7.0-rc1
 
 # Arguments
 ARG fork=EOSIO
-ARG branch=v1.9.0-rc1
+ARG branch=v1.9.0-rc3
 
 # Build
 RUN git clone \

@@ -1,4 +1,4 @@
-use eosio::{AccountName, PermissionName, TimePoint};
+use eosio::{AccountName, PermissionLevel, PermissionName, TimePoint};
 
 /// Get the current receiver of the action.
 #[must_use]
@@ -76,6 +76,23 @@ pub fn is_account<A: AsRef<AccountName>>(account: A) -> bool {
 pub fn require_auth<A: AsRef<AccountName>>(account: A) {
     let a = account.as_ref().as_u64();
     unsafe { eosio_cdt_sys::require_auth(a) }
+}
+
+#[inline]
+pub fn require_perm<A, P>(account: A, permission: P)
+where
+    A: AsRef<AccountName>,
+    P: AsRef<PermissionName>,
+{
+    let a = account.as_ref().as_u64();
+    let p = permission.as_ref().as_u64();
+    unsafe { eosio_cdt_sys::require_auth2(a, p) }
+}
+
+#[inline]
+pub fn require_level<L: AsRef<PermissionLevel>>(level: L) {
+    let level = level.as_ref();
+    require_perm(&level.actor, &level.permission)
 }
 
 /// Verifies that `name` exists in the set of provided auths on a action. Throws if not found.

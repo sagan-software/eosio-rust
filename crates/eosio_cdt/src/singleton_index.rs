@@ -1,7 +1,6 @@
-use crate::{PrimaryTableIndexExt, TableCursor, TableIndex};
+use crate::{Payer, PrimaryTableIndexExt, TableCursor, TableIndex};
 use eosio::{
-    table::Table, AccountName, PrimaryTableIndex, ReadError, ScopeName,
-    WriteError,
+    AccountName, PrimaryTableIndex, ReadError, ScopeName, Table, WriteError,
 };
 
 /// TODO docs
@@ -20,6 +19,7 @@ impl<T: Table> SingletonIndex<T> {
 
     /// Checks if the singleton entry exists
     #[inline]
+    #[must_use]
     pub fn exists(&self) -> bool {
         self.0.find(T::NAME).is_some()
     }
@@ -27,6 +27,7 @@ impl<T: Table> SingletonIndex<T> {
     /// Gets the value stored inside the singleton. Returns `None` if no value is found,
     /// or `ReadError` if there was an issue reading the data.
     #[inline]
+    #[must_use]
     pub fn get(&self) -> Option<Result<T::Row, ReadError>> {
         self.0.find(T::NAME).map(|c| c.get())
     }
@@ -51,7 +52,7 @@ impl<T: Table> SingletonIndex<T> {
     ) -> Result<(), WriteError> {
         match self.0.find(T::NAME) {
             Some(cursor) => {
-                cursor.modify(Some(payer), value)?;
+                cursor.modify(Payer::New(payer), value)?;
                 Ok(())
             }
             None => self.0.emplace(payer, value),

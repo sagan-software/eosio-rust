@@ -36,7 +36,7 @@ fn create(host: AccountName, challenger: AccountName) {
 
     let game = Game::new(host, challenger);
 
-    table.emplace(host, &game).expect("write");
+    table.emplace(host, game).expect("write");
 }
 
 #[eosio::action]
@@ -54,7 +54,7 @@ fn restart(host: AccountName, challenger: AccountName, by: u8) {
 
     game.restart();
 
-    cursor.modify(None, &game).expect("write");
+    cursor.modify(Payer::Same, game).expect("write");
 }
 
 #[eosio::action]
@@ -99,7 +99,7 @@ fn make_move(
     assert!(game.is_valid_move(row, col), "not a valid movement!");
 
     game.make_move(row, col);
-    cursor.modify(None, &game).expect("write");
+    cursor.modify(Payer::Same, game).expect("write");
 }
 
 eosio_cdt::abi!(create, restart, close, make_move);

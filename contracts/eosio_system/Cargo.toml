@@ -10,4 +10,6 @@ crate-type = ["cdylib"]
 [dependencies]
 serde = "1.0"
 serde_derive = "1.0"
-eosio = { path = "../../eosio" }
+eosio = { version = "0.3", path = "../../crates/eosio" }
+eosio_cdt = { version = "0.3", path = "../../crates/eosio_cdt" }
+lazy_static = "1.4"

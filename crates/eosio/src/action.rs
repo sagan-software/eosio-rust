@@ -77,6 +77,13 @@ pub struct PermissionLevel {
     pub permission: PermissionName,
 }
 
+impl AsRef<PermissionLevel> for PermissionLevel {
+    #[inline]
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
 /// TODO docs
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum ParsePermissionLevelError {

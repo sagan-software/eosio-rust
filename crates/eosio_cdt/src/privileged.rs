@@ -1,6 +1,6 @@
 use eosio::{
-    AccountName, BlockchainParameters, CpuWeight, NetWeight, NumBytes,
-    ProducerKey, RamBytes, Read, ReadError, Write, WriteError,
+    AccountName, BlockchainParameters, Checksum256, CpuWeight, NetWeight,
+    NumBytes, ProducerKey, RamBytes, Read, ReadError, Write, WriteError,
 };
 
 /// Check if an account is privileged
@@ -60,9 +60,10 @@ pub fn set_privileged<A: AsRef<AccountName>>(account: A, is_priv: bool) {
 
 /// Set the blockchain parameters
 #[inline]
-pub fn set_blockchain_parameters(
-    params: &BlockchainParameters,
+pub fn set_blockchain_parameters<T: AsRef<BlockchainParameters>>(
+    params: T,
 ) -> Result<(), WriteError> {
+    let params = params.as_ref();
     let size = params.num_bytes();
     let mut buf = vec![0_u8; size];
     params.write(&mut buf, &mut 0)?;
@@ -97,7 +98,10 @@ pub fn get_blockchain_parameters() -> Result<BlockchainParameters, ReadError> {
 /// Proposes a schedule change
 #[must_use]
 #[inline]
-pub fn set_proposed_producers(prods: &[ProducerKey]) -> Option<u64> {
+pub fn set_proposed_producers<T: AsRef<[ProducerKey]>>(
+    prods: T,
+) -> Option<u64> {
+    let prods = prods.as_ref();
     let size = prods.num_bytes();
     let mut buf = vec![0_u8; size];
     let buf_ptr = &mut buf as *mut _ as *mut u8;
@@ -109,4 +113,23 @@ pub fn set_proposed_producers(prods: &[ProducerKey]) -> Option<u64> {
     } else {
         None
     }
+}
+
+#[must_use]
+#[inline]
+pub fn is_feature_activated<T: AsRef<Checksum256>>(feature_digest: T) -> bool {
+    use eosio_cdt_sys::capi_checksum256;
+    let hash = feature_digest.as_ref().to_bytes();
+    let checksum = capi_checksum256 { hash };
+    let ptr = &checksum as *const capi_checksum256;
+    unsafe { eosio_cdt_sys::is_feature_activated(ptr) }
+}
+
+#[inline]
+pub fn preactivate_feature<T: AsRef<Checksum256>>(feature_digest: T) {
+    use eosio_cdt_sys::capi_checksum256;
+    let hash = feature_digest.as_ref().to_bytes();
+    let checksum = capi_checksum256 { hash };
+    let ptr = &checksum as *const capi_checksum256;
+    unsafe { eosio_cdt_sys::preactivate_feature(ptr) }
 }

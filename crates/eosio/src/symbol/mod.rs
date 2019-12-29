@@ -141,6 +141,14 @@ impl From<u64> for Symbol {
     }
 }
 
+impl From<Symbol> for u64 {
+    #[inline]
+    #[must_use]
+    fn from(n: Symbol) -> Self {
+        n.0
+    }
+}
+
 impl PartialEq<u64> for Symbol {
     #[inline]
     #[must_use]

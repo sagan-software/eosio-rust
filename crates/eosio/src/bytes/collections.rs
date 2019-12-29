@@ -1,3 +1,6 @@
+use crate::{NumBytes, Read, ReadError, Write, WriteError};
+use alloc::collections::VecDeque;
+
 impl<T> NumBytes for VecDeque<T>
 where
     T: NumBytes,

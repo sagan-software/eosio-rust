@@ -62,3 +62,9 @@ pub struct BlockchainParameters {
     /// Maximum authority depth
     pub max_authority_depth: u16,
 }
+
+impl AsRef<BlockchainParameters> for BlockchainParameters {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}

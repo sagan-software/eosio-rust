@@ -11,7 +11,7 @@ macro_rules! checksum_type {
         impl $ident {
             /// TODO docs.
             #[must_use]
-            pub fn as_bytes(&self) -> &[u8] {
+            pub const fn as_bytes(&self) -> &[u8; $bytes] {
                 &self.0
             }
 
@@ -35,6 +35,19 @@ macro_rules! checksum_type {
             #[must_use]
             fn from(value: $ident) -> Self {
                 value.0
+            }
+        }
+
+        impl Default for $ident {
+            fn default() -> Self {
+                Self([0; $bytes])
+            }
+        }
+
+        impl AsRef<$ident> for $ident {
+            #[inline]
+            fn as_ref(&self) -> &Self {
+                self
             }
         }
     };

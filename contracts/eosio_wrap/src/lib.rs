@@ -17,7 +17,9 @@ pub fn exec(
         let value = u128::from(executer.as_u64()) << 64 | now;
         value.into()
     };
-    send_deferred_bytes(&id, executer, &ds, false).expect("write");
+
+    let bytes = ds.as_remaining_bytes().unwrap();
+    send_deferred_bytes(id, executer, bytes, false).expect("write");
 }
 
 eosio_cdt::abi!(exec);

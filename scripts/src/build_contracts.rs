@@ -80,9 +80,12 @@ pub fn build_contract(package: &str) {
 }
 
 const ALL: &[&str] = &[
+    "addressbook",
     "hello_bare",
     "hello",
     "tictactoe",
+    "eosio_bios",
+    "eosio_msig",
     "eosio_token",
     "eosio_wrap",
 ];

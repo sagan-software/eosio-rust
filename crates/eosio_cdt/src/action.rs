@@ -41,36 +41,40 @@ pub fn send_context_free_inline_action(
 
 /// Sends a deferred transaction
 #[inline]
-pub fn send_deferred<P>(
-    id: &TransactionId,
+pub fn send_deferred<I, P, T>(
+    id: I,
     payer: P,
-    trx: &Transaction<Vec<u8>>,
+    trx: T,
     replace_existing: bool,
 ) -> Result<(), WriteError>
 where
+    I: AsRef<TransactionId>,
     P: AsRef<AccountName>,
+    T: AsRef<Transaction>,
 {
-    let mut bytes = vec![0_u8; trx.num_bytes()];
-    trx.write(&mut bytes, &mut 0)?;
-    send_deferred_bytes(id, payer, &bytes, replace_existing)
+    let bytes = trx.as_ref().pack()?;
+    send_deferred_bytes(id, payer, bytes, replace_existing)
 }
 
 /// Sends a deferred transaction from raw bytes
 #[inline]
-pub fn send_deferred_bytes<P>(
-    id: &TransactionId,
+pub fn send_deferred_bytes<I, P, T>(
+    id: I,
     payer: P,
-    bytes: &[u8],
+    bytes: T,
     replace_existing: bool,
 ) -> Result<(), WriteError>
 where
+    I: AsRef<TransactionId>,
     P: AsRef<AccountName>,
+    T: AsRef<[u8]>,
 {
-    let sender_id = id.as_u128();
-    let sender_id_ptr = &sender_id as *const _ as *const u128;
+    let id = id.as_ref().as_u128();
+    let id_ptr = &id as *const _ as *const u128;
+    let bytes = bytes.as_ref();
     unsafe {
         eosio_cdt_sys::send_deferred(
-            sender_id_ptr,
+            id_ptr,
             payer.as_ref().as_u64(),
             bytes.as_ptr(),
             bytes.len(),
@@ -83,8 +87,8 @@ where
 /// Cancels a deferred transaction
 #[must_use]
 #[inline]
-pub fn cancel_deferred(id: &TransactionId) -> bool {
-    let sender_id = id.as_u128();
+pub fn cancel_deferred<I: AsRef<TransactionId>>(id: I) -> bool {
+    let sender_id = id.as_ref().as_u128();
     let sender_id_ptr = &sender_id as *const _ as *const u128;
     let result = unsafe { eosio_cdt_sys::cancel_deferred(sender_id_ptr) };
     result == 1

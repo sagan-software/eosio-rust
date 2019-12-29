@@ -1,6 +1,7 @@
 use crate::{
-    NativeSecondaryKey, Print, TableCursor, TableIndex, TableIterator,
+    NativeSecondaryKey, Payer, Print, TableCursor, TableIndex, TableIterator,
 };
+use core::borrow::Borrow;
 use core::iter::IntoIterator;
 use core::marker::PhantomData;
 use core::ptr::null_mut;
@@ -114,17 +115,22 @@ where
     }
 
     #[inline]
-    fn modify(
+    fn modify<I: Borrow<T::Row>>(
         &self,
-        payer: Option<AccountName>,
-        item: &T::Row,
+        payer: Payer,
+        item: I,
     ) -> Result<usize, WriteError> {
+        let item = item.borrow();
         let size = item.num_bytes();
         let mut bytes = vec![0_u8; size];
         let mut pos = 0;
         item.write(&mut bytes, &mut pos)?;
         let bytes_ptr: *const c_void = &bytes[..] as *const _ as *const c_void;
-        let payer = payer.unwrap_or_else(|| AccountName::new(0));
+        let payer = if let Payer::New(payer) = payer {
+            payer
+        } else {
+            AccountName::new(0)
+        };
         #[allow(clippy::cast_possible_truncation)]
         unsafe {
             db_update_i64(self.value, payer.as_u64(), bytes_ptr, pos as u32)
@@ -311,11 +317,12 @@ where
     }
 
     #[inline]
-    fn emplace(
+    fn emplace<I: Borrow<T::Row>>(
         &self,
         payer: AccountName,
-        item: &T::Row,
+        item: I,
     ) -> Result<(), WriteError> {
+        let item = item.borrow();
         let id = T::primary_key(item);
         let size = item.num_bytes();
         let mut bytes = vec![0_u8; size];

@@ -18,7 +18,9 @@ use crate::{NumBytes, Read, Write};
     Default,
 )]
 #[eosio(crate_path = "crate::bytes")]
-pub struct BlockTimestamp(u32);
+pub struct BlockTimestamp {
+    pub slot: u32,
+}
 
 impl BlockTimestamp {
     /// Time between blocks.
@@ -30,7 +32,13 @@ impl BlockTimestamp {
     #[inline]
     #[must_use]
     pub const fn as_u32(self) -> u32 {
-        self.0
+        self.slot
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn new(millis: u32) -> Self {
+        Self { slot: millis }
     }
 }
 
@@ -82,7 +90,7 @@ impl From<u32> for BlockTimestamp {
     #[inline]
     #[must_use]
     fn from(i: u32) -> Self {
-        Self(i)
+        Self { slot: i }
     }
 }
 
@@ -90,6 +98,6 @@ impl From<BlockTimestamp> for u32 {
     #[inline]
     #[must_use]
     fn from(t: BlockTimestamp) -> Self {
-        t.0
+        t.slot
     }
 }

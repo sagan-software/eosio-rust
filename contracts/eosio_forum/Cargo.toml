@@ -8,4 +8,5 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-eosio = { path = "../../eosio" }
+eosio = { version = "0.3", path = "../../crates/eosio" }
+eosio_cdt = { version = "0.3", path = "../../crates/eosio_cdt"}

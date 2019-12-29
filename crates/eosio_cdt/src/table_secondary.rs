@@ -1,4 +1,7 @@
-use crate::{PrimaryTableIndexExt, TableCursor, TableIndex, TableIterator};
+use crate::{
+    Payer, PrimaryTableIndexExt, TableCursor, TableIndex, TableIterator,
+};
+use core::borrow::Borrow;
 use core::ptr::null_mut;
 use eosio::{
     AccountName, Read, ReadError, ScopeName, SecondaryTableIndex,
@@ -50,25 +53,25 @@ type FindSecondaryFn<T> = unsafe extern "C" fn(
 
 /// Trait for types that are natively supported by EOSIO to be used as secondary keys
 pub trait NativeSecondaryKey: Default {
-    /// Unsafe native end function
+    /// Unsafe native `end` function
     const END: EndFn;
-    /// Unsafe native next function
+    /// Unsafe native `next` function
     const NEXT: NextFn;
-    /// Unsafe native previous function
+    /// Unsafe native `previous` function
     const PREVIOUS: PreviousFn;
-    /// Unsafe native remove function
+    /// Unsafe native `remove` function
     const REMOVE: RemoveFn;
-    /// Unsafe native store function
+    /// Unsafe native `store` function
     const STORE: StoreFn<Self>;
-    /// Unsafe native update function
+    /// Unsafe native `update` function
     const UPDATE: UpdateFn<Self>;
-    /// Unsafe native lowerbound function
+    /// Unsafe native `lowerbound` function
     const LOWERBOUND: LowerboundFn<Self>;
-    /// Unsafe native upperbound function
+    /// Unsafe native `upperbound` function
     const UPPERBOUND: UpperboundFn<Self>;
-    /// Unsafe native find_primary function
+    /// Unsafe native `find_primary` function
     const FIND_PRIMARY: FindPrimaryFn<Self>;
-    /// Unsafe native find_secondary function
+    /// Unsafe native `find_secondary` function
     const FIND_SECONDARY: FindSecondaryFn<Self>;
     /// Safe wrapper around unsafe native function
     #[must_use]
@@ -389,10 +392,10 @@ where
     }
 
     #[inline]
-    fn modify(
+    fn modify<I: Borrow<T::Row>>(
         &self,
-        payer: Option<AccountName>,
-        item: &T::Row,
+        payer: Payer,
+        item: I,
     ) -> Result<usize, WriteError> {
         let table = self.index.primary_index();
         match table.find(self.pk) {
@@ -560,10 +563,10 @@ where
     }
 
     #[inline]
-    fn emplace(
+    fn emplace<I: Borrow<T::Row>>(
         &self,
         payer: AccountName,
-        item: &T::Row,
+        item: I,
     ) -> Result<(), WriteError> {
         let table = self.primary_index();
         table.emplace(payer, item)

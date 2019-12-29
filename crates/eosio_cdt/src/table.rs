@@ -1,4 +1,10 @@
+use core::borrow::Borrow;
 use eosio::{AccountName, ReadError, ScopeName, Table, WriteError};
+
+pub enum Payer {
+    Same,
+    New(AccountName),
+}
 
 /// Table Cursor
 pub trait TableCursor<T>: IntoIterator
@@ -10,10 +16,10 @@ where
     /// Erase the current row
     fn erase(&self) -> Result<T::Row, ReadError>;
     /// Modify the current row
-    fn modify(
+    fn modify<I: Borrow<T::Row>>(
         &self,
-        payer: Option<AccountName>,
-        item: &T::Row,
+        payer: Payer,
+        item: I,
     ) -> Result<usize, WriteError>;
 }
 
@@ -33,10 +39,10 @@ where
     /// Returns a cursor pointing to the last row that matches a key
     fn upper_bound<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor>;
     /// Inserts a new row into the table
-    fn emplace(
+    fn emplace<I: Borrow<T::Row>>(
         &'a self,
         payer: AccountName,
-        item: &'a T::Row,
+        item: I,
     ) -> Result<(), WriteError>;
 }
 

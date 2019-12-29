@@ -1,6 +1,6 @@
-use eosio::{TimePoint, TimePointSec};
+use eosio::{BlockTimestamp, TimePoint, TimePointSec};
 
-/// Gets the current time
+/// Returns the time in microseconds from 1970 of the current block as a `TimePoint`
 #[must_use]
 #[inline]
 pub fn current_time_point() -> TimePoint {
@@ -8,11 +8,18 @@ pub fn current_time_point() -> TimePoint {
     TimePoint::from_micros(micros)
 }
 
-/// Gets the current time
+/// Gets the current time as seconds
 #[must_use]
 #[inline]
 pub fn current_time_point_sec() -> TimePointSec {
     current_time_point().as_time_point_sec()
+}
+
+/// Gets the current time as a block timestamp
+#[must_use]
+#[inline]
+pub fn current_block_time() -> BlockTimestamp {
+    current_time_point().as_block_timestamp()
 }
 
 /// Gets the publication time

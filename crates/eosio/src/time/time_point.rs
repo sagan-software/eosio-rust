@@ -1,4 +1,4 @@
-use super::TimePointSec;
+use super::{BlockTimestamp, TimePointSec};
 use crate::bytes::{NumBytes, Read, Write};
 use core::convert::{TryFrom, TryInto};
 use core::fmt;
@@ -37,6 +37,13 @@ impl TimePoint {
         self.0
     }
 
+    /// Gets the milliseconds
+    #[inline]
+    #[must_use]
+    pub const fn as_millis(&self) -> i64 {
+        self.0 / 1_000
+    }
+
     #[inline]
     #[must_use]
     pub const fn as_secs(&self) -> i32 {
@@ -47,6 +54,12 @@ impl TimePoint {
     #[must_use]
     pub const fn as_time_point_sec(&self) -> TimePointSec {
         TimePointSec::from_secs(self.as_secs() as u32)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn as_block_timestamp(&self) -> BlockTimestamp {
+        BlockTimestamp::new(self.as_millis() as u32)
     }
 }
 
