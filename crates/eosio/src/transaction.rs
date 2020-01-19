@@ -19,7 +19,6 @@ use alloc::vec::Vec;
     Hash,
     Default,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct TransactionExtension(u16, Vec<char>);
 
@@ -37,7 +36,6 @@ pub struct TransactionExtension(u16, Vec<char>);
     Hash,
     Default,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct TransactionHeader {
     /// TODO docs
@@ -56,7 +54,6 @@ pub struct TransactionHeader {
 
 /// TODO docs
 #[derive(Clone, Debug, Read, Write, NumBytes, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct Transaction<T: Default + Clone = Vec<u8>> {
     /// TODO docs

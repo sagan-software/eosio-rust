@@ -29,9 +29,6 @@ include = [
 maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
-[package.metadata."docs.rs"]
-all-features = true
-
 [dev-dependencies]
 criterion = "0.3"
 proptest = "0.9.5"

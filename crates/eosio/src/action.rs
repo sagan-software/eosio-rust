@@ -15,7 +15,6 @@ name_type!(PermissionName);
 /// This is the packed representation of an action along with meta-data about
 /// the authorization levels.
 #[derive(Clone, Debug, Read, Write, NumBytes, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct Action<T> {
     /// Name of the account the action is intended for
@@ -68,7 +67,6 @@ pub trait ActionFn: Read + Write + NumBytes + Clone {
     PartialOrd,
     Ord,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct PermissionLevel {
     /// TODO docs
@@ -187,7 +185,7 @@ mod permission_level_tests {
             (" ", ParseNameError::BadChar(b' ')),
             ("hello6", ParseNameError::BadChar(b'6')),
             ("HELLO", ParseNameError::BadChar(b'H')),
-            ("hellohellohello", ParseNameError::TooLong),
+            ("hellohellohejjj", ParseNameError::TooLong),
         ] {
             assert_eq!(
                 PermissionLevel::from_str(input),
@@ -202,7 +200,7 @@ mod permission_level_tests {
             ("hello@ ", ParseNameError::BadChar(b' ')),
             ("hello@world6", ParseNameError::BadChar(b'6')),
             ("hello@WORLD", ParseNameError::BadChar(b'W')),
-            ("hello@worldworldworld", ParseNameError::TooLong),
+            ("hello@worldworldjjjj", ParseNameError::TooLong),
         ] {
             assert_eq!(
                 PermissionLevel::from_str(input),

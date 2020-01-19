@@ -19,11 +19,9 @@ impl fmt::Display for ParseNameError {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::BadChar(c) => write!(
-                f,
-                "name contains a disallowed character '{}'",
-                char::from(c)
-            ),
+            Self::BadChar(c) => {
+                write!(f, "name contains invalid character '{}'", char::from(c))
+            }
             Self::TooLong => {
                 write!(f, "name is too long, must be 13 chars or less")
             }

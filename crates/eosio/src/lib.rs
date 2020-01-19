@@ -27,12 +27,17 @@
     clippy::module_name_repetitions,
     clippy::trivially_copy_pass_by_ref
 )]
+#![cfg_attr(
+    test,
+    allow(clippy::option_unwrap_used, clippy::result_unwrap_used)
+)]
 
 #[macro_use]
 extern crate alloc;
 
-// TODO remove
-// extern crate std;
+#[cfg(test)]
+#[macro_use]
+extern crate std;
 
 pub use eosio_macros::{action, n, s, table};
 
@@ -68,11 +73,6 @@ mod crypto;
 pub use self::crypto::{
     Checksum160, Checksum256, Checksum512, PrivateKey, PublicKey, Signature,
 };
-
-#[cfg(feature = "serde")]
-mod json;
-#[cfg(feature = "serde")]
-pub use self::json::*;
 
 #[macro_use]
 mod name;

@@ -15,10 +15,6 @@ macro_rules! name_type {
             crate::bytes::Write,
             crate::bytes::NumBytes,
         )]
-        #[cfg_attr(
-            feature = "serde",
-            derive(serde::Serialize, serde::Deserialize)
-        )]
         #[eosio(crate_path = "crate::bytes")]
         pub struct $ident($crate::name::Name);
 
@@ -95,14 +91,6 @@ macro_rules! name_type {
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let name = $crate::name::Name::from_str(s)?;
                 Ok(Self(name))
-            }
-        }
-
-        impl core::convert::TryFrom<&str> for $ident {
-            type Error = $crate::name::ParseNameError;
-            #[inline]
-            fn try_from(value: &str) -> Result<Self, Self::Error> {
-                core::str::FromStr::from_str(value)
             }
         }
     };

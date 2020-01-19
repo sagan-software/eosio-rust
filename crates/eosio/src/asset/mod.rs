@@ -20,7 +20,6 @@ use eosio_numstr::symbol_from_bytes;
 #[derive(
     Debug, PartialEq, PartialOrd, Clone, Copy, Default, Read, Write, NumBytes,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct Asset {
     /// The amount of the asset
@@ -172,18 +171,6 @@ impl FromStr for Asset {
                 symbol: symbol.into(),
             })
         }
-    }
-}
-
-#[cfg(feature = "serde")]
-impl serde::Serialize for Asset {
-    #[inline]
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let s = self.to_string();
-        serializer.serialize_str(s.as_str())
     }
 }
 
@@ -364,98 +351,99 @@ impl_op! {
     CheckedRem, AssetOpError, checked_rem, Rem, rem, RemAssign, rem_assign
 }
 
-#[cfg(test)]
-mod asset_tests {
-    use super::*;
-    use alloc::string::ToString;
-    use eosio_macros::s;
+// #[cfg(test)]
+// mod asset_tests {
+//     use super::*;
+//     use alloc::string::ToString;
+//     use eosio_macros::s;
+//     use proptest::prelude::*;
 
-    macro_rules! test_to_string {
-        ($($name:ident, $amount:expr, $symbol:expr, $expected:expr)*) => ($(
-            #[test]
-            fn $name() {
-                let asset = Asset {
-                    amount: $amount,
-                    symbol: $symbol.into(),
-                };
-                assert_eq!(asset.to_string(), $expected);
-            }
-        )*)
-    }
+//     macro_rules! test_to_string {
+//         ($($name:ident, $amount:expr, $symbol:expr, $expected:expr)*) => ($(
+//             #[test]
+//             fn $name() {
+//                 let asset = Asset {
+//                     amount: $amount,
+//                     symbol: $symbol.into(),
+//                 };
+//                 assert_eq!(asset.to_string(), $expected);
+//             }
+//         )*)
+//     }
 
-    test_to_string! {
-        to_string, 1_0000, s!(4, "EOS"), "1.0000 EOS"
-        to_string_signed, -1_0000, s!(4, "EOS"), "-1.0000 EOS"
-        to_string_fraction, 1_0001, s!(4, "EOS"), "1.0001 EOS"
-        to_string_zero_precision, 10_001, s!(0, "EOS"), "10001 EOS"
-        to_string_zero_precision_unsigned, -10_001, s!(0, "EOS"), "-10001 EOS"
-        to_string_max_number, i64::max_value(), s!(4, "EOS"), "922337203685477.5807 EOS"
-        to_string_min_number, i64::min_value(), s!(4, "EOS"), "-922337203685477.5808 EOS"
-        to_string_very_small_number, 1, s!(255, "TST"), "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST"
-        to_string_very_small_number_neg, -1, s!(255, "TST"), "-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST"
-    }
+//     test_to_string! {
+//         to_string, 1_0000, s!(4, "EOS"), "1.0000 EOS"
+//         to_string_signed, -1_0000, s!(4, "EOS"), "-1.0000 EOS"
+//         to_string_fraction, 1_0001, s!(4, "EOS"), "1.0001 EOS"
+//         to_string_zero_precision, 10_001, s!(0, "EOS"), "10001 EOS"
+//         to_string_zero_precision_unsigned, -10_001, s!(0, "EOS"), "-10001 EOS"
+//         to_string_max_number, i64::max_value(), s!(4, "EOS"), "922337203685477.5807 EOS"
+//         to_string_min_number, i64::min_value(), s!(4, "EOS"), "-922337203685477.5808 EOS"
+//         to_string_very_small_number, 1, s!(255, "TST"), "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST"
+//         to_string_very_small_number_neg, -1, s!(255, "TST"), "-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST"
+//     }
 
-    macro_rules! test_from_str_ok {
-        ($($name:ident, $input:expr, $expected_amount:expr, $expected_symbol:expr)*) => ($(
-            #[test]
-            fn $name() {
-                let ok = Ok(Asset {
-                    amount: $expected_amount,
-                    symbol: $expected_symbol.into(),
-                });
-                assert_eq!(Asset::from_str($input), ok);
-            }
-        )*)
-    }
+//     macro_rules! test_from_str_ok {
+//         ($($name:ident, $input:expr, $expected_amount:expr, $expected_symbol:expr)*) => ($(
+//             #[test]
+//             fn $name() {
+//                 let ok = Ok(Asset {
+//                     amount: $expected_amount,
+//                     symbol: $expected_symbol.into(),
+//                 });
+//                 assert_eq!(Asset::from_str($input), ok);
+//             }
+//         )*)
+//     }
 
-    test_from_str_ok! {
-        from_str_ok_basic, "1.0000 EOS", 1_0000, s!(4, "EOS")
-        from_str_ok_zero_precision, "1 TST", 1, s!(0, "TST")
-        from_str_ok_long, "1234567890.12345 TMP", 123_456_789_012_345, s!(5, "TMP")
-        from_str_ok_signed_neg, "-1.0000 TLOS", -1_0000, s!(4, "TLOS")
-        from_str_ok_signed_zero_precision, "-1 SYS", -1, s!(0, "SYS")
-        from_str_ok_signed_long, "-1234567890.12345 TGFT", -123_456_789_012_345, s!(5, "TGFT")
-        from_str_ok_pos_sign, "+1 TST", 1, s!(0, "TST")
-        from_str_ok_fraction, "0.0001 EOS", 1, s!(4, "EOS")
-        from_str_ok_zero, "0.0000 EOS", 0, s!(4, "EOS")
-        from_str_whitespace_around, "            1.0000 EOS   ", 1_0000, s!(4, "EOS")
-        from_str_zero_padded, "0001.0000 EOS", 1_0000, s!(4, "EOS")
-        from_str_very_small_num, "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST", 1, s!(255, "TST")
-        from_str_very_small_num_neg, "-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST", -1, s!(255, "TST")
-    }
+//     test_from_str_ok! {
+//         from_str_ok_basic, "1.0000 EOS", 1_0000, s!(4, "EOS")
+//         from_str_ok_zero_precision, "1 TST", 1, s!(0, "TST")
+//         from_str_ok_long, "1234567890.12345 TMP", 123_456_789_012_345, s!(5, "TMP")
+//         from_str_ok_signed_neg, "-1.0000 TLOS", -1_0000, s!(4, "TLOS")
+//         from_str_ok_signed_zero_precision, "-1 SYS", -1, s!(0, "SYS")
+//         from_str_ok_signed_long, "-1234567890.12345 TGFT", -123_456_789_012_345, s!(5, "TGFT")
+//         from_str_ok_pos_sign, "+1 TST", 1, s!(0, "TST")
+//         from_str_ok_fraction, "0.0001 EOS", 1, s!(4, "EOS")
+//         from_str_ok_zero, "0.0000 EOS", 0, s!(4, "EOS")
+//         from_str_whitespace_around, "            1.0000 EOS   ", 1_0000, s!(4, "EOS")
+//         from_str_zero_padded, "0001.0000 EOS", 1_0000, s!(4, "EOS")
+//         from_str_very_small_num, "0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST", 1, s!(255, "TST")
+//         from_str_very_small_num_neg, "-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 TST", -1, s!(255, "TST")
+//     }
 
-    macro_rules! test_from_str_err {
-        ($($name:ident, $input:expr, $expected:expr)*) => ($(
-            #[test]
-            fn $name() {
-                let err = Err($expected);
-                assert_eq!(Asset::from_str($input), err);
-            }
-        )*)
-    }
+//     macro_rules! test_from_str_err {
+//         ($($name:ident, $input:expr, $expected:expr)*) => ($(
+//             #[test]
+//             fn $name() {
+//                 let err = Err($expected);
+//                 assert_eq!(Asset::from_str($input), err);
+//             }
+//         )*)
+//     }
 
-    test_from_str_err! {
-        from_str_bad_char1, "tst", ParseAssetError::BadChar(b't')
-        from_str_multi_spaces, "1.0000  EOS", ParseAssetError::BadChar(b' ')
-        from_str_lowercase_symbol, "1.0000 eos", ParseAssetError::BadChar(b'e')
-        from_str_no_space, "1EOS", ParseAssetError::BadChar(b'E')
-        from_str_no_symbol1, "1.2345 ", ParseAssetError::BadFormat
-        from_str_no_symbol2, "1", ParseAssetError::BadFormat
-        from_str_bad_char2, "1.a", ParseAssetError::BadChar(b'a')
-        from_str_bad_precision, "1. EOS", ParseAssetError::BadPrecision
-    }
+//     test_from_str_err! {
+//         from_str_bad_char1, "tst", ParseAssetError::BadChar(b't')
+//         from_str_multi_spaces, "1.0000  EOS", ParseAssetError::BadChar(b' ')
+//         from_str_lowercase_symbol, "1.0000 eos", ParseAssetError::BadChar(b'e')
+//         from_str_no_space, "1EOS", ParseAssetError::BadChar(b'E')
+//         from_str_no_symbol1, "1.2345 ", ParseAssetError::BadFormat
+//         from_str_no_symbol2, "1", ParseAssetError::BadFormat
+//         from_str_bad_char2, "1.a", ParseAssetError::BadChar(b'a')
+//         from_str_bad_precision, "1. EOS", ParseAssetError::BadPrecision
+//     }
 
-    #[test]
-    fn test_ops() {
-        let mut asset = Asset {
-            amount: 10_0000,
-            symbol: s!(4, "EOS").into(),
-        };
-        asset += 1;
-        assert_eq!(asset.amount, 10_0001);
-        asset -= 1;
-        assert_eq!(asset.amount, 10_0000);
-        asset /= 10;
-        assert_eq!(asset.amount, 1_0000);
-    }
-}
+//     #[test]
+//     fn test_ops() {
+//         let mut asset = Asset {
+//             amount: 10_0000,
+//             symbol: s!(4, "EOS").into(),
+//         };
+//         asset += 1;
+//         assert_eq!(asset.amount, 10_0001);
+//         asset -= 1;
+//         assert_eq!(asset.amount, 10_0000);
+//         asset /= 10;
+//         assert_eq!(asset.amount, 1_0000);
+//     }
+// }

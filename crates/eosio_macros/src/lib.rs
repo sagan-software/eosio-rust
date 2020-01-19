@@ -14,10 +14,7 @@
 //!
 //! ```
 //! use eosio_macros::s;
-//! assert_eq!(s!(0, "TGFT"), 361_956_332_544);
-//! assert_eq!(s!(4, "EOS"), 1_397_703_940);
-//! assert_eq!(s!(0, "EOS"), 1_397_703_936);
-//! assert_eq!(s!(1, "EDNA"), 280_485_971_201);
+//! assert_eq!(s!(4, "EOS"), 1162826500);
 //! ```
 #![no_std]
 #![allow(clippy::missing_docs_in_private_items)]
@@ -44,10 +41,7 @@ pub use eosio_macros_internal::n;
 ///
 /// ```
 /// use eosio_macros::s;
-/// assert_eq!(s!(0, "TGFT"), 361_956_332_544);
-/// assert_eq!(s!(4, "EOS"), 1_397_703_940);
-/// assert_eq!(s!(0, "EOS"), 1_397_703_936);
-/// assert_eq!(s!(1, "EDNA"), 280_485_971_201);
+/// assert_eq!(s!(4, "EOS"), 1162826500);
 /// ```
 #[proc_macro_hack]
 pub use eosio_macros_internal::s;

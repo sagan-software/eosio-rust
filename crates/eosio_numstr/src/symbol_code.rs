@@ -1,4 +1,4 @@
-use core::{convert::TryFrom, fmt};
+use core::fmt;
 
 /// All possible characters that can be used in EOSIO symbol codes.
 pub const SYMBOL_CODE_CHARS: [u8; 26] = *b"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -22,9 +22,11 @@ impl fmt::Display for ParseSymbolCodeError {
             Self::TooLong => {
                 write!(f, "symbol is too long, must be 7 chars or less")
             }
-            Self::BadChar(c) => {
-                write!(f, "symbol contains invalid character '{}'", c)
-            }
+            Self::BadChar(c) => write!(
+                f,
+                "symbol contains invalid character '{}'",
+                char::from(c)
+            ),
         }
     }
 }
@@ -39,11 +41,11 @@ impl fmt::Display for ParseSymbolCodeError {
 ///
 /// ```
 /// use eosio_numstr::{symbol_code_from_bytes, ParseSymbolCodeError};
-/// assert_eq!(symbol_code_from_bytes("EOS".bytes()), Ok(1397703936));
-/// assert_eq!(symbol_code_from_bytes("TGFT".bytes()), Ok(361956332544));
-/// assert_eq!(symbol_code_from_bytes("SYS".bytes()), Ok(1398362880));
+/// assert_eq!(symbol_code_from_bytes("EOS".bytes()), Ok(4542291));
+/// assert_eq!(symbol_code_from_bytes("TGFT".bytes()), Ok(1413957204));
+/// assert_eq!(symbol_code_from_bytes("SYS".bytes()), Ok(5462355));
 /// assert_eq!(symbol_code_from_bytes("TSt".bytes()), Err(ParseSymbolCodeError::BadChar(b't')));
-/// assert_eq!(symbol_code_from_bytes("TESTING".bytes()), Ok(5138124851399447552));
+/// assert_eq!(symbol_code_from_bytes("TESTING".bytes()), Ok(23720122242387527));
 /// assert_eq!(symbol_code_from_bytes("TESTINGG".bytes()), Err(ParseSymbolCodeError::TooLong));
 /// ```
 #[inline]
@@ -53,12 +55,13 @@ where
 {
     let mut value = 0_u64;
     for (i, c) in iter.enumerate() {
-        if i == 7 {
+        if i == SYMBOL_CODE_MAX_LEN {
             return Err(ParseSymbolCodeError::TooLong);
         } else if c < b'A' || c > b'Z' {
             return Err(ParseSymbolCodeError::BadChar(c));
         } else {
-            value |= u64::from(c) << (8 * (i + 1));
+            value <<= 8;
+            value |= u64::from(c);
         }
     }
     Ok(value)
@@ -70,23 +73,24 @@ where
 ///
 /// ```
 /// use eosio_numstr::symbol_code_to_bytes;
-/// assert_eq!(symbol_code_to_bytes(1397703940), *b"EOS    ");
-/// assert_eq!(symbol_code_to_bytes(5138124851399447552), *b"TESTING");
-/// assert_eq!(symbol_code_to_bytes(361956332544), *b"TGFT   ");
-/// assert_eq!(symbol_code_to_bytes(1398362882), *b"SYS    ");
+/// assert_eq!(symbol_code_to_bytes(4542291), *b"    EOS");
+/// assert_eq!(symbol_code_to_bytes(23720122242387527), *b"TESTING");
+/// assert_eq!(symbol_code_to_bytes(1413957204), *b"   TGFT");
+/// assert_eq!(symbol_code_to_bytes(5462355), *b"    SYS");
 /// assert_eq!(symbol_code_to_bytes(0), *b"       ");
 /// ```
 #[inline]
 #[must_use]
-pub fn symbol_code_to_bytes(value: u64) -> [u8; 7] {
-    let mut chars = [b' '; 7];
+#[allow(clippy::cast_possible_truncation)]
+pub fn symbol_code_to_bytes(value: u64) -> [u8; SYMBOL_CODE_MAX_LEN] {
+    let mut chars = [b' '; SYMBOL_CODE_MAX_LEN];
     let mut v = value;
-    for c in &mut chars {
-        v >>= 8;
+    for c in chars.iter_mut().rev() {
         if v == 0 {
             break;
         }
-        *c = u8::try_from(v & 0xff).unwrap_or_default();
+        *c = (v & 0xFF) as u8;
+        v >>= 8;
     }
     chars
 }
@@ -99,17 +103,12 @@ mod tests {
 
     proptest! {
         #[test]
-        fn from_to_bytes(input in "[A-Z]{1,7}") {
-            let value = match symbol_code_from_bytes(input.bytes()) {
-                Ok(value) => value,
-                Err(error) => panic!("Failed with input '{}': {}", input, error),
-            };
+        fn from_bytes_to_bytes(input in "[A-Z]{0,7}") {
+            let value = symbol_code_from_bytes(input.bytes()).unwrap();
+            println!("!!! {} = {}", input, value);
             let bytes = symbol_code_to_bytes(value);
-            let string = str::from_utf8(&bytes).expect("Failed to convert bytes into str");
-            prop_assert_eq!(
-                string,
-                format!("{:7}", input)
-            );
+            let string = str::from_utf8(&bytes).unwrap();
+            prop_assert_eq!(string, format!("{:>7}", input));
         }
 
         #[test]

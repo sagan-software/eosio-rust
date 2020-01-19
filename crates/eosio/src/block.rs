@@ -19,7 +19,6 @@ use core::str::FromStr;
     Hash,
     Default,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct BlockId(String);
 
@@ -43,7 +42,6 @@ impl fmt::Display for BlockId {
     Copy,
     Hash,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct BlockNum(NonZeroU64);
 
@@ -62,8 +60,6 @@ impl FromStr for BlockNum {
 
 /// TODO docs
 #[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(untagged))]
 pub enum BlockNumOrId {
     /// TODO docs
     Id(BlockId),

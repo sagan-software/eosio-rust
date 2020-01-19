@@ -58,34 +58,6 @@ impl From<TimePoint> for BlockTimestamp {
     }
 }
 
-#[cfg(test)]
-#[test]
-fn test_from_time_point() {
-    let test_cases = vec![
-        (0, 0),
-        (BlockTimestamp::EPOCH, 0),
-        (
-            BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
-            10,
-        ),
-        (
-            BlockTimestamp::EPOCH
-                + i64::from(BlockTimestamp::INTERVAL_MS) * 100,
-            100,
-        ),
-        (
-            BlockTimestamp::EPOCH
-                + i64::from(BlockTimestamp::INTERVAL_MS) * 10
-                + 255,
-            10,
-        ),
-    ];
-    for (millis, slot) in test_cases {
-        let tp = TimePoint::from_millis(millis);
-        assert_eq!(BlockTimestamp { slot }, BlockTimestamp::from(tp));
-    }
-}
-
 impl From<BlockTimestamp> for TimePoint {
     #[inline]
     fn from(bt: BlockTimestamp) -> Self {
@@ -93,26 +65,6 @@ impl From<BlockTimestamp> for TimePoint {
             * i64::from(BlockTimestamp::INTERVAL_MS)
             + BlockTimestamp::EPOCH;
         Self::from_millis(millis)
-    }
-}
-
-#[cfg(test)]
-#[test]
-fn test_to_time_point() {
-    let test_cases = vec![
-        (0, BlockTimestamp::EPOCH),
-        (
-            1,
-            BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
-        ),
-        (
-            10,
-            BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
-        ),
-    ];
-    for (slot, millis) in test_cases {
-        let bt = BlockTimestamp { slot };
-        assert_eq!(TimePoint::from_millis(millis), TimePoint::from(bt));
     }
 }
 
@@ -126,9 +78,9 @@ impl From<TimePointSec> for BlockTimestamp {
     }
 }
 
-#[cfg(test)]
-#[test]
-fn test_from_time_point_sec() {}
+// #[cfg(test)]
+// #[test]
+// fn test_from_time_point_sec() {}
 
 impl From<BlockTimestamp> for TimePointSec {
     #[inline]
@@ -141,68 +93,77 @@ impl From<BlockTimestamp> for TimePointSec {
     }
 }
 
-#[cfg(test)]
-#[test]
-fn test_to_time_point_sec() {
-    let test_cases = vec![
-        (0, BlockTimestamp::EPOCH),
-        (
-            1,
-            BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
-        ),
-        (
-            10,
-            BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
-        ),
-    ];
-    for (slot, millis) in test_cases {
-        let bt = BlockTimestamp { slot };
-        let secs = millis / 1_000;
-        let secs = secs as u32;
-        assert_eq!(TimePointSec::from_secs(secs), TimePointSec::from(bt));
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
 
-// TODO docs
-// struct BlockTimestampVisitor;
-
-// impl<'de> ::serde::de::Visitor<'de> for BlockTimestampVisitor {
-//     type Value = BlockTimestamp;
-
-//     #[inline]
-//     fn expecting(
-//         &self,
-//         formatter: &mut ::std::fmt::Formatter,
-//     ) -> ::std::fmt::Result {
-//         formatter.write_str("a second timestamp as a number or string")
-//     }
-
-//     #[inline]
-//     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-//     where
-//         E: ::serde::de::Error,
-//     {
-//         match value.parse::<u32>() {
-//             Ok(n) => Ok(BlockTimestamp(n)),
-//             Err(e) => Err(::serde::de::Error::custom(e)),
+//     #[test]
+//     fn from_time_point() {
+//         let test_cases = vec![
+//             (0, 0),
+//             (BlockTimestamp::EPOCH, 0),
+//             (
+//                 BlockTimestamp::EPOCH
+//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
+//                 10,
+//             ),
+//             (
+//                 BlockTimestamp::EPOCH
+//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 100,
+//                 100,
+//             ),
+//             (
+//                 BlockTimestamp::EPOCH
+//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10
+//                     + 255,
+//                 10,
+//             ),
+//         ];
+//         for (millis, slot) in test_cases {
+//             let tp = TimePoint::from_millis(millis);
+//             assert_eq!(BlockTimestamp { slot }, BlockTimestamp::from(tp));
 //         }
 //     }
 
-//     #[inline]
-//     fn visit_u32<E>(self, value: u32) -> Result<Self::Value, E>
-//     where
-//         E: ::serde::de::Error,
-//     {
-//         Ok(BlockTimestamp(value))
+//     #[test]
+//     fn to_time_point() {
+//         let test_cases = vec![
+//             (0, BlockTimestamp::EPOCH),
+//             (
+//                 1,
+//                 BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
+//             ),
+//             (
+//                 10,
+//                 BlockTimestamp::EPOCH
+//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
+//             ),
+//         ];
+//         for (slot, millis) in test_cases {
+//             let bt = BlockTimestamp { slot };
+//             assert_eq!(TimePoint::from_millis(millis), TimePoint::from(bt));
+//         }
 //     }
-// }
 
-// impl<'de> ::serde::de::Deserialize<'de> for BlockTimestamp {
-//     #[inline]
-//     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//     where
-//         D: ::serde::de::Deserializer<'de>,
-//     {
-//         deserializer.deserialize_any(BlockTimestampVisitor)
+//     #[test]
+//     fn to_time_point_sec() {
+//         let test_cases = vec![
+//             (0, BlockTimestamp::EPOCH),
+//             (
+//                 1,
+//                 BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
+//             ),
+//             (
+//                 10,
+//                 BlockTimestamp::EPOCH
+//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
+//             ),
+//         ];
+//         for (slot, millis) in test_cases {
+//             let bt = BlockTimestamp { slot };
+//             let secs = millis / 1_000;
+//             let secs = secs as u32;
+//             assert_eq!(TimePointSec::from_secs(secs), TimePointSec::from(bt));
+//         }
 //     }
 // }

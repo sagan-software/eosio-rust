@@ -1,7 +1,7 @@
-error: unexpected end of input, name is too long, must be 12 chars or less
+error: unexpected end of input, name is too long, must be 13 chars or less
  --> $DIR/name-too-long.rs:6:13
   |
-6 |     let _ = n!("1234512345123");
-  |             ^^^^^^^^^^^^^^^^^^^
+6 |     let _ = n!("12345123451234");
+  |             ^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in a macro outside of the current crate (in Nightly builds, run with -Z external-macro-backtrace for more info)

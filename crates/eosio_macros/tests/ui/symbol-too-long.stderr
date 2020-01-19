@@ -1,4 +1,4 @@
-error: unexpected end of input, symbol is too long, must be 7 chars or less
+error: unexpected end of input, symbol code is too long, must be 7 chars or less
  --> $DIR/symbol-too-long.rs:6:13
   |
 6 |     let _ = s!(4, "ABCDEFGH");

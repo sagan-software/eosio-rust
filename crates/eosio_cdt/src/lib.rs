@@ -16,7 +16,6 @@
     clippy::nursery,
     clippy::style,
     clippy::perf,
-    clippy::cargo,
     clippy::dbg_macro,
     clippy::else_if_without_else,
     clippy::float_cmp_const,

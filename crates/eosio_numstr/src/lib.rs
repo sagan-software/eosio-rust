@@ -14,7 +14,7 @@
 //! ```
 //! use eosio_numstr::symbol_from_bytes;
 //! let symbol = symbol_from_bytes(4, "EOS".bytes()).unwrap();
-//! assert_eq!(symbol, 1397703940);
+//! assert_eq!(symbol, 1162826500);
 //! ```
 #![no_std]
 #![deny(
@@ -39,6 +39,10 @@
     clippy::use_debug
 )]
 #![allow(clippy::module_name_repetitions)]
+#![cfg_attr(
+    test,
+    allow(clippy::option_unwrap_used, clippy::result_unwrap_used)
+)]
 
 #[cfg(test)]
 #[macro_use]
@@ -52,7 +56,8 @@ pub use name::{
     name_from_bytes, name_to_bytes, ParseNameError, NAME_CHARS, NAME_MAX_LEN,
 };
 pub use symbol::{
-    symbol_from_bytes, symbol_to_code, symbol_to_precision, ParseSymbolError,
+    symbol_from_bytes, symbol_from_code, symbol_to_code, symbol_to_precision,
+    ParseSymbolError,
 };
 pub use symbol_code::{
     symbol_code_from_bytes, symbol_code_to_bytes, ParseSymbolCodeError,

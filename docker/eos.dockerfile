@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS builder
+FROM ubuntu:18.04
 
 # Arguments
 ARG fork=EOSIO
@@ -17,16 +17,6 @@ WORKDIR /eos
 RUN git submodule update --init --recursive
 RUN yes | ./scripts/eosio_build.sh
 RUN ./scripts/eosio_install.sh
-
-
-FROM ubuntu:18.04
-
-COPY --from=builder /root/eosio /root/eosio
-
-RUN apt-get update && \
-    apt-get install -y openssl && \
-    apt-get autoremove -y && \
-    apt-get clean
 
 # Environment variables
 ENV EOSIO_ROOT /root/eosio/2.0

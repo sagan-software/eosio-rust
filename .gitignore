@@ -8,3 +8,4 @@ node_modules
 Cargo.lock
 /gh-pages
 .vscode
+proptest-regressions

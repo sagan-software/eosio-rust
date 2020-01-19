@@ -20,7 +20,6 @@ use core::ops::Add;
     Hash,
     Default,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct TimePointSec(u32);
 
@@ -37,54 +36,6 @@ impl TimePointSec {
     #[must_use]
     pub const fn as_secs(self) -> u32 {
         self.0
-    }
-}
-
-#[cfg(feature = "serde")]
-struct TimePointSecVisitor;
-
-#[cfg(feature = "serde")]
-impl<'de> serde::de::Visitor<'de> for TimePointSecVisitor {
-    type Value = TimePointSec;
-
-    #[inline]
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a second timestamp as a number or string")
-    }
-
-    #[cfg(feature = "chrono")]
-    #[inline]
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        match value.parse::<chrono::NaiveDateTime>() {
-            Ok(n) => n
-                .timestamp()
-                .try_into()
-                .map(TimePointSec)
-                .map_err(serde::de::Error::custom),
-            Err(e) => Err(serde::de::Error::custom(e)),
-        }
-    }
-
-    #[inline]
-    fn visit_u32<E>(self, value: u32) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(TimePointSec(value))
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de> serde::de::Deserialize<'de> for TimePointSec {
-    #[inline]
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::de::Deserializer<'de>,
-    {
-        deserializer.deserialize_any(TimePointSecVisitor)
     }
 }
 

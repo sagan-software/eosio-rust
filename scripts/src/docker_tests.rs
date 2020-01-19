@@ -29,7 +29,7 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
 
     cmd.arg("--entrypoint")
         .arg("/eosio.contracts/build/tests/unit_test")
-        .arg("sagansoftware/eosio.contracts:1.9.0-rc4")
+        .arg("sagansoftware/eosio.contracts:1.9.0")
         .arg("--show_progress=yes");
 
     for name in CONTRACTS {

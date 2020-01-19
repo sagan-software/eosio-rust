@@ -70,76 +70,29 @@ impl FromStr for Name {
     }
 }
 
-impl TryFrom<&str> for Name {
-    type Error = ParseNameError;
-    #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        Self::from_str(value)
-    }
-}
-
 impl fmt::Display for Name {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let bytes = name_to_bytes(self.0);
-        let value = str::from_utf8(&bytes).map_err(|_| fmt::Error)?;
+        let value = str::from_utf8(&bytes)
+            .map(|s| s.trim_end_matches('.'))
+            .map_err(|_| fmt::Error)?;
         write!(f, "{}", value)
     }
 }
 
-/// TODO docs
-#[cfg(feature = "serde")]
-struct NameVisitor<T: FromStr<Err = ParseNameError> + From<u64> + fmt::Display>(
-    PhantomData<T>,
-);
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use alloc::string::ToString;
+    use proptest::prelude::*;
 
-#[cfg(feature = "serde")]
-impl<'de, T> serde::de::Visitor<'de> for NameVisitor<T>
-where
-    T: FromStr<Err = ParseNameError> + From<u64> + fmt::Display,
-{
-    type Value = T;
-
-    #[inline]
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("an EOSIO name string or number")
-    }
-
-    #[inline]
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: ::serde::de::Error,
-    {
-        value.parse::<T>().map_err(serde::de::Error::custom)
-    }
-
-    #[inline]
-    fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(value.into())
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for Name {
-    #[inline]
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_any(NameVisitor(PhantomData::<Self>))
-    }
-}
-
-#[cfg(feature = "serde")]
-impl serde::Serialize for Name {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use alloc::string::ToString;
-        serializer.serialize_str(self.to_string().as_str())
+    proptest! {
+        #[test]
+        fn from_str_to_string(input in "[[1-5][a-z]]{0,12}[a-j]{0,1}") {
+            let name = Name::from_str(&input).expect("Failed to parse name from str");
+            let string = name.to_string();
+            prop_assert_eq!(string, input);
+        }
     }
 }

@@ -56,7 +56,9 @@ impl fmt::Display for SymbolCode {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let bytes = symbol_code_to_bytes(self.0);
-        let value = str::from_utf8(&bytes).map_err(|_| fmt::Error)?;
+        let value = str::from_utf8(&bytes)
+            .map(str::trim)
+            .map_err(|_| fmt::Error)?;
         write!(f, "{}", value)
     }
 }
@@ -101,70 +103,29 @@ impl FromStr for SymbolCode {
     }
 }
 
-impl TryFrom<&str> for SymbolCode {
-    type Error = ParseSymbolCodeError;
-    #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        Self::from_str(value)
-    }
-}
-
 #[cfg(test)]
 mod symbol_code_tests {
     use super::*;
     use alloc::string::ToString;
-    use eosio_macros::s;
-    use eosio_numstr::symbol_to_code;
+    use proptest::prelude::*;
 
-    macro_rules! test_to_string {
-        ($($name:ident, $value:expr, $expected:expr)*) => ($(
-            #[test]
-            fn $name() {
-                assert_eq!(
-                    SymbolCode::from(symbol_to_code($value)).to_string(),
-                    $expected
-                );
+    proptest! {
+        #[test]
+        fn from_to_string(input in "[A-Z]{1,7}") {
+            let symbol = SymbolCode::from_str(&input).unwrap();
+            let result = symbol.to_string();
+            prop_assert_eq!(result, input);
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn from_str_err(input in "[A-Z]{1,3}[^A-Z]{1,3}") {
+            match SymbolCode::from_str(&input) {
+                Err(ParseSymbolCodeError::BadChar(..)) => (),
+                Err(err) => prop_assert!(false, "from_str failed with the wrong error: {}", err),
+                Ok(..) => prop_assert!(false, "from_str should've failed"),
             }
-        )*)
-    }
-
-    test_to_string! {
-        to_string, s!(4, "EOS"), "EOS"
-        to_string_zero_precision, s!(0, "TGFT"), "TGFT"
-        to_string_nine_precision, s!(9, "SYS"), "SYS"
-    }
-
-    macro_rules! test_from_str_ok {
-        ($($name:ident, $input:expr, $expected:expr)*) => ($(
-            #[test]
-            fn $name() {
-                let ok = Ok(crate::Symbol::from($expected).code());
-                assert_eq!(SymbolCode::from_str($input), ok);
-                assert_eq!(SymbolCode::try_from($input), ok);
-            }
-        )*)
-    }
-
-    test_from_str_ok! {
-        from_str_ok1, "TST", s!(0, "TST")
-        from_str_ok2, "EOS", s!(4, "EOS")
-        from_str_ok3, "TGFT", s!(0, "TGFT")
-    }
-
-    macro_rules! test_from_str_err {
-        ($($name:ident, $input:expr, $expected:expr)*) => ($(
-            #[test]
-            fn $name() {
-            let err = Err($expected);
-            assert_eq!(SymbolCode::from_str($input), err);
-            assert_eq!(SymbolCode::try_from($input), err);
-            }
-        )*)
-    }
-
-    test_from_str_err! {
-        from_str_bad_char,
-        "tst",
-        ParseSymbolCodeError::BadChar(b't')
+        }
     }
 }

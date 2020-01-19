@@ -6,7 +6,6 @@ use alloc::string::String;
 #[derive(
     Read, Write, NumBytes, Clone, Default, Debug, PartialEq, PartialOrd,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct ChainId(String);
 
@@ -14,7 +13,6 @@ pub struct ChainId(String);
 #[derive(
     Read, Write, NumBytes, Clone, Default, Debug, PartialEq, PartialOrd,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct BlockchainParameters {
     /// The maximum net usage in instructions for a block

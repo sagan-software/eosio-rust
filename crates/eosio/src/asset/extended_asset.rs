@@ -9,7 +9,6 @@ use core::ops::Deref;
 #[derive(
     Debug, PartialEq, PartialOrd, Clone, Copy, Default, NumBytes, Read, Write,
 )]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[eosio(crate_path = "crate::bytes")]
 pub struct ExtendedAsset {
     /// The asset
