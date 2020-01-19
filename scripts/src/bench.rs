@@ -1,5 +1,5 @@
 use super::shared::cleos;
-use eosio::{SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
+use eosio::{SYMBOL_CODE_CHARS, SYMBOL_CODE_MAX_LEN};
 use lazy_static::lazy_static;
 use rand::prelude::*;
 use regex::Regex;
@@ -129,10 +129,10 @@ pub fn run_bench() {
             println!("Done warming up! Saving results...");
         }
 
-        let symbol: String = (0..SYMBOL_LEN_MAX)
+        let symbol: String = (0..SYMBOL_CODE_MAX_LEN)
             .map(|_| {
-                let idx = rng.gen_range(0, SYMBOL_UTF8_CHARS.len());
-                char::from(unsafe { *SYMBOL_UTF8_CHARS.get_unchecked(idx) })
+                let idx = rng.gen_range(0, SYMBOL_CODE_CHARS.len());
+                char::from(unsafe { *SYMBOL_CODE_CHARS.get_unchecked(idx) })
             })
             .collect();
         let mut r = eosio_token_tests("eosio.token", &symbol);

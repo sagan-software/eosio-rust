@@ -76,7 +76,8 @@ pub use self::json::*;
 
 #[macro_use]
 mod name;
-pub use self::name::{Name, NAME_LEN_MAX, NAME_UTF8_CHARS};
+pub use self::name::Name;
+pub use eosio_numstr::{ParseNameError, NAME_CHARS, NAME_MAX_LEN};
 
 mod ops;
 pub use self::ops::{
@@ -90,8 +91,10 @@ mod resources;
 pub use self::resources::{CpuWeight, NetWeight, RamBytes};
 
 mod symbol;
-pub use self::symbol::{
-    ExtendedSymbol, Symbol, SymbolCode, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS,
+pub use self::symbol::{ExtendedSymbol, Symbol, SymbolCode};
+pub use eosio_numstr::{
+    ParseSymbolCodeError, ParseSymbolError, SYMBOL_CODE_CHARS,
+    SYMBOL_CODE_MAX_LEN,
 };
 
 mod table;

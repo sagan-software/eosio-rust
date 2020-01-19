@@ -30,9 +30,8 @@ maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
 [dependencies]
-eosio_numstr = { version = "0.3", path = "../eosio_numstr", features = ["alloc"] }
+eosio_numstr = { version = "0.3", path = "../eosio_numstr" }
 eosio_macros = { version = "0.3", path = "../eosio_macros" }
-serde = { version = "1.0", features = ["derive"], optional = true }
 chrono = { version = "0.4", optional = true }
 
 [dev-dependencies]

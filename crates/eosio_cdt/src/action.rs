@@ -13,7 +13,11 @@ where
     unsafe { eosio_cdt_sys::eosio_exit(code.into()) }
 }
 
-/// Sends an inline action
+/// Sends an inline action.
+///
+/// # Errors
+///
+/// Will return `Err` if there was an issue serializing the action.
 #[inline]
 pub fn send_inline_action(action: &Action<Vec<u8>>) -> Result<(), WriteError> {
     let size = action.num_bytes();
@@ -25,7 +29,11 @@ pub fn send_inline_action(action: &Action<Vec<u8>>) -> Result<(), WriteError> {
     Ok(())
 }
 
-/// Sends a context free inline action
+/// Sends a context free inline action.
+///
+/// # Errors
+///
+/// Will return `Err` if there was an issue serializing the action.
 #[inline]
 pub fn send_context_free_inline_action(
     action: &Action<Vec<u8>>,
@@ -40,6 +48,10 @@ pub fn send_context_free_inline_action(
 }
 
 /// Sends a deferred transaction
+///
+/// # Errors
+///
+/// Will return `Err` if there was an issue serializing the transaction.
 #[inline]
 pub fn send_deferred<I, P, T>(
     id: I,
@@ -53,18 +65,18 @@ where
     T: AsRef<Transaction>,
 {
     let bytes = trx.as_ref().pack()?;
-    send_deferred_bytes(id, payer, bytes, replace_existing)
+    send_deferred_bytes(id, payer, bytes, replace_existing);
+    Ok(())
 }
 
-/// Sends a deferred transaction from raw bytes
+/// Sends a deferred transaction from raw bytes.
 #[inline]
 pub fn send_deferred_bytes<I, P, T>(
     id: I,
     payer: P,
     bytes: T,
     replace_existing: bool,
-) -> Result<(), WriteError>
-where
+) where
     I: AsRef<TransactionId>,
     P: AsRef<AccountName>,
     T: AsRef<[u8]>,
@@ -81,7 +93,6 @@ where
             replace_existing.into(),
         )
     }
-    Ok(())
 }
 
 /// Cancels a deferred transaction
@@ -95,6 +106,10 @@ pub fn cancel_deferred<I: AsRef<TransactionId>>(id: I) -> bool {
 }
 
 /// Reads action data
+///
+/// # Errors
+///
+/// Will return `Err` if there was a problem reading the action data.
 #[inline]
 pub fn read_action_data<T: Read>() -> Result<T, ReadError> {
     let num_bytes = unsafe { eosio_cdt_sys::action_data_size() };

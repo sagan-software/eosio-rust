@@ -19,7 +19,7 @@ pub fn current_time_point_sec() -> TimePointSec {
 #[must_use]
 #[inline]
 pub fn current_block_time() -> BlockTimestamp {
-    current_time_point().as_block_timestamp()
+    current_time_point().into()
 }
 
 /// Gets the publication time

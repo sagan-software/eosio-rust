@@ -369,8 +369,7 @@ pub fn exec(proposer: AccountName, proposal_name: Name, executer: AccountName) {
         (u128::from(proposer.as_u64()) << 64)
             | u128::from(proposal_name.as_u64()),
     );
-    send_deferred_bytes(trx_id, executer, proposal.packed_transaction, true)
-        .expect("write");
+    send_deferred_bytes(trx_id, executer, proposal.packed_transaction, true);
     proposal_cursor.erase().expect("read");
 }
 

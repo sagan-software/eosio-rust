@@ -2,11 +2,11 @@
 use crate::internal::get_root_path;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, quote_spanned, ToTokens};
-use syn::parse::{Parse, ParseStream, Result as ParseResult};
-use syn::spanned::Spanned;
 use syn::{
-    parse_quote, Data, DeriveInput, Fields, GenericParam, Generics, Ident,
-    Index, Path,
+    parse::{Parse, ParseStream, Result as ParseResult},
+    parse_quote,
+    spanned::Spanned,
+    Data, DeriveInput, Fields, GenericParam, Generics, Ident, Index, Path,
 };
 
 pub struct DeriveWrite {

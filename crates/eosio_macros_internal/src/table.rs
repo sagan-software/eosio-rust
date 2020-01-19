@@ -1,7 +1,9 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, ToTokens};
-use syn::parse::{Parse, ParseStream, Result as ParseResult};
-use syn::{DeriveInput, LitStr};
+use syn::{
+    parse::{Parse, ParseStream, Result as ParseResult},
+    DeriveInput, LitStr,
+};
 
 pub struct Table {
     input: DeriveInput,

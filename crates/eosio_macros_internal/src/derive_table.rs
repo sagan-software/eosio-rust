@@ -4,10 +4,8 @@ use crate::internal::{
 };
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens};
-use syn::parse::{
-    Error as ParseError, Parse, ParseStream, Result as ParseResult,
-};
 use syn::{
+    parse::{Error as ParseError, Parse, ParseStream, Result as ParseResult},
     Data, DeriveInput, Fields, Generics, Ident, Lit, LitStr, Meta, NestedMeta,
     Path, Type,
 };

@@ -1,8 +1,8 @@
-FROM sagansoftware/eosio.cdt:1.7.0-rc1
+FROM sagansoftware/eosio.cdt:1.7.0
 
 # Arguments
 ARG fork=EOSIO
-ARG branch=v1.9.0-rc3
+ARG branch=v1.9.0
 
 # Build
 RUN git clone \

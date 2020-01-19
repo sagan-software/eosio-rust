@@ -245,7 +245,7 @@ pub fn setalimits(
 #[eosio::action]
 pub fn setprods(schedule: Vec<ProducerKey>) {
     require_auth(current_receiver());
-    set_proposed_producers(schedule);
+    let _ = set_proposed_producers(schedule);
 }
 
 /// Set the blockchain parameters. By tuning these parameters, various degrees of customization can be achieved.

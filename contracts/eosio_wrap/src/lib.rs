@@ -19,7 +19,7 @@ pub fn exec(
     };
 
     let bytes = ds.as_remaining_bytes().unwrap();
-    send_deferred_bytes(id, executer, bytes, false).expect("write");
+    send_deferred_bytes(id, executer, bytes, false);
 }
 
 eosio_cdt::abi!(exec);

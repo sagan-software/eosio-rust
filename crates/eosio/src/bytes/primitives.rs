@@ -1,6 +1,6 @@
 use super::{NumBytes, Read, ReadError, Write, WriteError};
 use crate::varint::{SignedInt, UnsignedInt};
-use core::convert::{Into, TryInto};
+use core::convert::TryInto;
 
 macro_rules! impl_nums {
     ($($t:ty, $s:expr)*) => ($(
@@ -13,6 +13,7 @@ macro_rules! impl_nums {
             }
         }
 
+        #[allow(clippy::use_self)]
         impl Read for $t {
             #[inline]
             fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
@@ -33,6 +34,7 @@ macro_rules! impl_nums {
             }
         }
 
+        #[allow(clippy::use_self)]
         impl Write for $t
         {
             #[inline]
@@ -195,7 +197,7 @@ impl NumBytes for usize {
 impl Read for usize {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
-        UnsignedInt::read(bytes, pos).map(Into::into)
+        UnsignedInt::read(bytes, pos).map(Self::from)
     }
 }
 
@@ -221,7 +223,7 @@ impl NumBytes for isize {
 impl Read for isize {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
-        SignedInt::read(bytes, pos).map(Into::into)
+        SignedInt::read(bytes, pos).map(Self::from)
     }
 }
 

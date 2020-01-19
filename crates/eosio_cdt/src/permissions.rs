@@ -1,6 +1,10 @@
 use eosio::{PermissionLevel, PublicKey, Transaction, Write, WriteError};
 
 /// Checks if a transaction is authorized by a provided set of keys and permissions
+///
+/// # Errors
+///
+/// Returns `Err` if there as a problem serializing the public keys or permission levels.
 #[inline]
 pub fn has_transaction_authority<T, K, L>(
     trx: T,
@@ -17,6 +21,10 @@ where
 }
 
 /// Checks if a transaction is authorized by a provided set of keys and permissions
+///
+/// # Errors
+///
+/// Returns `Err` if there as a problem serializing the public keys or permission levels.
 #[inline]
 pub fn has_transaction_authority_bytes<T, K, L>(
     trx: T,

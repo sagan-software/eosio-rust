@@ -1,8 +1,10 @@
 use heck::CamelCase;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, ToTokens};
-use syn::parse::{Parse, ParseStream, Result as ParseResult};
-use syn::{Block, FnArg, Ident, ItemFn, LitStr, Signature};
+use syn::{
+    parse::{Parse, ParseStream, Result as ParseResult},
+    Block, FnArg, Ident, ItemFn, LitStr, Signature,
+};
 
 pub struct ActionArgs {
     name: Option<LitStr>,

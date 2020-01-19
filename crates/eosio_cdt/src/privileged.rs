@@ -1,3 +1,4 @@
+use core::convert::TryInto;
 use eosio::{
     AccountName, BlockchainParameters, Checksum256, CpuWeight, NetWeight,
     NumBytes, ProducerKey, RamBytes, Read, ReadError, Write, WriteError,
@@ -59,6 +60,10 @@ pub fn set_privileged<A: AsRef<AccountName>>(account: A, is_priv: bool) {
 }
 
 /// Set the blockchain parameters
+///
+/// # Errors
+///
+/// Returns an error if there was a problem serializing the parameters.
 #[inline]
 pub fn set_blockchain_parameters<T: AsRef<BlockchainParameters>>(
     params: T,
@@ -76,6 +81,10 @@ pub fn set_blockchain_parameters<T: AsRef<BlockchainParameters>>(
 }
 
 /// Retrieve the blolckchain parameters
+///
+/// # Errors
+///
+/// Returns an error if there was a problem reading the parameters.
 #[inline]
 pub fn get_blockchain_parameters() -> Result<BlockchainParameters, ReadError> {
     let expected_size = BlockchainParameters::default().num_bytes();
@@ -109,7 +118,7 @@ pub fn set_proposed_producers<T: AsRef<[ProducerKey]>>(
     let result =
         unsafe { eosio_cdt_sys::set_proposed_producers(buf_ptr, size as u32) };
     if result >= 0 {
-        Some(result as u64)
+        result.try_into().ok()
     } else {
         None
     }

@@ -32,7 +32,11 @@ impl<T: Table> SingletonIndex<T> {
         self.0.find(T::NAME).map(|c| c.get())
     }
 
-    /// TODO docs
+    /// Gets the value stored inside the singleton or returns the default value.
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue deserializing the stored value.
     #[inline]
     pub fn get_or_default(&self) -> Result<T::Row, ReadError>
     where
@@ -44,6 +48,10 @@ impl<T: Table> SingletonIndex<T> {
     }
 
     /// Sets the singleton value
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue serializing the value.
     #[inline]
     pub fn set(
         &self,
@@ -61,6 +69,10 @@ impl<T: Table> SingletonIndex<T> {
 
     /// Removes the singleton value if it exists. Returns `ReadError` if there was
     /// an issue reading the data, and None if there was no entry found
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue reading the stored value.
     #[inline]
     pub fn remove(&self) -> Result<Option<T::Row>, ReadError> {
         match self.0.find(T::NAME) {

@@ -29,6 +29,11 @@ impl TimePoint {
     pub const fn from_micros(micros: i64) -> Self {
         Self(micros)
     }
+    #[inline]
+    #[must_use]
+    pub const fn from_millis(millis: i64) -> Self {
+        Self::from_micros(millis * 1_000)
+    }
 
     /// Gets the microseconds
     #[inline]
@@ -54,12 +59,6 @@ impl TimePoint {
     #[must_use]
     pub const fn as_time_point_sec(&self) -> TimePointSec {
         TimePointSec::from_secs(self.as_secs() as u32)
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn as_block_timestamp(&self) -> BlockTimestamp {
-        BlockTimestamp::new(self.as_millis() as u32)
     }
 }
 

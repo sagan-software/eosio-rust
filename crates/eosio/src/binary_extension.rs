@@ -54,6 +54,7 @@ impl<T> BinaryExtension<T> {
         self.0.as_ref()
     }
 
+    #[allow(clippy::missing_const_for_fn)]
     #[inline]
     pub fn to_value(self) -> Option<T> {
         self.0

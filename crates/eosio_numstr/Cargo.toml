@@ -29,15 +29,12 @@ include = [
 maintenance = { status = "actively-developed" }
 travis-ci = { repository = "sagan-software/eosio-rust", branch = "master" }
 
-[features]
-default = ["alloc"]
-alloc = []
-
 [package.metadata."docs.rs"]
 all-features = true
 
 [dev-dependencies]
 criterion = "0.3"
+proptest = "0.9.5"
 
 [[bench]]
 name = "benches"

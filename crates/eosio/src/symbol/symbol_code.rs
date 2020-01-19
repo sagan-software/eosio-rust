@@ -1,11 +1,13 @@
 use crate::bytes::{NumBytes, Read, Write};
-use alloc::string::String;
-use core::convert::TryFrom;
-use core::fmt;
-use core::str::FromStr;
+use core::{
+    convert::TryFrom,
+    {
+        fmt,
+        str::{self, FromStr},
+    },
+};
 use eosio_numstr::{
-    symbol_code, symbol_from_str, symbol_to_string, symbol_to_utf8,
-    ParseSymbolError,
+    symbol_code_from_bytes, symbol_code_to_bytes, ParseSymbolCodeError,
 };
 
 /// Stores the symbol code as a `u64` value
@@ -46,14 +48,16 @@ impl From<SymbolCode> for [u8; 7] {
     #[inline]
     #[must_use]
     fn from(s: SymbolCode) -> Self {
-        symbol_to_utf8(s.0)
+        symbol_code_to_bytes(s.0)
     }
 }
 
 impl fmt::Display for SymbolCode {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", symbol_to_string(self.0 << 8))
+        let bytes = symbol_code_to_bytes(self.0);
+        let value = str::from_utf8(&bytes).map_err(|_| fmt::Error)?;
+        write!(f, "{}", value)
     }
 }
 
@@ -69,7 +73,7 @@ impl SymbolCode {
     #[inline]
     #[must_use]
     pub fn is_valid(&self) -> bool {
-        let chars = symbol_to_utf8(self.0);
+        let chars = symbol_code_to_bytes(self.0);
         for &c in &chars {
             if c == b' ' {
                 continue;
@@ -89,28 +93,19 @@ impl SymbolCode {
     }
 }
 
+impl FromStr for SymbolCode {
+    type Err = ParseSymbolCodeError;
+    #[inline]
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        symbol_code_from_bytes(value.bytes()).map(Into::into)
+    }
+}
+
 impl TryFrom<&str> for SymbolCode {
-    type Error = ParseSymbolError;
+    type Error = ParseSymbolCodeError;
     #[inline]
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let symbol = symbol_from_str(0, value)?;
-        Ok(symbol_code(symbol).into())
-    }
-}
-
-impl TryFrom<String> for SymbolCode {
-    type Error = ParseSymbolError;
-    #[inline]
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        Self::try_from(value.as_str())
-    }
-}
-
-impl FromStr for SymbolCode {
-    type Err = ParseSymbolError;
-    #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::try_from(s)
+        Self::from_str(value)
     }
 }
 
@@ -119,14 +114,14 @@ mod symbol_code_tests {
     use super::*;
     use alloc::string::ToString;
     use eosio_macros::s;
-    use eosio_numstr::symbol_code;
+    use eosio_numstr::symbol_to_code;
 
     macro_rules! test_to_string {
         ($($name:ident, $value:expr, $expected:expr)*) => ($(
             #[test]
             fn $name() {
                 assert_eq!(
-                    SymbolCode::from(symbol_code($value)).to_string(),
+                    SymbolCode::from(symbol_to_code($value)).to_string(),
                     $expected
                 );
             }
@@ -170,6 +165,6 @@ mod symbol_code_tests {
     test_from_str_err! {
         from_str_bad_char,
         "tst",
-        ParseSymbolError::BadChar('t')
+        ParseSymbolCodeError::BadChar(b't')
     }
 }

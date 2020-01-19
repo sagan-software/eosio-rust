@@ -1,9 +1,12 @@
 use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
 use std::fmt::{self, Display};
-use syn::parse::{Error as ParseError, Result as ParseResult};
-use syn::Meta::List;
-use syn::{Attribute, Ident, Lit, LitStr, Meta, NestedMeta, Path};
+use syn::{
+    parse::{Error as ParseError, Result as ParseResult},
+    Attribute, Ident, Lit, LitStr, Meta,
+    Meta::List,
+    NestedMeta, Path,
+};
 
 #[derive(Copy, Clone)]
 pub struct Symbol(&'static str);
@@ -65,9 +68,14 @@ pub fn get_root_path(attrs: &[Attribute]) -> Path {
         match meta_item {
             NestedMeta::Meta(Meta::NameValue(m)) if m.path == CRATE_PATH => {
                 match m.lit {
-                    Lit::Str(string) => match string.parse_with(Path::parse_mod_style) {
-                        Ok(path) => {return path },
-                        Err(_err) => panic!("`#[eosio(crate_path = \"...\")]` received an invalid path"),
+                    Lit::Str(string) => {
+                        if let Ok(path) =
+                            string.parse_with(Path::parse_mod_style)
+                        {
+                            return path;
+                        } else {
+                            panic!("`#[eosio(crate_path = \"...\")]` received an invalid path");
+                        }
                     }
                     _ => {
                         panic!("invalid eosio crate path");

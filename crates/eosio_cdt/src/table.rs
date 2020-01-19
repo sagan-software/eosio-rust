@@ -12,10 +12,25 @@ where
     T: Table,
 {
     /// Read and deserialize the current table row
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue reading the stored value.
     fn get(&self) -> Result<T::Row, ReadError>;
+
     /// Erase the current row
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue reading the stored value. Stored
+    /// values must be read in order to erase secondary indexes.
     fn erase(&self) -> Result<T::Row, ReadError>;
+
     /// Modify the current row
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue serializing the value.
     fn modify<I: Borrow<T::Row>>(
         &self,
         payer: Payer,
@@ -38,7 +53,12 @@ where
     fn lower_bound<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor>;
     /// Returns a cursor pointing to the last row that matches a key
     fn upper_bound<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor>;
+
     /// Inserts a new row into the table
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was an issue serializing the value.
     fn emplace<I: Borrow<T::Row>>(
         &'a self,
         payer: AccountName,

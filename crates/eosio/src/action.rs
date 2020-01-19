@@ -162,7 +162,7 @@ mod permission_level_tests {
     use eosio_macros::n;
 
     #[test]
-    fn test_from_str_ok() {
+    fn test_from_bytes_ok() {
         let ok = Ok(PermissionLevel {
             actor: AccountName::new(n!("hello")),
             permission: PermissionName::new(n!("world")),
@@ -184,11 +184,9 @@ mod permission_level_tests {
     #[test]
     fn test_from_str_invalid_actor() {
         for (input, expected) in &[
-            ("", ParseNameError::Empty),
-            (" ", ParseNameError::BadChar(' ')),
-            ("@world", ParseNameError::Empty),
-            ("hello6", ParseNameError::BadChar('6')),
-            ("HELLO", ParseNameError::BadChar('H')),
+            (" ", ParseNameError::BadChar(b' ')),
+            ("hello6", ParseNameError::BadChar(b'6')),
+            ("HELLO", ParseNameError::BadChar(b'H')),
             ("hellohellohello", ParseNameError::TooLong),
         ] {
             assert_eq!(
@@ -201,10 +199,9 @@ mod permission_level_tests {
     #[test]
     fn test_from_str_invalid_permission() {
         for (input, expected) in &[
-            ("hello@", ParseNameError::Empty),
-            ("hello@ ", ParseNameError::BadChar(' ')),
-            ("hello@world6", ParseNameError::BadChar('6')),
-            ("hello@WORLD", ParseNameError::BadChar('W')),
+            ("hello@ ", ParseNameError::BadChar(b' ')),
+            ("hello@world6", ParseNameError::BadChar(b'6')),
+            ("hello@WORLD", ParseNameError::BadChar(b'W')),
             ("hello@worldworldworld", ParseNameError::TooLong),
         ] {
             assert_eq!(

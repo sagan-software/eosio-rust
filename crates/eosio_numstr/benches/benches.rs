@@ -4,10 +4,12 @@ extern crate eosio_numstr;
 
 use criterion::{black_box, Criterion};
 
-fn name_from_str(c: &mut Criterion) {
+fn name_from_bytes(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "name_from_str",
-        |b, input| b.iter(|| eosio_numstr::name_from_str(black_box(input))),
+        "name_from_bytes",
+        |b, input| {
+            b.iter(|| eosio_numstr::name_from_bytes(black_box(input.bytes())))
+        },
         vec![
             "",
             "aaaaaa",
@@ -23,35 +25,41 @@ fn name_from_str(c: &mut Criterion) {
     );
 }
 
-fn name_to_string(c: &mut Criterion) {
+fn name_to_bytes(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "name_to_string",
-        |b, input| b.iter(|| eosio_numstr::name_to_string(black_box(*input))),
+        "name_to_bytes",
+        |b, input| b.iter(|| eosio_numstr::name_to_bytes(black_box(*input))),
         vec![0, 3_458_764_513_820_540_928, 614_251_535_012_020_768],
     );
 }
 
-fn symbol_from_str(c: &mut Criterion) {
+fn symbol_code_from_bytes(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "symbol_from_str",
-        |b, input| b.iter(|| eosio_numstr::name_from_str(black_box(input))),
+        "symbol_code_from_bytes",
+        |b, input| {
+            b.iter(|| {
+                eosio_numstr::symbol_code_from_bytes(black_box(input.bytes()))
+            })
+        },
         vec!["", "A", "AB", "ABC", "a", "ab", "abc"],
     );
 }
 
-fn symbol_to_string(c: &mut Criterion) {
+fn symbol_code_to_bytes(c: &mut Criterion) {
     c.bench_function_over_inputs(
-        "symbol_to_string",
-        |b, input| b.iter(|| eosio_numstr::symbol_to_string(black_box(*input))),
+        "symbol_code_to_bytes",
+        |b, input| {
+            b.iter(|| eosio_numstr::symbol_code_to_bytes(black_box(*input)))
+        },
         vec![0, 1_397_703_940, 5_138_124_851_399_447_552],
     );
 }
 
 criterion_group!(
     benches,
-    name_from_str,
-    name_to_string,
-    symbol_from_str,
-    symbol_to_string
+    name_from_bytes,
+    name_to_bytes,
+    symbol_code_from_bytes,
+    symbol_code_to_bytes
 );
 criterion_main!(benches);

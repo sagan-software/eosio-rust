@@ -1,4 +1,4 @@
-use crate::{AccountName, NumBytes, Read, UnsignedInt, Write};
+use crate::{NumBytes, Read, UnsignedInt, Write};
 use alloc::string::String;
 use core::fmt;
 

@@ -12,12 +12,20 @@ pub struct DataStream {
 
 impl DataStream {
     /// Read something from the stream
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was a problem reading the data.
     #[inline]
     pub fn read<T: Read>(&mut self) -> Result<T, ReadError> {
         T::read(&self.bytes, &mut self.pos)
     }
 
     /// Write something to the stream
+    ///
+    /// # Errors
+    ///
+    /// Will return `Err` if there was a problem writing the data.
     #[inline]
     pub fn write<T: Write>(&mut self, thing: T) -> Result<(), WriteError> {
         thing.write(&mut self.bytes, &mut self.pos)

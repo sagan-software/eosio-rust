@@ -3,7 +3,7 @@ use crate::account::AccountName;
 use crate::bytes::{NumBytes, Read, Write};
 use core::fmt;
 use core::ops::Deref;
-pub use eosio_numstr::{ParseSymbolError, SYMBOL_LEN_MAX, SYMBOL_UTF8_CHARS};
+pub use eosio_numstr::ParseSymbolError;
 
 /// Extended asset which stores the information of the owner of the symbol
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/symbol.hpp#L372-L450>

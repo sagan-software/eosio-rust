@@ -1,8 +1,10 @@
-use eosio_numstr::symbol_from_str;
+use eosio_numstr::symbol_from_bytes;
 use proc_macro2::{Literal, TokenStream};
 use quote::{ToTokens, TokenStreamExt};
-use syn::parse::{Parse, ParseStream, Result};
-use syn::{LitInt, LitStr, Token};
+use syn::{
+    parse::{Parse, ParseStream, Result},
+    {LitInt, LitStr, Token},
+};
 
 pub struct EosioSymbol(u64);
 
@@ -11,7 +13,7 @@ impl Parse for EosioSymbol {
         let precision = input.parse::<LitInt>()?.base10_parse::<u8>()?;
         input.parse::<Token![,]>()?;
         let code = input.parse::<LitStr>()?.value();
-        symbol_from_str(precision, code.as_str())
+        symbol_from_bytes(precision, code.bytes())
             .map(Self)
             .map_err(|e| input.error(e))
     }
