@@ -1,10 +1,7 @@
 use crate::bytes::{NumBytes, Read, Write};
 use core::{
-    convert::TryFrom,
-    {
-        fmt,
-        str::{self, FromStr},
-    },
+    fmt,
+    str::{self, FromStr},
 };
 use eosio_numstr::{
     symbol_code_from_bytes, symbol_code_to_bytes, ParseSymbolCodeError,
@@ -109,23 +106,23 @@ mod symbol_code_tests {
     use alloc::string::ToString;
     use proptest::prelude::*;
 
-    proptest! {
-        #[test]
-        fn from_to_string(input in "[A-Z]{1,7}") {
+    #[test]
+    fn from_to_string() {
+        proptest!(|(input in "[A-Z]{1,7}")| {
             let symbol = SymbolCode::from_str(&input).unwrap();
             let result = symbol.to_string();
             prop_assert_eq!(result, input);
-        }
+        })
     }
 
-    proptest! {
-        #[test]
-        fn from_str_err(input in "[A-Z]{1,3}[^A-Z]{1,3}") {
+    #[test]
+    fn from_str_err() {
+        proptest!(|(input in "[A-Z]{1,3}[^A-Z]{1,3}")| {
             match SymbolCode::from_str(&input) {
                 Err(ParseSymbolCodeError::BadChar(..)) => (),
                 Err(err) => prop_assert!(false, "from_str failed with the wrong error: {}", err),
                 Ok(..) => prop_assert!(false, "from_str should've failed"),
             }
-        }
+        });
     }
 }

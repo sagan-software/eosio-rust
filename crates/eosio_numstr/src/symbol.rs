@@ -116,15 +116,15 @@ mod tests {
     use crate::*;
     use proptest::prelude::*;
 
-    proptest! {
-        #[test]
-        fn from_bytes_to_code_and_precision(precision in 0_u8.., code in "[A-Z]{1,7}") {
+    #[test]
+    fn from_bytes_to_code_and_precision() {
+        proptest!(|(precision in 0_u8.., code in "[A-Z]{1,7}")| {
             let expected_code = symbol_code_from_bytes(code.bytes()).unwrap();
             let symbol = symbol_from_bytes(precision, code.bytes()).unwrap();
             let result_precision = symbol_to_precision(symbol);
             prop_assert_eq!(result_precision, precision);
             let result_code = symbol_to_code(symbol);
             prop_assert_eq!(result_code, expected_code);
-        }
+        });
     }
 }

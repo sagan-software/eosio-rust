@@ -22,7 +22,7 @@ use crate::{
 )]
 #[eosio(crate_path = "crate::bytes")]
 pub struct BlockTimestamp {
-    pub slot: u32,
+    slot: u32,
 }
 
 impl BlockTimestamp {
@@ -78,92 +78,88 @@ impl From<TimePointSec> for BlockTimestamp {
     }
 }
 
-// #[cfg(test)]
-// #[test]
-// fn test_from_time_point_sec() {}
-
 impl From<BlockTimestamp> for TimePointSec {
     #[inline]
     fn from(bt: BlockTimestamp) -> Self {
         let millis = i64::from(bt.slot)
             * i64::from(BlockTimestamp::INTERVAL_MS)
             + BlockTimestamp::EPOCH;
-        let secs = millis * 1_000;
+        let secs = millis / 1_000;
         Self::from_secs(secs as u32)
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-//     #[test]
-//     fn from_time_point() {
-//         let test_cases = vec![
-//             (0, 0),
-//             (BlockTimestamp::EPOCH, 0),
-//             (
-//                 BlockTimestamp::EPOCH
-//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
-//                 10,
-//             ),
-//             (
-//                 BlockTimestamp::EPOCH
-//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 100,
-//                 100,
-//             ),
-//             (
-//                 BlockTimestamp::EPOCH
-//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10
-//                     + 255,
-//                 10,
-//             ),
-//         ];
-//         for (millis, slot) in test_cases {
-//             let tp = TimePoint::from_millis(millis);
-//             assert_eq!(BlockTimestamp { slot }, BlockTimestamp::from(tp));
-//         }
-//     }
+    #[test]
+    fn from_time_point() {
+        let test_cases = vec![
+            (0, 0),
+            (BlockTimestamp::EPOCH, 0),
+            (
+                BlockTimestamp::EPOCH
+                    + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
+                10,
+            ),
+            (
+                BlockTimestamp::EPOCH
+                    + i64::from(BlockTimestamp::INTERVAL_MS) * 100,
+                100,
+            ),
+            (
+                BlockTimestamp::EPOCH
+                    + i64::from(BlockTimestamp::INTERVAL_MS) * 10
+                    + 255,
+                10,
+            ),
+        ];
+        for (millis, slot) in test_cases {
+            let tp = TimePoint::from_millis(millis);
+            assert_eq!(BlockTimestamp { slot }, BlockTimestamp::from(tp));
+        }
+    }
 
-//     #[test]
-//     fn to_time_point() {
-//         let test_cases = vec![
-//             (0, BlockTimestamp::EPOCH),
-//             (
-//                 1,
-//                 BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
-//             ),
-//             (
-//                 10,
-//                 BlockTimestamp::EPOCH
-//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
-//             ),
-//         ];
-//         for (slot, millis) in test_cases {
-//             let bt = BlockTimestamp { slot };
-//             assert_eq!(TimePoint::from_millis(millis), TimePoint::from(bt));
-//         }
-//     }
+    #[test]
+    fn to_time_point() {
+        let test_cases = vec![
+            (0, BlockTimestamp::EPOCH),
+            (
+                1,
+                BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
+            ),
+            (
+                10,
+                BlockTimestamp::EPOCH
+                    + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
+            ),
+        ];
+        for (slot, millis) in test_cases {
+            let bt = BlockTimestamp { slot };
+            assert_eq!(TimePoint::from_millis(millis), TimePoint::from(bt));
+        }
+    }
 
-//     #[test]
-//     fn to_time_point_sec() {
-//         let test_cases = vec![
-//             (0, BlockTimestamp::EPOCH),
-//             (
-//                 1,
-//                 BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
-//             ),
-//             (
-//                 10,
-//                 BlockTimestamp::EPOCH
-//                     + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
-//             ),
-//         ];
-//         for (slot, millis) in test_cases {
-//             let bt = BlockTimestamp { slot };
-//             let secs = millis / 1_000;
-//             let secs = secs as u32;
-//             assert_eq!(TimePointSec::from_secs(secs), TimePointSec::from(bt));
-//         }
-//     }
-// }
+    #[test]
+    fn to_time_point_sec() {
+        let test_cases = vec![
+            (0, BlockTimestamp::EPOCH),
+            (
+                1,
+                BlockTimestamp::EPOCH + i64::from(BlockTimestamp::INTERVAL_MS),
+            ),
+            (
+                10,
+                BlockTimestamp::EPOCH
+                    + i64::from(BlockTimestamp::INTERVAL_MS) * 10,
+            ),
+        ];
+        for (slot, millis) in test_cases {
+            let bt = BlockTimestamp { slot };
+            let secs = millis / 1_000;
+            let secs = secs as u32;
+            assert_eq!(TimePointSec::from_secs(secs), TimePointSec::from(bt));
+        }
+    }
+}

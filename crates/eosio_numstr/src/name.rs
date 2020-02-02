@@ -150,9 +150,9 @@ mod tests {
     use core::str;
     use proptest::prelude::*;
 
-    proptest! {
-        #[test]
-        fn from_to_bytes(input in "[[1-5][a-z]]{0,12}[a-j]{0,1}") {
+    #[test]
+    fn from_bytes_to_bytes() {
+        proptest!(|(input in "[[1-5][a-z]\\.]{0,12}[[1-5][a-j]\\.]{0,1}")| {
             let name = match name_from_bytes(input.bytes()) {
                 Ok(name) => name,
                 Err(error) => panic!("Failed with input '{}': {}", input, error),
@@ -164,18 +164,61 @@ mod tests {
                 format!("{:.<13}", input),
                 "Names don't match"
             );
-        }
+        });
+    }
 
-        #[test]
-        fn from_bytes_too_long(input in "[[1-5][a-z]]{12}[a-j]{2}") {
-            if name_from_bytes(input.bytes()).is_ok() {
-                panic!("Should've gotten TooLong error with input '{}'", input);
-            };
-        }
+    #[test]
+    fn from_bytes_too_long() {
+        proptest!(|(input in "[[1-5][a-z]\\.]{12}[[1-5][a-j]\\.]{2}")| {
+            let result = name_from_bytes(input.bytes());
+            prop_assert_eq!(
+                result,
+                Err(ParseNameError::TooLong),
+                "Should've gotten TooLong error"
+            );
+        });
+    }
 
-        #[test]
-        fn to_bytes_doesnt_crash(input in 0_u64..) {
+    #[test]
+    fn from_bytes_bad_char() {
+        proptest!(|(
+            input in "[[1-5][a-z]\\.]{11}",
+            bad_char in "[^[1-5][a-z]\\.]{1}"
+        )| {
+            let input = input + &bad_char;
+            let result = name_from_bytes(input.bytes());
+            let bad_char = bad_char.bytes().next().unwrap();
+            prop_assert_eq!(
+                result,
+                Err(ParseNameError::BadChar(bad_char)),
+                "Should've gotten BadChar error with char '{}'",
+                char::from(bad_char)
+            );
+        });
+    }
+
+    #[test]
+    fn from_bytes_bad_last_char() {
+        proptest!(|(
+            input in "[[1-5][a-z]\\.]{12}",
+            bad_char in "[^[1-5][a-j]\\.]{1}"
+        )| {
+            let input = input + &bad_char;
+            let result = name_from_bytes(input.bytes());
+            let bad_char = bad_char.bytes().next().unwrap();
+            prop_assert_eq!(
+                result,
+                Err(ParseNameError::BadChar(bad_char)),
+                "Should've gotten BadChar error with char '{}'",
+                char::from(bad_char)
+            );
+        });
+    }
+
+    #[test]
+    fn to_bytes_doesnt_crash() {
+        proptest!(|(input in 0_u64..)| {
             let _ = name_to_bytes(input);
-        }
+        });
     }
 }

@@ -101,26 +101,29 @@ mod tests {
     use core::str;
     use proptest::prelude::*;
 
-    proptest! {
-        #[test]
-        fn from_bytes_to_bytes(input in "[A-Z]{0,7}") {
+    #[test]
+    fn from_bytes_to_bytes() {
+        proptest!(|(input in "[A-Z]{0,7}")| {
             let value = symbol_code_from_bytes(input.bytes()).unwrap();
-            println!("!!! {} = {}", input, value);
             let bytes = symbol_code_to_bytes(value);
             let string = str::from_utf8(&bytes).unwrap();
             prop_assert_eq!(string, format!("{:>7}", input));
-        }
+        });
+    }
 
-        #[test]
-        fn from_bytes_too_long(input in "[A-Z]{8}") {
+    #[test]
+    fn from_bytes_too_long() {
+        proptest!(|(input in "[A-Z]{8}")| {
             if symbol_code_from_bytes(input.bytes()).is_ok() {
                 panic!("Should've gotten TooLong error with input '{}'", input);
             };
-        }
+        });
+    }
 
-        #[test]
-        fn to_bytes_doesnt_crash(input in 0_u64..) {
+    #[test]
+    fn to_bytes_doesnt_crash() {
+        proptest!(|(input in 0_u64..)| {
             let _ = symbol_code_to_bytes(input);
-        }
+        });
     }
 }
