@@ -40,3 +40,4 @@ proptest = "0.9.5"
 [[bench]]
 name = "bytes"
 harness = false
+path = "benches/bytes.rs"
