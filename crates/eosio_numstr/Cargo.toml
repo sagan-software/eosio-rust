@@ -20,7 +20,6 @@ documentation = "https://sagan-software.github.io/eosio-rust/eosio-numstr/"
 include = [
     "/Cargo.toml",
     "/src/**/*.rs",
-    "/README.md",
     "/LICENSE-APACHE",
     "/LICENSE-MIT"
 ]
@@ -36,3 +35,4 @@ proptest = "0.9.5"
 [[bench]]
 name = "benches"
 harness = false
+path = "benches/benches.rs"

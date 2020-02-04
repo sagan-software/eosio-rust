@@ -17,11 +17,19 @@ pub fn cleos() -> Command {
     cmd
 }
 
+pub fn project_dir() -> io::Result<PathBuf> {
+    let mut path = std::env::current_exe()?;
+    path.pop();
+    path.pop();
+    path.pop();
+    Ok(path)
+}
+
 pub fn get_target_dir() -> io::Result<PathBuf> {
-    let mut exe = std::env::current_exe()?;
-    exe.pop();
-    exe.pop();
-    Ok(exe.join("wasm32-unknown-unknown").join("release"))
+    Ok(project_dir()?
+        .join("target")
+        .join("wasm32-unknown-unknown")
+        .join("release"))
 }
 
 pub fn remove_file_if_exists<P: AsRef<Path>>(path: P) -> io::Result<()> {
