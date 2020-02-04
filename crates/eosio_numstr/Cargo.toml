@@ -19,6 +19,7 @@ homepage = "https://sagan-software.github.io/eosio-rust/"
 documentation = "https://sagan-software.github.io/eosio-rust/eosio-numstr/"
 include = [
     "/Cargo.toml",
+    "/README.md",
     "/src/**/*.rs",
     "/LICENSE-APACHE",
     "/LICENSE-MIT"
