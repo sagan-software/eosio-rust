@@ -64,6 +64,14 @@ where
         payer: AccountName,
         item: I,
     ) -> Result<(), WriteError>;
+
+    fn find<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor>;
+
+    /// Returns true if the table contains a row with the specified primary key
+    #[inline]
+    fn exists<N: Into<K>>(&'a self, key: N) -> bool {
+        self.find(key).is_some()
+    }
 }
 
 /// Table iterator

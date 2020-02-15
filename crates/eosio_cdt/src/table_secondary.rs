@@ -4,46 +4,107 @@ use crate::{
 use core::borrow::Borrow;
 use core::ptr::null_mut;
 use eosio::{
-    AccountName, Read, ReadError, ScopeName, SecondaryTableIndex,
-    SecondaryTableName, Table, WriteError,
+    AccountName, Checksum160, Checksum256, Read, ReadError, ScopeName,
+    SecondaryTableIndex, SecondaryTableName, Table, WriteError,
 };
 use eosio_cdt_sys::*;
 
-type EndFn = unsafe extern "C" fn(code: u64, scope: u64, table: u64) -> i32;
-type NextFn = unsafe extern "C" fn(itr: i32, primary: *mut u64) -> i32;
-type PreviousFn = unsafe extern "C" fn(itr: i32, primary: *mut u64) -> i32;
-type RemoveFn = unsafe extern "C" fn(itr: i32);
-type StoreFn<T> = unsafe extern "C" fn(
+pub enum Either<A, B> {
+    A(A),
+    B(B),
+}
+
+pub type EndFn = unsafe extern "C" fn(code: u64, scope: u64, table: u64) -> i32;
+pub type NextFn = unsafe extern "C" fn(itr: i32, primary: *mut u64) -> i32;
+pub type PreviousFn = unsafe extern "C" fn(itr: i32, primary: *mut u64) -> i32;
+pub type RemoveFn = unsafe extern "C" fn(itr: i32);
+
+pub type StoreValueFn<T> = unsafe extern "C" fn(
     scope: u64,
     table: u64,
     payer: u64,
     id: u64,
     secondary: *const T,
 ) -> i32;
-type UpdateFn<T> =
+
+pub type StoreArrayFn<T> = unsafe extern "C" fn(
+    scope: u64,
+    table: u64,
+    payer: u64,
+    id: u64,
+    data: *const T,
+    data_len: u32,
+) -> i32;
+
+pub type StoreFn<T> = Either<StoreValueFn<T>, StoreArrayFn<T>>;
+
+pub type UpdateValueFn<T> =
     unsafe extern "C" fn(itr: i32, payer: u64, secondary: *const T);
-type LowerboundFn<T> = unsafe extern "C" fn(
+
+pub type UpdateArrayFn<T> =
+    unsafe extern "C" fn(itr: i32, payer: u64, data: *const T, data_len: u32);
+
+pub type UpdateFn<T> = Either<UpdateValueFn<T>, UpdateArrayFn<T>>;
+
+pub type LowerboundValueFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
     table: u64,
     secondary: *mut T,
     primary: *mut u64,
 ) -> i32;
-type UpperboundFn<T> = unsafe extern "C" fn(
+
+pub type LowerboundArrayFn<T> = unsafe extern "C" fn(
+    code: u64,
+    scope: u64,
+    table: u64,
+    data: *mut T,
+    data_len: u32,
+    primary: *mut u64,
+) -> i32;
+
+pub type LowerboundFn<T> = Either<LowerboundValueFn<T>, LowerboundArrayFn<T>>;
+
+pub type UpperboundValueFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
     table: u64,
     secondary: *mut T,
     primary: *mut u64,
 ) -> i32;
-type FindPrimaryFn<T> = unsafe extern "C" fn(
+
+pub type UpperboundArrayFn<T> = unsafe extern "C" fn(
+    code: u64,
+    scope: u64,
+    table: u64,
+    data: *mut T,
+    data_len: u32,
+    primary: *mut u64,
+) -> i32;
+
+pub type UpperboundFn<T> = Either<UpperboundValueFn<T>, UpperboundArrayFn<T>>;
+
+pub type FindPrimaryValueFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
     table: u64,
     secondary: *mut T,
     primary: u64,
 ) -> i32;
-type FindSecondaryFn<T> = unsafe extern "C" fn(
+
+pub type FindPrimaryArrayFn<T> = unsafe extern "C" fn(
+    code: u64,
+    scope: u64,
+    table: u64,
+    data: *mut T,
+    data_len: u32,
+    primary: u64,
+) -> i32;
+
+pub type FindPrimaryFn<T> =
+    Either<FindPrimaryValueFn<T>, FindPrimaryArrayFn<T>>;
+
+pub type FindSecondaryValueFn<T> = unsafe extern "C" fn(
     code: u64,
     scope: u64,
     table: u64,
@@ -51,8 +112,21 @@ type FindSecondaryFn<T> = unsafe extern "C" fn(
     primary: *mut u64,
 ) -> i32;
 
+pub type FindSecondaryArrayFn<T> = unsafe extern "C" fn(
+    code: u64,
+    scope: u64,
+    table: u64,
+    data: *const T,
+    data_len: u32,
+    primary: *mut u64,
+) -> i32;
+
+pub type FindSecondaryFn<T> =
+    Either<FindSecondaryValueFn<T>, FindSecondaryArrayFn<T>>;
+
 /// Trait for types that are natively supported by EOSIO to be used as secondary keys
 pub trait NativeSecondaryKey: Default {
+    type NativeType;
     /// Unsafe native `end` function
     const END: EndFn;
     /// Unsafe native `next` function
@@ -62,17 +136,20 @@ pub trait NativeSecondaryKey: Default {
     /// Unsafe native `remove` function
     const REMOVE: RemoveFn;
     /// Unsafe native `store` function
-    const STORE: StoreFn<Self>;
+    const STORE: StoreFn<Self::NativeType>;
     /// Unsafe native `update` function
-    const UPDATE: UpdateFn<Self>;
+    const UPDATE: UpdateFn<Self::NativeType>;
     /// Unsafe native `lowerbound` function
-    const LOWERBOUND: LowerboundFn<Self>;
+    const LOWERBOUND: LowerboundFn<Self::NativeType>;
     /// Unsafe native `upperbound` function
-    const UPPERBOUND: UpperboundFn<Self>;
+    const UPPERBOUND: UpperboundFn<Self::NativeType>;
     /// Unsafe native `find_primary` function
-    const FIND_PRIMARY: FindPrimaryFn<Self>;
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType>;
     /// Unsafe native `find_secondary` function
-    const FIND_SECONDARY: FindSecondaryFn<Self>;
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType>;
+    fn as_ptr(&self) -> *const Self::NativeType;
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType;
+    const DATA_LEN: u32 = 0;
     /// Safe wrapper around unsafe native function
     #[must_use]
     #[inline]
@@ -115,20 +192,39 @@ pub trait NativeSecondaryKey: Default {
         payer: AccountName,
         id: u64,
     ) -> i32 {
-        unsafe {
-            Self::STORE(
-                scope.as_u64(),
-                table.as_u64(),
-                payer.as_u64(),
-                id,
-                self as *const Self,
-            )
+        match Self::STORE {
+            Either::A(func) => unsafe {
+                func(
+                    scope.as_u64(),
+                    table.as_u64(),
+                    payer.as_u64(),
+                    id,
+                    self.as_ptr(),
+                )
+            },
+            Either::B(func) => unsafe {
+                func(
+                    scope.as_u64(),
+                    table.as_u64(),
+                    payer.as_u64(),
+                    id,
+                    self.as_ptr(),
+                    Self::DATA_LEN,
+                )
+            },
         }
     }
     /// Safe wrapper around unsafe native function
     #[inline]
     fn db_idx_update(&self, iterator: i32, payer: AccountName) {
-        unsafe { Self::UPDATE(iterator, payer.as_u64(), self as *const Self) }
+        match Self::UPDATE {
+            Either::A(func) => unsafe {
+                func(iterator, payer.as_u64(), self.as_ptr())
+            },
+            Either::B(func) => unsafe {
+                func(iterator, payer.as_u64(), self.as_ptr(), Self::DATA_LEN)
+            },
+        }
     }
     /// Safe wrapper around unsafe native function
     #[inline]
@@ -139,14 +235,26 @@ pub trait NativeSecondaryKey: Default {
         table: SecondaryTableName,
     ) -> (i32, u64) {
         let mut pk = 0_u64;
-        let itr = unsafe {
-            Self::LOWERBOUND(
-                code.as_u64(),
-                scope.as_u64(),
-                table.as_u64(),
-                self as *mut Self,
-                &mut pk as *mut u64,
-            )
+        let itr = match Self::LOWERBOUND {
+            Either::A(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_mut_ptr(),
+                    &mut pk as *mut u64,
+                )
+            },
+            Either::B(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_mut_ptr(),
+                    Self::DATA_LEN,
+                    &mut pk as *mut u64,
+                )
+            },
         };
         (itr, pk)
     }
@@ -159,14 +267,26 @@ pub trait NativeSecondaryKey: Default {
         table: SecondaryTableName,
     ) -> (i32, u64) {
         let mut pk = 0_u64;
-        let itr = unsafe {
-            Self::UPPERBOUND(
-                code.as_u64(),
-                scope.as_u64(),
-                table.as_u64(),
-                self as *mut Self,
-                &mut pk as *mut u64,
-            )
+        let itr = match Self::UPPERBOUND {
+            Either::A(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_mut_ptr(),
+                    &mut pk as *mut u64,
+                )
+            },
+            Either::B(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_mut_ptr(),
+                    Self::DATA_LEN,
+                    &mut pk as *mut u64,
+                )
+            },
         };
         (itr, pk)
     }
@@ -179,14 +299,26 @@ pub trait NativeSecondaryKey: Default {
         table: SecondaryTableName,
         primary: u64,
     ) -> i32 {
-        unsafe {
-            Self::FIND_PRIMARY(
-                code.as_u64(),
-                scope.as_u64(),
-                table.as_u64(),
-                self as *mut Self,
-                primary,
-            )
+        match Self::FIND_PRIMARY {
+            Either::A(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_mut_ptr(),
+                    primary,
+                )
+            },
+            Either::B(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_mut_ptr(),
+                    Self::DATA_LEN,
+                    primary,
+                )
+            },
         }
     }
     /// Safe wrapper around unsafe native function
@@ -198,14 +330,26 @@ pub trait NativeSecondaryKey: Default {
         table: SecondaryTableName,
     ) -> (i32, u64) {
         let mut pk = 0_u64;
-        let itr = unsafe {
-            Self::FIND_SECONDARY(
-                code.as_u64(),
-                scope.as_u64(),
-                table.as_u64(),
-                self as *const Self,
-                &mut pk as *mut u64,
-            )
+        let itr = match Self::FIND_SECONDARY {
+            Either::A(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_ptr(),
+                    &mut pk as *mut u64,
+                )
+            },
+            Either::B(func) => unsafe {
+                func(
+                    code.as_u64(),
+                    scope.as_u64(),
+                    table.as_u64(),
+                    self.as_ptr(),
+                    Self::DATA_LEN,
+                    &mut pk as *mut u64,
+                )
+            },
         };
         (itr, pk)
     }
@@ -230,42 +374,110 @@ pub trait NativeSecondaryKey: Default {
 }
 
 impl NativeSecondaryKey for u64 {
+    type NativeType = Self;
+    #[inline]
+    fn as_ptr(&self) -> *const Self::NativeType {
+        self as *const Self::NativeType
+    }
+    #[inline]
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
+        self as *mut Self::NativeType
+    }
     const END: EndFn = db_idx64_end;
     const NEXT: NextFn = db_idx64_next;
     const PREVIOUS: PreviousFn = db_idx64_previous;
     const REMOVE: RemoveFn = db_idx64_remove;
-    const STORE: StoreFn<Self> = db_idx64_store;
-    const UPDATE: UpdateFn<Self> = db_idx64_update;
-    const LOWERBOUND: LowerboundFn<Self> = db_idx64_lowerbound;
-    const UPPERBOUND: UpperboundFn<Self> = db_idx64_upperbound;
-    const FIND_PRIMARY: FindPrimaryFn<Self> = db_idx64_find_primary;
-    const FIND_SECONDARY: FindSecondaryFn<Self> = db_idx64_find_secondary;
+    const STORE: StoreFn<Self::NativeType> = Either::A(db_idx64_store);
+    const UPDATE: UpdateFn<Self::NativeType> = Either::A(db_idx64_update);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::A(db_idx64_lowerbound);
+    const UPPERBOUND: UpperboundFn<Self::NativeType> =
+        Either::A(db_idx64_upperbound);
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::A(db_idx64_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::A(db_idx64_find_secondary);
 }
 
 impl NativeSecondaryKey for f64 {
+    type NativeType = Self;
+    #[inline]
+    fn as_ptr(&self) -> *const Self::NativeType {
+        self as *const Self::NativeType
+    }
+    #[inline]
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
+        self as *mut Self::NativeType
+    }
     const END: EndFn = db_idx_double_end;
     const NEXT: NextFn = db_idx_double_next;
     const PREVIOUS: PreviousFn = db_idx_double_previous;
     const REMOVE: RemoveFn = db_idx_double_remove;
-    const STORE: StoreFn<Self> = db_idx_double_store;
-    const UPDATE: UpdateFn<Self> = db_idx_double_update;
-    const LOWERBOUND: LowerboundFn<Self> = db_idx_double_lowerbound;
-    const UPPERBOUND: UpperboundFn<Self> = db_idx_double_upperbound;
-    const FIND_PRIMARY: FindPrimaryFn<Self> = db_idx_double_find_primary;
-    const FIND_SECONDARY: FindSecondaryFn<Self> = db_idx_double_find_secondary;
+    const STORE: StoreFn<Self::NativeType> = Either::A(db_idx_double_store);
+    const UPDATE: UpdateFn<Self::NativeType> = Either::A(db_idx_double_update);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::A(db_idx_double_lowerbound);
+    const UPPERBOUND: UpperboundFn<Self::NativeType> =
+        Either::A(db_idx_double_upperbound);
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::A(db_idx_double_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::A(db_idx_double_find_secondary);
 }
 
 impl NativeSecondaryKey for u128 {
+    type NativeType = Self;
+    #[inline]
+    fn as_ptr(&self) -> *const Self::NativeType {
+        self as *const Self::NativeType
+    }
+    #[inline]
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
+        self as *mut Self::NativeType
+    }
     const END: EndFn = db_idx128_end;
     const NEXT: NextFn = db_idx128_next;
     const PREVIOUS: PreviousFn = db_idx128_previous;
     const REMOVE: RemoveFn = db_idx128_remove;
-    const STORE: StoreFn<Self> = db_idx128_store;
-    const UPDATE: UpdateFn<Self> = db_idx128_update;
-    const LOWERBOUND: LowerboundFn<Self> = db_idx128_lowerbound;
-    const UPPERBOUND: UpperboundFn<Self> = db_idx128_upperbound;
-    const FIND_PRIMARY: FindPrimaryFn<Self> = db_idx128_find_primary;
-    const FIND_SECONDARY: FindSecondaryFn<Self> = db_idx128_find_secondary;
+    const STORE: StoreFn<Self::NativeType> = Either::A(db_idx128_store);
+    const UPDATE: UpdateFn<Self::NativeType> = Either::A(db_idx128_update);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::A(db_idx128_lowerbound);
+    const UPPERBOUND: UpperboundFn<Self::NativeType> =
+        Either::A(db_idx128_upperbound);
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::A(db_idx128_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::A(db_idx128_find_secondary);
+}
+
+impl NativeSecondaryKey for [u8; 32] {
+    type NativeType = u128;
+    const DATA_LEN: u32 = 8 * 32 / 128;
+    #[inline]
+    #[warn(clippy::cast_ptr_alignment)]
+    fn as_ptr(&self) -> *const Self::NativeType {
+        self as *const _ as *const Self::NativeType
+    }
+    #[inline]
+    #[warn(clippy::cast_ptr_alignment)]
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
+        self as *mut _ as *mut Self::NativeType
+    }
+    const END: EndFn = db_idx256_end;
+    const NEXT: NextFn = db_idx256_next;
+    const PREVIOUS: PreviousFn = db_idx256_previous;
+    const REMOVE: RemoveFn = db_idx256_remove;
+    const STORE: StoreFn<Self::NativeType> = Either::B(db_idx256_store);
+    const UPDATE: UpdateFn<Self::NativeType> = Either::B(db_idx256_update);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::B(db_idx256_lowerbound);
+    const UPPERBOUND: UpperboundFn<Self::NativeType> =
+        Either::B(db_idx256_upperbound);
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::B(db_idx256_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::B(db_idx256_find_secondary);
 }
 
 /// Trait for types that can be turned into types that are native secondary keys
@@ -303,6 +515,29 @@ impl IntoNativeSecondaryKey for u128 {
     }
 }
 
+impl IntoNativeSecondaryKey for Checksum256 {
+    type Native = [u8; 32];
+    #[must_use]
+    #[inline]
+    fn into_native_secondary_key(self) -> Self::Native {
+        self.to_bytes()
+    }
+}
+
+impl IntoNativeSecondaryKey for Checksum160 {
+    type Native = [u8; 32];
+    #[must_use]
+    #[inline]
+    fn into_native_secondary_key(self) -> Self::Native {
+        let b = self.to_bytes();
+        [
+            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10],
+            b[11], b[12], b[13], b[14], b[15], b[16], b[17], b[18], b[19], 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ]
+    }
+}
+
 macro_rules! impl_into_type {
     ($($t:ty, $x:ty)*) => ($(
         impl IntoNativeSecondaryKey for $x {
@@ -321,11 +556,13 @@ impl_into_type! {
     u64, u16
     u64, u32
     u64, eosio::Name
-    // u64, eosio_core::AccountName
-    // u64, eosio_core::TableName
-    // u64, eosio_core::PermissionName
-    // u64, eosio_core::ScopeName
-    // u64, eosio_core::ActionName
+    u64, eosio::AccountName
+    u64, eosio::TableName
+    u64, eosio::PermissionName
+    u64, eosio::ScopeName
+    u64, eosio::ActionName
+    u64, eosio::Symbol
+    u64, eosio::SymbolCode
 }
 
 /// Cursor for a `SecondaryTableIndex`
@@ -550,6 +787,24 @@ where
             .into()
             .into_native_secondary_key()
             .db_idx_upperbound(self.code, self.scope, self.table);
+        let end = K::Native::db_idx_end(self.code, self.scope, self.table);
+        if value == end {
+            None
+        } else {
+            Some(SecondaryTableCursor {
+                value,
+                pk,
+                index: self,
+            })
+        }
+    }
+
+    #[inline]
+    fn find<N: Into<K>>(&'a self, key: N) -> Option<Self::Cursor> {
+        let (value, pk) = key
+            .into()
+            .into_native_secondary_key()
+            .db_idx_find_secondary(self.code, self.scope, self.table);
         let end = K::Native::db_idx_end(self.code, self.scope, self.table);
         if value == end {
             None

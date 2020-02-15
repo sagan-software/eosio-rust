@@ -108,6 +108,17 @@ where
                             u128::db_idx_remove(itr);
                         }
                     }
+                    SecondaryKey::H256(v) => {
+                        let end = <[u8; 32]>::db_idx_end(
+                            self.code, self.scope, table,
+                        );
+                        let itr = v.clone().db_idx_find_primary(
+                            self.code, self.scope, table, pk,
+                        );
+                        if itr != end {
+                            <[u8; 32]>::db_idx_remove(itr);
+                        }
+                    }
                 }
             }
         }
@@ -149,6 +160,9 @@ where
                         v.db_idx_upsert(self.code, self.scope, table, payer, pk)
                     }
                     SecondaryKey::U128(v) => {
+                        v.db_idx_upsert(self.code, self.scope, table, payer, pk)
+                    }
+                    SecondaryKey::H256(v) => {
                         v.db_idx_upsert(self.code, self.scope, table, payer, pk)
                     }
                 };
@@ -355,11 +369,43 @@ where
                     SecondaryKey::U128(v) => {
                         v.db_idx_store(self.scope, table, payer, id)
                     }
+                    SecondaryKey::H256(v) => {
+                        v.db_idx_store(self.scope, table, payer, id)
+                    }
                 };
             }
         }
 
         Ok(())
+    }
+
+    /// Returns a cursor pointing to a row with the specified primary key, if it exists
+    #[inline]
+    fn find<Id>(&'a self, id: Id) -> Option<PrimaryTableCursor<T>>
+    where
+        Id: Into<u64>,
+    {
+        let code = self.code();
+        let scope = self.scope();
+        let itr = unsafe {
+            db_find_i64(
+                code.as_u64(),
+                scope.as_u64(),
+                T::NAME.as_u64(),
+                id.into(),
+            )
+        };
+        let end = self.end();
+        if itr == end {
+            None
+        } else {
+            Some(PrimaryTableCursor {
+                value: itr,
+                code,
+                scope,
+                data: PhantomData,
+            })
+        }
     }
 }
 
@@ -396,15 +442,6 @@ where
         self.iter().count()
     }
 
-    /// Returns true if the table contains a row with the specified primary key
-    #[inline]
-    fn exists<Id>(&'a self, id: Id) -> bool
-    where
-        Id: Into<u64>,
-    {
-        self.find(id).is_some()
-    }
-
     /// Returns the last row in the table
     #[inline]
     fn end(&'a self) -> i32 {
@@ -414,35 +451,6 @@ where
                 self.scope().as_u64(),
                 T::NAME.as_u64(),
             )
-        }
-    }
-
-    /// Returns a cursor pointing to a row with the specified primary key, if it exists
-    #[inline]
-    fn find<Id>(&'a self, id: Id) -> Option<PrimaryTableCursor<T>>
-    where
-        Id: Into<u64>,
-    {
-        let code = self.code();
-        let scope = self.scope();
-        let itr = unsafe {
-            db_find_i64(
-                code.as_u64(),
-                scope.as_u64(),
-                T::NAME.as_u64(),
-                id.into(),
-            )
-        };
-        let end = self.end();
-        if itr == end {
-            None
-        } else {
-            Some(PrimaryTableCursor {
-                value: itr,
-                code,
-                scope,
-                data: PhantomData,
-            })
         }
     }
 
