@@ -1,10 +1,12 @@
-use alloc::string::String;
+use alloc::{string::String, vec::Vec};
 use eosio::{
-    AccountName, ActionName, Name, PermissionName, ScopeName, TableName,
-    TimePoint, TimePointSec,
+    AccountName, ActionName, Checksum160, Checksum256, Checksum512, Name,
+    PermissionName, PublicKey, ScopeName, Signature, TableName, TimePoint,
+    TimePointSec,
 };
 use eosio_cdt_sys::{
-    printdf, printi, printn, prints, prints_l, printsf, printui,
+    c_void, printdf, printhex, printi, printn, prints, prints_l, printsf,
+    printui,
 };
 
 /// Trait for types that can be printed from within EOSIO smart contracts
@@ -190,4 +192,57 @@ macro_rules! print {
         $crate::print!($e);
         $crate::print!($($es),+);
     );
+}
+
+impl Print for &[u8] {
+    #[inline]
+    fn print(&self) {
+        let ptr = self.as_ptr() as *const c_void;
+        let len = self.len();
+        unsafe { printhex(ptr, len as u32) }
+    }
+}
+
+macro_rules! impl_print_for_as_slice_types {
+    ($($ident:ty)*) => ($(
+        #[automatically_derived]
+        impl Print for $ident {
+            #[inline]
+            fn print(&self) {
+                self.as_slice().print()
+            }
+        }
+    )*)
+}
+
+impl_print_for_as_slice_types! {
+    Vec<u8>
+    Checksum160
+    Checksum256
+    Checksum512
+    PublicKey
+    Signature
+}
+
+macro_rules! impl_print_for_byte_arrays {
+    ($($bytes:literal)*) => ($(
+        #[automatically_derived]
+        impl Print for [u8; $bytes] {
+            #[inline]
+            fn print(&self) {
+                (&self[..]).print()
+            }
+        }
+    )*)
+}
+
+impl_print_for_byte_arrays! {
+     1  2  3  4  5  6  7  8
+     9 10 11 12 13 14 15 16
+    17 18 19 20 21 22 23 24
+    25 26 27 28 29 30 31 32
+    33 34 35 36 37 38 39 40
+    41 42 43 44 45 46 47 48
+    49 50 51 52 53 54 55 56
+    57 58 59 60 61 62 63 64
 }
