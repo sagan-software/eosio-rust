@@ -1,5 +1,4 @@
 use crate::proc_macro::TokenStream;
-use heck::CamelCase;
 use quote::quote;
 use syn::parse::{Parse, ParseStream, Result as ParseResult};
 use syn::punctuated::Punctuated;
@@ -39,9 +38,6 @@ impl Parse for AbiPairs {
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let pairs = parse_macro_input!(input as AbiPairs);
-    let call_site = ::proc_macro2::Span::call_site();
-    // let eosio_core = crate::paths::eosio_core();
-    // let eosio_cdt = crate::paths::eosio_cdt();
     let actions = pairs.0.into_iter().map(|pair| {
         let code = pair
             .code
