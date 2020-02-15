@@ -19,7 +19,7 @@ macro_rules! key_type {
         impl $ident {
             /// TODO docs.
             #[must_use]
-            pub fn as_bytes(&self) -> &[u8] {
+            pub const fn as_bytes(&self) -> &[u8; $bytes] {
                 &self.data
             }
 
@@ -27,6 +27,12 @@ macro_rules! key_type {
             #[must_use]
             pub const fn to_bytes(&self) -> [u8; $bytes] {
                 self.data
+            }
+
+            /// TODO docs.
+            #[must_use]
+            pub fn as_slice(&self) -> &[u8] {
+                &self.data
             }
         }
 
@@ -43,14 +49,14 @@ macro_rules! key_type {
         impl PartialEq for $ident {
             #[must_use]
             fn eq(&self, other: &Self) -> bool {
-                self.type_ == other.type_ && self.as_bytes() == other.as_bytes()
+                self.type_ == other.type_ && self.as_slice() == other.as_slice()
             }
         }
 
         impl fmt::Debug for $ident {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 fmt::Debug::fmt(&self.type_, f)?;
-                fmt::Debug::fmt(self.as_bytes(), f)
+                fmt::Debug::fmt(self.as_slice(), f)
             }
         }
     };
