@@ -39,7 +39,7 @@ extern crate alloc;
 #[macro_use]
 extern crate std;
 
-pub use eosio_macros::{action, n, s, table};
+pub use eosio_macros::{abi, action, n, s, table};
 
 mod abi;
 pub use self::abi::*;

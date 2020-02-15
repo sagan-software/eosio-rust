@@ -240,4 +240,4 @@ fn close(owner: AccountName, symbol: Symbol) {
     accts_cursor.erase().expect("read");
 }
 
-eosio_cdt::abi!(create, issue, transfer, open, close, retire);
+eosio::abi!(create, issue, transfer, open, close, retire);

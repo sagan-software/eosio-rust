@@ -42,7 +42,7 @@ pub use self::rex::*;
 mod voting;
 pub use self::voting::*;
 
-eosio_cdt::abi!(
+eosio::abi!(
     setram,
     setramrate,
     setparams,

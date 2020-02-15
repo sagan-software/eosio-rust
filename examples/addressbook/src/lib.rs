@@ -1,7 +1,7 @@
 use eosio::*;
 use eosio_cdt::*;
 
-eosio_cdt::abi!(add, update, erase, like, likezip);
+eosio::abi!(add, update, erase, like, likezip);
 
 #[eosio::table("address")]
 struct Address {

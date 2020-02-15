@@ -102,7 +102,7 @@ fn make_move(
     cursor.modify(Payer::Same, game).expect("write");
 }
 
-eosio_cdt::abi!(create, restart, close, make_move);
+eosio::abi!(create, restart, close, make_move);
 
 impl Game {
     fn new(host: AccountName, challenger: AccountName) -> Self {

@@ -28,9 +28,6 @@
 #[macro_use]
 extern crate alloc;
 
-#[macro_use]
-mod abi;
-
 mod account;
 pub use self::account::*;
 

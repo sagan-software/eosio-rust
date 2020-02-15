@@ -296,7 +296,7 @@ pub struct AbiHash {
     pub hash: Checksum256,
 }
 
-eosio_cdt::abi!(
+eosio::abi!(
     newaccount,
     updateauth,
     deleteauth,

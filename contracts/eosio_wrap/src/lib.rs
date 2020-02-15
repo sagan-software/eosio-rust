@@ -22,4 +22,4 @@ pub fn exec(
     send_deferred_bytes(id, executer, bytes, false);
 }
 
-eosio_cdt::abi!(exec);
+eosio::abi!(exec);

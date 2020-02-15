@@ -46,4 +46,6 @@ pub use eosio_macros_internal::n;
 #[proc_macro_hack]
 pub use eosio_macros_internal::s;
 
-pub use eosio_macros_internal::{action, table, NumBytes, Read, Table, Write};
+pub use eosio_macros_internal::{
+    abi, action, table, NumBytes, Read, Table, Write,
+};

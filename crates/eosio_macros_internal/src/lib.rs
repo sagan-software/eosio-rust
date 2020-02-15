@@ -15,6 +15,7 @@
 )]
 extern crate proc_macro;
 
+mod abi;
 mod action;
 mod derive_num_bytes;
 mod derive_read;
@@ -29,6 +30,11 @@ use crate::proc_macro::TokenStream;
 use proc_macro_hack::proc_macro_hack;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput, ItemFn};
+
+#[proc_macro]
+pub fn abi(input: TokenStream) -> TokenStream {
+    crate::abi::expand(input)
+}
 
 #[proc_macro_hack]
 pub fn n(input: TokenStream) -> TokenStream {

@@ -399,4 +399,4 @@ pub fn invalidate(account: AccountName) {
     }
 }
 
-eosio_cdt::abi!(propose, approve, unapprove, cancel, exec, invalidate);
+eosio::abi!(propose, approve, unapprove, cancel, exec, invalidate);
