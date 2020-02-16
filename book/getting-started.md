@@ -46,7 +46,8 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-eosio = "0.2"
+eosio = "0.3"
+eosio_cdt = "0.3"
 ```
 
 #### Generating and Optimizing a WASM File
@@ -99,14 +100,18 @@ By using `wasm-gc` and `wasm-opt` we are able to get the file size down to just 
 Now that we know how to prepare the `.wasm` file, let's start coding. Open up `src/lib.rs` and replace its contents with this:
 
 ```rust
-use eosio::*;                       // Include everything from the eosio crate
+use eosio::AccountName;
+use eosio_cdt::{
+    abi,
+    print
+};
 
-#[eosio_action]                     // Mark this function as an action
+#[eosio::action]                  // Mark this function as an action
 fn hi(name: AccountName) {
-    eosio_print!("Hello, ", name);  // Print to the console
+    print!("Hello, {:?}", name);  // Print to the console
 }
 
-eosio_abi!(hi);                     // Create the 'apply' function
+abi!(hi);                         // Create the 'apply' function
 ```
 
 See the [API documentation](https://sagan-software.github.io/eosio-rust/) for more details on what this code is doing.
@@ -125,25 +130,30 @@ In the future ABI files will be [automatically generated](#abi-generation), but 
 
 ```json
 {
-	"version": "eosio::abi/1.0",
-	"structs": [
-		{
-			"name": "hi",
-			"base": "",
-			"fields": [
-				{
-					"name": "name",
-					"type": "name"
-				}
-			]
-		}
-	],
-	"actions": [
-		{
-			"name": "hi",
-			"type": "hi"
-		}
-	]
+  "version": "eosio::abi/1.0",
+  "types": [],
+  "structs": [
+    {
+      "name": "hi",
+      "base": "",
+      "fields": [
+        {
+          "name": "name",
+          "type": "name"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "hi",
+      "type": "hi",
+      "ricardian_contract": ""
+    }
+  ],
+  "tables": [],
+  "ricardian_clauses": [],
+  "abi_extensions": []
 }
 ```
 
