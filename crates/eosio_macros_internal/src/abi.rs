@@ -4,17 +4,17 @@ use syn::{
     parse::{Parse, ParseStream, Result as ParseResult},
     parse_macro_input,
     punctuated::Punctuated,
-    Expr, Ident, Token,
+    Expr, Path, Token,
 };
 
 struct AbiPair {
     code: Option<Expr>,
-    action: Ident,
+    action: Path,
 }
 
 impl Parse for AbiPair {
     fn parse(input: ParseStream) -> ParseResult<Self> {
-        let action: Ident = input.parse()?;
+        let action: Path = input.parse()?;
         match input.parse::<Token![@]>() {
             Ok(_) => {
                 let code: Expr = input.parse()?;
