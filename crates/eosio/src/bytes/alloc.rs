@@ -1,6 +1,5 @@
 use super::{NumBytes, Read, ReadError, Write, WriteError};
-use alloc::string::String;
-use alloc::vec::Vec;
+use alloc::{string::String, vec::Vec};
 
 impl NumBytes for String {
     #[inline]

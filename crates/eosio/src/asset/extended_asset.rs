@@ -1,8 +1,9 @@
 use super::Asset;
-use crate::account::AccountName;
-use crate::bytes::{NumBytes, Read, Write};
-use core::fmt;
-use core::ops::Deref;
+use crate::{
+    account::AccountName,
+    bytes::{NumBytes, Read, Write},
+};
+use core::{fmt, ops::Deref};
 
 /// Extended asset which stores the information of the owner of the asset
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/asset.hpp#L371-L481>

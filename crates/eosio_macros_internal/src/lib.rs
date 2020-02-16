@@ -7,7 +7,6 @@
 //!
 //! [`proc_macro_hygiene`]: https://doc.rust-lang.org/beta/unstable-book/language-features/proc-macro-hygiene.html
 //! [`proc_macro_hack`]: https://github.com/dtolnay/proc-macro-hack
-//!
 #![allow(
     clippy::unimplemented,
     clippy::missing_inline_in_public_items,

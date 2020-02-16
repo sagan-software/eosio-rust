@@ -17,7 +17,8 @@ pub enum Push {
 pub struct Action {
     /// The account providing the contract to execute
     pub account: AccountName,
-    /// A JSON string or filename defining the action to execute on the contract
+    /// A JSON string or filename defining the action to execute on the
+    /// contract
     pub action: ActionName,
     /// The arguments to the contract
     pub data: String,

@@ -85,6 +85,7 @@ impl From<&[u8]> for DataStream {
 
 impl Deref for DataStream {
     type Target = [u8];
+
     #[must_use]
     fn deref(&self) -> &Self::Target {
         self.as_bytes()

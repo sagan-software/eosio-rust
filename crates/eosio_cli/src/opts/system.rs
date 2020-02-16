@@ -54,7 +54,8 @@ pub struct Newaccount {
     /// The amount of tokens delegated for CPU bandwidth
     #[structopt(long)]
     pub stake_cpu: Asset,
-    /// The amount of RAM bytes to purchase for the new account in kibibytes (KiB)
+    /// The amount of RAM bytes to purchase for the new account in kibibytes
+    /// (KiB)
     #[structopt(long)]
     pub buy_ram_kbytes: Option<u64>,
     /// The amount of RAM bytes to purchase for the new account in bytes
@@ -243,8 +244,8 @@ pub struct Buyram {
     pub payer: AccountName,
     /// The account receiving bought RAM
     pub receiver: AccountName,
-    /// The amount of tokens to pay for RAM, or number of bytes/kibibytes of RAM
-    /// if --bytes/--kbytes is set
+    /// The amount of tokens to pay for RAM, or number of bytes/kibibytes of
+    /// RAM if --bytes/--kbytes is set
     pub amount: String,
     /// buyram in number of kibibytes (KiB)
     #[structopt(short, long)]

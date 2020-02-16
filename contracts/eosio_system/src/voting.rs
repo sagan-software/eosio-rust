@@ -1,7 +1,7 @@
 use eosio::*;
 
-/// Defines `producer_info` structure to be stored in `producer_info` table, added after version 1.0
-/// <https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L180-L200>
+/// Defines `producer_info` structure to be stored in `producer_info` table,
+/// added after version 1.0 <https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L180-L200>
 #[derive(Read, Write, NumBytes, Debug, Clone)]
 pub struct ProducerInfo {
     pub owner: AccountName,
@@ -40,8 +40,8 @@ pub struct VoterInfo {
     pub staked: i64,
     /// The vote weight cast the last time the vote was updated.
     ///
-    /// Every time a vote is cast we must first "undo" the last vote weight, before casting the
-    /// new vote weight.  Vote weight is calculated as:
+    /// Every time a vote is cast we must first "undo" the last vote weight,
+    /// before casting the new vote weight.  Vote weight is calculated as:
     ///
     ///     stated.amount * 2 ^ ( weeks_since_launch/weeks_per_year)
     pub last_vote_weight: f64,

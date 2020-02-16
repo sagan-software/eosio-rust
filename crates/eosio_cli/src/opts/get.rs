@@ -28,7 +28,8 @@ pub enum Get {
     Servants(GetServants),
     /// Retrieve a transaction from the blockchain
     Transaction(GetTransaction),
-    /// Retrieve all actions with specific account name referenced in authorization or receiver
+    /// Retrieve all actions with specific account name referenced in
+    /// authorization or receiver
     Actions(GetActions),
     /// Retrieve the producer schedule
     Schedule,
@@ -79,7 +80,8 @@ pub struct GetCode {
 pub struct GetAbi {
     /// The name of the account whose abi should be retrieved
     pub name: AccountName,
-    /// The name of the file to save the contract .abi to instead of writing to console
+    /// The name of the file to save the contract .abi to instead of writing to
+    /// console
     #[structopt(short, long)]
     pub file: Option<String>,
 }
@@ -105,19 +107,19 @@ pub struct GetTable {
     /// JSON representation of upper bound value of key, defaults to last
     #[structopt(short = "U", long)]
     pub upper: Option<String>,
-    /// Index number, 1 - primary (first), 2 - secondary index (in order defined by
-    /// multi_index), 3 - third index, etc. Number or name of index can be specified,
-    /// e.g. 'secondary' or '2'.
+    /// Index number, 1 - primary (first), 2 - secondary index (in order
+    /// defined by multi_index), 3 - third index, etc. Number or name of
+    /// index can be specified, e.g. 'secondary' or '2'.
     #[structopt(long)]
     pub index: Option<String>,
-    /// The key type of --index, primary only supports (i64), all others support (i64,
-    /// i128, i256, float64, float128, ripemd160, sha256). Special type 'name' indicates
-    /// an account name.
+    /// The key type of --index, primary only supports (i64), all others
+    /// support (i64, i128, i256, float64, float128, ripemd160, sha256).
+    /// Special type 'name' indicates an account name.
     #[structopt(long)]
     pub key_type: Option<String>,
-    /// The encoding type of key_type (i64, i128, float64, float128) only support decimal
-    /// encoding e.g. 'dec'i256 - supports both 'dec' and 'hex', ripemd160 and sha256 is
-    /// 'hex' only
+    /// The encoding type of key_type (i64, i128, float64, float128) only
+    /// support decimal encoding e.g. 'dec'i256 - supports both 'dec' and
+    /// 'hex', ripemd160 and sha256 is 'hex' only
     #[structopt(long)]
     pub encode_type: Option<String>,
     /// Iterate in reverse order
@@ -166,7 +168,8 @@ pub struct GetCurrencyBalance {
     pub contract: AccountName,
     /// The account to query balances for
     pub account: AccountName,
-    /// The symbol for the currency if the contract operates multiple currencies
+    /// The symbol for the currency if the contract operates multiple
+    /// currencies
     pub symbol: Option<SymbolCode>,
 }
 
@@ -175,7 +178,8 @@ pub struct GetCurrencyBalance {
 pub struct GetCurrencyStats {
     /// The contract that operates the currency
     pub contract: AccountName,
-    /// The symbol for the currency if the contract operates multiple currencies
+    /// The symbol for the currency if the contract operates multiple
+    /// currencies
     pub symbol: SymbolCode,
 }
 
@@ -211,8 +215,8 @@ pub struct GetActions {
     pub account_name: AccountName,
     /// sequence number of action for this account, -1 for last
     pub pos: Option<i64>,
-    /// get actions [pos,pos+offset] for positive offset or [pos-offset,pos] for
-    /// negative offset
+    /// get actions [pos,pos+offset] for positive offset or [pos-offset,pos]
+    /// for negative offset
     pub offset: Option<i64>,
     /// print full json
     #[structopt(short, long)]
@@ -231,7 +235,7 @@ pub struct GetActions {
 /// Get transaction id given transaction object
 #[derive(StructOpt, Debug)]
 pub struct GetTransactionId {
-    /// The JSON string or filename defining the transaction which transaction id we
-    /// want to retrieve
+    /// The JSON string or filename defining the transaction which transaction
+    /// id we want to retrieve
     pub transaction: String,
 }

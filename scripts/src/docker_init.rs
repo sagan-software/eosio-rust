@@ -1,6 +1,5 @@
 use crate::shared::{cleos, push_action};
-use std::io;
-use std::process::ExitStatus;
+use std::{io, process::ExitStatus};
 
 const PUBKEY: &str = "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV";
 const PRIVKEY: &str = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3";

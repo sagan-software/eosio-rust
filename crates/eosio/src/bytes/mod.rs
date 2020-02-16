@@ -102,8 +102,10 @@ impl fmt::Display for WriteError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ::alloc::string::{String, ToString};
-    use ::alloc::vec::Vec;
+    use ::alloc::{
+        string::{String, ToString},
+        vec::Vec,
+    };
 
     macro_rules! test_type {
         ($($i:ident, $t:ty, $e:expr)*) => ($(

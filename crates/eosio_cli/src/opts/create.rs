@@ -6,19 +6,20 @@ use structopt::StructOpt;
 pub enum Create {
     /// Create a new keypair and print the public and private keys
     Key(CreateKey),
-    /// Create a new account on the blockchain (assumes system contract does not
-    /// restrict RAM usage)
+    /// Create a new account on the blockchain (assumes system contract does
+    /// not restrict RAM usage)
     Account(CreateAccount),
 }
 
 /// Create a new keypair and print the public and private keys
 #[derive(StructOpt, Debug)]
 pub struct CreateKey {
-    /// Generate a key using the R1 curve (iPhone), instead of the K1 curve (Bitcoin)
+    /// Generate a key using the R1 curve (iPhone), instead of the K1 curve
+    /// (Bitcoin)
     #[structopt(long)]
     pub r1: bool,
-    /// Name of file to write private/public key output to. (Must be set, unless
-    /// "--to-console" is passed)
+    /// Name of file to write private/public key output to. (Must be set,
+    /// unless "--to-console" is passed)
     #[structopt(short, long, required_unless = "to-console")]
     pub file: Option<String>,
     /// Print private/public keys to console.

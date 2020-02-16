@@ -11,7 +11,8 @@ pub const SYMBOL_CODE_MAX_LEN: usize = 7;
 pub enum ParseSymbolCodeError {
     /// The symbol is too long. Symbols must be 7 characters or less.
     TooLong,
-    /// The symbol contains an invalid character. Symbols can only contain uppercase letters A-Z.
+    /// The symbol contains an invalid character. Symbols can only contain
+    /// uppercase letters A-Z.
     BadChar(u8),
 }
 
@@ -35,7 +36,8 @@ impl fmt::Display for ParseSymbolCodeError {
 ///
 /// # Errors
 ///
-/// Will return `Err` if the symbol contains invalid characters, is too long, or is empty.
+/// Will return `Err` if the symbol contains invalid characters, is too long, or
+/// is empty.
 ///
 /// # Examples
 ///
@@ -44,9 +46,18 @@ impl fmt::Display for ParseSymbolCodeError {
 /// assert_eq!(symbol_code_from_bytes("EOS".bytes()), Ok(4542291));
 /// assert_eq!(symbol_code_from_bytes("TGFT".bytes()), Ok(1413957204));
 /// assert_eq!(symbol_code_from_bytes("SYS".bytes()), Ok(5462355));
-/// assert_eq!(symbol_code_from_bytes("TSt".bytes()), Err(ParseSymbolCodeError::BadChar(b't')));
-/// assert_eq!(symbol_code_from_bytes("TESTING".bytes()), Ok(23720122242387527));
-/// assert_eq!(symbol_code_from_bytes("TESTINGG".bytes()), Err(ParseSymbolCodeError::TooLong));
+/// assert_eq!(
+///     symbol_code_from_bytes("TSt".bytes()),
+///     Err(ParseSymbolCodeError::BadChar(b't'))
+/// );
+/// assert_eq!(
+///     symbol_code_from_bytes("TESTING".bytes()),
+///     Ok(23720122242387527)
+/// );
+/// assert_eq!(
+///     symbol_code_from_bytes("TESTINGG".bytes()),
+///     Err(ParseSymbolCodeError::TooLong)
+/// );
 /// ```
 #[inline]
 pub fn symbol_code_from_bytes<I>(iter: I) -> Result<u64, ParseSymbolCodeError>

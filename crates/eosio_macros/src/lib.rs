@@ -21,7 +21,8 @@
 
 use proc_macro_hack::proc_macro_hack;
 
-/// Macro for converting EOSIO names into `u64` representations at compile time.
+/// Macro for converting EOSIO names into `u64` representations at compile
+/// time.
 ///
 /// # Examples
 ///
@@ -35,7 +36,8 @@ use proc_macro_hack::proc_macro_hack;
 #[proc_macro_hack]
 pub use eosio_macros_internal::n;
 
-/// Macro for converting EOSIO symbols into `u64` representations at compile time.
+/// Macro for converting EOSIO symbols into `u64` representations at
+/// compile time.
 ///
 /// # Examples
 ///

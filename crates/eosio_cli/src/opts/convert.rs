@@ -27,10 +27,11 @@ pub struct ConvertPackTransaction {
 /// From packed to plain signed json form
 #[derive(StructOpt, Debug)]
 pub struct ConvertUnpackTransaction {
-    /// The packed transaction json (string containing packed_trx and optionally
-    /// compression fields)
+    /// The packed transaction json (string containing packed_trx and
+    /// optionally compression fields)
     pub transaction: String,
-    /// Unpack all action data within transaction, needs interaction with nodeos
+    /// Unpack all action data within transaction, needs interaction with
+    /// nodeos
     #[structopt(long)]
     pub unpack_action_data: bool,
 }

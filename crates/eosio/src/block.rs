@@ -1,9 +1,11 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L134-L210>
 use crate::bytes::{NumBytes, Read, Write};
 use alloc::string::{String, ToString};
-use core::fmt;
-use core::num::{NonZeroU64, ParseIntError};
-use core::str::FromStr;
+use core::{
+    fmt,
+    num::{NonZeroU64, ParseIntError},
+    str::FromStr,
+};
 
 /// TODO docs
 #[derive(
@@ -53,6 +55,7 @@ impl fmt::Display for BlockNum {
 
 impl FromStr for BlockNum {
     type Err = ParseIntError;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         s.parse::<NonZeroU64>().map(Self)
     }
@@ -69,6 +72,7 @@ pub enum BlockNumOrId {
 
 impl FromStr for BlockNumOrId {
     type Err = ParseIntError;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.parse::<BlockNum>() {
             Ok(num) => Ok(Self::Num(num)),

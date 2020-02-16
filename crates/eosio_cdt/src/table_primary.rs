@@ -1,10 +1,9 @@
 use crate::{
     NativeSecondaryKey, Payer, Print, TableCursor, TableIndex, TableIterator,
 };
-use core::borrow::Borrow;
-use core::iter::IntoIterator;
-use core::marker::PhantomData;
-use core::ptr::null_mut;
+use core::{
+    borrow::Borrow, iter::IntoIterator, marker::PhantomData, ptr::null_mut,
+};
 use eosio::{
     AccountName, NumBytes, PrimaryTableIndex, Read, ReadError, ScopeName,
     SecondaryKey, SecondaryTableName, Table, Write, WriteError,
@@ -177,8 +176,9 @@ impl<'a, T> IntoIterator for PrimaryTableCursor<T>
 where
     T: Table,
 {
-    type Item = Self;
     type IntoIter = PrimaryTableIterator<T>;
+    type Item = Self;
+
     #[must_use]
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
@@ -218,6 +218,7 @@ where
     T: Table,
 {
     type Item = PrimaryTableCursor<T>;
+
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         if self.value == self.end {
@@ -379,7 +380,8 @@ where
         Ok(())
     }
 
-    /// Returns a cursor pointing to a row with the specified primary key, if it exists
+    /// Returns a cursor pointing to a row with the specified primary key, if it
+    /// exists
     #[inline]
     fn find<Id>(&'a self, id: Id) -> Option<PrimaryTableCursor<T>>
     where
@@ -409,7 +411,8 @@ where
     }
 }
 
-/// Trait for functions of a `PrimaryTableIndex` that only apply within a smart contract
+/// Trait for functions of a `PrimaryTableIndex` that only apply within a smart
+/// contract
 pub trait PrimaryTableIndexExt<'a, T>:
     TableIndex<'a, u64, T, Cursor = PrimaryTableCursor<T>>
 where

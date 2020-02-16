@@ -3,7 +3,7 @@ use proc_macro2::{Literal, TokenStream};
 use quote::{ToTokens, TokenStreamExt};
 use syn::{
     parse::{Parse, ParseStream, Result},
-    {LitInt, LitStr, Token},
+    LitInt, LitStr, Token,
 };
 
 pub struct EosioSymbol(u64);

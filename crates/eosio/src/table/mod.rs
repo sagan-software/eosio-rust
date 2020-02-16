@@ -11,10 +11,12 @@ pub use self::{
 };
 pub use eosio_macros::Table;
 
-use crate::account::AccountName;
-use crate::bytes::{NumBytes, Read, Write};
-use crate::name_type;
-use crate::symbol::{Symbol, SymbolCode};
+use crate::{
+    account::AccountName,
+    bytes::{NumBytes, Read, Write},
+    name_type,
+    symbol::{Symbol, SymbolCode},
+};
 
 name_type!(TableName);
 name_type!(ScopeName);

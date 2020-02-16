@@ -1,8 +1,10 @@
 use super::{BlockTimestamp, TimePointSec};
 use crate::bytes::{NumBytes, Read, Write};
-use core::convert::{TryFrom, TryInto};
-use core::fmt;
-use core::num::TryFromIntError;
+use core::{
+    convert::{TryFrom, TryInto},
+    fmt,
+    num::TryFromIntError,
+};
 
 /// High resolution time point in microseconds
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L49-L77>
@@ -29,6 +31,7 @@ impl TimePoint {
     pub const fn from_micros(micros: i64) -> Self {
         Self(micros)
     }
+
     #[inline]
     #[must_use]
     pub const fn from_millis(millis: i64) -> Self {
@@ -80,6 +83,7 @@ impl From<TimePoint> for i64 {
 
 impl TryFrom<u64> for TimePoint {
     type Error = TryFromIntError;
+
     #[inline]
     fn try_from(i: u64) -> Result<Self, Self::Error> {
         Ok(i64::try_from(i)?.into())
@@ -88,6 +92,7 @@ impl TryFrom<u64> for TimePoint {
 
 impl TryFrom<TimePoint> for u64 {
     type Error = TryFromIntError;
+
     #[inline]
     fn try_from(t: TimePoint) -> Result<Self, Self::Error> {
         t.as_micros().try_into()

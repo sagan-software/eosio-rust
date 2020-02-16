@@ -42,15 +42,16 @@ pub struct BlockHeader {
 
 /// New account action
 ///
-/// Called after a new account is created. This code enforces resource-limits rules
-/// for new accounts as well as new account naming conventions.
+/// Called after a new account is created. This code enforces resource-limits
+/// rules for new accounts as well as new account naming conventions.
 ///
-///     1. accounts cannot contain '.' symbols which forces all acccounts to be 12
-///        characters long without '.' until a future account auction process is implemented
-///        which prevents name squatting.
-///     2. new accounts must stake a minimal number of tokens (as set in system parameters)
-///        therefore, this method will execute an inline buyram from receiver for newacnt in
-///        an amount equal to the current new account creation fee.
+///     1. accounts cannot contain '.' symbols which forces all acccounts to be
+/// 12        characters long without '.' until a future account auction process
+/// is implemented        which prevents name squatting.
+///     2. new accounts must stake a minimal number of tokens (as set in system
+/// parameters)        therefore, this method will execute an inline buyram from
+/// receiver for newacnt in        an amount equal to the current new account
+/// creation fee.
 #[eosio::action]
 pub fn newaccount(
     _creator: AccountName,
@@ -92,16 +93,20 @@ pub fn deleteauth(
 
 /// Link authorization action.
 ///
-/// Assigns a specific action from a contract to a permission you have created. Five system
-/// actions can not be linked `updateauth`, `deleteauth`, `linkauth`, `unlinkauth`, and `canceldelay`.
-/// This is useful because when doing authorization checks, the EOSIO based blockchain starts with the
-/// action needed to be authorized (and the contract belonging to), and looks up which permission
-/// is needed to pass authorization validation. If a link is set, that permission is used for authoraization
-/// validation otherwise then active is the default, with the exception of `eosio.any`.
-/// `eosio.any` is an implicit permission which exists on every account; you can link actions to `eosio.any`
-/// and that will make it so linked actions are accessible to any permissions defined for the account.
+/// Assigns a specific action from a contract to a permission you have created.
+/// Five system actions can not be linked `updateauth`, `deleteauth`,
+/// `linkauth`, `unlinkauth`, and `canceldelay`. This is useful because when
+/// doing authorization checks, the EOSIO based blockchain starts with the
+/// action needed to be authorized (and the contract belonging to), and looks up
+/// which permission is needed to pass authorization validation. If a link is
+/// set, that permission is used for authoraization validation otherwise then
+/// active is the default, with the exception of `eosio.any`. `eosio.any` is an
+/// implicit permission which exists on every account; you can link actions to
+/// `eosio.any` and that will make it so linked actions are accessible to any
+/// permissions defined for the account.
 ///
-/// - `account` - the permission's owner to be linked and the payer of the RAM needed to store this link,
+/// - `account` - the permission's owner to be linked and the payer of the RAM
+///   needed to store this link,
 /// - `code` - the owner of the action to be linked,
 /// - `type` - the action to be linked,
 /// - `requirement` - the permission to be linked.
@@ -118,7 +123,8 @@ pub fn linkauth(
 ///
 /// It's doing the reverse of linkauth action, by unlinking the given action.
 ///
-/// - `account` - the owner of the permission to be unlinked and the receiver of the freed RAM,
+/// - `account` - the owner of the permission to be unlinked and the receiver of
+///   the freed RAM,
 /// - `code` - the owner of the action to be unlinked,
 /// - `type` - the action to be unlinked.
 #[eosio::action]
@@ -162,9 +168,10 @@ pub fn setcode(
 
 /// Set abi for contract.
 ///
-/// Set the abi for contract identified by `account` name. Creates an entry in the abi_hash_table
-/// index, with `account` name as key, if it is not already present and sets its value with the abi hash.
-/// Otherwise it is updating the current abi hash value for the existing `account` key.
+/// Set the abi for contract identified by `account` name. Creates an entry in
+/// the abi_hash_table index, with `account` name as key, if it is not already
+/// present and sets its value with the abi hash. Otherwise it is updating the
+/// current abi hash value for the existing `account` key.
 ///
 /// - `account` - the name of the account to set the abi for
 /// - `abi`     - the abi hash represented as a vector of characters
@@ -191,9 +198,9 @@ pub fn setabi(account: AccountName, abi: Vec<u8>) {
 
 /// On error action.
 ///
-/// Notification of this action is delivered to the sender of a deferred transaction
-/// when an objective error occurs while executing the deferred transaction.
-/// This action is not meant to be called directly.
+/// Notification of this action is delivered to the sender of a deferred
+/// transaction when an objective error occurs while executing the deferred
+/// transaction. This action is not meant to be called directly.
 ///
 /// - `sender_id` - the id for the deferred transaction chosen by the sender,
 /// - `sent_trx` - the deferred transaction that failed.
@@ -221,8 +228,10 @@ pub fn setpriv(account: AccountName, is_priv: bool) {
 ///
 /// - `account` - name of the account whose resource limit to be set
 /// - `ram_bytes` - ram limit in absolute bytes
-/// - `net_weight` - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts)
-/// - `cpu_weight` - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts)
+/// - `net_weight` - fractionally proportionate net limit of available resources
+///   based on (weight / total_weight_of_all_accounts)
+/// - `cpu_weight` - fractionally proportionate cpu limit of available resources
+///   based on (weight / total_weight_of_all_accounts)
 #[eosio::action]
 pub fn setalimits(
     account: AccountName,
@@ -236,10 +245,10 @@ pub fn setalimits(
 
 /// Set a new list of active producers, that is, a new producers' schedule.
 ///
-/// Set a new list of active producers, by proposing a schedule change, once the block that
-/// contains the proposal becomes irreversible, the schedule is promoted to "pending"
-/// automatically. Once the block that promotes the schedule is irreversible, the schedule will
-/// become "active".
+/// Set a new list of active producers, by proposing a schedule change, once the
+/// block that contains the proposal becomes irreversible, the schedule is
+/// promoted to "pending" automatically. Once the block that promotes the
+/// schedule is irreversible, the schedule will become "active".
 ///
 /// - `schedule` - New list of active producers to set
 #[eosio::action]
@@ -248,7 +257,8 @@ pub fn setprods(schedule: Vec<ProducerKey>) {
     let _ = set_proposed_producers(schedule);
 }
 
-/// Set the blockchain parameters. By tuning these parameters, various degrees of customization can be achieved.
+/// Set the blockchain parameters. By tuning these parameters, various degrees
+/// of customization can be achieved.
 ///
 /// - `params` - New blockchain parameters to set
 #[eosio::action]
@@ -259,8 +269,9 @@ pub fn setparams(params: BlockchainParameters) {
 
 /// Check if an account has authorization to access current action.
 ///
-/// Checks if the account name `from` passed in as param has authorization to access
-/// current action, that is, if it is listed in the action’s allowed permissions vector.
+/// Checks if the account name `from` passed in as param has authorization to
+/// access current action, that is, if it is listed in the action’s allowed
+/// permissions vector.
 ///
 /// - `from` - the account name to authorize
 #[eosio::action]

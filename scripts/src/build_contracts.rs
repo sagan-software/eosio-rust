@@ -1,8 +1,12 @@
-use crate::opts::BuildContracts;
-use crate::shared::{get_target_dir, remove_file_if_exists};
-use std::io;
-use std::path::Path;
-use std::process::{Command, ExitStatus};
+use crate::{
+    opts::BuildContracts,
+    shared::{get_target_dir, remove_file_if_exists},
+};
+use std::{
+    io,
+    path::Path,
+    process::{Command, ExitStatus},
+};
 
 fn cargo_build(package: &str) -> io::Result<ExitStatus> {
     println!("building package: {}", package);

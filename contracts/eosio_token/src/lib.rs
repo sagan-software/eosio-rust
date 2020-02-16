@@ -7,9 +7,9 @@ pub struct Account {
 }
 
 impl Table for Account {
-    const NAME: TableName = TableName::new(n!("accounts"));
-
     type Row = Self;
+
+    const NAME: TableName = TableName::new(n!("accounts"));
 
     fn primary_key(row: &Self::Row) -> u64 {
         row.balance.symbol.code().as_u64()
@@ -24,9 +24,9 @@ pub struct CurrencyStats {
 }
 
 impl Table for CurrencyStats {
-    const NAME: TableName = TableName::new(n!("stat"));
-
     type Row = Self;
+
+    const NAME: TableName = TableName::new(n!("stat"));
 
     fn primary_key(row: &Self::Row) -> u64 {
         row.supply.symbol.code().as_u64()
@@ -101,13 +101,12 @@ fn issue(to: AccountName, quantity: Asset, memo: String) {
             quantity,
             memo,
         };
-        send_inline_action(&action.to_action(
-            current_receiver(),
-            vec![PermissionLevel {
+        send_inline_action(&action.to_action(current_receiver(), vec![
+            PermissionLevel {
                 actor: st.issuer,
                 permission: n!("active").into(),
-            }],
-        ))
+            },
+        ]))
         .expect("failed to send inline action");
     }
 }
@@ -229,9 +228,10 @@ fn close(owner: AccountName, symbol: Symbol) {
     require_auth(owner);
     let code = current_receiver();
     let accts_table = Account::table(code, owner);
-    let accts_cursor = accts_table
-        .find(symbol.code())
-        .expect("Balance row already deleted or never existed. Action won't have any effect.");
+    let accts_cursor = accts_table.find(symbol.code()).expect(
+        "Balance row already deleted or never existed. Action won't have any \
+         effect.",
+    );
     let account = accts_cursor.get().expect("read");
     assert!(
         account.balance.amount == 0,

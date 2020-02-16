@@ -1,4 +1,5 @@
-/// Aborts processing of this action and unwinds all pending changes if the test condition is true
+/// Aborts processing of this action and unwinds all pending changes if the test
+/// condition is true
 #[inline]
 pub fn check(pred: bool, msg: &str) {
     if !pred {
@@ -9,7 +10,8 @@ pub fn check(pred: bool, msg: &str) {
     }
 }
 
-/// Aborts processing of this action and unwinds all pending changes if the test condition is true
+/// Aborts processing of this action and unwinds all pending changes if the test
+/// condition is true
 #[inline]
 pub fn check_code<C>(pred: bool, code: C)
 where
@@ -27,6 +29,7 @@ pub trait Check {
 
 impl<T, E> Check for Result<T, E> {
     type Output = T;
+
     #[inline]
     fn check(self, msg: &str) -> Self::Output {
         if let Ok(t) = self {
@@ -40,6 +43,7 @@ impl<T, E> Check for Result<T, E> {
 
 impl<T> Check for Option<T> {
     type Output = T;
+
     #[inline]
     fn check(self, msg: &str) -> Self::Output {
         if let Some(t) = self {
@@ -53,6 +57,7 @@ impl<T> Check for Option<T> {
 
 impl Check for bool {
     type Output = Self;
+
     #[inline]
     fn check(self, msg: &str) -> Self::Output {
         check(self, msg);

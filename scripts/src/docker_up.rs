@@ -1,6 +1,8 @@
-use std::io;
-use std::path::Path;
-use std::process::{Command, ExitStatus};
+use std::{
+    io,
+    path::Path,
+    process::{Command, ExitStatus},
+};
 
 fn docker_compose() -> Command {
     let mut cmd = Command::new("docker-compose");

@@ -24,12 +24,16 @@ impl fmt::Display for ParseSymbolError {
             Self::CodeTooLong => {
                 write!(f, "symbol code is too long, must be 7 chars or less")
             }
-            Self::BadFormat => {
-                write!(f, "symbol is not in the correct format, should be similar to: 4,EOS")
-            }
-            Self::BadChar(c) => {
-                write!(f, "symbol contains invalid character '{}'", char::from(*c))
-            }
+            Self::BadFormat => write!(
+                f,
+                "symbol is not in the correct format, should be similar to: \
+                 4,EOS"
+            ),
+            Self::BadChar(c) => write!(
+                f,
+                "symbol contains invalid character '{}'",
+                char::from(*c)
+            ),
         }
     }
 }
@@ -47,7 +51,8 @@ impl From<ParseSymbolCodeError> for ParseSymbolError {
 ///
 /// # Errors
 ///
-/// Will return `Err` if the symbol contains invalid characters, is too long, or is empty.
+/// Will return `Err` if the symbol contains invalid characters, is too long, or
+/// is empty.
 ///
 /// # Examples
 ///
@@ -56,9 +61,18 @@ impl From<ParseSymbolCodeError> for ParseSymbolError {
 /// assert_eq!(symbol_from_bytes(4, "EOS".bytes()), Ok(1162826500));
 /// assert_eq!(symbol_from_bytes(0, "TGFT".bytes()), Ok(361973044224));
 /// assert_eq!(symbol_from_bytes(2, "SYS".bytes()), Ok(1398362882));
-/// assert_eq!(symbol_from_bytes(4, "TSt".bytes()), Err(ParseSymbolError::BadChar(b't')));
-/// assert_eq!(symbol_from_bytes(0, "TESTING".bytes()), Ok(6072351294051206912));
-/// assert_eq!(symbol_from_bytes(0, "TESTINGG".bytes()), Err(ParseSymbolError::CodeTooLong));
+/// assert_eq!(
+///     symbol_from_bytes(4, "TSt".bytes()),
+///     Err(ParseSymbolError::BadChar(b't'))
+/// );
+/// assert_eq!(
+///     symbol_from_bytes(0, "TESTING".bytes()),
+///     Ok(6072351294051206912)
+/// );
+/// assert_eq!(
+///     symbol_from_bytes(0, "TESTINGG".bytes()),
+///     Err(ParseSymbolError::CodeTooLong)
+/// );
 /// ```
 #[inline]
 pub fn symbol_from_bytes<I>(

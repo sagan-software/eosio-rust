@@ -1,8 +1,10 @@
 //! TODO docs
-use crate::action::Action;
-use crate::bytes::{NumBytes, Read, Write};
-use crate::time::TimePointSec;
-use crate::varint::UnsignedInt;
+use crate::{
+    action::Action,
+    bytes::{NumBytes, Read, Write},
+    time::TimePointSec,
+    varint::UnsignedInt,
+};
 use alloc::vec::Vec;
 
 /// TODO docs
@@ -44,7 +46,8 @@ pub struct TransactionHeader {
     pub ref_block_num: u16,
     /// TODO docs
     pub ref_block_prefix: u32,
-    /// number of 8 byte words this transaction can serialize into after compressions
+    /// number of 8 byte words this transaction can serialize into after
+    /// compressions
     pub max_net_usage_words: UnsignedInt,
     /// number of CPU usage units to bill transaction for
     pub max_cpu_usage_ms: u8,

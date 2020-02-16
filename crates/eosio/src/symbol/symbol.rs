@@ -50,7 +50,7 @@ impl Symbol {
     /// # Examples
     ///
     /// ```
-    /// use eosio::{Symbol, s};
+    /// use eosio::{s, Symbol};
     /// let symbol: Symbol = s!(4, "EOS").into();
     /// let code = symbol.code();
     /// assert_eq!(code.to_string(), "EOS");

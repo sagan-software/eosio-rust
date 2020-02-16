@@ -1,7 +1,9 @@
 use crate::shared::project_dir;
-use std::io;
-use std::path::Path;
-use std::process::{Command, ExitStatus};
+use std::{
+    io,
+    path::Path,
+    process::{Command, ExitStatus},
+};
 
 fn build_readme<T: AsRef<Path>>(crate_name: T) -> io::Result<ExitStatus> {
     let crate_name = crate_name.as_ref();

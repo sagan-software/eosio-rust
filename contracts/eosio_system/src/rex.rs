@@ -11,7 +11,8 @@ pub struct RexPool {
     pub total_unlent: Asset,
     /// fees received in exchange for lent  (connector)
     pub total_rent: Asset,
-    /// total amount of CORE_SYMBOL that have been lent (total_unlent + total_lent)
+    /// total amount of CORE_SYMBOL that have been lent (total_unlent +
+    /// total_lent)
     pub total_lendable: Asset,
     /// total number of REX shares allocated to contributors to total_lendable
     pub total_rex: Asset,
@@ -22,8 +23,10 @@ pub struct RexPool {
 }
 
 impl Table for RexPool {
-    const NAME: TableName = TableName::new(n!("rexpool"));
     type Row = Self;
+
+    const NAME: TableName = TableName::new(n!("rexpool"));
+
     fn primary_key(_row: &Self::Row) -> u64 {
         0
     }

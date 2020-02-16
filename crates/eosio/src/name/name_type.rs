@@ -37,6 +37,7 @@ macro_rules! name_type {
 
         impl core::ops::Deref for $ident {
             type Target = $crate::name::Name;
+
             #[must_use]
             fn deref(&self) -> &Self::Target {
                 &self.0
@@ -87,6 +88,7 @@ macro_rules! name_type {
 
         impl core::str::FromStr for $ident {
             type Err = $crate::name::ParseNameError;
+
             #[inline]
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let name = $crate::name::Name::from_str(s)?;

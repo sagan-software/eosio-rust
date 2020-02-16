@@ -88,8 +88,8 @@ pub struct SetAccountPermission {
     pub account: AccountName,
     /// The permission name to set/delete an authority for
     pub permission: PermissionName,
-    /// [delete] NULL, [create/update] public key, JSON string or filename defining
-    /// the authority, [code] contract name
+    /// [delete] NULL, [create/update] public key, JSON string or filename
+    /// defining the authority, [code] contract name
     pub authority: Option<String>,
     /// [create] The permission name of this parents permission
     #[structopt(default_value = "active")]
@@ -97,7 +97,8 @@ pub struct SetAccountPermission {
     /// [code] add 'eosio.code' permission to specified permission authority
     #[structopt(long)]
     pub add_code: bool,
-    /// [code] remove 'eosio.code' permission from specified permission authority
+    /// [code] remove 'eosio.code' permission from specified permission
+    /// authority
     #[structopt(long)]
     pub remove_code: bool,
     #[structopt(flatten)]

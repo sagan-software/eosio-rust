@@ -71,7 +71,8 @@ pub fn is_account<A: AsRef<AccountName>>(account: A) -> bool {
     unsafe { eosio_cdt_sys::is_account(a) }
 }
 
-/// Verifies that `name` exists in the set of provided auths on a action. Throws if not found.
+/// Verifies that `name` exists in the set of provided auths on a action. Throws
+/// if not found.
 #[inline]
 pub fn require_auth<A: AsRef<AccountName>>(account: A) {
     let a = account.as_ref().as_u64();
@@ -95,7 +96,8 @@ pub fn require_level<L: AsRef<PermissionLevel>>(level: L) {
     require_perm(&level.actor, &level.permission)
 }
 
-/// Verifies that `name` exists in the set of provided auths on a action. Throws if not found.
+/// Verifies that `name` exists in the set of provided auths on a action. Throws
+/// if not found.
 #[inline]
 pub fn require_permission<A, P>(account: A, permission: P)
 where

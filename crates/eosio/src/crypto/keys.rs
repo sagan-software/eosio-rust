@@ -4,8 +4,8 @@ use core::fmt;
 
 macro_rules! key_type {
     ($ident:ident, $bytes:literal) => {
-        /// TODO depreciate, newer signature types cannot be represented as a fixed size structure
-        /// EOSIO Public Key
+        /// TODO depreciate, newer signature types cannot be represented as a
+        /// fixed size structure EOSIO Public Key
         /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/crypto.hpp#L22-L48>
         #[derive(Read, Write, NumBytes, Clone)]
         #[eosio(crate_path = "crate::bytes")]

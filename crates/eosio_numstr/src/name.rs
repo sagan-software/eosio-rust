@@ -41,16 +41,46 @@ impl fmt::Display for ParseNameError {
 /// use eosio_numstr::{name_from_bytes, ParseNameError};
 /// assert_eq!(name_from_bytes("".bytes()), Ok(0));
 /// assert_eq!(name_from_bytes("a".bytes()), Ok(3458764513820540928));
-/// assert_eq!(name_from_bytes("123456789012".bytes()), Err(ParseNameError::BadChar(b'6')));
-/// assert_eq!(name_from_bytes("123451234512".bytes()), Ok(614251535012020768));
-/// assert_eq!(name_from_bytes("123451234512j".bytes()), Ok(614251535012020783));
-/// assert_eq!(name_from_bytes("123451234512k".bytes()), Err(ParseNameError::BadChar(b'k')));
-/// assert_eq!(name_from_bytes("12345123451234".bytes()), Err(ParseNameError::TooLong));
-/// assert_eq!(name_from_bytes("eosio.token".bytes()), Ok(6138663591592764928));
-/// assert_eq!(name_from_bytes("eosio.token".bytes()), Ok(6138663591592764928));
-/// assert_eq!(name_from_bytes("eosio.bpay".bytes()), Ok(6138663581940940800));
-/// assert_eq!(name_from_bytes("A".bytes()), Err(ParseNameError::BadChar(b'A')));
-/// assert_eq!(name_from_bytes("TEST".bytes()), Err(ParseNameError::BadChar(b'T')));
+/// assert_eq!(
+///     name_from_bytes("123456789012".bytes()),
+///     Err(ParseNameError::BadChar(b'6'))
+/// );
+/// assert_eq!(
+///     name_from_bytes("123451234512".bytes()),
+///     Ok(614251535012020768)
+/// );
+/// assert_eq!(
+///     name_from_bytes("123451234512j".bytes()),
+///     Ok(614251535012020783)
+/// );
+/// assert_eq!(
+///     name_from_bytes("123451234512k".bytes()),
+///     Err(ParseNameError::BadChar(b'k'))
+/// );
+/// assert_eq!(
+///     name_from_bytes("12345123451234".bytes()),
+///     Err(ParseNameError::TooLong)
+/// );
+/// assert_eq!(
+///     name_from_bytes("eosio.token".bytes()),
+///     Ok(6138663591592764928)
+/// );
+/// assert_eq!(
+///     name_from_bytes("eosio.token".bytes()),
+///     Ok(6138663591592764928)
+/// );
+/// assert_eq!(
+///     name_from_bytes("eosio.bpay".bytes()),
+///     Ok(6138663581940940800)
+/// );
+/// assert_eq!(
+///     name_from_bytes("A".bytes()),
+///     Err(ParseNameError::BadChar(b'A'))
+/// );
+/// assert_eq!(
+///     name_from_bytes("TEST".bytes()),
+///     Err(ParseNameError::BadChar(b'T'))
+/// );
 /// ```
 #[inline]
 pub fn name_from_bytes<I>(mut iter: I) -> Result<u64, ParseNameError>
@@ -82,7 +112,8 @@ where
     if let Some(c) = iter.next() {
         let v = char_to_value(c).ok_or_else(|| ParseNameError::BadChar(c))?;
 
-        // The 13th character can only be 4 bits, it has to be between letters 'a' to 'j'
+        // The 13th character can only be 4 bits, it has to be between letters
+        // 'a' to 'j'
         if v > 0x0F {
             return Err(ParseNameError::BadChar(c));
         }

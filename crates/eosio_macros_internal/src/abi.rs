@@ -1,8 +1,11 @@
 use crate::proc_macro::TokenStream;
 use quote::quote;
-use syn::parse::{Parse, ParseStream, Result as ParseResult};
-use syn::punctuated::Punctuated;
-use syn::{parse_macro_input, Expr, Ident, Token};
+use syn::{
+    parse::{Parse, ParseStream, Result as ParseResult},
+    parse_macro_input,
+    punctuated::Punctuated,
+    Expr, Ident, Token,
+};
 
 struct AbiPair {
     code: Option<Expr>,

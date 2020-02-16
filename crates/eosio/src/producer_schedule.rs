@@ -31,7 +31,8 @@ pub struct ProducerSchedule {
 pub struct KeyWeight {
     /// public key used in a weighted threshold multi-sig authority
     pub key: PublicKey,
-    /// weight associated with a signature from the private key associated with the accompanying public key
+    /// weight associated with a signature from the private key associated with
+    /// the accompanying public key
     pub weight: u64,
 }
 
@@ -46,7 +47,8 @@ impl From<PublicKey> for KeyWeight {
 #[derive(Read, Write, NumBytes, Clone, Default, Debug)]
 #[eosio(crate_path = "crate::bytes")]
 pub struct BlockSigningAuthority {
-    /// minimum threshold of accumulated weights from component keys that satisfies this authority
+    /// minimum threshold of accumulated weights from component keys that
+    /// satisfies this authority
     pub threshold: u32,
     /// component keys and their associated weights
     pub keys: Vec<KeyWeight>,

@@ -1,7 +1,9 @@
-use std::fs::remove_file;
-use std::io;
-use std::path::{Path, PathBuf};
-use std::process::{Command, ExitStatus};
+use std::{
+    fs::remove_file,
+    io,
+    path::{Path, PathBuf},
+    process::{Command, ExitStatus},
+};
 
 pub fn cleos() -> Command {
     let mut cmd = Command::new("docker");

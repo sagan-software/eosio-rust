@@ -30,8 +30,10 @@ impl Default for Connector {
 pub struct RamMarket;
 
 impl Table for RamMarket {
-    const NAME: TableName = TableName::new(n!("rammarket"));
     type Row = ExchangeState;
+
+    const NAME: TableName = TableName::new(n!("rammarket"));
+
     fn primary_key(row: &Self::Row) -> u64 {
         row.supply.symbol.as_u64()
     }

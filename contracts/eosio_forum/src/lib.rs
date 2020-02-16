@@ -92,9 +92,9 @@ pub struct VoteRow {
 }
 
 impl Table for VoteRow {
-    const NAME: TableName = TableName::new(n!("vote"));
-
     type Row = Self;
+
+    const NAME: TableName = TableName::new(n!("vote"));
 
     fn primary_key(row: &Self::Row) -> u64 {
         row.id

@@ -1,13 +1,12 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/contracts/eosio/action.hpp#L249-L274>
-use crate::account::AccountName;
-use crate::bytes::{NumBytes, Read, Write};
-use crate::name::ParseNameError;
-use crate::name_type;
-use alloc::string::String;
-use alloc::vec::Vec;
-use core::convert::TryFrom;
-use core::fmt;
-use core::str::FromStr;
+use crate::{
+    account::AccountName,
+    bytes::{NumBytes, Read, Write},
+    name::ParseNameError,
+    name_type,
+};
+use alloc::{string::String, vec::Vec};
+use core::{convert::TryFrom, fmt, str::FromStr};
 
 name_type!(ActionName);
 name_type!(PermissionName);
@@ -111,6 +110,7 @@ impl fmt::Display for ParsePermissionLevelError {
 
 impl FromStr for PermissionLevel {
     type Err = ParsePermissionLevelError;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split('@');
         let actor = parts.next().ok_or(ParsePermissionLevelError::Format)?;
@@ -132,6 +132,7 @@ impl FromStr for PermissionLevel {
 
 impl TryFrom<&str> for PermissionLevel {
     type Error = ParsePermissionLevelError;
+
     #[inline]
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::from_str(value)
@@ -140,6 +141,7 @@ impl TryFrom<&str> for PermissionLevel {
 
 impl TryFrom<String> for PermissionLevel {
     type Error = ParsePermissionLevelError;
+
     #[inline]
     fn try_from(value: String) -> Result<Self, Self::Error> {
         Self::try_from(value.as_str())

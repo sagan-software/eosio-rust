@@ -4,7 +4,8 @@ use eosio::{
     TransactionId, Write, WriteError,
 };
 
-/// This method will abort execution of wasm without failing the contract. This is used to bypass all cleanup / destructors that would normally be called.
+/// This method will abort execution of wasm without failing the contract. This
+/// is used to bypass all cleanup / destructors that would normally be called.
 #[inline]
 pub fn eosio_exit<C>(code: C)
 where

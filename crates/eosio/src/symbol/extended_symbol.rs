@@ -1,8 +1,9 @@
 use super::Symbol;
-use crate::account::AccountName;
-use crate::bytes::{NumBytes, Read, Write};
-use core::fmt;
-use core::ops::Deref;
+use crate::{
+    account::AccountName,
+    bytes::{NumBytes, Read, Write},
+};
+use core::{fmt, ops::Deref};
 pub use eosio_numstr::ParseSymbolError;
 
 /// Extended asset which stores the information of the owner of the symbol
@@ -56,8 +57,8 @@ mod tests {
 //     use eosio_macros::{n, s};
 
 //     macro_rules! test_to_string {
-//         ($($name:ident, $symbol:expr, $contract:expr, $expected:expr)*) => ($(
-//             #[test]
+//         ($($name:ident, $symbol:expr, $contract:expr, $expected:expr)*) =>
+// ($(             #[test]
 //             fn $name() {
 //                 let extended = ExtendedSymbol {
 //                     symbol: $symbol.into(),

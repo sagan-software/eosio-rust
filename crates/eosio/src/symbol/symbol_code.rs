@@ -94,6 +94,7 @@ impl SymbolCode {
 
 impl FromStr for SymbolCode {
     type Err = ParseSymbolCodeError;
+
     #[inline]
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         symbol_code_from_bytes(value.bytes()).map(Into::into)

@@ -26,10 +26,10 @@ pub struct BlockTimestamp {
 }
 
 impl BlockTimestamp {
-    /// Milliseconds between blocks.
-    pub const INTERVAL_MS: i32 = 500;
     /// Epoch is 2000-01-01T00:00.000Z.
     pub const EPOCH: i64 = 946_684_800_000;
+    /// Milliseconds between blocks.
+    pub const INTERVAL_MS: i32 = 500;
 }
 
 impl From<u32> for BlockTimestamp {

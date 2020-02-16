@@ -80,8 +80,9 @@ pub struct TransactionOpts {
     /// set the time in seconds before a transaction expires
     #[structopt(short = "x", long, default_value = "30")]
     pub expiration: u64,
-    /// force the transaction to be unique. this will consume extra bandwidth and remove
-    /// any protections against accidently issuing the same transaction multiple times
+    /// force the transaction to be unique. this will consume extra bandwidth
+    /// and remove any protections against accidently issuing the same
+    /// transaction multiple times
     #[structopt(short, long)]
     pub force_unique: bool,
     /// Specify if unlocked wallet keys should be used to sign transaction
@@ -97,14 +98,16 @@ pub struct TransactionOpts {
     /// Proof-of-Stake)
     #[structopt(short, long)]
     pub ref_block: Option<BlockNumOrId>,
-    /// An account and permission level to authorize, as in 'account@permission'
+    /// An account and permission level to authorize, as in
+    /// 'account@permission'
     #[structopt(short, long = "permission")]
     pub permission_level: Option<PermissionLevel>,
-    /// set an upper limit on the milliseconds of cpu usage budget, for the execution
-    /// of the transaction
+    /// set an upper limit on the milliseconds of cpu usage budget, for the
+    /// execution of the transaction
     #[structopt(long, default_value = "0")]
     pub max_cpu_usage_ms: u64,
-    /// set an upper limit on the net usage budget, in bytes, for the transaction
+    /// set an upper limit on the net usage budget, in bytes, for the
+    /// transaction
     #[structopt(long, default_value = "0")]
     pub max_net_usage: u64,
     /// set the delay_sec seconds

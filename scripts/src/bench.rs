@@ -35,6 +35,7 @@ impl Case {
             scope: scope.into(),
         }
     }
+
     fn exec(&self) -> Run {
         let out = cleos()
             .args(&[
@@ -53,7 +54,11 @@ impl Case {
             Some(caps) => caps,
             None => {
                 let stdout = String::from_utf8_lossy(&out.stdout);
-                panic!("No regex matches found, something probably went wrong. stderr:\n{}\n\nstdout:\n{}", stderr, stdout);
+                panic!(
+                    "No regex matches found, something probably went wrong. \
+                     stderr:\n{}\n\nstdout:\n{}",
+                    stderr, stdout
+                );
             }
         };
         let bytes = &caps["bytes"].parse::<u64>().expect("bytes is not a u64");

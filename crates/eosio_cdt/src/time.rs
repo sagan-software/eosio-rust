@@ -1,6 +1,7 @@
 use eosio::{BlockTimestamp, TimePoint, TimePointSec};
 
-/// Returns the time in microseconds from 1970 of the current block as a `TimePoint`
+/// Returns the time in microseconds from 1970 of the current block as a
+/// `TimePoint`
 #[must_use]
 #[inline]
 pub fn current_time_point() -> TimePoint {

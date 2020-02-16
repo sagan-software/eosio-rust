@@ -108,7 +108,8 @@ pub fn setram(max_ram_size: u64) {
         "attempt to set max below reserved"
     );
 
-    // Increase the amount of ram for sale based upon the change in max ram size.
+    // Increase the amount of ram for sale based upon the change in max ram
+    // size.
     let cursor = RAMMARKET
         .find(RAMCORE_SYMBOL)
         .expect("failed to find RAMCORE market");
@@ -152,8 +153,10 @@ pub fn setpriv(account: AccountName, is_priv: u8) {}
 ///
 /// @param account - name of the account whose resource limit to be set,
 /// @param ram_bytes - ram limit in absolute bytes,
-/// @param net_weight - fractionally proportionate net limit of available resources based on (weight / total_weight_of_all_accounts),
-/// @param cpu_weight - fractionally proportionate cpu limit of available resources based on (weight / total_weight_of_all_accounts).
+/// @param net_weight - fractionally proportionate net limit of available
+/// resources based on (weight / total_weight_of_all_accounts),
+/// @param cpu_weight - fractionally proportionate cpu limit of available
+/// resources based on (weight / total_weight_of_all_accounts).
 ///
 /// <https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/src/eosio.system.cpp#L123-L139>
 #[eosio::action]

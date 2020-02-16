@@ -1,7 +1,6 @@
 use eosio::*;
 use eosio_cdt::*;
-use std::collections::VecDeque;
-use std::marker::PhantomData;
+use std::{collections::VecDeque, marker::PhantomData};
 
 /// A name bid, which consists of:
 /// - a `newname` name that the bid is for
@@ -15,7 +14,8 @@ pub struct NameBid {
     pub newname: AccountName,
     /// account name that is the one with the highest bid so far
     pub high_bidder: AccountName,
-    /// amount of highest bid. negative high_bid == closed auction waiting to be claimed
+    /// amount of highest bid. negative high_bid == closed auction waiting to
+    /// be claimed
     pub high_bid: i64,
     /// time of the highest bid
     pub last_bid_time: TimePoint,

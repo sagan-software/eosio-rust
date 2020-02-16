@@ -70,7 +70,8 @@ impl Parse for DeriveTable {
                     } else {
                         return Err(ParseError::new_spanned(
                             m,
-                            "`#[eosio(table_name = \"...\")]` must use a string literal",
+                            "`#[eosio(table_name = \"...\")]` must use a \
+                             string literal",
                         ));
                     }
                 }
@@ -83,12 +84,26 @@ impl Parse for DeriveTable {
                     if m.path == CRATE_PATH =>
                 {
                     match m.lit {
-                        Lit::Str(string) => match string.parse_with(Path::parse_mod_style) {
-                            Ok(path) => {crate_path.set(path.clone(), path)?;},
-                            Err(_) => return Err(ParseError::new_spanned(m.path, "`#[eosio(crate_path = \"...\")]` received an invalid path"))
+                        Lit::Str(string) => {
+                            match string.parse_with(Path::parse_mod_style) {
+                                Ok(path) => {
+                                    crate_path.set(path.clone(), path)?;
+                                }
+                                Err(_) => {
+                                    return Err(ParseError::new_spanned(
+                                        m.path,
+                                        "`#[eosio(crate_path = \"...\")]` \
+                                         received an invalid path",
+                                    ))
+                                }
+                            }
                         }
                         _ => {
-                            return Err(ParseError::new_spanned(m.path, "`#[eosio(crate_path = \"...\")]` expected a string literal"))
+                            return Err(ParseError::new_spanned(
+                                m.path,
+                                "`#[eosio(crate_path = \"...\")]` expected a \
+                                 string literal",
+                            ))
                         }
                     }
                 }
@@ -116,7 +131,13 @@ impl Parse for DeriveTable {
 
         let table_name = match table_name.get() {
             Some(t) => t,
-            None => return Err(ParseError::new(input.ident.span(), "`#[eosio(table_name = \"...\")]` must be set when deriving from `eosio::Table`")),
+            None => {
+                return Err(ParseError::new(
+                    input.ident.span(),
+                    "`#[eosio(table_name = \"...\")]` must be set when \
+                     deriving from `eosio::Table`",
+                ))
+            }
         };
 
         // Field attributes
@@ -157,14 +178,19 @@ impl Parse for DeriveTable {
                                         .replace(' ', "");
                                     return Err(ParseError::new_spanned(
                                         meta_item,
-                                        format!("unknown eosio field attribute `{}`", path),
+                                        format!(
+                                            "unknown eosio field attribute \
+                                             `{}`",
+                                            path
+                                        ),
                                     ));
                                 }
                                 // Error
                                 NestedMeta::Lit(lit) => {
                                     return Err(ParseError::new_spanned(
                                         lit,
-                                        "unexpected literal in eosio field attribute",
+                                        "unexpected literal in eosio field \
+                                         attribute",
                                     ));
                                 }
                             }
@@ -181,7 +207,12 @@ impl Parse for DeriveTable {
                                 })
                             }
                             (true, true) => {
-                                return Err(ParseError::new_spanned(field, "cannot use both `#[eosio(primary_key)]` and `#[eosio(secondary_key)]` on the same field"));
+                                return Err(ParseError::new_spanned(
+                                    field,
+                                    "cannot use both `#[eosio(primary_key)]` \
+                                     and `#[eosio(secondary_key)]` on the \
+                                     same field",
+                                ));
                             }
                             (false, false) => (),
                         }
@@ -189,16 +220,28 @@ impl Parse for DeriveTable {
                 }
                 // Error
                 Fields::Unnamed(fields) => {
-                    return Err(ParseError::new_spanned(fields, "deriving `eosio::Table` from structs with unnamed fields is not currently supported"));
+                    return Err(ParseError::new_spanned(
+                        fields,
+                        "deriving `eosio::Table` from structs with unnamed \
+                         fields is not currently supported",
+                    ));
                 }
                 // Error
                 Fields::Unit => {
-                    return Err(ParseError::new(input.ident.span(), "deriving `eosio::Table` from unit structs is not supported"));
+                    return Err(ParseError::new(
+                        input.ident.span(),
+                        "deriving `eosio::Table` from unit structs is not \
+                         supported",
+                    ));
                 }
             },
             // Error
             Data::Enum(_data) => {
-                return Err(ParseError::new(input.ident.span(), "deriving `eosio::Table` with enums is not currently supported"));
+                return Err(ParseError::new(
+                    input.ident.span(),
+                    "deriving `eosio::Table` with enums is not currently \
+                     supported",
+                ));
             }
             // Error
             Data::Union(_data) => {
@@ -213,7 +256,11 @@ impl Parse for DeriveTable {
 
         if singleton.get() {
             if let Some((ts, _)) = &primary_key {
-                return Err(ParseError::new_spanned(ts, "`#[eosio(primary_key)]` cannot be used with `#[eosio(singleton)]`"));
+                return Err(ParseError::new_spanned(
+                    ts,
+                    "`#[eosio(primary_key)]` cannot be used with \
+                     `#[eosio(singleton)]`",
+                ));
             }
 
             return Ok(DeriveTable::Singleton(Singleton {
@@ -226,7 +273,13 @@ impl Parse for DeriveTable {
 
         let primary_key = match primary_key {
             Some((_, pk)) => pk,
-            None => return Err(ParseError::new(input.ident.span(), "`#[eosio(primary_key)]` must be set for a field when deriving from `eosio::Table`")),
+            None => {
+                return Err(ParseError::new(
+                    input.ident.span(),
+                    "`#[eosio(primary_key)]` must be set for a field when \
+                     deriving from `eosio::Table`",
+                ))
+            }
         };
 
         Ok(DeriveTable::Table(Table {

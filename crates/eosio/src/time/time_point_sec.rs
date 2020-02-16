@@ -1,8 +1,6 @@
 use super::TimePoint;
 use crate::bytes::{NumBytes, Read, Write};
-use core::convert::TryInto;
-use core::fmt;
-use core::ops::Add;
+use core::{convert::TryInto, fmt, ops::Add};
 
 /// A lower resolution `TimePoint` accurate only to seconds from 1970
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L79-L132>

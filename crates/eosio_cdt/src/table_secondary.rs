@@ -1,8 +1,7 @@
 use crate::{
     Payer, PrimaryTableIndexExt, TableCursor, TableIndex, TableIterator,
 };
-use core::borrow::Borrow;
-use core::ptr::null_mut;
+use core::{borrow::Borrow, ptr::null_mut};
 use eosio::{
     AccountName, Checksum160, Checksum256, Read, ReadError, ScopeName,
     SecondaryTableIndex, SecondaryTableName, Table, WriteError,
@@ -124,7 +123,8 @@ pub type FindSecondaryArrayFn<T> = unsafe extern "C" fn(
 pub type FindSecondaryFn<T> =
     Either<FindSecondaryValueFn<T>, FindSecondaryArrayFn<T>>;
 
-/// Trait for types that are natively supported by EOSIO to be used as secondary keys
+/// Trait for types that are natively supported by EOSIO to be used as secondary
+/// keys
 pub trait NativeSecondaryKey: Default {
     type NativeType;
     /// Unsafe native `end` function
@@ -375,109 +375,121 @@ pub trait NativeSecondaryKey: Default {
 
 impl NativeSecondaryKey for u64 {
     type NativeType = Self;
-    #[inline]
-    fn as_ptr(&self) -> *const Self::NativeType {
-        self as *const Self::NativeType
-    }
-    #[inline]
-    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
-        self as *mut Self::NativeType
-    }
+
     const END: EndFn = db_idx64_end;
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::A(db_idx64_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::A(db_idx64_find_secondary);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::A(db_idx64_lowerbound);
     const NEXT: NextFn = db_idx64_next;
     const PREVIOUS: PreviousFn = db_idx64_previous;
     const REMOVE: RemoveFn = db_idx64_remove;
     const STORE: StoreFn<Self::NativeType> = Either::A(db_idx64_store);
     const UPDATE: UpdateFn<Self::NativeType> = Either::A(db_idx64_update);
-    const LOWERBOUND: LowerboundFn<Self::NativeType> =
-        Either::A(db_idx64_lowerbound);
     const UPPERBOUND: UpperboundFn<Self::NativeType> =
         Either::A(db_idx64_upperbound);
-    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
-        Either::A(db_idx64_find_primary);
-    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
-        Either::A(db_idx64_find_secondary);
-}
 
-impl NativeSecondaryKey for f64 {
-    type NativeType = Self;
     #[inline]
     fn as_ptr(&self) -> *const Self::NativeType {
         self as *const Self::NativeType
     }
+
     #[inline]
     fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
         self as *mut Self::NativeType
     }
+}
+
+impl NativeSecondaryKey for f64 {
+    type NativeType = Self;
+
     const END: EndFn = db_idx_double_end;
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::A(db_idx_double_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::A(db_idx_double_find_secondary);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::A(db_idx_double_lowerbound);
     const NEXT: NextFn = db_idx_double_next;
     const PREVIOUS: PreviousFn = db_idx_double_previous;
     const REMOVE: RemoveFn = db_idx_double_remove;
     const STORE: StoreFn<Self::NativeType> = Either::A(db_idx_double_store);
     const UPDATE: UpdateFn<Self::NativeType> = Either::A(db_idx_double_update);
-    const LOWERBOUND: LowerboundFn<Self::NativeType> =
-        Either::A(db_idx_double_lowerbound);
     const UPPERBOUND: UpperboundFn<Self::NativeType> =
         Either::A(db_idx_double_upperbound);
-    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
-        Either::A(db_idx_double_find_primary);
-    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
-        Either::A(db_idx_double_find_secondary);
-}
 
-impl NativeSecondaryKey for u128 {
-    type NativeType = Self;
     #[inline]
     fn as_ptr(&self) -> *const Self::NativeType {
         self as *const Self::NativeType
     }
+
     #[inline]
     fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
         self as *mut Self::NativeType
     }
+}
+
+impl NativeSecondaryKey for u128 {
+    type NativeType = Self;
+
     const END: EndFn = db_idx128_end;
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::A(db_idx128_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::A(db_idx128_find_secondary);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::A(db_idx128_lowerbound);
     const NEXT: NextFn = db_idx128_next;
     const PREVIOUS: PreviousFn = db_idx128_previous;
     const REMOVE: RemoveFn = db_idx128_remove;
     const STORE: StoreFn<Self::NativeType> = Either::A(db_idx128_store);
     const UPDATE: UpdateFn<Self::NativeType> = Either::A(db_idx128_update);
-    const LOWERBOUND: LowerboundFn<Self::NativeType> =
-        Either::A(db_idx128_lowerbound);
     const UPPERBOUND: UpperboundFn<Self::NativeType> =
         Either::A(db_idx128_upperbound);
-    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
-        Either::A(db_idx128_find_primary);
-    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
-        Either::A(db_idx128_find_secondary);
+
+    #[inline]
+    fn as_ptr(&self) -> *const Self::NativeType {
+        self as *const Self::NativeType
+    }
+
+    #[inline]
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
+        self as *mut Self::NativeType
+    }
 }
 
 impl NativeSecondaryKey for [u8; 32] {
     type NativeType = u128;
+
     const DATA_LEN: u32 = 8 * 32 / 128;
-    #[inline]
-    #[warn(clippy::cast_ptr_alignment)]
-    fn as_ptr(&self) -> *const Self::NativeType {
-        self as *const _ as *const Self::NativeType
-    }
-    #[inline]
-    #[warn(clippy::cast_ptr_alignment)]
-    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
-        self as *mut _ as *mut Self::NativeType
-    }
     const END: EndFn = db_idx256_end;
+    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
+        Either::B(db_idx256_find_primary);
+    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
+        Either::B(db_idx256_find_secondary);
+    const LOWERBOUND: LowerboundFn<Self::NativeType> =
+        Either::B(db_idx256_lowerbound);
     const NEXT: NextFn = db_idx256_next;
     const PREVIOUS: PreviousFn = db_idx256_previous;
     const REMOVE: RemoveFn = db_idx256_remove;
     const STORE: StoreFn<Self::NativeType> = Either::B(db_idx256_store);
     const UPDATE: UpdateFn<Self::NativeType> = Either::B(db_idx256_update);
-    const LOWERBOUND: LowerboundFn<Self::NativeType> =
-        Either::B(db_idx256_lowerbound);
     const UPPERBOUND: UpperboundFn<Self::NativeType> =
         Either::B(db_idx256_upperbound);
-    const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
-        Either::B(db_idx256_find_primary);
-    const FIND_SECONDARY: FindSecondaryFn<Self::NativeType> =
-        Either::B(db_idx256_find_secondary);
+
+    #[inline]
+    #[warn(clippy::cast_ptr_alignment)]
+    fn as_ptr(&self) -> *const Self::NativeType {
+        self as *const _ as *const Self::NativeType
+    }
+
+    #[inline]
+    #[warn(clippy::cast_ptr_alignment)]
+    fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
+        self as *mut _ as *mut Self::NativeType
+    }
 }
 
 /// Trait for types that can be turned into types that are native secondary keys
@@ -490,6 +502,7 @@ pub trait IntoNativeSecondaryKey {
 
 impl IntoNativeSecondaryKey for u64 {
     type Native = Self;
+
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
@@ -499,6 +512,7 @@ impl IntoNativeSecondaryKey for u64 {
 
 impl IntoNativeSecondaryKey for f64 {
     type Native = Self;
+
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
@@ -508,6 +522,7 @@ impl IntoNativeSecondaryKey for f64 {
 
 impl IntoNativeSecondaryKey for u128 {
     type Native = Self;
+
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
@@ -517,6 +532,7 @@ impl IntoNativeSecondaryKey for u128 {
 
 impl IntoNativeSecondaryKey for Checksum256 {
     type Native = [u8; 32];
+
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
@@ -526,6 +542,7 @@ impl IntoNativeSecondaryKey for Checksum256 {
 
 impl IntoNativeSecondaryKey for Checksum160 {
     type Native = [u8; 32];
+
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
@@ -647,8 +664,9 @@ where
     K: IntoNativeSecondaryKey,
     T: Table,
 {
-    type Item = Self;
     type IntoIter = SecondaryTableIterator<'a, K, T>;
+    type Item = Self;
+
     #[must_use]
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
@@ -694,6 +712,7 @@ where
     T: Table,
 {
     type Item = SecondaryTableCursor<'a, K, T>;
+
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         if self.value == self.sk_end {

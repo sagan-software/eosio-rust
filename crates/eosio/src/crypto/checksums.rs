@@ -4,7 +4,8 @@ use core::cmp::PartialEq;
 macro_rules! checksum_type {
     ($ident:ident, $bytes:literal) => {
         /// TODO docs
-        /// TODO Read, Write, `NumBytes` needs a custom implementation based on `fixed_bytes`
+        /// TODO Read, Write, `NumBytes` needs a custom implementation based on
+        /// `fixed_bytes`
         #[derive(
             Debug, Read, Write, NumBytes, Clone, Copy, PartialEq, PartialOrd,
         )]
@@ -90,7 +91,8 @@ checksum_type!(Checksum160, 20);
 checksum_type!(Checksum256, 32);
 
 /// TODO docs
-/// TODO Read, Write, `NumBytes` needs a custom implementation based on `fixed_bytes`
+/// TODO Read, Write, `NumBytes` needs a custom implementation based on
+/// `fixed_bytes`
 #[derive(Read, Write, NumBytes, Clone, Copy)]
 #[eosio(crate_path = "crate::bytes")]
 pub struct Checksum512([u8; 64]);

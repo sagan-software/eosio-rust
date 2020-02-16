@@ -1,6 +1,5 @@
 use crate::shared::cleos;
-use std::io;
-use std::process::ExitStatus;
+use std::{io, process::ExitStatus};
 
 fn deploy_example_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
     cleos()

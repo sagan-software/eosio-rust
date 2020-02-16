@@ -74,7 +74,10 @@ pub fn get_root_path(attrs: &[Attribute]) -> Path {
                         {
                             return path;
                         } else {
-                            panic!("`#[eosio(crate_path = \"...\")]` received an invalid path");
+                            panic!(
+                                "`#[eosio(crate_path = \"...\")]` received an \
+                                 invalid path"
+                            );
                         }
                     }
                     _ => {

@@ -24,8 +24,8 @@ impl<T: Table> SingletonIndex<T> {
         self.0.find(T::NAME).is_some()
     }
 
-    /// Gets the value stored inside the singleton. Returns `None` if no value is found,
-    /// or `ReadError` if there was an issue reading the data.
+    /// Gets the value stored inside the singleton. Returns `None` if no value
+    /// is found, or `ReadError` if there was an issue reading the data.
     #[inline]
     #[must_use]
     pub fn get(&self) -> Option<Result<T::Row, ReadError>> {
@@ -67,8 +67,8 @@ impl<T: Table> SingletonIndex<T> {
         }
     }
 
-    /// Removes the singleton value if it exists. Returns `ReadError` if there was
-    /// an issue reading the data, and None if there was no entry found
+    /// Removes the singleton value if it exists. Returns `ReadError` if there
+    /// was an issue reading the data, and None if there was no entry found
     ///
     /// # Errors
     ///
