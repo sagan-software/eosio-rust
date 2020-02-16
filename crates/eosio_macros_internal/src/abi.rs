@@ -52,6 +52,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         }
     });
     let expanded = quote! {
+        #[cfg(target_arch = "wasm32")]
         #[no_mangle]
         pub extern "C" fn apply(receiver: u64, code: u64, action: u64) {
             std::panic::set_hook(Box::new(|panic_info| {
