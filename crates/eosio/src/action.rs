@@ -5,7 +5,7 @@ use crate::{
     name::ParseNameError,
     name_type,
 };
-use alloc::{string::String, vec::Vec};
+use alloc::{string::String, vec, vec::Vec};
 use core::{convert::TryFrom, fmt, str::FromStr};
 
 name_type!(ActionName);

@@ -10,6 +10,7 @@ pub struct UnsignedInt(u32);
 
 impl From<usize> for UnsignedInt {
     #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
     fn from(v: usize) -> Self {
         Self(v as u32)
     }
@@ -62,6 +63,7 @@ impl NumBytes for UnsignedInt {
 
 impl Read for UnsignedInt {
     #[inline]
+    #[allow(clippy::cast_possible_truncation)]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
         let mut v = 0_u64;
         let mut by = 0_u8;
@@ -79,6 +81,7 @@ impl Read for UnsignedInt {
 
 impl Write for UnsignedInt {
     #[inline]
+    #[allow(clippy::cast_possible_truncation)]
     fn write(
         &self,
         bytes: &mut [u8],

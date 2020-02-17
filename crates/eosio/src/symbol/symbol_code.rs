@@ -116,6 +116,7 @@ mod symbol_code_tests {
         })
     }
 
+    #[allow(clippy::unnecessary_operation)]
     #[test]
     fn from_str_err() {
         proptest!(|(input in "[A-Z]{1,3}[^A-Z]{1,3}")| {

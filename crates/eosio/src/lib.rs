@@ -15,7 +15,7 @@
     clippy::nursery,
     clippy::style,
     clippy::perf,
-    clippy::cargo,
+    // clippy::cargo,
     clippy::dbg_macro,
     clippy::else_if_without_else,
     clippy::float_cmp_const,
@@ -25,6 +25,7 @@
 #![allow(
     clippy::missing_docs_in_private_items,
     clippy::module_name_repetitions,
+    clippy::module_inception,
     clippy::trivially_copy_pass_by_ref
 )]
 #![cfg_attr(
@@ -32,7 +33,6 @@
     allow(clippy::option_unwrap_used, clippy::result_unwrap_used)
 )]
 
-#[macro_use]
 extern crate alloc;
 
 #[cfg(test)]

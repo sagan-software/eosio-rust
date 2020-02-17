@@ -50,6 +50,7 @@ impl From<BlockTimestamp> for u32 {
 
 impl From<TimePoint> for BlockTimestamp {
     #[inline]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn from(tp: TimePoint) -> Self {
         let millis = tp.as_millis() - Self::EPOCH;
         let slot = millis.max(0) / i64::from(Self::INTERVAL_MS);
@@ -70,6 +71,7 @@ impl From<BlockTimestamp> for TimePoint {
 
 impl From<TimePointSec> for BlockTimestamp {
     #[inline]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn from(tps: TimePointSec) -> Self {
         let millis = i64::from(tps.as_secs()) * 1_000 - Self::EPOCH;
         let slot = millis / i64::from(Self::INTERVAL_MS);
@@ -80,6 +82,7 @@ impl From<TimePointSec> for BlockTimestamp {
 
 impl From<BlockTimestamp> for TimePointSec {
     #[inline]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn from(bt: BlockTimestamp) -> Self {
         let millis = i64::from(bt.slot)
             * i64::from(BlockTimestamp::INTERVAL_MS)
@@ -141,6 +144,7 @@ mod tests {
         }
     }
 
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     #[test]
     fn to_time_point_sec() {
         let test_cases = vec![

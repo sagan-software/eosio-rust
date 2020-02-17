@@ -30,6 +30,7 @@ where
 /// Returns `Err` if there as a problem serializing the public keys or
 /// permission levels.
 #[inline]
+#[allow(clippy::cast_possible_truncation)]
 pub fn has_transaction_authority_bytes<T, K, L>(
     trx: T,
     public_keys: K,

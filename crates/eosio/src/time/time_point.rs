@@ -1,8 +1,7 @@
-use super::{BlockTimestamp, TimePointSec};
+use super::TimePointSec;
 use crate::bytes::{NumBytes, Read, Write};
 use core::{
     convert::{TryFrom, TryInto},
-    fmt,
     num::TryFromIntError,
 };
 
@@ -54,12 +53,14 @@ impl TimePoint {
 
     #[inline]
     #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
     pub const fn as_secs(&self) -> i32 {
         (self.0 / 1_000_000) as i32
     }
 
     #[inline]
     #[must_use]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub const fn as_time_point_sec(&self) -> TimePointSec {
         TimePointSec::from_secs(self.as_secs() as u32)
     }

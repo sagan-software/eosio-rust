@@ -3,7 +3,7 @@ mod name_type;
 
 use crate::bytes::{NumBytes, Read, Write};
 use core::{
-    convert::TryFrom,
+    cmp::PartialEq,
     fmt,
     str::{self, FromStr},
 };
@@ -63,6 +63,7 @@ impl From<Name> for u64 {
 
 impl FromStr for Name {
     type Err = ParseNameError;
+
     #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let name = name_from_bytes(s.bytes())?;
@@ -78,6 +79,12 @@ impl fmt::Display for Name {
             .map(|s| s.trim_end_matches('.'))
             .map_err(|_| fmt::Error)?;
         write!(f, "{}", value)
+    }
+}
+
+impl PartialEq<u64> for Name {
+    fn eq(&self, other: &u64) -> bool {
+        &self.0 == other
     }
 }
 

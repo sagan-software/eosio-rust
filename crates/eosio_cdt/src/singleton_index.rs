@@ -1,4 +1,4 @@
-use crate::{Payer, PrimaryTableIndexExt, TableCursor, TableIndex};
+use crate::{Payer, TableCursor, TableIndex};
 use eosio::{
     AccountName, PrimaryTableIndex, ReadError, ScopeName, Table, WriteError,
 };

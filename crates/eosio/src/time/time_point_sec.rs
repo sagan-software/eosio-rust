@@ -1,6 +1,6 @@
 use super::TimePoint;
 use crate::bytes::{NumBytes, Read, Write};
-use core::{convert::TryInto, fmt, ops::Add};
+use core::ops::Add;
 
 /// A lower resolution `TimePoint` accurate only to seconds from 1970
 /// <https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/core/eosio/time.hpp#L79-L132>
@@ -56,6 +56,7 @@ impl From<TimePointSec> for u32 {
 impl From<TimePoint> for TimePointSec {
     #[inline]
     #[must_use]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn from(t: TimePoint) -> Self {
         Self((t.as_micros() as u32) / 1_000_000_u32)
     }

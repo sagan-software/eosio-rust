@@ -26,6 +26,7 @@ impl DataStream {
     /// # Errors
     ///
     /// Will return `Err` if there was a problem writing the data.
+    #[allow(clippy::needless_pass_by_value)]
     #[inline]
     pub fn write<T: Write>(&mut self, thing: T) -> Result<(), WriteError> {
         thing.write(&mut self.bytes, &mut self.pos)

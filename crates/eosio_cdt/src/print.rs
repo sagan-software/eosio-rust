@@ -196,6 +196,7 @@ macro_rules! print {
 
 impl Print for &[u8] {
     #[inline]
+    #[allow(clippy::cast_possible_truncation)]
     fn print(&self) {
         let ptr = self.as_ptr() as *const c_void;
         let len = self.len();

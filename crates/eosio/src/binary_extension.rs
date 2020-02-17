@@ -56,7 +56,7 @@ impl<T> BinaryExtension<T> {
 
     #[allow(clippy::missing_const_for_fn)]
     #[inline]
-    pub fn to_value(self) -> Option<T> {
+    pub fn into_value(self) -> Option<T> {
         self.0
     }
 }

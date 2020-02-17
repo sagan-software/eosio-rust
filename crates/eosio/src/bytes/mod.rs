@@ -10,7 +10,7 @@ mod primitives;
 pub use self::data_stream::DataStream;
 pub use eosio_macros::{NumBytes, Read, Write};
 
-use ::alloc::vec::Vec;
+use ::alloc::{vec, vec::Vec};
 use core::fmt;
 
 /// Count the number of bytes a type is expected to use.

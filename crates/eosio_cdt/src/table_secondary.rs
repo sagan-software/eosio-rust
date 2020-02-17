@@ -1,6 +1,4 @@
-use crate::{
-    Payer, PrimaryTableIndexExt, TableCursor, TableIndex, TableIterator,
-};
+use crate::{Payer, TableCursor, TableIndex, TableIterator};
 use core::{borrow::Borrow, ptr::null_mut};
 use eosio::{
     AccountName, Checksum160, Checksum256, Read, ReadError, ScopeName,
@@ -479,14 +477,16 @@ impl NativeSecondaryKey for [u8; 32] {
     const UPPERBOUND: UpperboundFn<Self::NativeType> =
         Either::B(db_idx256_upperbound);
 
+    // TODO: Don't allow this clippy lint. This should be fixed
     #[inline]
-    #[warn(clippy::cast_ptr_alignment)]
+    #[allow(clippy::cast_ptr_alignment)]
     fn as_ptr(&self) -> *const Self::NativeType {
         self as *const _ as *const Self::NativeType
     }
 
+    // TODO: Don't allow this clippy lint. This should be fixed
     #[inline]
-    #[warn(clippy::cast_ptr_alignment)]
+    #[allow(clippy::cast_ptr_alignment)]
     fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
         self as *mut _ as *mut Self::NativeType
     }

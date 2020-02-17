@@ -4,6 +4,7 @@ use eosio::{BlockTimestamp, TimePoint, TimePointSec};
 /// `TimePoint`
 #[must_use]
 #[inline]
+#[allow(clippy::cast_possible_wrap)]
 pub fn current_time_point() -> TimePoint {
     let micros = unsafe { eosio_cdt_sys::current_time() } as i64;
     TimePoint::from_micros(micros)
@@ -26,6 +27,7 @@ pub fn current_block_time() -> BlockTimestamp {
 /// Gets the publication time
 #[must_use]
 #[inline]
+#[allow(clippy::cast_possible_wrap)]
 pub fn publication() -> TimePoint {
     let micros = unsafe { eosio_cdt_sys::publication_time() } as i64;
     TimePoint::from_micros(micros)

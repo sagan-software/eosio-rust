@@ -1,6 +1,6 @@
 //! <https://github.com/EOSIO/eosio.cdt/blob/796ff8bee9a0fc864f665a0a4d018e0ff18ac383/libraries/eosiolib/contracts/eosio/producer_schedule.hpp#L54-L69>
 use crate::{AccountName, NumBytes, PublicKey, Read, Write};
-use alloc::vec::Vec;
+use alloc::{vec, vec::Vec};
 
 /// Maps producer with its signing key, used for producer schedule
 /// <https://github.com/EOSIO/eosio.cdt/blob/796ff8bee9a0fc864f665a0a4d018e0ff18ac383/libraries/eosiolib/contracts/eosio/producer_schedule.hpp#L15-L45>
