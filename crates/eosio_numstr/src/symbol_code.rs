@@ -62,10 +62,10 @@ impl fmt::Display for ParseSymbolCodeError {
 #[inline]
 pub fn symbol_code_from_bytes<I>(iter: I) -> Result<u64, ParseSymbolCodeError>
 where
-    I: Iterator<Item = u8>,
+    I: DoubleEndedIterator<Item = u8> + ExactSizeIterator,
 {
     let mut value = 0_u64;
-    for (i, c) in iter.enumerate() {
+    for (i, c) in iter.enumerate().rev() {
         if i == SYMBOL_CODE_MAX_LEN {
             return Err(ParseSymbolCodeError::TooLong);
         } else if c < b'A' || c > b'Z' {
@@ -96,7 +96,7 @@ where
 pub fn symbol_code_to_bytes(value: u64) -> [u8; SYMBOL_CODE_MAX_LEN] {
     let mut chars = [b' '; SYMBOL_CODE_MAX_LEN];
     let mut v = value;
-    for c in chars.iter_mut().rev() {
+    for c in &mut chars {
         if v == 0 {
             break;
         }

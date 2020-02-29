@@ -80,7 +80,7 @@ pub fn symbol_from_bytes<I>(
     iter: I,
 ) -> Result<u64, ParseSymbolError>
 where
-    I: Iterator<Item = u8>,
+    I: DoubleEndedIterator<Item = u8> + ExactSizeIterator,
 {
     let code = symbol_code_from_bytes(iter)?;
     Ok(symbol_from_code(precision, code))
