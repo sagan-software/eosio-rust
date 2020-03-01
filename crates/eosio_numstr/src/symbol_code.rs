@@ -108,7 +108,7 @@ pub fn symbol_code_to_bytes(value: u64) -> [u8; SYMBOL_CODE_MAX_LEN] {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{symbol_code_from_bytes, symbol_code_to_bytes};
     use core::str;
     use proptest::prelude::*;
 

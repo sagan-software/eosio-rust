@@ -177,7 +177,7 @@ pub fn name_to_bytes(value: u64) -> [u8; NAME_MAX_LEN] {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{char, name_from_bytes, name_to_bytes, ParseNameError};
     use core::str;
     use proptest::prelude::*;
 

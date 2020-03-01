@@ -127,7 +127,10 @@ pub const fn symbol_to_code(value: u64) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use crate::{
+        symbol_code_from_bytes, symbol_from_bytes, symbol_to_code,
+        symbol_to_precision,
+    };
     use proptest::prelude::*;
 
     #[test]
