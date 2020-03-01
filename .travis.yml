@@ -13,8 +13,16 @@ install:
   - rustup target add wasm32-unknown-unknown
   - rustup component add rustfmt
   - cargo install wasm-gc
+  - cargo install mdbook
 services:
   - docker
 script:
   - cargo unit-tests
   - cargo docker-tests
+  - cargo build-docs
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  local_dir: target/doc

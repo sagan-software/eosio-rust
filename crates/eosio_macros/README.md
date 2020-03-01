@@ -18,7 +18,7 @@ Creating EOSIO symbols:
 
 ```rust
 use eosio_macros::s;
-assert_eq!(s!(4, "EOS"), 1162826500);
+assert_eq!(s!(4, "EOS"), 1397703940);
 ```
 
 License: MIT OR Apache-2.0

@@ -18,7 +18,7 @@ Creating an EOSIO symbol:
 ```rust
 use eosio_numstr::symbol_from_bytes;
 let symbol = symbol_from_bytes(4, "EOS".bytes()).unwrap();
-assert_eq!(symbol, 1162826500);
+assert_eq!(symbol, 1397703940);
 ```
 
 License: MIT OR Apache-2.0
