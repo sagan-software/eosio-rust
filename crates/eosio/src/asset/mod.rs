@@ -435,7 +435,7 @@ mod asset_tests {
     test_from_str_err! {
         from_str_bad_char1, "tst", ParseAssetError::BadChar(b't')
         from_str_multi_spaces, "1.0000  EOS", ParseAssetError::BadChar(b' ')
-        from_str_lowercase_symbol, "1.0000 eos", ParseAssetError::BadChar(b'e')
+        from_str_lowercase_symbol, "1.0000 eos", ParseAssetError::BadChar(b's')
         from_str_no_space, "1EOS", ParseAssetError::BadChar(b'E')
         from_str_no_symbol1, "1.2345 ", ParseAssetError::BadFormat
         from_str_no_symbol2, "1", ParseAssetError::BadFormat

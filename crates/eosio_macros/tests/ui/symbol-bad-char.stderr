@@ -1,4 +1,4 @@
-error: unexpected end of input, symbol contains invalid character 'e'
+error: unexpected end of input, symbol contains invalid character 't'
  --> $DIR/symbol-bad-char.rs:6:13
   |
 6 |     let _ = s!(4, "Test");

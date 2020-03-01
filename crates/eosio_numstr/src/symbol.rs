@@ -58,8 +58,8 @@ impl From<ParseSymbolCodeError> for ParseSymbolError {
 ///
 /// ```
 /// use eosio_numstr::{symbol_from_bytes, ParseSymbolError};
-/// assert_eq!(symbol_from_bytes(4, "EOS".bytes()), Ok(1162826500));
-/// assert_eq!(symbol_from_bytes(0, "TGFT".bytes()), Ok(361973044224));
+/// assert_eq!(symbol_from_bytes(4, "EOS".bytes()), Ok(1397703940));
+/// assert_eq!(symbol_from_bytes(0, "TGFT".bytes()), Ok(361956332544));
 /// assert_eq!(symbol_from_bytes(2, "SYS".bytes()), Ok(1398362882));
 /// assert_eq!(
 ///     symbol_from_bytes(4, "TSt".bytes()),
@@ -67,7 +67,7 @@ impl From<ParseSymbolCodeError> for ParseSymbolError {
 /// );
 /// assert_eq!(
 ///     symbol_from_bytes(0, "TESTING".bytes()),
-///     Ok(6072351294051206912)
+///     Ok(5138124851399447552)
 /// );
 /// assert_eq!(
 ///     symbol_from_bytes(0, "TESTINGG".bytes()),
@@ -98,9 +98,9 @@ pub const fn symbol_from_code(precision: u8, code: u64) -> u64 {
 ///
 /// ```
 /// use eosio_numstr::symbol_to_precision;
-/// assert_eq!(symbol_to_precision(1162826500), 4); // 4,EOS
+/// assert_eq!(symbol_to_precision(1397703940), 4); // 4,EOS
 /// assert_eq!(symbol_to_precision(1398362882), 2); // 2,SYS
-/// assert_eq!(symbol_to_precision(6072351294051206912), 0); // 0,TESTING
+/// assert_eq!(symbol_to_precision(5138124851399447552), 0); // 0,TESTING
 /// ```
 #[inline]
 #[must_use]

@@ -14,7 +14,7 @@
 //!
 //! ```
 //! use eosio_macros::s;
-//! assert_eq!(s!(4, "EOS"), 1162826500);
+//! assert_eq!(s!(4, "EOS"), 1397703940);
 //! ```
 #![no_std]
 #![allow(clippy::missing_docs_in_private_items)]
@@ -43,7 +43,7 @@ pub use eosio_macros_internal::n;
 ///
 /// ```
 /// use eosio_macros::s;
-/// assert_eq!(s!(4, "EOS"), 1162826500);
+/// assert_eq!(s!(4, "EOS"), 1397703940);
 /// ```
 #[proc_macro_hack]
 pub use eosio_macros_internal::s;

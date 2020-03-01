@@ -43,8 +43,8 @@ impl fmt::Display for ParseSymbolCodeError {
 ///
 /// ```
 /// use eosio_numstr::{symbol_code_from_bytes, ParseSymbolCodeError};
-/// assert_eq!(symbol_code_from_bytes("EOS".bytes()), Ok(4542291));
-/// assert_eq!(symbol_code_from_bytes("TGFT".bytes()), Ok(1413957204));
+/// assert_eq!(symbol_code_from_bytes("EOS".bytes()), Ok(5459781));
+/// assert_eq!(symbol_code_from_bytes("TGFT".bytes()), Ok(1413891924));
 /// assert_eq!(symbol_code_from_bytes("SYS".bytes()), Ok(5462355));
 /// assert_eq!(
 ///     symbol_code_from_bytes("TSt".bytes()),
@@ -52,7 +52,7 @@ impl fmt::Display for ParseSymbolCodeError {
 /// );
 /// assert_eq!(
 ///     symbol_code_from_bytes("TESTING".bytes()),
-///     Ok(23720122242387527)
+///     Ok(20070800200779092)
 /// );
 /// assert_eq!(
 ///     symbol_code_from_bytes("TESTINGG".bytes()),
@@ -84,10 +84,10 @@ where
 ///
 /// ```
 /// use eosio_numstr::symbol_code_to_bytes;
-/// assert_eq!(symbol_code_to_bytes(4542291), *b"    EOS");
-/// assert_eq!(symbol_code_to_bytes(23720122242387527), *b"TESTING");
-/// assert_eq!(symbol_code_to_bytes(1413957204), *b"   TGFT");
-/// assert_eq!(symbol_code_to_bytes(5462355), *b"    SYS");
+/// assert_eq!(symbol_code_to_bytes(5459781), *b"EOS    ");
+/// assert_eq!(symbol_code_to_bytes(20070800200779092), *b"TESTING");
+/// assert_eq!(symbol_code_to_bytes(1413891924), *b"TGFT   ");
+/// assert_eq!(symbol_code_to_bytes(5462355), *b"SYS    ");
 /// assert_eq!(symbol_code_to_bytes(0), *b"       ");
 /// ```
 #[inline]
@@ -118,7 +118,7 @@ mod tests {
             let value = symbol_code_from_bytes(input.bytes()).unwrap();
             let bytes = symbol_code_to_bytes(value);
             let string = str::from_utf8(&bytes).unwrap();
-            prop_assert_eq!(string, format!("{:>7}", input));
+            prop_assert_eq!(string, format!("{:<7}", input));
         });
     }
 
