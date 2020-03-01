@@ -26,7 +26,7 @@ impl fmt::Display for ExtendedSymbol {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{AccountName, ExtendedSymbol, Symbol};
     use crate::SymbolCode;
     use alloc::string::ToString;
     use core::str::FromStr;

@@ -218,11 +218,27 @@ macro_rules! impl_print_for_as_slice_types {
 
 impl_print_for_as_slice_types! {
     Vec<u8>
+    PublicKey
+    Signature
+}
+
+macro_rules! impl_print_for_checksum_types {
+    ($($ident:ty)*) => ($(
+        #[automatically_derived]
+        impl Print for $ident {
+            #[inline]
+            fn print(&self) {
+                let bytes = self.to_bytes();
+                (&bytes).print();
+            }
+        }
+    )*)
+}
+
+impl_print_for_checksum_types! {
     Checksum160
     Checksum256
     Checksum512
-    PublicKey
-    Signature
 }
 
 macro_rules! impl_print_for_byte_arrays {

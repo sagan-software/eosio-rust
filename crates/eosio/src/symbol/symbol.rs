@@ -110,7 +110,7 @@ impl PartialEq<u64> for Symbol {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Symbol, SymbolCode};
     use alloc::string::ToString;
     use core::str::FromStr;
     use proptest::prelude::*;

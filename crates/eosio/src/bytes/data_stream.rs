@@ -101,7 +101,7 @@ impl AsRef<[u8]> for DataStream {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::DataStream;
     use crate::{n, AccountName, Name};
 
     #[test]

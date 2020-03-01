@@ -101,7 +101,7 @@ impl fmt::Display for WriteError {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{vec, NumBytes, Read, Write};
     use ::alloc::{
         string::{String, ToString},
         vec::Vec,

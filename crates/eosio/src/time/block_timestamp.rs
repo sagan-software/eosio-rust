@@ -94,7 +94,7 @@ impl From<BlockTimestamp> for TimePointSec {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{BlockTimestamp, TimePoint, TimePointSec};
 
     #[test]
     fn from_time_point() {

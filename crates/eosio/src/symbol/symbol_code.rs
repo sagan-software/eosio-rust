@@ -103,7 +103,7 @@ impl FromStr for SymbolCode {
 
 #[cfg(test)]
 mod symbol_code_tests {
-    use super::*;
+    use super::{FromStr, ParseSymbolCodeError, SymbolCode};
     use alloc::string::ToString;
     use proptest::prelude::*;
 
@@ -119,10 +119,10 @@ mod symbol_code_tests {
     #[allow(clippy::unnecessary_operation)]
     #[test]
     fn from_str_err() {
-        proptest!(|(input in "[A-Z]{1,3}[^A-Z]{1,3}")| {
+        proptest!(|(input in "[A-Z]{1,3}[a-z]{1,3}")| {
             match SymbolCode::from_str(&input) {
                 Err(ParseSymbolCodeError::BadChar(..)) => (),
-                Err(err) => prop_assert!(false, "from_str failed with the wrong error: {}", err),
+                Err(err) => prop_assert!(false, "`SymbolCode::from_str` failed with the wrong error (expected `BadChar`): {}", err),
                 Ok(..) => prop_assert!(false, "from_str should've failed"),
             }
         });

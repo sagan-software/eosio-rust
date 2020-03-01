@@ -1,5 +1,6 @@
+use alloc::vec::Vec;
 use core::borrow::Borrow;
-use eosio::{AccountName, ReadError, ScopeName, Table, WriteError};
+use eosio::{AccountName, DataStream, ReadError, ScopeName, Table, WriteError};
 
 pub enum Payer {
     Same,
@@ -11,12 +12,22 @@ pub trait TableCursor<T>: IntoIterator
 where
     T: Table,
 {
+    fn bytes(&self) -> Vec<u8>;
+
+    #[inline]
+    fn stream(&self) -> DataStream {
+        self.bytes().into()
+    }
+
     /// Read and deserialize the current table row
     ///
     /// # Errors
     ///
     /// Will return `Err` if there was an issue reading the stored value.
-    fn get(&self) -> Result<T::Row, ReadError>;
+    #[inline]
+    fn get(&self) -> Result<T::Row, ReadError> {
+        self.stream().read()
+    }
 
     /// Erase the current row
     ///

@@ -364,7 +364,7 @@ impl_op! {
 
 #[cfg(test)]
 mod asset_tests {
-    use super::*;
+    use super::{Asset, FromStr, ParseAssetError};
     use alloc::string::ToString;
     use eosio_macros::s;
 

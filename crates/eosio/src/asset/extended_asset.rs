@@ -117,7 +117,7 @@ impl fmt::Display for ExtendedAsset {
 
 #[cfg(test)]
 mod extended_asset_tests {
-    use super::*;
+    use super::{Asset, ExtendedAsset};
     use alloc::string::ToString;
     use eosio_macros::{n, s};
 

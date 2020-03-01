@@ -157,7 +157,10 @@ impl fmt::Display for PermissionLevel {
 
 #[cfg(test)]
 mod permission_level_tests {
-    use super::*;
+    use super::{
+        AccountName, FromStr, ParseNameError, ParsePermissionLevelError,
+        PermissionLevel, PermissionName, TryFrom,
+    };
     use alloc::string::ToString;
     use eosio_macros::n;
 

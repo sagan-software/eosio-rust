@@ -90,7 +90,7 @@ impl PartialEq<u64> for Name {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{FromStr, Name};
     use alloc::string::ToString;
     use proptest::prelude::*;
 

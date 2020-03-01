@@ -10,7 +10,7 @@ pub enum SecondaryKey {
     /// TODO docs
     U128(u128),
     /// TODO docs
-    H256([u8; 32]),
+    H256([u128; 2]),
 }
 
 impl From<u64> for SecondaryKey {
@@ -34,29 +34,24 @@ impl From<u128> for SecondaryKey {
     }
 }
 
-impl From<[u8; 32]> for SecondaryKey {
+impl From<[u128; 2]> for SecondaryKey {
     #[must_use]
-    fn from(v: [u8; 32]) -> Self {
-        Self::H256(v)
+    fn from(b: [u128; 2]) -> Self {
+        Self::H256([b[0], b[1]])
     }
 }
 
 impl From<Checksum256> for SecondaryKey {
     #[must_use]
     fn from(v: Checksum256) -> Self {
-        Self::H256(v.to_bytes())
+        v.words().into()
     }
 }
 
 impl From<Checksum160> for SecondaryKey {
     #[must_use]
     fn from(v: Checksum160) -> Self {
-        let b = v.to_bytes();
-        Self::H256([
-            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10],
-            b[11], b[12], b[13], b[14], b[15], b[16], b[17], b[18], b[19], 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ])
+        v.words().into()
     }
 }
 

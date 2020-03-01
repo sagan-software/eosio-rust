@@ -1,10 +1,26 @@
 use crate::{Payer, TableCursor, TableIndex, TableIterator};
+use alloc::vec::Vec;
 use core::{borrow::Borrow, ptr::null_mut};
 use eosio::{
-    AccountName, Checksum160, Checksum256, Read, ReadError, ScopeName,
+    AccountName, Checksum160, Checksum256, ReadError, ScopeName,
     SecondaryTableIndex, SecondaryTableName, Table, WriteError,
 };
-use eosio_cdt_sys::*;
+use eosio_cdt_sys::{
+    c_void, db_end_i64, db_find_i64, db_get_i64, db_idx128_end,
+    db_idx128_find_primary, db_idx128_find_secondary, db_idx128_lowerbound,
+    db_idx128_next, db_idx128_previous, db_idx128_remove, db_idx128_store,
+    db_idx128_update, db_idx128_upperbound, db_idx256_end,
+    db_idx256_find_primary, db_idx256_find_secondary, db_idx256_lowerbound,
+    db_idx256_next, db_idx256_previous, db_idx256_remove, db_idx256_store,
+    db_idx256_update, db_idx256_upperbound, db_idx64_end,
+    db_idx64_find_primary, db_idx64_find_secondary, db_idx64_lowerbound,
+    db_idx64_next, db_idx64_previous, db_idx64_remove, db_idx64_store,
+    db_idx64_update, db_idx64_upperbound, db_idx_double_end,
+    db_idx_double_find_primary, db_idx_double_find_secondary,
+    db_idx_double_lowerbound, db_idx_double_next, db_idx_double_previous,
+    db_idx_double_remove, db_idx_double_store, db_idx_double_update,
+    db_idx_double_upperbound,
+};
 
 pub enum Either<A, B> {
     A(A),
@@ -458,10 +474,10 @@ impl NativeSecondaryKey for u128 {
     }
 }
 
-impl NativeSecondaryKey for [u8; 32] {
+impl NativeSecondaryKey for [u128; 2] {
     type NativeType = u128;
 
-    const DATA_LEN: u32 = 8 * 32 / 128;
+    const DATA_LEN: u32 = 2;
     const END: EndFn = db_idx256_end;
     const FIND_PRIMARY: FindPrimaryFn<Self::NativeType> =
         Either::B(db_idx256_find_primary);
@@ -477,18 +493,14 @@ impl NativeSecondaryKey for [u8; 32] {
     const UPPERBOUND: UpperboundFn<Self::NativeType> =
         Either::B(db_idx256_upperbound);
 
-    // TODO: Don't allow this clippy lint. This should be fixed
     #[inline]
-    #[allow(clippy::cast_ptr_alignment)]
     fn as_ptr(&self) -> *const Self::NativeType {
-        self as *const _ as *const Self::NativeType
+        (&self[..]).as_ptr()
     }
 
-    // TODO: Don't allow this clippy lint. This should be fixed
     #[inline]
-    #[allow(clippy::cast_ptr_alignment)]
     fn as_mut_ptr(&mut self) -> *mut Self::NativeType {
-        self as *mut _ as *mut Self::NativeType
+        (&mut self[..]).as_mut_ptr()
     }
 }
 
@@ -531,27 +543,22 @@ impl IntoNativeSecondaryKey for u128 {
 }
 
 impl IntoNativeSecondaryKey for Checksum256 {
-    type Native = [u8; 32];
+    type Native = [u128; 2];
 
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
-        self.to_bytes()
+        self.words()
     }
 }
 
 impl IntoNativeSecondaryKey for Checksum160 {
-    type Native = [u8; 32];
+    type Native = [u128; 2];
 
     #[must_use]
     #[inline]
     fn into_native_secondary_key(self) -> Self::Native {
-        let b = self.to_bytes();
-        [
-            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10],
-            b[11], b[12], b[13], b[14], b[15], b[16], b[17], b[18], b[19], 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ]
+        self.words()
     }
 }
 
@@ -600,7 +607,8 @@ where
     T: Table,
 {
     #[inline]
-    fn get(&self) -> Result<T::Row, ReadError> {
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+    fn bytes(&self) -> Vec<u8> {
         let pk_itr = unsafe {
             db_find_i64(
                 self.index.code.as_u64(),
@@ -611,29 +619,12 @@ where
         };
         let nullptr: *mut c_void = null_mut() as *mut _ as *mut c_void;
         let size = unsafe { db_get_i64(self.value, nullptr, 0) };
-        let mut bytes = vec![
-            0_u8;
-            #[allow(
-                clippy::cast_possible_truncation,
-                clippy::cast_sign_loss
-            )]
-            {
-                size as usize
-            }
-        ];
+        let mut bytes = vec![0_u8; size as usize];
         let ptr: *mut c_void = &mut bytes[..] as *mut _ as *mut c_void;
         unsafe {
-            db_get_i64(
-                pk_itr,
-                ptr,
-                #[allow(clippy::cast_sign_loss)]
-                {
-                    size as u32
-                },
-            );
+            db_get_i64(pk_itr, ptr, size as u32);
         }
-        let mut pos = 0;
-        T::Row::read(&bytes, &mut pos)
+        bytes
     }
 
     #[inline]

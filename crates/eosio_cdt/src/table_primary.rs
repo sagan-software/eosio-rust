@@ -1,14 +1,19 @@
 use crate::{
     NativeSecondaryKey, Payer, Print, TableCursor, TableIndex, TableIterator,
 };
+use alloc::vec::Vec;
 use core::{
     borrow::Borrow, iter::IntoIterator, marker::PhantomData, ptr::null_mut,
 };
 use eosio::{
-    AccountName, NumBytes, PrimaryTableIndex, Read, ReadError, ScopeName,
+    AccountName, NumBytes, PrimaryTableIndex, ReadError, ScopeName,
     SecondaryKey, SecondaryTableName, Table, Write, WriteError,
 };
-use eosio_cdt_sys::*;
+use eosio_cdt_sys::{
+    c_void, db_end_i64, db_find_i64, db_get_i64, db_lowerbound_i64,
+    db_next_i64, db_previous_i64, db_remove_i64, db_store_i64, db_update_i64,
+    db_upperbound_i64,
+};
 
 /// Cursor for a primary table index
 #[allow(clippy::missing_inline_in_public_items)]
@@ -53,7 +58,7 @@ where
     T: Table,
 {
     #[inline]
-    fn get(&self) -> Result<T::Row, ReadError> {
+    fn bytes(&self) -> Vec<u8> {
         let nullptr: *mut c_void = null_mut() as *mut _ as *mut c_void;
         let size = unsafe { db_get_i64(self.value, nullptr, 0) };
         #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
@@ -63,8 +68,7 @@ where
         unsafe {
             db_get_i64(self.value, ptr, size as u32);
         }
-        let mut pos = 0;
-        T::Row::read(&bytes, &mut pos)
+        bytes
     }
 
     #[inline]
@@ -108,14 +112,14 @@ where
                         }
                     }
                     SecondaryKey::H256(v) => {
-                        let end = <[u8; 32]>::db_idx_end(
+                        let end = <[u128; 2]>::db_idx_end(
                             self.code, self.scope, table,
                         );
                         let itr = v.clone().db_idx_find_primary(
                             self.code, self.scope, table, pk,
                         );
                         if itr != end {
-                            <[u8; 32]>::db_idx_remove(itr);
+                            <[u128; 2]>::db_idx_remove(itr);
                         }
                     }
                 }
