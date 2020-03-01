@@ -63,3 +63,25 @@ pub fn push_action(
         .arg(auth)
         .status()
 }
+
+pub trait RunOr {
+    fn run_or_none(&mut self) -> Option<()>;
+    fn run_or_panic(&mut self);
+}
+
+impl RunOr for Command {
+    fn run_or_none(&mut self) -> Option<()> {
+        let status = self.status().expect("failed to execute process");
+        if status.success() {
+            Some(())
+        } else {
+            None
+        }
+    }
+
+    fn run_or_panic(&mut self) {
+        if self.run_or_none().is_none() {
+            panic!("Failed to run command: {:?}", self);
+        }
+    }
+}

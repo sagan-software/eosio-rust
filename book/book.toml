@@ -1,7 +1,7 @@
 [book]
 authors = ["Liam Curry"]
 multilingual = false
-src = "book"
+src = "."
 title = "eosio-rust"
 
 [build]

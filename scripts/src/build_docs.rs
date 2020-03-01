@@ -1,13 +1,11 @@
-use crate::shared::project_dir;
+use crate::shared::{project_dir, RunOr};
 use std::{
-    io,
-    path::Path,
+    fs, io, os,
+    path::{Path, PathBuf},
     process::{Command, ExitStatus},
 };
 
-fn build_readme<T: AsRef<Path>>(crate_name: T) -> io::Result<ExitStatus> {
-    let crate_name = crate_name.as_ref();
-    let crate_root = project_dir()?.join("crates").join(crate_name);
+fn build_readme(crate_root: &Path) -> io::Result<()> {
     let output = crate_root.join("README.md");
     println!("building README.md for {:?} ({:?})", crate_root, output);
     Command::new("cargo")
@@ -16,51 +14,54 @@ fn build_readme<T: AsRef<Path>>(crate_name: T) -> io::Result<ExitStatus> {
         .arg(crate_root)
         .arg("--output")
         .arg(output)
-        .status()
+        .run_or_panic();
+    Ok(())
 }
 
-fn symlink_licenses<T: AsRef<Path>>(crate_name: T) -> io::Result<()> {
-    let crate_name = crate_name.as_ref();
-    let crate_root = project_dir()?.join("crates").join(crate_name);
+fn symlink_licenses(crate_root: &Path) -> io::Result<()> {
     for license in &["LICENSE-APACHE", "LICENSE-MIT"] {
         let src = Path::new("..").join("..").join(license);
         let dst = crate_root.join(license);
         println!("Creating symlink: src={:?}, dst={:?}", src, dst);
         if dst.exists() {
-            std::fs::remove_file(&dst)?;
+            fs::remove_file(&dst)?;
         }
         #[cfg(target_os = "linux")]
         {
-            std::os::unix::fs::symlink(src, dst)?;
+            os::unix::fs::symlink(src, dst)?;
         }
         #[cfg(target_os = "windows")]
         {
-            std::os::windows::fs::symlink_file(src, dst)?;
+            os::windows::fs::symlink_file(src, dst)?;
         }
     }
     Ok(())
 }
 
-const CRATE_NAMES: &[&str] = &[
-    "eosio",
-    "eosio_cdt",
-    "eosio_cdt_sys",
-    "eosio_macros",
-    "eosio_macros_internal",
-    "eosio_numstr",
-];
+fn build_docs_for_dir(dir: PathBuf) {
+    println!("Building docs for all crates in dir: {:?}", dir);
+    for dir_entry in fs::read_dir(dir).unwrap() {
+        let dir_entry = dir_entry.unwrap();
+        let crate_root = dir_entry.path();
+        symlink_licenses(&crate_root).unwrap();
+        build_readme(&crate_root).unwrap();
+    }
+}
 
 pub fn build_docs() -> io::Result<()> {
     println!("building docs");
+    let root_dir = project_dir().unwrap();
+    Command::new("mdbook")
+        .arg("build")
+        .arg("book")
+        .run_or_panic();
     Command::new("cargo")
         .arg("doc")
         .arg("--all")
         .arg("--all-features")
         .arg("--no-deps")
-        .status()?;
-    for crate_name in CRATE_NAMES {
-        symlink_licenses(crate_name)?;
-        build_readme(crate_name)?;
-    }
+        .run_or_panic();
+    build_docs_for_dir(root_dir.join("crates"));
+    build_docs_for_dir(root_dir.join("contracts"));
     Ok(())
 }
