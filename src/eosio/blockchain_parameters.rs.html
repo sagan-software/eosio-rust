@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `crates/eosio/src/blockchain_parameters.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>blockchain_parameters.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../eosio/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+</pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! &lt;https://github.com/EOSIO/eosio.cdt/blob/4985359a30da1f883418b7133593f835927b8046/libraries/eosiolib/contracts/eosio/privileged.hpp#L40-L160&gt;</span>
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">bytes</span>::{<span class="ident">NumBytes</span>, <span class="ident">Read</span>, <span class="ident">Write</span>};
+<span class="kw">use</span> <span class="ident">alloc</span>::<span class="ident">string</span>::<span class="ident">String</span>;
+
+<span class="doccomment">/// Tunable blockchain configuration that can be changed via consensus</span>
+<span class="attribute">#[<span class="ident">derive</span>(
+    <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">NumBytes</span>, <span class="ident">Clone</span>, <span class="ident">Default</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">PartialOrd</span>,
+)]</span>
+<span class="attribute">#[<span class="ident">eosio</span>(<span class="ident">crate_path</span> <span class="op">=</span> <span class="string">&quot;crate::bytes&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChainId</span>(<span class="ident">String</span>);
+
+<span class="doccomment">/// Tunable blockchain configuration that can be changed via consensus</span>
+<span class="attribute">#[<span class="ident">derive</span>(
+    <span class="ident">Read</span>, <span class="ident">Write</span>, <span class="ident">NumBytes</span>, <span class="ident">Clone</span>, <span class="ident">Default</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">PartialOrd</span>,
+)]</span>
+<span class="attribute">#[<span class="ident">eosio</span>(<span class="ident">crate_path</span> <span class="op">=</span> <span class="string">&quot;crate::bytes&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockchainParameters</span> {
+    <span class="doccomment">/// The maximum net usage in instructions for a block</span>
+    <span class="kw">pub</span> <span class="ident">max_block_net_usage</span>: <span class="ident">u64</span>,
+    <span class="doccomment">/// The target percent (1% == 100, 100% == 10,000) of maximum net usage;</span>
+    <span class="doccomment">/// exceeding this triggers congestion handling</span>
+    <span class="kw">pub</span> <span class="ident">target_block_net_usage_pct</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The maximum objectively measured net usage that the chain will</span>
+    <span class="doccomment">/// allow regardless of account limits</span>
+    <span class="kw">pub</span> <span class="ident">max_transaction_net_usage</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The base amount of net usage billed for a transaction to cover</span>
+    <span class="doccomment">/// incidentals</span>
+    <span class="kw">pub</span> <span class="ident">base_per_transaction_net_usage</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The amount of net usage leeway available whilst executing a</span>
+    <span class="doccomment">/// transaction (still checks against new limits wihout leeway at the end</span>
+    <span class="doccomment">/// of the transaction)</span>
+    <span class="kw">pub</span> <span class="ident">net_usage_leeway</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The numerator for the discount on net usage of context-free data</span>
+    <span class="kw">pub</span> <span class="ident">context_free_discount_net_usage_num</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The denominator for the discount on net usage of context-free data</span>
+    <span class="kw">pub</span> <span class="ident">context_free_discount_net_usage_den</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The maximum billable cpu usage (in microseconds) for a block</span>
+    <span class="kw">pub</span> <span class="ident">max_block_cpu_usage</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The target percent (1% == 100, 100% == 10,000) of maximum cpu usage;</span>
+    <span class="doccomment">/// exceeding this triggers congestion handling</span>
+    <span class="kw">pub</span> <span class="ident">target_block_cpu_usage_pct</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The maximum billable cpu usage (in microseconds) that the chain will</span>
+    <span class="doccomment">/// allow regardless of account limits</span>
+    <span class="kw">pub</span> <span class="ident">max_transaction_cpu_usage</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The minimum billable cpu usage (in microseconds) that the chain</span>
+    <span class="doccomment">/// requires</span>
+    <span class="kw">pub</span> <span class="ident">min_transaction_cpu_usage</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// Maximum lifetime of a transaction</span>
+    <span class="kw">pub</span> <span class="ident">max_transaction_lifetime</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The number of seconds after the time a deferred transaction can first</span>
+    <span class="doccomment">/// execute until it expires</span>
+    <span class="kw">pub</span> <span class="ident">deferred_trx_expiration_window</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// The maximum number of seconds that can be imposed as a delay</span>
+    <span class="doccomment">/// requirement by authorization checks</span>
+    <span class="kw">pub</span> <span class="ident">max_transaction_delay</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// Maximum size of inline action</span>
+    <span class="kw">pub</span> <span class="ident">max_inline_action_size</span>: <span class="ident">u32</span>,
+    <span class="doccomment">/// Maximum depth of inline action</span>
+    <span class="kw">pub</span> <span class="ident">max_inline_action_depth</span>: <span class="ident">u16</span>,
+    <span class="doccomment">/// Maximum authority depth</span>
+    <span class="kw">pub</span> <span class="ident">max_authority_depth</span>: <span class="ident">u16</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">BlockchainParameters</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BlockchainParameters</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="self">Self</span> {
+        <span class="self">self</span>
+    }
+}
+</pre></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "eosio";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

@@ -6,5 +6,4 @@ implementors["eosio_cdt"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

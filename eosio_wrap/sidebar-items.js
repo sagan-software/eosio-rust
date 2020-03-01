@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["apply",""],["exec",""]],"struct":[["ExecAction",""]]});
+initSidebarItems({"struct":[["Exec",""]],"type":[["exec",""]]});

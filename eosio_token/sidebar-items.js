@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["apply",""]],"struct":[["Account",""],["CloseAction",""],["CreateAction",""],["CurrencyStats",""],["IssueAction",""],["OpenAction",""],["RetireAction",""],["TransferAction",""]]});
+initSidebarItems({"struct":[["Account",""],["Close",""],["Create",""],["CurrencyStats",""],["Issue",""],["Open",""],["Retire",""],["Transfer",""]],"type":[["close",""],["create",""],["issue",""],["open",""],["retire",""],["transfer",""]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Approval",""],["ApprovalsInfo",""],["Approve",""],["Cancel",""],["Exec",""],["Invalidate",""],["Invalidation",""],["OldApprovalsInfo",""],["Proposal",""],["Propose",""],["Unapprove",""]],"type":[["approve",""],["cancel",""],["exec",""],["invalidate",""],["propose",""],["unapprove",""]]});

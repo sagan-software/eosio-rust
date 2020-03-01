@@ -1,0 +1,1 @@
+initSidebarItems({"attr":[["action",""],["table",""]],"derive":[["NumBytes","Derive the `NumBytes` trait"],["Read","Derive the `Read` trait"],["Table","TODO docs"],["Write","Derive the `Write` trait"],["proc_macro_hack_n",""],["proc_macro_hack_s",""]],"macro":[["abi",""]]});

@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `contracts/eosio_system/src/name_bidding.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>name_bidding.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../eosio_system/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+</pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="ident">eosio</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">eosio_cdt</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections</span>::<span class="ident">VecDeque</span>, <span class="ident">marker</span>::<span class="ident">PhantomData</span>};
+
+<span class="doccomment">/// A name bid, which consists of:</span>
+<span class="doccomment">/// - a `newname` name that the bid is for</span>
+<span class="doccomment">/// - a `high_bidder` account name that is the one with the highest bid so far</span>
+<span class="doccomment">/// - the `high_bid` which is amount of highest bid</span>
+<span class="doccomment">/// - and `last_bid_time` which is the time of the highest bid</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [Reference implementation](https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L90-L103)</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NameBid</span> {
+    <span class="doccomment">/// name that the bid is for</span>
+    <span class="kw">pub</span> <span class="ident">newname</span>: <span class="ident">AccountName</span>,
+    <span class="doccomment">/// account name that is the one with the highest bid so far</span>
+    <span class="kw">pub</span> <span class="ident">high_bidder</span>: <span class="ident">AccountName</span>,
+    <span class="doccomment">/// amount of highest bid. negative high_bid == closed auction waiting to</span>
+    <span class="doccomment">/// be claimed</span>
+    <span class="kw">pub</span> <span class="ident">high_bid</span>: <span class="ident">i64</span>,
+    <span class="doccomment">/// time of the highest bid</span>
+    <span class="kw">pub</span> <span class="ident">last_bid_time</span>: <span class="ident">TimePoint</span>,
+}
+
+<span class="doccomment">/// A bid refund, which is defined by:</span>
+<span class="doccomment">/// - the `bidder` account name owning the refund</span>
+<span class="doccomment">/// - the `amount` to be refunded</span>
+<span class="doccomment">/// [Reference implementation](https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/include/eosio.system/eosio.system.hpp#L105-L113)</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BidRefund</span> {
+    <span class="doccomment">/// account name owning the refund</span>
+    <span class="kw">pub</span> <span class="ident">bidder</span>: <span class="ident">AccountName</span>,
+    <span class="doccomment">/// to be refunded</span>
+    <span class="kw">pub</span> <span class="ident">amount</span>: <span class="ident">Asset</span>,
+}
+
+<span class="doccomment">/// &lt;https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/src/name_bidding.cpp#L11-L68&gt;</span>
+<span class="attribute">#[<span class="ident">eosio</span>::<span class="ident">action</span>]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bidname</span>(<span class="ident">bidder</span>: <span class="ident">AccountName</span>, <span class="ident">newname</span>: <span class="ident">AccountName</span>, <span class="ident">bid</span>: <span class="ident">Asset</span>) {}
+
+<span class="doccomment">/// &lt;https://github.com/EOSIO/eosio.contracts/blob/v1.9.0-rc3/contracts/eosio.system/src/name_bidding.cpp#L70-L78&gt;</span>
+<span class="attribute">#[<span class="ident">eosio</span>::<span class="ident">action</span>]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bidrefund</span>(<span class="ident">bidder</span>: <span class="ident">AccountName</span>, <span class="ident">newname</span>: <span class="ident">AccountName</span>) {}
+</pre></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "eosio_system";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

@@ -1,9 +1,11 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js ayu">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Tic-Tac-Toe - eosio-rust</title>
+        
+
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,11 +32,11 @@
 
         
     </head>
-    <body class="ayu">
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "../";
-            var default_theme = "ayu";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -56,10 +58,13 @@
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script type="text/javascript">
             var theme;
-            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -75,7 +80,10 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="../getting-help.html"><strong aria-hidden="true">2.</strong> Getting Help</a></li><li><a href="../installation.html"><strong aria-hidden="true">3.</strong> Installation</a></li><li><ol class="section"><li><a href="../install-rust.html"><strong aria-hidden="true">3.1.</strong> Install Rust</a></li><li><a href="../install-eos.html"><strong aria-hidden="true">3.2.</strong> Install EOS</a></li><li><a href="../optional-dependencies.html"><strong aria-hidden="true">3.3.</strong> Optional Dependencies</a></li></ol></li><li><a href="../quick-start.html"><strong aria-hidden="true">4.</strong> Quick Start</a></li><li><a href="../getting-started.html"><strong aria-hidden="true">5.</strong> Getting Started</a></li><li><a href="../examples/index.html"><strong aria-hidden="true">6.</strong> Examples</a></li><li><ol class="section"><li><a href="../examples/hello-world.html"><strong aria-hidden="true">6.1.</strong> Hello, World!</a></li><li><a href="../examples/tic-tac-toe.html" class="active"><strong aria-hidden="true">6.2.</strong> Tic-Tac-Toe</a></li><li><a href="../examples/addressbook.html"><strong aria-hidden="true">6.3.</strong> Address Book</a></li><li><a href="../examples/url-shortener.html"><strong aria-hidden="true">6.4.</strong> URL Shortener</a></li></ol></li><li><a href="../roadmap.html"><strong aria-hidden="true">7.</strong> Roadmap</a></li><li><a href="../api-documentation.html"><strong aria-hidden="true">8.</strong> API Documentation</a></li><li><a href="../contributing.html"><strong aria-hidden="true">9.</strong> Contributing</a></li><li><ol class="section"><li><a href="../contributing/git-commit-messages.html"><strong aria-hidden="true">9.1.</strong> Git Commit Messages</a></li></ol></li></ol>
+            <div id="sidebar-scrollbox" class="sidebar-scrollbox">
+                <ol class="chapter"><li class="expanded affix "><a href="../index.html">Introduction</a></li><li class="spacer"></li><li class="expanded "><a href="../getting-help.html"><strong aria-hidden="true">1.</strong> Getting Help</a></li><li class="expanded "><a href="../install/index.html"><strong aria-hidden="true">2.</strong> Install</a></li><li><ol class="section"><li class="expanded "><a href="../install/rust.html"><strong aria-hidden="true">2.1.</strong> Install Rust</a></li><li class="expanded "><a href="../install/eos.html"><strong aria-hidden="true">2.2.</strong> Install EOS</a></li><li class="expanded "><a href="../install/optional.html"><strong aria-hidden="true">2.3.</strong> Optional Dependencies</a></li></ol></li><li class="expanded "><a href="../quick-start.html"><strong aria-hidden="true">3.</strong> Quick Start</a></li><li class="expanded "><a href="../examples/index.html"><strong aria-hidden="true">4.</strong> Examples</a></li><li><ol class="section"><li class="expanded "><a href="../examples/hello-bare.html"><strong aria-hidden="true">4.1.</strong> Hello, World!</a></li><li class="expanded "><a href="../examples/hello.html"><strong aria-hidden="true">4.2.</strong> Hello, EOSIO Rust!</a></li><li class="expanded "><a href="../examples/tic-tac-toe.html" class="active"><strong aria-hidden="true">4.3.</strong> Tic-Tac-Toe</a></li><li class="expanded "><a href="../examples/addressbook.html"><strong aria-hidden="true">4.4.</strong> Address Book</a></li></ol></li><li class="expanded "><a href="../guide/index.html"><strong aria-hidden="true">5.</strong> User Guide</a></li><li><ol class="section"><li class="expanded "><a href="../guide/actions.html"><strong aria-hidden="true">5.1.</strong> Declaring Actions</a></li><li class="expanded "><a href="../guide/tables.html"><strong aria-hidden="true">5.2.</strong> Declaring Tables</a></li><li class="expanded "><a href="../guide/secondary-keys.html"><strong aria-hidden="true">5.3.</strong> Secondary Keys</a></li><li class="expanded "><a href="../guide/traits.html"><strong aria-hidden="true">5.4.</strong> Deriving Common Traits</a></li><li class="expanded "><a href="../guide/compiling.html"><strong aria-hidden="true">5.5.</strong> Compiling Smart Contracts</a></li><li class="expanded "><a href="../guide/deploying.html"><strong aria-hidden="true">5.6.</strong> Deploying Smart Contracts</a></li><li class="expanded "><a href="../guide/optimization.html"><strong aria-hidden="true">5.7.</strong> Optimizing WASM files</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -105,7 +113,7 @@
                             
                         </div>
 
-                        <h1 class="menu-title">eosio-rust</h1> 
+                        <h1 class="menu-title">eosio-rust</h1>
 
                         <div class="right-buttons">
                             <a href="../print.html" title="Print this book" aria-label="Print this book">
@@ -140,14 +148,67 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#tic-tac-toe" id="tic-tac-toe"><h1>Tic-Tac-Toe</h1></a>
+                        <h1><a class="header" href="#tic-tac-toe" id="tic-tac-toe">Tic-Tac-Toe</a></h1>
+<p>This example shows how to create a smart contract that reads and writes tables.</p>
+<h2><a class="header" href="#usage" id="usage">Usage</a></h2>
+<pre><code class="language-sh">cleos push action tictactoe create '[&quot;alice&quot;,&quot;bob&quot;]' -p 'alice@active'
+cleos push action tictactoe makemove '[&quot;alice&quot;,&quot;bob&quot;,1,0,1]' -p 'alice@active'
+cleos push action tictactoe restart '[&quot;alice&quot;,&quot;bob&quot;,1]' -p 'alice@active'
+cleos push action tictactoe close '[&quot;alice&quot;,&quot;bob&quot;]' -p 'alice@active'
+</code></pre>
+<h2><a class="header" href="#cargotoml" id="cargotoml">Cargo.toml</a></h2>
+<pre><code class="language-toml">[package]
+name = &quot;hello&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2018&quot;
+publish = false
+
+[lib]
+crate-type = [&quot;cdylib&quot;]
+doc = false
+
+[dependencies]
+eosio = { path = &quot;../../crates/eosio&quot; }
+eosio_cdt = { path = &quot;../../crates/eosio_cdt&quot; }
+</code></pre>
+<h2><a class="header" href="#source" id="source">Source</a></h2>
+<pre><code class="language-rust no_run noplaypen">#[eosio::action]
+fn hi(name: eosio::AccountName) {
+    eosio_cdt::print!(&quot;Hello, &quot;, name, &quot;!&quot;);
+}
+
+eosio::abi!(hi);
+</code></pre>
+<h2><a class="header" href="#abi" id="abi">ABI</a></h2>
+<pre><code class="language-json">{
+	&quot;version&quot;: &quot;eosio::abi/1.0&quot;,
+	&quot;structs&quot;: [
+		{
+			&quot;name&quot;: &quot;hi&quot;,
+			&quot;base&quot;: &quot;&quot;,
+			&quot;fields&quot;: [
+				{
+					&quot;name&quot;: &quot;user&quot;,
+					&quot;type&quot;: &quot;name&quot;
+				}
+			]
+		}
+	],
+	&quot;actions&quot;: [
+		{
+			&quot;name&quot;: &quot;hi&quot;,
+			&quot;type&quot;: &quot;hi&quot;
+		}
+	]
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../examples/hello-world.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../examples/hello.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
@@ -165,7 +226,7 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="../examples/hello-world.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="../examples/hello.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
@@ -181,6 +242,14 @@
 
         
 
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
         
 
         

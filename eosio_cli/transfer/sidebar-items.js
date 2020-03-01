@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Transfer","Transfer tokens from account to account"]]});

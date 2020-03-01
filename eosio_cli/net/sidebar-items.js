@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Net","Interact with local p2p network connections"]],"struct":[["Connect","start a new connection to a peer"],["Disconnect","close an existing connection"],["Status","status of existing connection"]]});
