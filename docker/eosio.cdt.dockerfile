@@ -1,4 +1,4 @@
-FROM sagansoftware/eos:2.0.0
+FROM sagansoftware/eos:2.0.3
 # Arguments
 ARG fork=EOSIO
 ARG branch=v1.7.0

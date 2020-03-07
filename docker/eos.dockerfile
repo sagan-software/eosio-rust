@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 # Arguments
 ARG fork=EOSIO
-ARG branch=v2.0.0
+ARG branch=v2.0.3
 
 # Build
 RUN apt-get update && \
