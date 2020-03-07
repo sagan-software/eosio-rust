@@ -1,6 +1,7 @@
 [alias]
 build-contracts = "run -p scripts -- build-contracts"
 build-docs = "run -p scripts -- build-docs"
+build-bench = "build -p bench --release"
 deploy-examples = "run -p scripts -- deploy-examples"
 docker-init = "run -p scripts -- docker-init"
 docker-tests = "run -p scripts -- run-tests"

@@ -4,7 +4,7 @@
 
 ![Travis (.org)](https://img.shields.io/travis/sagan-software/eosio-rust.svg) ![Crates.io](https://img.shields.io/crates/l/eosio.svg) ![Crates.io](https://img.shields.io/crates/v/eosio.svg)
 
-*EOSIO SDK for Rust* is a suite of APIs for building smart contracts and full-stack applications on EOSIO-based blockchains using the Rust programming language.
+_EOSIO SDK for Rust_ is a suite of APIs for building smart contracts and full-stack applications on EOSIO-based blockchains using the Rust programming language.
 
 ## [Read the Book](https://sagan-software.github.io/eosio-rust/)
 
@@ -23,7 +23,6 @@ Licensed under either of these:
 - MIT license ([LICENSE-MIT](LICENSE-MIT) or
   https://opensource.org/licenses/MIT)
 
-
 ## Contributing
 
 Unless you explicitly state otherwise, any contribution you intentionally submit
@@ -34,4 +33,3 @@ dual-licensed as above, without any additional terms or conditions.
 [telegram]: https://t.me/rust_eos
 [website]: https://sagan-software.github.io/eosio-rust/
 [docs]: https://sagan-software.github.io/eosio-rust/docs/
-

@@ -131,7 +131,8 @@ impl ToTokens for DeriveRead {
 //             type_param.bounds.push(parse_quote!(#root::Read));
 //         }
 //     }
-//     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+//     let (impl_generics, ty_generics, where_clause) =
+// generics.split_for_impl();
 
 //     let call_site = ::proc_macro2::Span::call_site();
 //     let reads = match input.data {
@@ -159,10 +160,10 @@ impl ToTokens for DeriveRead {
 //                 }
 //             }
 //             Fields::Unnamed(ref fields) => {
-//                 let field_reads = fields.unnamed.iter().enumerate().map(|(i, f)| {
-//                     let ty = &f.ty;
-//                     let ident = Ident::new(format!("field_{}", i).as_str(), call_site);
-//                     quote_spanned! {f.span() =>
+//                 let field_reads = fields.unnamed.iter().enumerate().map(|(i,
+// f)| {                     let ty = &f.ty;
+//                     let ident = Ident::new(format!("field_{}", i).as_str(),
+// call_site);                     quote_spanned! {f.span() =>
 //                         let #ident = <#ty as #root::Read>::read(bytes, pos)?;
 //                     }
 //                 });
@@ -194,10 +195,10 @@ impl ToTokens for DeriveRead {
 //     let expanded = quote! {
 //         #[automatically_derived]
 //         #[allow(unused_qualifications)]
-//         impl #impl_generics #root::Read for #name #ty_generics #where_clause {
-//             #[inline]
-//             fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, #root::ReadError> {
-//                 #reads
+//         impl #impl_generics #root::Read for #name #ty_generics #where_clause
+// {             #[inline]
+//             fn read(bytes: &[u8], pos: &mut usize) -> Result<Self,
+// #root::ReadError> {                 #reads
 //             }
 //         }
 //     };

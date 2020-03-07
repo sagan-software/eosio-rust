@@ -24,10 +24,10 @@
     clippy::unseparated_literal_suffix
 )]
 
-// #[cfg(all(target_arch = "wasm32", not(feature = "mock")))]
+// #[cfg(target_arch = "wasm32")]
 mod bindings;
 
-// #[cfg(all(target_arch = "wasm32", not(feature = "mock")))]
+// #[cfg(target_arch = "wasm32")]
 pub use self::bindings::*;
 
 // #[cfg(any(not(target_arch = "wasm32"), feature = "mock"))]

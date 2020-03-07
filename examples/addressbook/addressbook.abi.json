@@ -1,184 +1,184 @@
 {
-    "version": "eosio::abi/1.0",
-    "types": [
+  "version": "eosio::abi/1.0",
+  "types": [
+    {
+      "new_type_name": "account_name",
+      "type": "name"
+    }
+  ],
+  "structs": [
+    {
+      "name": "address",
+      "base": "",
+      "fields": [
         {
-            "new_type_name": "account_name",
-            "type": "name"
+          "name": "account",
+          "type": "account_name"
+        },
+        {
+          "name": "first_name",
+          "type": "string"
+        },
+        {
+          "name": "last_name",
+          "type": "string"
+        },
+        {
+          "name": "street",
+          "type": "string"
+        },
+        {
+          "name": "city",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        },
+        {
+          "name": "zip",
+          "type": "uint32"
+        },
+        {
+          "name": "liked",
+          "type": "uint64"
         }
-    ],
-    "structs": [
+      ]
+    },
+    {
+      "name": "add",
+      "base": "",
+      "fields": [
         {
-            "name": "address",
-            "base": "",
-            "fields": [
-                {
-                    "name": "account",
-                    "type": "account_name"
-                },
-                {
-                    "name": "first_name",
-                    "type": "string"
-                },
-                {
-                    "name": "last_name",
-                    "type": "string"
-                },
-                {
-                    "name": "street",
-                    "type": "string"
-                },
-                {
-                    "name": "city",
-                    "type": "string"
-                },
-                {
-                    "name": "state",
-                    "type": "string"
-                },
-                {
-                    "name": "zip",
-                    "type": "uint32"
-                },
-                {
-                    "name": "liked",
-                    "type": "uint64"
-                }
-            ]
+          "name": "account",
+          "type": "account_name"
         },
         {
-            "name": "add",
-            "base": "",
-            "fields": [
-                {
-                    "name": "account",
-                    "type": "account_name"
-                },
-                {
-                    "name": "first_name",
-                    "type": "string"
-                },
-                {
-                    "name": "last_name",
-                    "type": "string"
-                },
-                {
-                    "name": "street",
-                    "type": "string"
-                },
-                {
-                    "name": "city",
-                    "type": "string"
-                },
-                {
-                    "name": "state",
-                    "type": "string"
-                },
-                {
-                    "name": "zip",
-                    "type": "uint32"
-                }
-            ]
+          "name": "first_name",
+          "type": "string"
         },
         {
-            "name": "update",
-            "base": "",
-            "fields": [
-                {
-                    "name": "account",
-                    "type": "account_name"
-                },
-                {
-                    "name": "first_name",
-                    "type": "string"
-                },
-                {
-                    "name": "last_name",
-                    "type": "string"
-                },
-                {
-                    "name": "street",
-                    "type": "string"
-                },
-                {
-                    "name": "city",
-                    "type": "string"
-                },
-                {
-                    "name": "state",
-                    "type": "string"
-                },
-                {
-                    "name": "zip",
-                    "type": "uint32"
-                }
-            ]
+          "name": "last_name",
+          "type": "string"
         },
         {
-            "name": "remove",
-            "base": "",
-            "fields": [
-                {
-                    "name": "account",
-                    "type": "account_name"
-                }
-            ]
+          "name": "street",
+          "type": "string"
         },
         {
-            "name": "like",
-            "base": "",
-            "fields": [
-                {
-                    "name": "account",
-                    "type": "account_name"
-                }
-            ]
+          "name": "city",
+          "type": "string"
         },
         {
-            "name": "likezip",
-            "base": "",
-            "fields": [
-                {
-                    "name": "zip",
-                    "type": "uint32"
-                }
-            ]
+          "name": "state",
+          "type": "string"
+        },
+        {
+          "name": "zip",
+          "type": "uint32"
         }
-    ],
-    "actions": [
+      ]
+    },
+    {
+      "name": "update",
+      "base": "",
+      "fields": [
         {
-            "name": "add",
-            "type": "add",
-            "ricardian_contract": ""
+          "name": "account",
+          "type": "account_name"
         },
         {
-            "name": "update",
-            "type": "update",
-            "ricardian_contract": ""
+          "name": "first_name",
+          "type": "string"
         },
         {
-            "name": "remove",
-            "type": "remove",
-            "ricardian_contract": ""
+          "name": "last_name",
+          "type": "string"
         },
         {
-            "name": "like",
-            "type": "like",
-            "ricardian_contract": ""
+          "name": "street",
+          "type": "string"
         },
         {
-            "name": "likezip",
-            "type": "likezip",
-            "ricardian_contract": ""
+          "name": "city",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        },
+        {
+          "name": "zip",
+          "type": "uint32"
         }
-    ],
-    "tables": [
+      ]
+    },
+    {
+      "name": "remove",
+      "base": "",
+      "fields": [
         {
-            "name": "address",
-            "index_type": "i64",
-            "key_names": ["zip"],
-            "key_types": ["uint64"],
-            "type": "address"
+          "name": "account",
+          "type": "account_name"
         }
-    ],
-    "ricardian_clauses": []
+      ]
+    },
+    {
+      "name": "like",
+      "base": "",
+      "fields": [
+        {
+          "name": "account",
+          "type": "account_name"
+        }
+      ]
+    },
+    {
+      "name": "likezip",
+      "base": "",
+      "fields": [
+        {
+          "name": "zip",
+          "type": "uint32"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "add",
+      "type": "add",
+      "ricardian_contract": ""
+    },
+    {
+      "name": "update",
+      "type": "update",
+      "ricardian_contract": ""
+    },
+    {
+      "name": "remove",
+      "type": "remove",
+      "ricardian_contract": ""
+    },
+    {
+      "name": "like",
+      "type": "like",
+      "ricardian_contract": ""
+    },
+    {
+      "name": "likezip",
+      "type": "likezip",
+      "ricardian_contract": ""
+    }
+  ],
+  "tables": [
+    {
+      "name": "address",
+      "index_type": "i64",
+      "key_names": ["zip"],
+      "key_types": ["uint64"],
+      "type": "address"
+    }
+  ],
+  "ricardian_clauses": []
 }
