@@ -1,5 +1,6 @@
-use crate::shared::cleos;
+use crate::build_contracts::build_contract;
 use std::{io, process::ExitStatus};
+use util::cleos;
 
 fn deploy_example_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
     cleos()
@@ -23,7 +24,7 @@ pub fn run_deploy_examples() -> io::Result<()> {
         ("hello_bare", "hello_bare", "hellobare"),
         ("tictactoe", "tictactoe", "tictactoe"),
     ] {
-        crate::build_contract(package);
+        build_contract(package);
         deploy_example_contract(account, bin)?;
     }
     Ok(())

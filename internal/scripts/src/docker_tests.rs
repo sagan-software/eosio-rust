@@ -1,8 +1,9 @@
-use crate::{opts::RunTestsCmd, shared::get_target_dir};
+use crate::{build_contracts::build_contract, opts::RunTestsCmd};
 use std::{
     io,
     process::{Command, ExitStatus},
 };
+use util::get_target_dir;
 
 const CONTRACTS: &[&str] = &["bios", "msig", "token", "wrap"];
 
@@ -14,7 +15,7 @@ fn eosio_contract_tests() -> io::Result<ExitStatus> {
     for name in CONTRACTS {
         let crate_name = format!("eosio_{}", name);
         let contract_name = format!("eosio.{}", name);
-        crate::build_contract(&crate_name);
+        build_contract(&crate_name);
         let volume = {
             let name = format!("{}_gc.wasm", crate_name);
             let path = target_dir.join(name);

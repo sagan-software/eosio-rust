@@ -1,9 +1,9 @@
-use crate::shared::{project_dir, RunOr};
 use std::{
     fs, io, os,
     path::{Path, PathBuf},
-    process::{Command, ExitStatus},
+    process::Command,
 };
+use util::{get_project_dir, RunOr};
 
 fn build_readme(crate_root: &Path) -> io::Result<()> {
     let output = crate_root.join("README.md");
@@ -50,7 +50,7 @@ fn build_docs_for_dir(dir: PathBuf) {
 
 pub fn build_docs() -> io::Result<()> {
     println!("building docs");
-    let root_dir = project_dir().unwrap();
+    let root_dir = get_project_dir().unwrap();
     Command::new("mdbook")
         .arg("build")
         .arg("book")

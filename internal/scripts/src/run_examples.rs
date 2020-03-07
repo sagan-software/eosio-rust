@@ -1,5 +1,4 @@
-use crate::shared::push_action;
-use std::io;
+use util::push_action;
 
 const TICTACTOE_ACTIONS: &[(&str, &str, &str)] = &[
     ("create", "[\"alice\",\"bob\"]", "alice@active"),
@@ -17,10 +16,9 @@ const TICTACTOE_ACTIONS: &[(&str, &str, &str)] = &[
     ("close", "[\"alice\",\"bob\"]", "alice@active"),
 ];
 
-pub fn run_examples() -> io::Result<()> {
-    push_action("hello", "hi", "[\"contributor\"]", "hello@active")?;
+pub fn run_examples() {
+    push_action("hello", "hi", "[\"contributor\"]", "hello@active");
     for (action, data, auth) in TICTACTOE_ACTIONS {
-        push_action("tictactoe", action, data, auth)?;
+        push_action("tictactoe", action, data, auth);
     }
-    Ok(())
 }

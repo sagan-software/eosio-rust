@@ -1,0 +1,11 @@
+[package]
+name = "bench_contract_rs"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eosio = { path = "../../crates/eosio" }
+eosio_cdt = { path = "../../crates/eosio_cdt" }

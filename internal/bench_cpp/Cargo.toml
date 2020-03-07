@@ -1,0 +1,8 @@
+[package]
+name = "bench_cpp"
+version = "0.1.0"
+authors = ["Liam Curry <liam@sagan.software>"]
+edition = "2018"
+
+[dependencies]
+util = { path = "../util" }
