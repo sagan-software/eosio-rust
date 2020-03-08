@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Sign","Sign a transaction"]]});

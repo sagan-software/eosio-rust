@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Subcommand",""]],"mod":[["convert",""],["create",""],["get",""],["multisig",""],["net",""],["push",""],["set",""],["sign",""],["system",""],["transfer",""],["version",""],["wallet",""],["wrap",""]],"struct":[["Opt",""],["TransactionOpts",""]]});

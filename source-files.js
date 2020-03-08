@@ -1,9 +1,11 @@
 var N = null;var sourcesIndex = {};
+sourcesIndex["bench"] = {"name":"","files":["eosio_token.rs","main.rs","scenario.rs"]};
+sourcesIndex["bench_contract_rs"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["bench_cpp"] = {"name":"","files":["main.rs"]};
 sourcesIndex["eosio"] = {"name":"","dirs":[{"name":"asset","files":["extended_asset.rs","mod.rs"]},{"name":"bytes","files":["alloc.rs","collections.rs","data_stream.rs","marker.rs","mod.rs","num.rs","option.rs","primitives.rs"]},{"name":"crypto","files":["checksums.rs","keys.rs","mod.rs"]},{"name":"name","files":["mod.rs","name_type.rs"]},{"name":"symbol","files":["extended_symbol.rs","mod.rs","symbol.rs","symbol_code.rs"]},{"name":"table","files":["mod.rs","primary_table_index.rs","secondary_key.rs","secondary_keys.rs","secondary_table_index.rs","secondary_table_name.rs"]},{"name":"time","files":["block_timestamp.rs","mod.rs","time_point.rs","time_point_sec.rs"]},{"name":"varint","files":["mod.rs","signed.rs","unsigned.rs"]}],"files":["abi.rs","account.rs","action.rs","binary_extension.rs","block.rs","blockchain_parameters.rs","lib.rs","ops.rs","producer_schedule.rs","resources.rs","transaction.rs"]};
 sourcesIndex["eosio_bios"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["eosio_cdt"] = {"name":"","files":["account.rs","action.rs","check.rs","crypto.rs","lib.rs","permissions.rs","print.rs","privileged.rs","singleton_index.rs","table.rs","table_primary.rs","table_secondary.rs","time.rs"]};
 sourcesIndex["eosio_cdt_sys"] = {"name":"","files":["bindings.rs","lib.rs"]};
-sourcesIndex["eosio_cli"] = {"name":"","dirs":[{"name":"opts","files":["convert.rs","create.rs","get.rs","mod.rs","multisig.rs","net.rs","push.rs","set.rs","sign.rs","system.rs","transfer.rs","version.rs","wallet.rs","wrap.rs"]}],"files":["lib.rs"]};
 sourcesIndex["eosio_forum"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["eosio_macros"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["eosio_macros_internal"] = {"name":"","files":["abi.rs","action.rs","derive_num_bytes.rs","derive_read.rs","derive_table.rs","derive_write.rs","internal.rs","lib.rs","n.rs","s.rs","table.rs"]};
@@ -12,4 +14,6 @@ sourcesIndex["eosio_numstr"] = {"name":"","files":["lib.rs","name.rs","symbol.rs
 sourcesIndex["eosio_system"] = {"name":"","files":["core.rs","delegate_bandwidth.rs","exchange_state.rs","lib.rs","name_bidding.rs","native.rs","producer_pay.rs","rex.rs","voting.rs"]};
 sourcesIndex["eosio_token"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["eosio_wrap"] = {"name":"","files":["lib.rs"]};
+sourcesIndex["scripts"] = {"name":"","files":["build_contracts.rs","build_docs.rs","deploy_examples.rs","docker_init.rs","docker_tests.rs","docker_up.rs","main.rs","opts.rs","run_examples.rs"]};
+sourcesIndex["util"] = {"name":"","files":["lib.rs"]};
 createSourceSidebar();

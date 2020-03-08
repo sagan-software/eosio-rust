@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Convert","Pack and unpack transactions"]],"struct":[["ConvertPackActionData","From json action data to packed form"],["ConvertPackTransaction","From plain signed json to packed form"],["ConvertUnpackActionData","From json action data to packed form"],["ConvertUnpackTransaction","From packed to plain signed json form"]]});

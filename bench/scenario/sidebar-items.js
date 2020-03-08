@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Action",""],["Run",""],["Wasm",""],["WasmBenchResults",""]],"trait":[["Scenario",""]]});

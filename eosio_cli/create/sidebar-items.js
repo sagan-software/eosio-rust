@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Create","Create various items, on and off the blockchain"]],"struct":[["CreateAccount","Create a new account on the blockchain (assumes system contract does not restrict RAM usage)"],["CreateKey","Create a new keypair and print the public and private keys"]]});

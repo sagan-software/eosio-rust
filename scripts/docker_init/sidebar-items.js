@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["EXAMPLE_ACCOUNTS",""],["PRIVKEY",""],["PUBKEY",""],["SYSTEM_ACCOUNTS",""]],"fn":[["activate_feature",""],["create_account",""],["create_wallet",""],["docker_init","https://developers.eos.io/welcome/latest/tutorials/bios-boot-sequence"],["new_account",""],["set_contract",""],["set_contract_with_path",""],["set_old_contract_with_path",""]]});

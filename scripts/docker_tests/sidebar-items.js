@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["CONTRACTS",""]],"fn":[["eosio_contract_tests",""],["run_test",""]]});

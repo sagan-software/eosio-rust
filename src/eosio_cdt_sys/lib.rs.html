@@ -66,10 +66,10 @@
     <span class="ident">clippy</span>::<span class="ident">unseparated_literal_suffix</span>
 )]</span>
 
-<span class="comment">// #[cfg(all(target_arch = &quot;wasm32&quot;, not(feature = &quot;mock&quot;)))]</span>
+<span class="comment">// #[cfg(target_arch = &quot;wasm32&quot;)]</span>
 <span class="kw">mod</span> <span class="ident">bindings</span>;
 
-<span class="comment">// #[cfg(all(target_arch = &quot;wasm32&quot;, not(feature = &quot;mock&quot;)))]</span>
+<span class="comment">// #[cfg(target_arch = &quot;wasm32&quot;)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">bindings</span>::<span class="kw-2">*</span>;
 
 <span class="comment">// #[cfg(any(not(target_arch = &quot;wasm32&quot;), feature = &quot;mock&quot;))]</span>

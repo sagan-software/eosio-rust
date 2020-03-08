@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Push","Push arbitrary transactions to the blockchain"]],"struct":[["Action","Push a transaction with a single action"],["Transaction","Push an arbitrary JSON transaction"],["Transactions","Push an array of arbitrary JSON transactions"]]});

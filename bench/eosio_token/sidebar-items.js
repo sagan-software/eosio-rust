@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["EosioTokenScenario",""],["SYMBOL_RE",""]]});

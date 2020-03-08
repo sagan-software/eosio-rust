@@ -204,6 +204,7 @@
 <span id="204">204</span>
 <span id="205">205</span>
 <span id="206">206</span>
+<span id="207">207</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Derive `Read`.</span>
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">internal</span>::<span class="ident">get_root_path</span>;
@@ -338,7 +339,8 @@
 <span class="comment">//             type_param.bounds.push(parse_quote!(#root::Read));</span>
 <span class="comment">//         }</span>
 <span class="comment">//     }</span>
-<span class="comment">//     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();</span>
+<span class="comment">//     let (impl_generics, ty_generics, where_clause) =</span>
+<span class="comment">// generics.split_for_impl();</span>
 
 <span class="comment">//     let call_site = ::proc_macro2::Span::call_site();</span>
 <span class="comment">//     let reads = match input.data {</span>
@@ -366,10 +368,10 @@
 <span class="comment">//                 }</span>
 <span class="comment">//             }</span>
 <span class="comment">//             Fields::Unnamed(ref fields) =&gt; {</span>
-<span class="comment">//                 let field_reads = fields.unnamed.iter().enumerate().map(|(i, f)| {</span>
-<span class="comment">//                     let ty = &amp;f.ty;</span>
-<span class="comment">//                     let ident = Ident::new(format!(&quot;field_{}&quot;, i).as_str(), call_site);</span>
-<span class="comment">//                     quote_spanned! {f.span() =&gt;</span>
+<span class="comment">//                 let field_reads = fields.unnamed.iter().enumerate().map(|(i,</span>
+<span class="comment">// f)| {                     let ty = &amp;f.ty;</span>
+<span class="comment">//                     let ident = Ident::new(format!(&quot;field_{}&quot;, i).as_str(),</span>
+<span class="comment">// call_site);                     quote_spanned! {f.span() =&gt;</span>
 <span class="comment">//                         let #ident = &lt;#ty as #root::Read&gt;::read(bytes, pos)?;</span>
 <span class="comment">//                     }</span>
 <span class="comment">//                 });</span>
@@ -401,10 +403,10 @@
 <span class="comment">//     let expanded = quote! {</span>
 <span class="comment">//         #[automatically_derived]</span>
 <span class="comment">//         #[allow(unused_qualifications)]</span>
-<span class="comment">//         impl #impl_generics #root::Read for #name #ty_generics #where_clause {</span>
-<span class="comment">//             #[inline]</span>
-<span class="comment">//             fn read(bytes: &amp;[u8], pos: &amp;mut usize) -&gt; Result&lt;Self, #root::ReadError&gt; {</span>
-<span class="comment">//                 #reads</span>
+<span class="comment">//         impl #impl_generics #root::Read for #name #ty_generics #where_clause</span>
+<span class="comment">// {             #[inline]</span>
+<span class="comment">//             fn read(bytes: &amp;[u8], pos: &amp;mut usize) -&gt; Result&lt;Self,</span>
+<span class="comment">// #root::ReadError&gt; {                 #reads</span>
 <span class="comment">//             }</span>
 <span class="comment">//         }</span>
 <span class="comment">//     };</span>

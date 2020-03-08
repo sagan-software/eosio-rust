@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Wrap",""]],"struct":[["Exec","Execute a transaction while bypassing authorization checks"]]});
