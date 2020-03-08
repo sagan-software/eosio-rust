@@ -26,19 +26,19 @@ fn wasm_gc<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
         .run_or_panic()
 }
 
-fn wasm_opt<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
-    println!(
-        "running wasm-opt (input: {:#?}, output: {:#?})",
-        input.as_ref(),
-        output.as_ref()
-    );
-    Command::new("wasm-opt")
-        .arg("-Oz")
-        .arg("--output")
-        .arg(output.as_ref())
-        .arg(input.as_ref())
-        .run_or_panic()
-}
+// fn wasm_opt<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
+//     println!(
+//         "running wasm-opt (input: {:#?}, output: {:#?})",
+//         input.as_ref(),
+//         output.as_ref()
+//     );
+//     Command::new("wasm-opt")
+//         .arg("-Oz")
+//         .arg("--output")
+//         .arg(output.as_ref())
+//         .arg(input.as_ref())
+//         .run_or_panic()
+// }
 
 // TODO: requires wabt
 // fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
@@ -61,7 +61,7 @@ pub fn build_contract(package: &str) {
     let bin = package.replace('-', "_");
     let wasm = target_dir.join(format!("{}.wasm", bin));
     let gc_wasm = target_dir.join(format!("{}_gc.wasm", bin));
-    let gc_opt_wasm = target_dir.join(format!("{}_gc_opt.wasm", bin));
+    // let gc_opt_wasm = target_dir.join(format!("{}_gc_opt.wasm", bin));
     let gc_opt_wat = target_dir.join(format!("{}_gc_opt.wat", bin));
     remove_file_if_exists(&gc_wasm).unwrap_or_else(|e| {
         panic!("failed to remove {:#?}: {:#?}", gc_wasm, e)
@@ -72,7 +72,7 @@ pub fn build_contract(package: &str) {
     });
     wasm_gc(wasm, &gc_wasm);
     // These two commands require binaryen:
-    wasm_opt(gc_wasm, &gc_opt_wasm);
+    // wasm_opt(gc_wasm, &gc_opt_wasm);
     // wasm2wat(gc_opt_wasm, gc_opt_wat);
 }
 

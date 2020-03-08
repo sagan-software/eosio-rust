@@ -39,7 +39,7 @@ impl Scenario for EosioTokenScenario {
             Wasm {
                 desc: "eosio-rust v0.3.1".into(),
                 lang: "rust".into(),
-                path: "/mnt/dev/release/eosio_token_gc_opt.wasm".into(),
+                path: "/mnt/dev/release/eosio_token_gc.wasm".into(),
             },
         ]
     }
