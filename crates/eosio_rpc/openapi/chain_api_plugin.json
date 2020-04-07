@@ -1,0 +1,2053 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Chain API",
+    "description": "OAS 3.0 Nodeos [chain_api_plugin](https://eosio.github.io/eos/latest/nodeos/plugins/chain_api_plugin/index) API Specification\r",
+    "version": "1.0.0",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "contact": {
+      "url": "https://eos.io"
+    }
+  },
+  "servers": [
+    {
+      "url": "{protocol}://{host}:{port}/v1/chain",
+      "variables": {
+        "protocol": {
+          "enum": ["http", "https"],
+          "default": "http"
+        },
+        "host": {
+          "default": "localhost"
+        },
+        "port": {
+          "default": "8080"
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/get_account": {
+      "post": {
+        "description": "Returns an object containing various details about a specific account on the blockchain.",
+        "operationId": "get_account",
+        "requestBody": {
+          "description": "JSON Object with single member \"account_name\"",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_name"],
+                "properties": {
+                  "account_name": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 18,
+                  "required": [
+                    "account_name",
+                    "head_block_num",
+                    "head_block_time",
+                    "last_code_update",
+                    "created",
+                    "refund_request",
+                    "ram_quota",
+                    "net_limit",
+                    "cpu_limit",
+                    "total_resources",
+                    "core_liquid_balance",
+                    "self_delegated_bandwidth",
+                    "net_weight",
+                    "cpu_weight",
+                    "ram_usage",
+                    "privileged",
+                    "permissions",
+                    "voter_info"
+                  ],
+                  "properties": {
+                    "account_name": {
+                      "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                    },
+                    "head_block_num": {
+                      "type": "integer"
+                    },
+                    "head_block_time": {
+                      "$ref": "#/paths/~1get_scheduled_transaction/post/requestBody/content/application~1json/schema/properties/lower_bound"
+                    },
+                    "last_code_update": {
+                      "$ref": "#/paths/~1get_scheduled_transaction/post/requestBody/content/application~1json/schema/properties/lower_bound"
+                    },
+                    "created": {
+                      "$ref": "#/paths/~1get_scheduled_transaction/post/requestBody/content/application~1json/schema/properties/lower_bound"
+                    },
+                    "refund_request": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 4,
+                      "required": [
+                        "owner",
+                        "request_time",
+                        "net_amount",
+                        "cpu_amount"
+                      ],
+                      "properties": {
+                        "owner": {
+                          "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                        },
+                        "request_time": {
+                          "type": "string"
+                        },
+                        "net_amount": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        },
+                        "cpu_amount": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        }
+                      },
+                      "title": "RefundRequest",
+                      "nullable": true
+                    },
+                    "ram_quota": {
+                      "description": "A whole number",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\d+$"
+                        },
+                        {
+                          "type": "integer"
+                        }
+                      ],
+                      "title": "WholeNumber"
+                    },
+                    "net_limit": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 3,
+                      "required": ["max", "available", "used"],
+                      "properties": {
+                        "max": {
+                          "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                        },
+                        "available": {
+                          "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                        },
+                        "used": {
+                          "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                        }
+                      },
+                      "title": "ResourceLimits"
+                    },
+                    "cpu_limit": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/net_limit"
+                    },
+                    "total_resources": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 4,
+                      "required": [
+                        "owner",
+                        "ram_bytes",
+                        "net_weight",
+                        "cpu_weight"
+                      ],
+                      "properties": {
+                        "owner": {
+                          "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                        },
+                        "ram_bytes": {
+                          "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                        },
+                        "net_weight": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        },
+                        "cpu_weight": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        }
+                      },
+                      "title": "ResourceOverview"
+                    },
+                    "core_liquid_balance": {
+                      "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                    },
+                    "self_delegated_bandwidth": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 4,
+                      "required": ["from", "to", "net_weight", "cpu_weight"],
+                      "properties": {
+                        "from": {
+                          "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                        },
+                        "to": {
+                          "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                        },
+                        "net_weight": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        },
+                        "cpu_weight": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        }
+                      },
+                      "title": "ResourceDelegation",
+                      "nullable": true
+                    },
+                    "net_weight": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "cpu_weight": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "ram_usage": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "privileged": {
+                      "type": "boolean"
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 3,
+                        "required": ["parent", "perm_name", "required_auth"],
+                        "properties": {
+                          "parent": {
+                            "description": "The parent of this permission, if any",
+                            "type": "string"
+                          },
+                          "perm_name": {
+                            "description": "Name of this permission",
+                            "type": "string"
+                          },
+                          "required_auth": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "minProperties": 4,
+                            "required": [
+                              "waits",
+                              "keys",
+                              "threshold",
+                              "accounts"
+                            ],
+                            "properties": {
+                              "waits": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "minProperties": 2,
+                                  "additionalProperties": false,
+                                  "required": ["wait_sec", "weight"],
+                                  "properties": {
+                                    "wait_sec": {
+                                      "type": "integer"
+                                    },
+                                    "weight": {
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "title": "Wait"
+                                }
+                              },
+                              "keys": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": ["key", "weight"],
+                                  "properties": {
+                                    "key": {
+                                      "$ref": "#/paths/~1get_required_keys/post/requestBody/content/application~1json/schema/properties/available_keys/items"
+                                    },
+                                    "weight": {
+                                      "type": "integer"
+                                    }
+                                  },
+                                  "title": "KeyAuthority"
+                                }
+                              },
+                              "threshold": {
+                                "type": "integer"
+                              },
+                              "accounts": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "additionalProperties": false,
+                                  "required": ["weight", "permission"],
+                                  "properties": {
+                                    "weight": {
+                                      "type": "integer"
+                                    },
+                                    "permission": {
+                                      "$ref": "#/paths/~1push_transactions/post/requestBody/content/application~1json/schema/items/properties/actions/items/properties/authorization/items"
+                                    }
+                                  },
+                                  "title": "AccountAuthority"
+                                }
+                              }
+                            },
+                            "title": "RequiredAuthority"
+                          }
+                        },
+                        "title": "Permission"
+                      }
+                    },
+                    "voter_info": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 10,
+                      "required": [
+                        "owner",
+                        "proxy",
+                        "producers",
+                        "staked",
+                        "last_vote_weight",
+                        "proxied_vote_weight",
+                        "is_proxy",
+                        "flags1",
+                        "reserved2",
+                        "reserved3"
+                      ],
+                      "properties": {
+                        "owner": {
+                          "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                        },
+                        "proxy": {
+                          "oneOf": [
+                            {
+                              "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                            },
+                            {
+                              "$ref": "#/paths/~1get_block/post/responses/200/content/application~1json/schema/properties/producer/oneOf/0"
+                            }
+                          ]
+                        },
+                        "producers": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          }
+                        },
+                        "staked": {
+                          "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                        },
+                        "last_vote_weight": {
+                          "type": "string"
+                        },
+                        "proxied_vote_weight": {
+                          "type": "string"
+                        },
+                        "is_proxy": {
+                          "description": "1 if true, 0 if false.",
+                          "type": "integer"
+                        },
+                        "flags1": {
+                          "type": "integer"
+                        },
+                        "reserved2": {
+                          "type": "integer"
+                        },
+                        "reserved3": {
+                          "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                        }
+                      },
+                      "title": "VoterInfo",
+                      "nullable": true
+                    }
+                  },
+                  "title": "Account"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_block": {
+      "post": {
+        "description": "Returns an object containing various details about a specific block on the blockchain.",
+        "operationId": "get_block",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["block_num_or_id"],
+                "properties": {
+                  "block_num_or_id": {
+                    "type": "string",
+                    "description": "Provide a `block number` or a `block id`"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 9,
+                  "required": [
+                    "timestamp",
+                    "producer",
+                    "confirmed",
+                    "previous",
+                    "transaction_mroot",
+                    "action_mroot",
+                    "schedule_version",
+                    "new_producers",
+                    "producer_signature"
+                  ],
+                  "properties": {
+                    "timestamp": {
+                      "$ref": "#/paths/~1get_scheduled_transaction/post/requestBody/content/application~1json/schema/properties/lower_bound"
+                    },
+                    "producer": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 0,
+                          "title": "EmptyString"
+                        },
+                        {
+                          "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                        }
+                      ]
+                    },
+                    "confirmed": {
+                      "type": "integer"
+                    },
+                    "previous": {
+                      "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                    },
+                    "transaction_mroot": {
+                      "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                    },
+                    "action_mroot": {
+                      "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                    },
+                    "schedule_version": {
+                      "type": "integer"
+                    },
+                    "new_producers": {
+                      "$ref": "#/paths/~1get_producers/post/responses/200/content/application~1json/schema/properties/active/items"
+                    },
+                    "header_extensions": {
+                      "$ref": "#/paths/~1get_block/post/responses/200/content/application~1json/schema/properties/block_extensions"
+                    },
+                    "new_protocol_features": {
+                      "type": "array",
+                      "description": "list of new protocol features",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "producer_signature": {
+                      "$ref": "#/paths/~1push_transaction/post/requestBody/content/application~1json/schema/properties/signatures/items"
+                    },
+                    "transactions": {
+                      "type": "array",
+                      "description": "list of valid transaction receipts included in block",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 4,
+                        "required": [
+                          "status",
+                          "cpu_usage_us",
+                          "net_usage_words",
+                          "trx"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "executed",
+                              "soft_fail",
+                              "hard_fail",
+                              "delayed",
+                              "expired"
+                            ],
+                            "description": "status:\n  * `executed` - Succeed, no error handler executed\n  * `soft_fail` - Objectively failed (not executed), error handler executed\n  * `hard_fail` - Objectively failed and error handler objectively failed thus no state change\n  * `delayed` - Transaction delayed/deferred/scheduled for future execution\n  * `expired` - Transaction expired and storage space refuned to user\n"
+                          },
+                          "cpu_usage_us": {
+                            "type": "integer"
+                          },
+                          "net_usage_words": {
+                            "type": "integer"
+                          },
+                          "trx": {
+                            "anyOf": [
+                              {
+                                "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                              },
+                              {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "minProperties": 7,
+                                "required": [
+                                  "id",
+                                  "signatures",
+                                  "compression",
+                                  "packed_context_free_data",
+                                  "context_free_data",
+                                  "packed_trx",
+                                  "transaction"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                                  },
+                                  "signatures": {
+                                    "type": "array",
+                                    "items": {
+                                      "$ref": "#/paths/~1push_transaction/post/requestBody/content/application~1json/schema/properties/signatures/items"
+                                    }
+                                  },
+                                  "compression": {
+                                    "type": "string"
+                                  },
+                                  "packed_context_free_data": {
+                                    "type": "string"
+                                  },
+                                  "context_free_data": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "packed_trx": {
+                                    "type": "string"
+                                  },
+                                  "transaction": {
+                                    "$ref": "#/paths/~1push_transactions/post/requestBody/content/application~1json/schema/items"
+                                  }
+                                },
+                                "title": "PackedTransaction"
+                              }
+                            ],
+                            "title": "TransactionVariant"
+                          }
+                        },
+                        "title": "TransactionReceipt"
+                      }
+                    },
+                    "block_extensions": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "title": "Extension"
+                    },
+                    "id": {
+                      "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                    },
+                    "block_num": {
+                      "type": "integer"
+                    },
+                    "ref_block_prefix": {
+                      "description": "lower 32 bits of block ID; used to prevent replay attacks",
+                      "type": "integer"
+                    }
+                  },
+                  "title": "Block"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_info": {
+      "post": {
+        "description": "Returns an object containing various details about the blockchain.",
+        "operationId": "get_info",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "server_version",
+                    "chain_id",
+                    "head_block_num",
+                    "head_block_id",
+                    "head_block_time",
+                    "head_block_producer",
+                    "last_irreversible_block_num",
+                    "last_irreversible_block_id",
+                    "virtual_block_cpu_limit",
+                    "virtual_block_net_limit",
+                    "block_cpu_limit",
+                    "block_net_limit",
+                    "server_version_string",
+                    "fork_db_head_block_num",
+                    "fork_db_head_block_id"
+                  ],
+                  "properties": {
+                    "server_version": {
+                      "type": "string",
+                      "description": "Hash representing the last commit in the tagged release"
+                    },
+                    "chain_id": {
+                      "type": "string",
+                      "description": "Hash representing the ID of the chain"
+                    },
+                    "head_block_num": {
+                      "type": "integer",
+                      "description": "Highest block number on the chain"
+                    },
+                    "head_block_id": {
+                      "type": "string",
+                      "description": "Highest block ID on the chain"
+                    },
+                    "head_block_time": {
+                      "type": "string",
+                      "description": "Highest block unix timestamp"
+                    },
+                    "head_block_producer": {
+                      "type": "string",
+                      "description": "Producer that signed the highest block (head block)"
+                    },
+                    "last_irreversible_block_num": {
+                      "type": "integer",
+                      "description": "Highest block number on the chain that has been irreversibly applied to state"
+                    },
+                    "last_irreversible_block_id": {
+                      "type": "string",
+                      "description": "Highest block ID on the chain that has been irreversibly applied to state"
+                    },
+                    "virtual_block_cpu_limit": {
+                      "type": "integer",
+                      "description": "CPU limit calculated after each block is produced, approximately 1000 times block_cpu_limit"
+                    },
+                    "virtual_block_net_limit": {
+                      "type": "integer",
+                      "description": "NET limit calculated after each block is produced, approximately 1000 times block_net_limit"
+                    },
+                    "block_cpu_limit": {
+                      "type": "integer",
+                      "description": "Actual maximum CPU limit"
+                    },
+                    "block_net_limit": {
+                      "type": "integer",
+                      "description": "Actual maximum NET limit"
+                    },
+                    "server_version_string": {
+                      "type": "string",
+                      "description": "String representation of server version - Majorish-Minorish-Patchy - Warning - Not actually SEMVER!"
+                    },
+                    "fork_db_head_block_num": {
+                      "type": "integer",
+                      "description": "Sequential block number representing the best known head in the fork database tree"
+                    },
+                    "fork_db_head_block_id": {
+                      "type": "string",
+                      "description": "Hash representing the best known head in the fork database tree"
+                    }
+                  },
+                  "title": "Info"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/push_transaction": {
+      "post": {
+        "description": "This method expects a transaction in JSON format and will attempt to apply it to the blockchain.",
+        "operationId": "push_transaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "signatures": {
+                    "type": "array",
+                    "description": "array of signatures required to authorize transaction",
+                    "items": {
+                      "type": "string",
+                      "description": "String representation of an EOSIO compatible cryptographic signature",
+                      "pattern": "^SIG_([RK]1|WA)_[1-9A-HJ-NP-Za-km-z]+$",
+                      "title": "Signature"
+                    }
+                  },
+                  "compression": {
+                    "type": "boolean",
+                    "description": "Compression used, usually false"
+                  },
+                  "packed_context_free_data": {
+                    "type": "string",
+                    "description": "json to hex"
+                  },
+                  "packed_trx": {
+                    "type": "string",
+                    "description": "Transaction object json to hex"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Returns Nothing"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/send_transaction": {
+      "post": {
+        "description": "This method expects a transaction in JSON format and will attempt to apply it to the blockchain.",
+        "operationId": "send_transaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "signatures": {
+                    "type": "array",
+                    "description": "array of signatures required to authorize transaction",
+                    "items": {
+                      "$ref": "#/paths/~1push_transaction/post/requestBody/content/application~1json/schema/properties/signatures/items"
+                    }
+                  },
+                  "compression": {
+                    "type": "boolean",
+                    "description": "Compression used, usually false"
+                  },
+                  "packed_context_free_data": {
+                    "type": "string",
+                    "description": "json to hex"
+                  },
+                  "packed_trx": {
+                    "type": "string",
+                    "description": "Transaction object json to hex"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Returns Nothing"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/push_transactions": {
+      "post": {
+        "description": "This method expects a transaction in JSON format and will attempt to apply it to the blockchain.",
+        "operationId": "push_transactions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 8,
+                  "required": [
+                    "expiration",
+                    "ref_block_num",
+                    "ref_block_prefix",
+                    "max_net_usage_words",
+                    "max_cpu_usage_ms",
+                    "delay_sec",
+                    "context_free_actions",
+                    "actions"
+                  ],
+                  "properties": {
+                    "expiration": {
+                      "description": "Time that transaction must be confirmed by.",
+                      "type": "string",
+                      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+                      "title": "DateTime"
+                    },
+                    "ref_block_num": {
+                      "type": "integer"
+                    },
+                    "ref_block_prefix": {
+                      "type": "integer"
+                    },
+                    "max_net_usage_words": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "max_cpu_usage_ms": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "delay_sec": {
+                      "type": "integer"
+                    },
+                    "context_free_actions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/paths/~1push_transactions/post/requestBody/content/application~1json/schema/items/properties/actions/items"
+                      }
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 5,
+                        "required": [
+                          "account",
+                          "name",
+                          "authorization",
+                          "data",
+                          "hex_data"
+                        ],
+                        "properties": {
+                          "account": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "name": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "authorization": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "minProperties": 2,
+                              "required": ["actor", "permission"],
+                              "properties": {
+                                "actor": {
+                                  "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                                },
+                                "permission": {
+                                  "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                                }
+                              },
+                              "title": "Authority"
+                            }
+                          },
+                          "data": {
+                            "type": "object",
+                            "additionalProperties": true
+                          },
+                          "hex_data": {
+                            "type": "string"
+                          }
+                        },
+                        "title": "Action"
+                      }
+                    },
+                    "transaction_extensions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/paths/~1get_block/post/responses/200/content/application~1json/schema/properties/block_extensions"
+                      }
+                    }
+                  },
+                  "title": "Transaction"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Returns Nothing"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_block_header_state": {
+      "post": {
+        "description": "Retrieves the glock header state",
+        "operationId": "get_block_header_state",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["block_num_or_id"],
+                "properties": {
+                  "block_num_or_id": {
+                    "type": "string",
+                    "description": "Provide a block_number or a block_id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 16,
+                  "required": [
+                    "id",
+                    "block_num",
+                    "header",
+                    "dpos_proposed_irreversible_blocknum",
+                    "dpos_irreversible_blocknum",
+                    "bft_irreversible_blocknum",
+                    "pending_schedule_lib_num",
+                    "pending_schedule_hash",
+                    "pending_schedule",
+                    "active_schedule",
+                    "blockroot_merkle",
+                    "producer_to_last_produced",
+                    "producer_to_last_implied_irb",
+                    "block_signing_key",
+                    "confirm_count",
+                    "confirmations"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of block"
+                    },
+                    "block_num": {
+                      "type": "integer",
+                      "description": "Incremented number of block"
+                    },
+                    "header": {
+                      "$ref": "#/paths/~1get_block/post/responses/200/content/application~1json/schema"
+                    },
+                    "dpos_proposed_irreversible_blocknum": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "dpos_irreversible_blocknum": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "bft_irreversible_blocknum": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "pending_schedule_lib_num": {
+                      "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                    },
+                    "pending_schedule_hash": {
+                      "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                    },
+                    "pending_schedule": {
+                      "$ref": "#/paths/~1get_producers/post/responses/200/content/application~1json/schema/properties/active/items"
+                    },
+                    "active_schedule": {
+                      "$ref": "#/paths/~1get_producers/post/responses/200/content/application~1json/schema/properties/active/items"
+                    },
+                    "blockroot_merkle": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "minProperties": 2,
+                      "required": ["_active_nodes", "_node_count"],
+                      "properties": {
+                        "_active_nodes": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                          }
+                        },
+                        "_node_count": {
+                          "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                        }
+                      },
+                      "title": "BlockrootMerkle"
+                    },
+                    "producer_to_last_produced": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                            },
+                            {
+                              "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "producer_to_last_implied_irb": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                            },
+                            {
+                              "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "block_signing_key": {
+                      "$ref": "#/paths/~1get_required_keys/post/requestBody/content/application~1json/schema/properties/available_keys/items"
+                    },
+                    "confirm_count": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/paths/~1get_account/post/responses/200/content/application~1json/schema/properties/ram_quota"
+                      }
+                    },
+                    "confirmations": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "title": "BlockHeaderState"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_abi": {
+      "post": {
+        "description": "Retrieves the ABI for a contract based on its account name",
+        "operationId": "get_abi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_name"],
+                "properties": {
+                  "account_name": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "String representation of privileged EOSIO name type",
+                        "pattern": "^(eosio[\\.][a-z1-5]{1,6})([a-j]{1})?$",
+                        "title": "NamePrivileged"
+                      },
+                      {
+                        "type": "string",
+                        "description": "String representation of basic EOSIO name type, must be 12 characters and contain only a-z and 0-5",
+                        "pattern": "^([a-z]{1}[a-z1-5]{11})([a-j]{1})?$",
+                        "title": "NameBasic"
+                      },
+                      {
+                        "type": "string",
+                        "description": "String representation of EOSIO bid name type, 1-12 characters and only a-z and 0-5 are allowed",
+                        "pattern": "^([a-z1-5]{1,12})([a-j]{1})?$",
+                        "title": "NameBid"
+                      },
+                      {
+                        "type": "string",
+                        "description": "String representation of EOSIO name type",
+                        "pattern": "^([a-z1-5]{1}[a-z1-5\\.]{0,10}[a-z1-5]{1})([a-j]{1})?$",
+                        "title": "NameCatchAll"
+                      }
+                    ],
+                    "title": "Name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "version",
+                    "types",
+                    "structs",
+                    "actions",
+                    "tables",
+                    "abi_extensions",
+                    "error_messages",
+                    "ricardian_clauses",
+                    "variants"
+                  ],
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    },
+                    "types": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 2,
+                        "required": ["new_type_name", "type"],
+                        "properties": {
+                          "new_type_name": {
+                            "$ref": "#/paths/~1get_abi/post/responses/200/content/application~1json/schema/properties/tables/items/properties/type"
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Native and EOSIO types",
+                            "enum": [
+                              "uint8",
+                              "uint16",
+                              "uint32",
+                              "uint64",
+                              "uint128",
+                              "float32",
+                              "float64",
+                              "float128",
+                              "bytes",
+                              "name",
+                              "string",
+                              "time_point",
+                              "time_point_sec",
+                              "symbol_code",
+                              "symbol",
+                              "asset",
+                              "checksum160",
+                              "checksum256",
+                              "checksum521",
+                              "public_key",
+                              "private_key",
+                              "signature",
+                              "account_name",
+                              "action_name"
+                            ],
+                            "title": "Type"
+                          }
+                        },
+                        "title": "AbiType"
+                      }
+                    },
+                    "structs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 3,
+                        "required": ["name", "base", "fields"],
+                        "properties": {
+                          "name": {
+                            "$ref": "#/paths/~1get_abi/post/responses/200/content/application~1json/schema/properties/tables/items/properties/type"
+                          },
+                          "base": {
+                            "type": "string"
+                          },
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "minProperties": 2,
+                              "required": ["name", "type"],
+                              "properties": {
+                                "name": {
+                                  "$ref": "#/paths/~1get_abi/post/responses/200/content/application~1json/schema/properties/tables/items/properties/type"
+                                },
+                                "type": {
+                                  "$ref": "#/paths/~1get_abi/post/responses/200/content/application~1json/schema/properties/types/items/properties/type"
+                                }
+                              },
+                              "title": "AbiStructFields"
+                            }
+                          }
+                        },
+                        "title": "AbiStruct"
+                      }
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["name", "type", "ricardian_contract"],
+                        "properties": {
+                          "name": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "type": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "ricardian_contract": {
+                            "type": "string",
+                            "minLength": 0
+                          }
+                        },
+                        "title": "AbiAction"
+                      }
+                    },
+                    "tables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 5,
+                        "required": ["name", "index_type"],
+                        "properties": {
+                          "name": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "index_type": {
+                            "type": "string",
+                            "enum": ["i64"],
+                            "title": "IndexType"
+                          },
+                          "key_names": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/paths/~1get_abi/post/responses/200/content/application~1json/schema/properties/tables/items/properties/type"
+                            }
+                          },
+                          "key_types": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": ["uint64", "double"],
+                              "title": "KeyType"
+                            }
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "C++ variable signature",
+                            "pattern": "^([a-z1-9]{1}[a-z1-9_]{0,30}[a-z1-9]{1})$",
+                            "title": "CppSignature"
+                          }
+                        },
+                        "title": "AbiTable"
+                      }
+                    },
+                    "abi_extensions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/paths/~1get_block/post/responses/200/content/application~1json/schema/properties/block_extensions"
+                      }
+                    },
+                    "error_messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ricardian_clauses": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "variants": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "title": "Abi"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_currency_balance": {
+      "post": {
+        "description": "Retrieves the current balance",
+        "operationId": "get_currency_balance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "account", "symbol"],
+                "properties": {
+                  "code": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  },
+                  "account": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  },
+                  "symbol": {
+                    "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "A string representation of an EOSIO symbol, composed of a float with a precision of 4, and a symbol composed of capital letters between 1-7 letters separated by a space, example `1.0000 ABC`.",
+                    "pattern": "^([0-9]{1,32}.[0-9]{4} [A-Z]{1,7})$",
+                    "title": "Symbol"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_currency_stats": {
+      "post": {
+        "description": "Retrieves currency stats",
+        "operationId": "get_currency_stats",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  },
+                  "symbol": {
+                    "$ref": "#/paths/~1get_currency_balance/post/responses/200/content/application~1json/schema/items"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Returns an object with one member labeled as the symbol you requested, the object has three members: supply (Symbol), max_supply (Symbol) and issuer (Name)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_required_keys": {
+      "post": {
+        "description": "Returns the required keys needed to sign a transaction.",
+        "operationId": "get_required_keys",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["transaction", "available_keys"],
+                "properties": {
+                  "transaction": {
+                    "$ref": "#/paths/~1push_transactions/post/requestBody/content/application~1json/schema/items"
+                  },
+                  "available_keys": {
+                    "type": "array",
+                    "description": "Provide the available keys",
+                    "items": {
+                      "type": "string",
+                      "description": "String representation of EOSIO public key type",
+                      "pattern": "^(EOS|PUB_([RK]1|WA)_)[1-9A-HJ-NP-Za-km-z]+$",
+                      "title": "PublicKey"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_producers": {
+      "post": {
+        "description": "Retrieves producers list",
+        "operationId": "get_producers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "GetProducersRequest",
+                "type": "object",
+                "required": ["limit", "lower_bound"],
+                "properties": {
+                  "limit": {
+                    "type": "string",
+                    "description": "total number of producers to retrieve"
+                  },
+                  "lower_bound": {
+                    "type": "string",
+                    "description": "In conjunction with limit can be used to paginate through the results. For example, limit=10 and lower_bound=10 would be page 2"
+                  },
+                  "json": {
+                    "type": "boolean",
+                    "description": "return result in JSON format"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "GetProducersResponse",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "minProperties": 3,
+                  "required": ["active", "pending", "proposed"],
+                  "properties": {
+                    "active": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 2,
+                        "required": ["version", "producers"],
+                        "properties": {
+                          "version": {
+                            "type": "integer"
+                          },
+                          "producers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "minProperties": 2,
+                              "required": [
+                                "producer_name",
+                                "block_signing_key"
+                              ],
+                              "properties": {
+                                "producer_name": {
+                                  "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                                },
+                                "block_signing_key": {
+                                  "$ref": "#/paths/~1get_required_keys/post/requestBody/content/application~1json/schema/properties/available_keys/items"
+                                }
+                              },
+                              "title": "ProducerSigningKey"
+                            }
+                          }
+                        },
+                        "title": "ProducerSchedule",
+                        "nullable": true
+                      }
+                    },
+                    "pending": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/paths/~1get_producers/post/responses/200/content/application~1json/schema/properties/active/items"
+                      }
+                    },
+                    "proposed": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/paths/~1get_producers/post/responses/200/content/application~1json/schema/properties/active/items"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_raw_code_and_abi": {
+      "post": {
+        "description": "Retrieves raw code and ABI for a contract based on account name",
+        "operationId": "get_raw_code_and_abi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_name"],
+                "properties": {
+                  "account_name": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_name": {
+                      "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                    },
+                    "wasm": {
+                      "type": "string",
+                      "description": "base64 encoded wasm"
+                    },
+                    "abi": {
+                      "type": "string",
+                      "description": "base64 encoded ABI"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_scheduled_transaction": {
+      "post": {
+        "description": "Retrieves the scheduled transaction",
+        "operationId": "get_scheduled_transaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lower_bound": {
+                    "type": "string",
+                    "description": "Date/time string in the format YYYY-MM-DDTHH:MM:SS.sss",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}$",
+                    "title": "DateTimeSeconds"
+                  },
+                  "limit": {
+                    "description": "The maximum number of transactions to return",
+                    "type": "integer"
+                  },
+                  "json": {
+                    "description": "true/false whether the packed transaction is converted to json",
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/paths/~1push_transactions/post/requestBody/content/application~1json/schema/items"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_table_by_scope": {
+      "post": {
+        "description": "Retrieves table scope",
+        "operationId": "get_table_by_scope",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "`name` of the contract to return table data for"
+                  },
+                  "table": {
+                    "type": "string",
+                    "description": "Filter results by table"
+                  },
+                  "lower_bound": {
+                    "type": "string",
+                    "description": "Filters results to return the first element that is not less than provided value in set"
+                  },
+                  "upper_bound": {
+                    "type": "string",
+                    "description": "Filters results to return the first element that is greater than provided value in set"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "description": "Limit number of results returned.",
+                    "format": "int32"
+                  },
+                  "reverse": {
+                    "type": "boolean",
+                    "description": "Reverse the order of returned results"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "minProperties": 5,
+                        "required": [
+                          "code",
+                          "scope",
+                          "table",
+                          "payer",
+                          "count"
+                        ],
+                        "properties": {
+                          "code": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "scope": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "table": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "payer": {
+                            "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                          },
+                          "count": {
+                            "description": "Number of matching items.",
+                            "type": "integer"
+                          }
+                        },
+                        "title": "TableScope"
+                      }
+                    },
+                    "more": {
+                      "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_table_rows": {
+      "post": {
+        "description": "Returns an object containing rows from the specified table.",
+        "operationId": "get_table_rows",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "table", "scope"],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "The name of the smart contract that controls the provided table"
+                  },
+                  "table": {
+                    "type": "string",
+                    "description": "The name of the table to query"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "The account to which this data belongs"
+                  },
+                  "index_position": {
+                    "type": "string",
+                    "description": "Position of the index used, accepted parameters `primary`, `secondary`, `tertiary`, `fourth`, `fifth`, `sixth`, `seventh`, `eighth`, `ninth` , `tenth`"
+                  },
+                  "key_type": {
+                    "type": "string",
+                    "description": "Type of key specified by index_position (for example - `uint64_t` or `name`)"
+                  },
+                  "encode_type": {
+                    "type": "string"
+                  },
+                  "upper_bound": {
+                    "type": "string"
+                  },
+                  "lower_bound": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rows": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abi_json_to_bin": {
+      "post": {
+        "description": "Returns an object containing rows from the specified table.",
+        "operationId": "abi_json_to_bin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "AbiJsonToBinRequest",
+                "properties": {
+                  "binargs": {
+                    "type": "string",
+                    "pattern": "^(0x)(([0-9a-f][0-9a-f])+)?$",
+                    "title": "Hex"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "binargs": {
+                      "$ref": "#/paths/~1abi_json_to_bin/post/requestBody/content/application~1json/schema/properties/binargs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abi_bin_to_json": {
+      "post": {
+        "description": "Returns an object containing rows from the specified table.",
+        "operationId": "abi_bin_to_json",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "AbiBinToJsonRequest",
+                "properties": {
+                  "code": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  },
+                  "action": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  },
+                  "binargs": {
+                    "$ref": "#/paths/~1abi_json_to_bin/post/requestBody/content/application~1json/schema/properties/binargs"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_code": {
+      "post": {
+        "description": "Returns an object containing rows from the specified table.",
+        "operationId": "get_code",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_name", "code_as_wasm"],
+                "properties": {
+                  "account_name": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  },
+                  "code_as_wasm": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "This must be 1 (true)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "GetCodeResponse.yaml",
+                  "properties": {
+                    "name": {
+                      "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                    },
+                    "code_hash": {
+                      "type": "string",
+                      "pattern": "^[0-9A-Fa-f]{64}$",
+                      "title": "Sha256"
+                    },
+                    "wast": {
+                      "type": "string"
+                    },
+                    "wasm": {
+                      "type": "string"
+                    },
+                    "abi": {
+                      "$ref": "#/paths/~1get_abi/post/responses/200/content/application~1json/schema"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_raw_abi": {
+      "post": {
+        "description": "Returns an object containing rows from the specified table.",
+        "operationId": "get_raw_abi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_name"],
+                "properties": {
+                  "account_name": {
+                    "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_name": {
+                      "$ref": "#/paths/~1get_abi/post/requestBody/content/application~1json/schema/properties/account_name"
+                    },
+                    "code_hash": {
+                      "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                    },
+                    "abi_hash": {
+                      "allOf": [
+                        {
+                          "$ref": "#/paths/~1get_code/post/responses/200/content/application~1json/schema/properties/code_hash"
+                        }
+                      ]
+                    },
+                    "abi": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_activated_protocol_features": {
+      "post": {
+        "description": "Retreives the activated protocol features for producer node",
+        "operationId": "get_activated_protocol_features",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["params"],
+                "properties": {
+                  "params": {
+                    "type": "object",
+                    "description": "Defines the filters to retreive the protocol features by",
+                    "required": ["search_by_block_num", "reverse"],
+                    "properties": {
+                      "lower_bound": {
+                        "type": "integer",
+                        "description": "Lower bound"
+                      },
+                      "upper_bound": {
+                        "type": "integer",
+                        "description": "Upper bound"
+                      },
+                      "limit": {
+                        "type": "integer",
+                        "description": "The limit, default is 10"
+                      },
+                      "search_by_block_num": {
+                        "type": "boolean",
+                        "description": "Flag to indicate it is has to search by block number"
+                      },
+                      "reverse": {
+                        "type": "boolean",
+                        "description": "Flag to indicate it has to search in reverse"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Returns activated protocol features",
+                  "required": ["activated_protocol_features"],
+                  "properties": {
+                    "activated_protocol_features": {
+                      "type": "array",
+                      "description": "Variant type, an array of strings with the activated protocol features",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "more": {
+                      "type": "integer",
+                      "description": "In case there's more activated protocol features than the input parameter `limit` requested, returns the ordinal of the next activated protocol feature which was not returned, otherwise zero."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

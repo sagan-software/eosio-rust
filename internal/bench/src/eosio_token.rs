@@ -1,17 +1,14 @@
-use crate::scenario::{Action, Scenario, Wasm};
-use lazy_static::lazy_static;
+use crate::{
+    scenario::{Action, Scenario, Wasm},
+    SYMBOL_RE,
+};
 use rand::{distributions::Distribution, rngs::ThreadRng};
-use rand_regex::Regex as RandRegex;
 use serde_json::json;
 use std::collections::HashSet;
 
 pub struct EosioTokenScenario {
     rng: ThreadRng,
     used_symbols: HashSet<String>,
-}
-
-lazy_static! {
-    static ref SYMBOL_RE: RandRegex = RandRegex::compile(r"[A-Z]+", 5).unwrap();
 }
 
 impl Scenario for EosioTokenScenario {
@@ -39,7 +36,9 @@ impl Scenario for EosioTokenScenario {
             Wasm {
                 desc: "eosio-rust v0.3.1".into(),
                 lang: "rust".into(),
-                path: "/mnt/dev/release/eosio_token_gc.wasm".into(),
+                path: "/mnt/dev/project/target/wasm32-unknown-unknown/release/\
+                       eosio_token_gc.wasm"
+                    .into(),
             },
         ]
     }

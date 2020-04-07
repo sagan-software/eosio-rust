@@ -8,17 +8,12 @@
 )]
 
 pub mod chain;
-pub mod history;
-pub mod net;
-pub mod producer;
 
 mod client;
 mod clients;
 mod error;
 
-pub use self::client::*;
-pub use self::clients::*;
-pub use self::error::*;
+pub use self::{client::*, clients::*, error::*};
 
 #[macro_export]
 macro_rules! builder {
@@ -45,8 +40,8 @@ macro_rules! builder {
 
 //         type Output: 'static + for<'de> Deserialize<'de>;
 
-//         fn fetch(&self, client: &Client) -> Box<Future<Item = Self::Output, Error = Error>> {
-//             Box::new(client.fetch(Self::PATH, Some(self)))
+//         fn fetch(&self, client: &Client) -> Box<Future<Item = Self::Output,
+// Error = Error>> {             Box::new(client.fetch(Self::PATH, Some(self)))
 //         }
 //     }
 // }

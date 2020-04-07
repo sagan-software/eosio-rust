@@ -1,7 +1,8 @@
-#![no_std]
 use core::marker::PhantomData;
+use eosio::Name;
 
-pub fn noop(_: PhantomData<()>) {}
+#[eosio::action]
+fn noop(_data: PhantomData<Name>) {}
 
 eosio::abi! {
     noop

@@ -11,17 +11,17 @@ cleos push action hello hi '["world"]' -p 'hello@active'
 ## Cargo.toml
 
 ```toml
-{{#include ../../examples/hello/Cargo.toml}}
+{{#include ../../../examples/hello/Cargo.toml}}
 ```
 
 ## Source
 
 ```rust,no_run,noplaypen
-{{#include ../../examples/hello/src/lib.rs}}
+{{#include ../../../examples/hello/src/lib.rs}}
 ```
 
 ## ABI
 
 ```json
-{{#include ../../examples/hello/hello.abi.json}}
+{{#include ../../../examples/hello/hello.abi.json}}
 ```

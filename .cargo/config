@@ -1,9 +1,8 @@
 [alias]
 build-contracts = "run -p scripts -- build-contracts"
 build-docs = "run -p scripts -- build-docs"
-build-bench = "build -p bench --release"
 deploy-examples = "run -p scripts -- deploy-examples"
-docker-init = "run -p scripts -- docker-init"
+init-chain = "run -p scripts -- init-chain"
 docker-tests = "run -p scripts -- run-tests"
 docker-up = "run -p scripts -- docker-up"
 eosrs = "run -p eosio-cli --"

@@ -5,7 +5,7 @@ src = "."
 title = "eosio-rust"
 
 [build]
-build-dir = "../target/doc"
+build-dir = "../../target/doc"
 
 [output.html]
 default-theme = "ayu"

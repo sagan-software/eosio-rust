@@ -23,6 +23,7 @@ members = [
     "crates/eosio_macros",
     "crates/eosio_numstr",
     # "crates/eosio_rpc",
+    "docs/perf",
     "examples/addressbook",
     "examples/hello_bare",
     "examples/hello",

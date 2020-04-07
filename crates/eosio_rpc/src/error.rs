@@ -21,7 +21,7 @@ impl From<hyper::Error> for Error {
 impl From<serde_json::Error> for Error {
     fn from(err: serde_json::Error) -> Self {
         println!("SERDE ERROR: {:#?}", err);
-        Error::BadResponse
+        Self::BadResponse
     }
 }
 

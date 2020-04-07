@@ -29,12 +29,6 @@ pub struct Run {
     pub time: u64,
 }
 
-pub struct WasmBenchResults {
-    pub wasm: Wasm,
-    pub ram: u64,
-    pub runs: Vec<Run>,
-}
-
 impl Action {
     pub fn new(
         name: impl ToString,
@@ -51,9 +45,12 @@ impl Action {
     pub fn run(&self, contract: impl AsRef<str>) -> Run {
         let contract = contract.as_ref();
         let data = serde_json::to_string(&self.data).unwrap();
-        println!(
+        log::debug!(
             "push action {} {} {} -p {}",
-            contract, self.name, data, self.scope
+            contract,
+            self.name,
+            data,
+            self.scope
         );
         let metrics =
             util::push_action_metrics(contract, &self.name, data, &self.scope);

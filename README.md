@@ -1,4 +1,4 @@
-<img src="./book/logo.svg" width="300"/>
+<img src="./docs/book/logo.svg" width="300"/>
 
 # EOSIO SDK for Rust
 
@@ -9,10 +9,6 @@ _EOSIO SDK for Rust_ is a suite of APIs for building smart contracts and full-st
 ## [Read the Book](https://sagan-software.github.io/eosio-rust/)
 
 ## [Documentation](https://sagan-software.github.io/eosio-rust/eosio/)
-
-## [Benchmarks](https://sagan-software.github.io/eosio-rust/benchmarks/report/)
-
-## [Roadmap](https://sagan-software.github.io/eosio-rust/roadmap.html)
 
 ## License
 

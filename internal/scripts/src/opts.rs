@@ -10,6 +10,7 @@ pub struct Opt {
 #[derive(StructOpt, Debug)]
 #[structopt(about = "which subcommand to run")]
 pub enum Cmd {
+    InitChain,
     DeployExamples,
     DockerInit,
     DockerUp,

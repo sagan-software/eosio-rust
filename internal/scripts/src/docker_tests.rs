@@ -1,9 +1,9 @@
-use crate::{build_contracts::build_contract, opts::RunTestsCmd};
+use crate::opts::RunTestsCmd;
 use std::{
     io,
     process::{Command, ExitStatus},
 };
-use util::get_target_dir;
+use util::{build_contract, get_target_dir};
 
 const CONTRACTS: &[&str] = &["bios", "msig", "token", "wrap"];
 

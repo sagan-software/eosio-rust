@@ -1,7 +1,6 @@
 use crate::error::Error;
 use serde::{Deserialize, Serialize};
-use std::future::Future;
-use std::pin::Pin;
+use std::{future::Future, pin::Pin};
 
 pub trait Client {
     fn node(&self) -> &str;

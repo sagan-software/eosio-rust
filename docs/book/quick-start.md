@@ -11,13 +11,13 @@ cargo new hello --lib
 Edit `Cargo.toml`:
 
 ```toml
-{{#include ../examples/hello/Cargo.toml}}
+{{#include ../../examples/hello/Cargo.toml}}
 ```
 
 Edit `src/lib.rs`:
 
 ```rust,no_run,noplaypen
-{{#include ../examples/hello/src/lib.rs}}
+{{#include ../../examples/hello/src/lib.rs}}
 ```
 
 Compile with the following command:
@@ -31,30 +31,29 @@ The smart contract should now be built at `target/wasm32-unknown-unknown/release
 
 ## Deploying
 
-
 Create a new file called `abi.json` (in future versions this will be automatically generated):
 
 ```json
 {
-    "version": "eosio::abi/1.0",
-    "structs": [
+  "version": "eosio::abi/1.0",
+  "structs": [
+    {
+      "name": "hi",
+      "base": "",
+      "fields": [
         {
-            "name": "hi",
-            "base": "",
-            "fields": [
-                {
-                    "name": "name",
-                    "type": "name"
-                }
-            ]
+          "name": "name",
+          "type": "name"
         }
-    ],
-    "actions": [
-        {
-            "name": "hi",
-            "type": "hi"
-        }
-    ]
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "hi",
+      "type": "hi"
+    }
+  ]
 }
 ```
 

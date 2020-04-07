@@ -1,19 +1,24 @@
-use crate::build_contracts::build_contract;
 use std::{io, process::ExitStatus};
-use util::cleos;
+use util::{build_contract, cleos};
 
 fn deploy_example_contract(account: &str, bin: &str) -> io::Result<ExitStatus> {
     cleos()
         .arg("set")
         .arg("abi")
         .arg(account)
-        .arg(format!("mnt/dev/examples/{}/{}.abi.json", bin, bin))
+        .arg(format!(
+            "/mnt/dev/project/examples/{}/{}.abi.json",
+            bin, bin
+        ))
         .status()?;
     cleos()
         .arg("set")
         .arg("code")
         .arg(account)
-        .arg(format!("mnt/dev/release/{}_gc.wasm", bin))
+        .arg(format!(
+            "/mnt/dev/project/target/wasm32-unknown-unknown/release/{}_gc.wasm",
+            bin
+        ))
         .status()
 }
 

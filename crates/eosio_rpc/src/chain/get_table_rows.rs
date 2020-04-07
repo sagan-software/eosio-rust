@@ -2,11 +2,11 @@ use crate::Client;
 use eosio::{AccountName, ScopeName, TableName};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Clone, Copy)]
+#[derive(Serialize, Clone)]
 pub struct GetTableRowsParams {
-    pub scope: ScopeName,
-    pub code: AccountName,
-    pub table: TableName,
+    pub scope: String,
+    pub code: String,
+    pub table: String,
     pub json: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lower_bound: Option<u64>,
@@ -56,8 +56,8 @@ impl GetTableRowsParams {
     // pub fn fetch<Row>(
     //     self,
     //     client: Box<dyn Client>,
-    // ) -> impl std::future::Future<Output = Result<GetTableRows<Row>, crate::Error>>
-    // where
+    // ) -> impl std::future::Future<Output = Result<GetTableRows<Row>,
+    // crate::Error>> where
     //     Row: for<'a> Deserialize<'a> + 'static + Send,
     // {
     //     client.fetch::<GetTableRows<Row>, GetTableRowsParams>(
@@ -67,19 +67,15 @@ impl GetTableRowsParams {
     // }
 }
 
-pub fn get_table_rows<
-    C: Into<AccountName>,
-    S: Into<ScopeName>,
-    T: Into<TableName>,
->(
+pub fn get_table_rows<C: ToString, S: ToString, T: ToString>(
     code: C,
     scope: S,
     table: T,
 ) -> GetTableRowsParams {
     GetTableRowsParams {
-        code: code.into(),
-        scope: scope.into(),
-        table: table.into(),
+        code: code.to_string(),
+        scope: scope.to_string(),
+        table: table.to_string(),
         json: true,
         lower_bound: None,
         upper_bound: None,

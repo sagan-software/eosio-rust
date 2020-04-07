@@ -31,8 +31,12 @@ impl RunOr for Command {
 
 pub fn docker_compose() -> Command {
     let mut cmd = Command::new("docker-compose");
+    let docker_compose_yml = get_project_dir()
+        .unwrap()
+        .join("docker")
+        .join("docker-compose.yml");
     cmd.arg("-f");
-    cmd.arg("docker/docker-compose.yml");
+    cmd.arg(docker_compose_yml);
     cmd
 }
 
@@ -85,7 +89,7 @@ pub fn push_action_cmd(
     let action = action.as_ref();
     let data = data.as_ref();
     let auth = auth.as_ref();
-    println!("push action {} {} '{}' -p {}", account, action, data, auth);
+    log::debug!("push action {} {} '{}' -p {}", account, action, data, auth);
     let mut cmd = cleos();
     cmd.arg("push")
         .arg("action")
@@ -162,7 +166,7 @@ pub fn push_action_metrics(
 pub fn set_abi(account: impl AsRef<str>, abi_path: impl AsRef<str>) {
     let account = account.as_ref();
     let abi_path = abi_path.as_ref();
-    println!("set abi {} {}", account, abi_path);
+    log::debug!("set abi {} {}", account, abi_path);
     cleos()
         .arg("set")
         .arg("abi")
@@ -177,7 +181,7 @@ pub fn set_code_cmd(
 ) -> Command {
     let account = account.as_ref();
     let wasm_path = wasm_path.as_ref();
-    println!("set code {} {}", account, wasm_path);
+    log::debug!("set code {} {}", account, wasm_path);
     let mut cmd = cleos();
     cmd.arg("set").arg("code").arg(account).arg(wasm_path);
     cmd
@@ -215,7 +219,7 @@ pub fn new_account(
     let net = net.as_ref();
     let cpu = cpu.as_ref();
     let ram = ram.as_ref();
-    println!("Creating new account {}", name);
+    log::debug!("Creating new account {}", name);
     cleos()
         .arg("system")
         .arg("newaccount")
@@ -230,4 +234,79 @@ pub fn new_account(
         .arg("--buy-ram-kbytes")
         .arg(ram)
         .run_or_panic()
+}
+
+fn cargo_build(package: &str) {
+    println!("building package: {}", package);
+    Command::new("cargo")
+        .env("RUSTFLAGS", "-C link-args=-zstack-size=48000")
+        .arg("build")
+        .arg("--release")
+        .arg("--target=wasm32-unknown-unknown")
+        .arg("-p")
+        .arg(package)
+        .run_or_panic()
+}
+
+fn wasm_gc<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
+    println!(
+        "running wasm-gc (input: {:#?}, output: {:#?})",
+        input.as_ref(),
+        output.as_ref()
+    );
+    Command::new("wasm-gc")
+        .arg(input.as_ref())
+        .arg(output.as_ref())
+        .run_or_panic()
+}
+
+// fn wasm_opt<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
+//     println!(
+//         "running wasm-opt (input: {:#?}, output: {:#?})",
+//         input.as_ref(),
+//         output.as_ref()
+//     );
+//     Command::new("wasm-opt")
+//         .arg("-Oz")
+//         .arg("--output")
+//         .arg(output.as_ref())
+//         .arg(input.as_ref())
+//         .run_or_panic()
+// }
+
+// TODO: requires wabt
+// fn wasm2wat<I: AsRef<Path>, O: AsRef<Path>>(input: I, output: O) {
+//     println!(
+//         "running wasm2wat (input: {:#?}, output: {:#?})",
+//         input.as_ref(),
+//         output.as_ref()
+//     );
+//     Command::new("wasm2wat")
+//         .arg(input.as_ref())
+//         .arg("-o")
+//         .arg(output.as_ref())
+//         .arg("--generate-names")
+//         .run_or_panic();
+// }
+
+pub fn build_contract(package: impl AsRef<str>) {
+    let package = package.as_ref();
+    cargo_build(package);
+    let target_dir = get_target_dir().expect("failed to get target directory");
+    let bin = package.replace('-', "_");
+    let wasm = target_dir.join(format!("{}.wasm", bin));
+    let gc_wasm = target_dir.join(format!("{}_gc.wasm", bin));
+    // let gc_opt_wasm = target_dir.join(format!("{}_gc_opt.wasm", bin));
+    let gc_opt_wat = target_dir.join(format!("{}_gc_opt.wat", bin));
+    remove_file_if_exists(&gc_wasm).unwrap_or_else(|e| {
+        panic!("failed to remove {:#?}: {:#?}", gc_wasm, e)
+    });
+    // remove_file_if_exists(&gc_opt_wasm)?;
+    remove_file_if_exists(&gc_opt_wat).unwrap_or_else(|e| {
+        panic!("failed to remove {:#?}: {:#?}", gc_opt_wat, e)
+    });
+    wasm_gc(wasm, &gc_wasm);
+    // These two commands require binaryen:
+    // wasm_opt(gc_wasm, &gc_opt_wasm);
+    // wasm2wat(gc_opt_wasm, gc_opt_wat);
 }

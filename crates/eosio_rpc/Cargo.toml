@@ -1,6 +1,6 @@
 [package]
 name = "eosio_rpc"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"
 
@@ -9,12 +9,12 @@ cfg-if = "0.1.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 eosio = { path = "../eosio" }
-eosio_abi = { path = "../eosio_abi" }
+# eosio_abi = { path = "../eosio_abi" }
 futures-preview = { version = "=0.3.0-alpha.16", features = ["compat"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"], optional = true }
 js-sys = { version = "0.3.5", optional = true }
 wasm-bindgen-futures = { version = "0.3.5", optional = true }
-hyper = { version = "0.12", optional = true }
+hyper = { version = "0.13", optional = true }
 hyper-tls = { version = "0.3", optional = true }
 stdweb = { version = "0.4.14", optional = true }
 
